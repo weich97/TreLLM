@@ -50,6 +50,18 @@ The visual tour is deliberately small enough for a README, while the underlying
 artifacts are real files produced by the repository demos and diagnostic
 snapshots.
 
+Regenerate the hands-on version locally:
+
+```bash
+python examples/visual_tour_demo.py
+```
+
+Open:
+
+```text
+outputs/examples/visual_tour_index.html
+```
+
 ## Audit Report Preview
 
 TradeArena records every step as an auditable trajectory rather than hiding the
@@ -149,6 +161,7 @@ outputs/examples/showcase.html
 The showcase is API-free. It builds a local portal linking to:
 
 - an auditable trajectory report
+- an animated lifecycle/execution/diagnostics tour
 - an execution-realism sweep
 - A-share market-rule interventions
 - crisis-scene visual diagnostics

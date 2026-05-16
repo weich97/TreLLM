@@ -5,6 +5,7 @@ This matrix maps framework capabilities to hands-on repository artifacts.
 | Capability | Run | Main artifact | What it shows |
 | --- | --- | --- | --- |
 | First-run repo tour | `python scripts/run_showcase.py` | `outputs/examples/showcase.html` | One command builds a public-facing demo surface. |
+| Animated visual tour | `python examples/visual_tour_demo.py` | `outputs/examples/visual_tour_index.html` | README-style lifecycle, execution, and diagnostics GIFs become reproducible local artifacts. |
 | Auditable trajectories | `python examples/audit_trajectory_walkthrough.py` and `python scripts/render_audit_report.py` | `outputs/examples/audit_report.html` | A decision can be traced from observation to risk gate to fills and memory. |
 | Execution realism | `python examples/execution_realism_sweep_demo.py` | `outputs/examples/execution_realism_sweep.svg` | The same agent behaves differently under slippage, latency, liquidity, and rejections. |
 | Risk lifecycle | `python examples/ashare_market_rules_demo.py` | `outputs/examples/ashare_market_rules.svg` | Hard market rules become clipped or blocked risk reports. |

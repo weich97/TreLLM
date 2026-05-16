@@ -62,12 +62,31 @@ def test_paper_design_demo_suite_builds_advanced_artifacts():
     assert (ROOT / "outputs/examples/custom_plugin.svg").exists()
 
 
+def test_visual_tour_demo_generates_animated_artifacts():
+    _run_example("examples/visual_tour_demo.py")
+    summary = _read_json("outputs/examples/visual_tour_summary.json")
+
+    assert summary["api_free"] is True
+    assert summary["requires_live_market_data"] is False
+    assert (ROOT / "outputs/examples/visual_tour_index.html").exists()
+
+    for filename in (
+        "visual_tour_audit_lifecycle.gif",
+        "visual_tour_execution_realism.gif",
+        "visual_tour_diagnostics_loop.gif",
+    ):
+        path = ROOT / "outputs/examples" / filename
+        assert path.exists()
+        assert 0 < path.stat().st_size < 1_500_000
+
+
 def test_showcase_index_can_be_built_from_existing_or_missing_artifacts():
     subprocess.run([sys.executable, "scripts/run_showcase.py", "--reuse-existing"], cwd=ROOT, check=True)
 
     html = (ROOT / "outputs/examples/showcase.html").read_text(encoding="utf-8")
     assert "TradeArena Showcase" in html
     assert "Experiment-design demos" in html
+    assert "Animated visual tour" in html
     assert "Custom plugin extension" in html
 
 

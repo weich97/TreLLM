@@ -20,7 +20,7 @@ Issues = "https://github.com/weich97/TradeArena/issues"
 
 [project.optional-dependencies]
 data = ["pandas>=2.0", "yfinance>=0.2"]
-dev = ["pytest>=7.0"]
+dev = ["pytest>=7.0", "pillow>=10.0"]
 embeddings = ["sentence-transformers>=3.0"]
 ashare = ["akshare>=1.18"]
 

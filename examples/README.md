@@ -16,8 +16,9 @@ outputs/examples/showcase.html
 ```
 
 The showcase links to a practical tour of auditable trajectories, execution
-realism, A-share market-rule interventions, portfolio baselines, redacted LLM
-cache manifests, and a custom plugin extension.
+realism, animated visual diagnostics, A-share market-rule interventions,
+portfolio baselines, redacted LLM cache manifests, and a custom plugin
+extension.
 
 ## 1. Core Benchmark
 
@@ -32,7 +33,24 @@ Output:
 
 - `outputs/examples/quickstart_core_metrics.json`
 
-## 2. Audit Trajectory Walkthrough
+## 2. Animated Visual Tour
+
+```bash
+python examples/visual_tour_demo.py
+```
+
+Regenerates the README-style audit lifecycle, execution realism, and
+diagnostics animations as local hands-on artifacts.
+
+Output:
+
+- `outputs/examples/visual_tour_index.html`
+- `outputs/examples/visual_tour_summary.json`
+- `outputs/examples/visual_tour_audit_lifecycle.gif`
+- `outputs/examples/visual_tour_execution_realism.gif`
+- `outputs/examples/visual_tour_diagnostics_loop.gif`
+
+## 3. Audit Trajectory Walkthrough
 
 ```bash
 python examples/audit_trajectory_walkthrough.py
@@ -48,7 +66,7 @@ Output:
 - `outputs/examples/audit_walkthrough_trajectory.json`
 - `outputs/examples/audit_report.html`
 
-## 3. Optional Data Sidecars
+## 4. Optional Data Sidecars
 
 ```bash
 python examples/sidecar_data_demo.py
@@ -62,7 +80,7 @@ Output:
 
 - `outputs/examples/sidecar_data/`
 
-## 4. AkShare CSV Reuse
+## 5. AkShare CSV Reuse
 
 ```bash
 python examples/akshare_csv_reuse_demo.py
@@ -83,7 +101,7 @@ python -m pip install -e ".[ashare]"
 python scripts/download_akshare_ashare_daily.py --symbols 600519.SS,300750.SZ --start 2021-01-01 --end 2026-05-14 --output-dir data/real/akshare_ashare_daily
 ```
 
-## 5. A-Share Market Rules
+## 6. A-Share Market Rules
 
 ```bash
 python examples/ashare_market_rules_demo.py
@@ -98,7 +116,7 @@ Output:
 - `outputs/examples/ashare_market_rules_orders.csv`
 - `outputs/examples/ashare_market_rules.svg`
 
-## 6. Execution Realism Sweep
+## 7. Execution Realism Sweep
 
 ```bash
 python examples/execution_realism_sweep_demo.py
@@ -113,7 +131,7 @@ Output:
 - `outputs/examples/execution_realism_sweep.csv`
 - `outputs/examples/execution_realism_sweep.svg`
 
-## 7. Portfolio / Markowitz Baselines
+## 8. Portfolio / Markowitz Baselines
 
 ```bash
 python examples/portfolio_markowitz_demo.py
@@ -128,7 +146,7 @@ Output:
 - `outputs/examples/portfolio_markowitz.csv`
 - `outputs/examples/portfolio_markowitz.svg`
 
-## 8. Representation Diagnostics
+## 9. Representation Diagnostics
 
 ```bash
 python examples/representation_signature_demo.py
@@ -142,7 +160,7 @@ Output:
 - `outputs/examples/representation_signature_summary.json`
 - `outputs/examples/representation_signature.svg`
 
-## 9. Custom Plugin Extension
+## 10. Custom Plugin Extension
 
 ```bash
 python examples/custom_plugin_demo.py
@@ -156,7 +174,7 @@ Output:
 - `outputs/examples/custom_plugin_summary.json`
 - `outputs/examples/custom_plugin.svg`
 
-## 10. Redacted LLM Cache Manifest
+## 11. Redacted LLM Cache Manifest
 
 ```bash
 python examples/llm_cache_replay_demo.py

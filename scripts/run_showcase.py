@@ -24,6 +24,12 @@ SECTIONS = [
         "python scripts/run_paper_design_demos.py",
     ),
     (
+        "Animated visual tour",
+        "A hands-on regeneration of the audit lifecycle, execution realism, and diagnostics GIFs shown in the README.",
+        "visual_tour_index.html",
+        "python examples/visual_tour_demo.py",
+    ),
+    (
         "Audit report",
         "One complete observe-plan-risk-act-reflect trajectory with risk gate and execution outcomes.",
         "audit_report.html",
@@ -66,6 +72,7 @@ def main() -> int:
     if not args.reuse_existing:
         _run([sys.executable, "scripts/run_launch_demo.py", "--skip-paper-figures"], "Launch demo portal")
         _run([sys.executable, "scripts/run_paper_design_demos.py"], "Experiment-design demo suite")
+        _run([sys.executable, "examples/visual_tour_demo.py"], "Animated visual tour")
 
     _write_showcase_index(OUTPUT_DIR / "showcase.html")
     print("\nShowcase artifacts", flush=True)

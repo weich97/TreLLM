@@ -30,6 +30,7 @@ python examples/audit_trajectory_walkthrough.py
 python scripts/render_audit_report.py
 python examples/execution_realism_sweep_demo.py
 python examples/portfolio_markowitz_demo.py
+python examples/visual_tour_demo.py
 python examples/custom_plugin_demo.py
 ```
 
@@ -38,6 +39,7 @@ Useful files:
 - `outputs/examples/audit_report.html`
 - `outputs/examples/execution_realism_sweep.svg`
 - `outputs/examples/portfolio_markowitz.svg`
+- `outputs/examples/visual_tour_index.html`
 - `outputs/examples/custom_plugin.svg`
 - `outputs/examples/audit_walkthrough_trajectory.json`
 

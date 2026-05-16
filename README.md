@@ -10,6 +10,7 @@
   <a href="docs/getting_started.md">Getting started</a> |
   <a href="docs/demo_matrix.md">Demo matrix</a> |
   <a href="examples">Hands-on examples</a> |
+  <a href="#visual-tour">Visual tour</a> |
   <a href="#research-grade-diagnostics">Diagnostics</a> |
   <a href="docs/schemas.md">Schemas</a> |
   <a href="docs/plugin_interfaces.md">Plugin interfaces</a>
@@ -33,6 +34,21 @@ replayable trajectory logs.
 This public repository is the framework and demo release.
 
 ![TradeArena motivation: from leaderboard returns to accountable trading decisions](docs/assets/motivation.svg)
+
+## Visual Tour
+
+The fastest way to understand TradeArena is to watch the decision loop. These
+short, API-free previews are generated from the same concepts used by the
+examples: lifecycle logging, execution realism, risk feedback, and portfolio
+diagnostics.
+
+| Audit lifecycle | Execution realism | Diagnostic loop |
+| --- | --- | --- |
+| <img src="docs/assets/readme_audit_lifecycle.gif" alt="Animated audit lifecycle showing observe, plan, risk gate, execute, and reflect" width="280"> | <img src="docs/assets/readme_execution_realism.gif" alt="Animated execution realism demo showing fills, slippage, latency, liquidity, and rejected orders" width="280"> | <img src="docs/assets/readme_diagnostics_loop.gif" alt="Animated diagnostics demo showing representation rank, risk feedback, and portfolio concentration" width="280"> |
+
+The visual tour is deliberately small enough for a README, while the underlying
+artifacts are real files produced by the repository demos and diagnostic
+snapshots.
 
 ## Audit Report Preview
 

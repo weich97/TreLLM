@@ -10,6 +10,7 @@
   <a href="docs/getting_started.md">Getting started</a> |
   <a href="docs/demo_matrix.md">Demo matrix</a> |
   <a href="examples">Hands-on examples</a> |
+  <a href="#research-grade-diagnostics">Diagnostics</a> |
   <a href="docs/schemas.md">Schemas</a> |
   <a href="docs/plugin_interfaces.md">Plugin interfaces</a>
 </p>
@@ -33,6 +34,51 @@ This public repository is the framework and demo release.
 
 ![TradeArena motivation: from leaderboard returns to accountable trading decisions](docs/assets/motivation.svg)
 
+## Research-Grade Diagnostics
+
+TradeArena is more than a toy backtester: the repository includes tracked,
+API-free diagnostic artifacts produced by the same trajectory, risk, execution,
+and evaluation interfaces used by the framework. These examples show how an
+agent's decision path can be inspected as a system object rather than reduced
+to a final return number.
+
+The current diagnostic suite highlights three research axes:
+
+- representation signatures before agent failure
+- risk-feedback alignment under true, hidden, placebo, and contrarian feedback
+- high-dimensional portfolio behavior under realistic execution constraints
+
+| Representation signature preview | Crisis-scene trajectory probe |
+| --- | --- |
+| <img src="docs/assets/representation_signature_preview.svg" alt="Representation signature preview" width="430"> | <img src="docs/assets/crisis/crisis_representation_trajectory.svg" alt="Crisis-scene representation trajectory" width="430"> |
+
+| Market correlation vs. LLM intent | Risk-feedback calibration |
+| --- | --- |
+| <img src="docs/assets/crisis/crisis_correlation_intent_heatmap.svg" alt="Market correlation versus LLM intent co-exposure" width="430"> | <img src="docs/assets/crisis/crisis_feedback_learning_curves.svg" alt="Risk-feedback calibration curves" width="430"> |
+
+The crisis-scene probes use timestamp-masked historical stress paths, including
+a 2022 Tech/Rates drawdown scene and a 2023 SVB/regional-bank shock scene. The
+tracked snapshots include redacted model metadata for GPT-family, Gemini,
+Claude, and DeepSeek V4 Pro runs without shipping raw provider prompt/response
+text.
+
+Run the gallery locally:
+
+```bash
+python examples/crisis_snapshot_demo.py
+```
+
+Open:
+
+```text
+outputs/examples/crisis_snapshot_gallery.html
+```
+
+Numeric snapshots live under [`docs/results/crisis`](docs/results/crisis) and
+[`docs/results/representation`](docs/results/representation). They are small
+enough to track in Git and concrete enough for new users to reproduce the
+visual diagnostics without spending API credits.
+
 ## One-Command Showcase
 
 ```bash
@@ -51,7 +97,9 @@ The showcase is API-free. It builds a local portal linking to:
 - an auditable trajectory report
 - an execution-realism sweep
 - A-share market-rule interventions
+- crisis-scene visual diagnostics
 - Markowitz/MVO portfolio baselines
+- representation-signature diagnostics
 - a custom plugin extension example
 - redacted LLM cache manifest metadata
 
@@ -145,6 +193,22 @@ Build shareable redacted manifests with:
 ```bash
 python scripts/build_llm_cache_manifest.py
 ```
+
+## Development Direction
+
+TradeArena is designed to grow through plugins and benchmarks rather than a
+single fixed pipeline. Near-term extension areas include:
+
+- more data bridges for equities, A-shares, crypto, prediction markets, news,
+  filings, macro, and alternative data
+- richer execution simulators, including limit-order-book style queues,
+  corporate-action calendars, venue-specific rules, and stress liquidity
+- stronger baseline libraries spanning deterministic policies, Markowitz/MVO,
+  reinforcement learning, and model-backed agents
+- broader risk protocols covering pre-trade gates, in-trade monitors,
+  post-trade attribution, human audit labels, and adversarial feedback tests
+- community benchmark tasks with shareable redacted trajectories and compact
+  result manifests
 
 ## Contributing
 

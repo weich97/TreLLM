@@ -34,6 +34,31 @@ This public repository is the framework and demo release.
 
 ![TradeArena motivation: from leaderboard returns to accountable trading decisions](docs/assets/motivation.svg)
 
+## Audit Report Preview
+
+TradeArena records every step as an auditable trajectory rather than hiding the
+agent inside a return curve. The rendered report links observations, analyst
+signals, proposed and approved decisions, risk-gate edits, submitted orders,
+fills, rejections, portfolio state, memory events, and reproducibility
+fingerprints in one browser-readable artifact.
+
+<p align="center">
+  <img src="docs/assets/audit_report_preview.svg" alt="TradeArena audit report preview" width="880">
+</p>
+
+Generate the same style of report locally:
+
+```bash
+python examples/audit_trajectory_walkthrough.py
+python scripts/render_audit_report.py
+```
+
+Open:
+
+```text
+outputs/examples/audit_report.html
+```
+
 ## Research-Grade Diagnostics
 
 TradeArena is more than a toy backtester: the repository includes tracked,

@@ -80,6 +80,22 @@ def test_visual_tour_demo_generates_animated_artifacts():
         assert 0 < path.stat().st_size < 1_500_000
 
 
+def test_extension_walkthrough_demo_shows_modular_contribution_path():
+    _run_example("examples/extension_walkthrough_demo.py")
+    summary = _read_json("outputs/examples/extension_walkthrough_summary.json")
+
+    assert summary["custom_modules"] == {
+        "analyst": "GapVolumeAnalyst",
+        "risk_manager": "VolatilityCircuitBreakerRisk",
+        "evaluator": "ExtensionCoverageEvaluator",
+    }
+    assert summary["reused_core_modules"]["order_simulator"] == "realistic-order-simulator"
+    assert summary["metrics"]["extension_custom_signal_count"] > 0
+    assert summary["metrics"]["extension_circuit_breaker_blocks"] > 0
+    assert summary["metrics"]["risk_lifecycle_coverage"] == 1.0
+    assert (ROOT / "outputs/examples/extension_walkthrough.svg").exists()
+
+
 def test_showcase_index_can_be_built_from_existing_or_missing_artifacts():
     subprocess.run([sys.executable, "scripts/run_showcase.py", "--reuse-existing"], cwd=ROOT, check=True)
 
@@ -88,6 +104,7 @@ def test_showcase_index_can_be_built_from_existing_or_missing_artifacts():
     assert "Experiment-design demos" in html
     assert "Animated visual tour" in html
     assert "Custom plugin extension" in html
+    assert "Contributor extension walkthrough" in html
 
 
 def _run_example(path: str) -> None:

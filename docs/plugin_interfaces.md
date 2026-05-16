@@ -16,3 +16,26 @@ Recommended extension categories:
 Risk managers are encouraged to expose `last_report: RiskReport | None`. Execution simulators are encouraged to expose `last_report: ExecutionReport | None`. The runner automatically serializes these reports into trajectories when present.
 
 The framework intentionally keeps interfaces narrow. A new LLM agent, FinRL policy, broker adapter, or risk model should be able to enter the system by implementing only the protocol it owns.
+
+## Hands-On Extension Path
+
+Run:
+
+```bash
+python examples/extension_walkthrough_demo.py
+```
+
+This demo replaces only three modules:
+
+- `GapVolumeAnalyst` implements `AnalystAgent`.
+- `VolatilityCircuitBreakerRisk` implements the risk lifecycle by extending the
+  baseline risk manager with a pre-trade circuit breaker.
+- `ExtensionCoverageEvaluator` implements `Evaluator`.
+
+The same run reuses the existing data provider, strategy, execution agent,
+realistic order simulator, memory store, trajectory logger, and baseline
+evaluators. Open `outputs/examples/extension_walkthrough.svg` to see the module
+boundary visually.
+
+For a contributor-oriented checklist, see
+[`docs/extension_walkthrough.md`](extension_walkthrough.md).

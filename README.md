@@ -13,6 +13,7 @@
   <a href="#visual-tour">Visual tour</a> |
   <a href="#research-grade-diagnostics">Diagnostics</a> |
   <a href="docs/schemas.md">Schemas</a> |
+  <a href="docs/extension_walkthrough.md">Extension walkthrough</a> |
   <a href="docs/plugin_interfaces.md">Plugin interfaces</a>
 </p>
 
@@ -61,6 +62,38 @@ Open:
 ```text
 outputs/examples/visual_tour_index.html
 ```
+
+## Modular Extension Walkthrough
+
+TradeArena modules connect through narrow protocols rather than hidden runner
+state. The fastest contributor demo swaps in three local modules while the rest
+of the framework stays fixed:
+
+```bash
+python examples/extension_walkthrough_demo.py
+```
+
+Open:
+
+```text
+outputs/examples/extension_walkthrough.svg
+```
+
+<p align="center">
+  <img src="docs/assets/extension_walkthrough_preview.svg" alt="TradeArena contributor extension walkthrough" width="900">
+</p>
+
+The example contributes:
+
+- `GapVolumeAnalyst`: emits `Signal` objects from custom market features
+- `VolatilityCircuitBreakerRisk`: adds a pre-trade circuit breaker and
+  auditable `RiskReport` entries
+- `ExtensionCoverageEvaluator`: adds contributor-specific metrics from the
+  final `Trajectory`
+
+It reuses the existing data provider, strategy, execution agent, realistic order
+simulator, memory store, reproducibility state, and trajectory logger. For the
+contribution checklist, see [`docs/extension_walkthrough.md`](docs/extension_walkthrough.md).
 
 ## Audit Report Preview
 
@@ -168,6 +201,7 @@ The showcase is API-free. It builds a local portal linking to:
 - Markowitz/MVO portfolio baselines
 - representation-signature diagnostics
 - a custom plugin extension example
+- a contributor extension walkthrough
 - redacted LLM cache manifest metadata
 
 ## Quick Start

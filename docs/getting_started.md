@@ -32,6 +32,7 @@ python examples/execution_realism_sweep_demo.py
 python examples/portfolio_markowitz_demo.py
 python examples/visual_tour_demo.py
 python examples/custom_plugin_demo.py
+python examples/extension_walkthrough_demo.py
 ```
 
 Useful files:
@@ -41,6 +42,7 @@ Useful files:
 - `outputs/examples/portfolio_markowitz.svg`
 - `outputs/examples/visual_tour_index.html`
 - `outputs/examples/custom_plugin.svg`
+- `outputs/examples/extension_walkthrough.svg`
 - `outputs/examples/audit_walkthrough_trajectory.json`
 
 ## Extension Path
@@ -48,6 +50,11 @@ Useful files:
 Start from `examples/custom_plugin_demo.py`. It defines one local analyst class
 and reuses the existing runner, risk manager, execution simulator, memory store,
 and evaluators.
+
+Then run `examples/extension_walkthrough_demo.py`. It shows the fuller
+contributor path: a custom analyst, a custom risk manager, and a custom
+evaluator plugged into the same runner while the data provider, strategy,
+execution simulator, memory store, and trajectory logger remain unchanged.
 
 ## Quality Check
 

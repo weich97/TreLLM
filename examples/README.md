@@ -18,7 +18,7 @@ outputs/examples/showcase.html
 The showcase links to a practical tour of auditable trajectories, execution
 realism, animated visual diagnostics, A-share market-rule interventions,
 portfolio baselines, redacted LLM cache manifests, and a custom plugin
-extension.
+extension plus a contributor extension walkthrough.
 
 ## 1. Core Benchmark
 
@@ -174,7 +174,22 @@ Output:
 - `outputs/examples/custom_plugin_summary.json`
 - `outputs/examples/custom_plugin.svg`
 
-## 11. Redacted LLM Cache Manifest
+## 11. Contributor Extension Walkthrough
+
+```bash
+python examples/extension_walkthrough_demo.py
+```
+
+Shows how to add a custom analyst, risk manager, and evaluator without editing
+the core runner.
+
+Output:
+
+- `outputs/examples/extension_walkthrough_summary.json`
+- `outputs/examples/extension_walkthrough.svg`
+- `outputs/examples/extension_walkthrough_notes.md`
+
+## 12. Redacted LLM Cache Manifest
 
 ```bash
 python examples/llm_cache_replay_demo.py

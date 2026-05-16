@@ -14,3 +14,4 @@ This matrix maps framework capabilities to hands-on repository artifacts.
 | Portfolio baselines | `python examples/portfolio_markowitz_demo.py` | `outputs/examples/portfolio_markowitz.svg` | Buy-and-hold, signal-weighted, and MVO strategies share the same evaluation stack. |
 | LLM manifest portability | `python examples/llm_cache_replay_demo.py` | `outputs/examples/llm_cache_replay_summary.json` | Redacted manifests expose provider, model, prompt mode, and parse coverage without raw provider text. |
 | Plugin extensibility | `python examples/custom_plugin_demo.py` | `outputs/examples/custom_plugin.svg` | A new analyst can be swapped in without editing the runner, risk, execution, memory, or evaluators. |
+| Contributor extension path | `python examples/extension_walkthrough_demo.py` | `outputs/examples/extension_walkthrough.svg` | A contributor can add an analyst, risk manager, and evaluator while reusing the rest of the framework. |

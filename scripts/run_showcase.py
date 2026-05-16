@@ -53,6 +53,12 @@ SECTIONS = [
         "custom_plugin.svg",
         "python examples/custom_plugin_demo.py",
     ),
+    (
+        "Contributor extension walkthrough",
+        "Swap in a custom analyst, risk manager, and evaluator while reusing the rest of the framework.",
+        "extension_walkthrough.svg",
+        "python examples/extension_walkthrough_demo.py",
+    ),
 ]
 
 
@@ -73,6 +79,7 @@ def main() -> int:
         _run([sys.executable, "scripts/run_launch_demo.py", "--skip-paper-figures"], "Launch demo portal")
         _run([sys.executable, "scripts/run_paper_design_demos.py"], "Experiment-design demo suite")
         _run([sys.executable, "examples/visual_tour_demo.py"], "Animated visual tour")
+        _run([sys.executable, "examples/extension_walkthrough_demo.py"], "Contributor extension walkthrough")
 
     _write_showcase_index(OUTPUT_DIR / "showcase.html")
     print("\nShowcase artifacts", flush=True)

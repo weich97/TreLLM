@@ -1,9 +1,14 @@
 <p align="center">
-  <img src="docs/assets/tradearena_wordmark.svg" alt="TradeArena: auditable LLM trading agents under realistic market constraints" width="780">
+  <img src="docs/assets/tradearena_wordmark.svg"
+       alt="TradeArena wordmark"
+       width="780">
 </p>
 
 <p align="center">
-  <strong>Open-source benchmark and audit framework for evaluating LLM trading agents under realistic execution, risk, and replayability constraints.</strong>
+  <strong>
+    Open-source benchmark and audit framework for evaluating LLM trading agents
+    under realistic execution, risk, and replayability constraints.
+  </strong>
 </p>
 
 <p align="center">
@@ -17,16 +22,21 @@
   <a href="#research-grade-diagnostics">Diagnostics</a> |
   <a href="docs/schemas.md">Schemas</a> |
   <a href="docs/contributor_roadmap.md">Roadmap</a> |
+  <a href="docs/community_milestones.md">Milestones</a> |
   <a href="docs/extension_walkthrough.md">Extension walkthrough</a> |
   <a href="docs/related_work.md">Related work</a> |
-  <a href="docs/technical_report.md">Technical note</a>
+  <a href="docs/technical_report.md">Technical note</a> |
+  <a href="docs/blog/why_llm_trading_agents_need_audit_benchmarks.md">Blog draft</a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/weich97/TradeArena/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/weich97/TradeArena/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/weich97/TradeArena/actions/workflows/ci.yml">
+    <img alt="CI" src="https://github.com/weich97/TradeArena/actions/workflows/ci.yml/badge.svg">
+  </a>
   <img alt="Python" src="https://img.shields.io/badge/python-3.10%2B-0f172a">
   <img alt="Quickstart demo" src="https://img.shields.io/badge/quickstart-offline%20demo-059669">
-  <img alt="Execution realistic" src="https://img.shields.io/badge/execution-fees%20%7C%20slippage%20%7C%20latency%20%7C%20partial%20fills-0284c7">
+  <img alt="Execution realistic"
+       src="https://img.shields.io/badge/execution-realistic-0284c7">
   <img alt="Replayable trajectories" src="https://img.shields.io/badge/trajectories-replayable-7c3aed">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-f59e0b">
 </p>
@@ -57,7 +67,7 @@ headline return?
 | First-run reproducibility | Quickstart showcase, tracked demo artifacts, and CI smoke tests |
 | Extensibility | Narrow plugins for data, analysts, strategies, risk modules, simulators, planners, and evaluators |
 
-![Concept diagram contrasting leaderboard returns with replayable, risk-checked trading decisions](docs/assets/motivation.svg)
+![Concept diagram contrasting leaderboard returns with replayable decisions][motivation-fig]
 
 ## Quick Start
 
@@ -82,8 +92,14 @@ Prefer to click before cloning? Open the static project site:
 Try without a local install:
 
 <p>
-  <a href="https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=weich97/TradeArena"><img alt="Open in GitHub Codespaces" src="https://img.shields.io/badge/Open%20in-Codespaces-181717?logo=github"></a>
-  <a href="https://colab.research.google.com/github/weich97/TradeArena/blob/main/notebooks/tradearena_5min_colab.ipynb"><img alt="Open in Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>
+  <a href="https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=weich97/TradeArena">
+    <img alt="Open in GitHub Codespaces"
+         src="https://img.shields.io/badge/Open%20in-Codespaces-181717?logo=github">
+  </a>
+  <a href="https://colab.research.google.com/github/weich97/TradeArena/blob/main/notebooks/tradearena_5min_colab.ipynb">
+    <img alt="Open in Colab"
+         src="https://colab.research.google.com/assets/colab-badge.svg">
+  </a>
 </p>
 
 ## What It Is Not
@@ -95,11 +111,15 @@ paper-only and requires human approval for generated rebalance instructions.
 
 ## How It Differs
 
-| Project | Primary focus | TradeArena difference |
-| --- | --- | --- |
-| TradingAgents | Multi-role LLM trading workflows | TradeArena focuses on audit trajectories, risk gates, execution realism, and reproducible evaluation |
-| FinRobot | Financial analysis and equity-research agents | TradeArena is a benchmark/simulation/audit layer for decision traces and execution constraints |
-| FinRL | Financial reinforcement learning | TradeArena can host quant/RL-style baselines, but centers LLM agent decision chains and risk-aware replay |
+- **TradingAgents:** multi-role LLM trading workflows. TradeArena focuses on
+  audit trajectories, risk gates, execution realism, and reproducible
+  evaluation.
+- **FinRobot:** financial analysis and equity-research agents. TradeArena is a
+  benchmark, simulation, and audit layer for decision traces and execution
+  constraints.
+- **FinRL:** financial reinforcement learning. TradeArena can host quant or
+  RL-style baselines, but centers LLM agent decision chains and risk-aware
+  replay.
 
 For a broader non-adversarial comparison, see [`docs/related_work.md`](docs/related_work.md).
 
@@ -110,7 +130,8 @@ LLM trading agents look different once intended allocations pass through
 slippage, latency, liquidity limits, partial fills, rejected orders, and risk
 gates.
 
-- Static page: [`weich97.github.io/TradeArena/benchmark-v0.1.html`](https://weich97.github.io/TradeArena/benchmark-v0.1.html)
+- Static page:
+  [`weich97.github.io/TradeArena/benchmark-v0.1.html`](https://weich97.github.io/TradeArena/benchmark-v0.1.html)
 - Citable Markdown: [`docs/results/benchmark_v0_1.md`](docs/results/benchmark_v0_1.md)
 - Rebuild command: `python scripts/build_benchmark_page.py`
 
@@ -118,9 +139,14 @@ The benchmark snapshot includes deterministic quickstart baselines, crisis-scene
 LLM rows, 51-stock intraday portfolio probes, and representation robustness
 diagnostics.
 
+New users should start with the benchmark card. Contributors can pick a route
+from [`docs/contributor_roadmap.md`](docs/contributor_roadmap.md), then map it
+to [`docs/community_milestones.md`](docs/community_milestones.md) or a good
+first issue.
+
 ## 3-Minute Demo Video
 
-[![TradeArena 3-minute demo video](docs/assets/demo_video_thumbnail.svg)](https://weich97.github.io/TradeArena/demo_video.html)
+[![TradeArena 3-minute demo video][demo-video-thumb]][demo-video-page]
 
 The browser-playable video walks through the quickstart command, the showcase portal, the audit
 report, execution realism, extension walkthrough, and retail planning sandbox.
@@ -139,9 +165,30 @@ short offline-generated previews are produced from the same concepts used by the
 examples: lifecycle logging, execution realism, risk feedback, and portfolio
 diagnostics.
 
-| Audit lifecycle | Execution realism | Diagnostic loop |
-| --- | --- | --- |
-| <img src="docs/assets/readme_audit_lifecycle.gif" alt="Animated decision trace moving through observe, plan, risk gate, execute, and reflect stages into an audit record" width="280"> | <img src="docs/assets/readme_execution_realism.gif" alt="Animated execution comparison of ideal fills, realistic fills, low liquidity, and high latency using fill-rate, slippage, and rejection bars" width="280"> | <img src="docs/assets/readme_diagnostics_loop.gif" alt="Animated diagnostics dashboard showing representation-rank contraction, risk-feedback curves, and portfolio concentration bars beyond final return" width="280"> |
+<table>
+  <tr>
+    <th>Audit lifecycle</th>
+    <th>Execution realism</th>
+    <th>Diagnostic loop</th>
+  </tr>
+  <tr>
+    <td>
+      <img src="docs/assets/readme_audit_lifecycle.gif"
+           alt="Animated observe-plan-risk-execute-reflect audit trace"
+           width="280">
+    </td>
+    <td>
+      <img src="docs/assets/readme_execution_realism.gif"
+           alt="Animated execution comparison of ideal fills, realistic fills, low liquidity, and high latency"
+           width="280">
+    </td>
+    <td>
+      <img src="docs/assets/readme_diagnostics_loop.gif"
+           alt="Animated representation, risk-feedback, and concentration diagnostics"
+           width="280">
+    </td>
+  </tr>
+</table>
 
 The visual tour is deliberately small enough for a README, while the underlying
 artifacts are real files produced by the repository demos and diagnostic
@@ -176,7 +223,9 @@ outputs/examples/extension_walkthrough.svg
 ```
 
 <p align="center">
-  <img src="docs/assets/extension_walkthrough_preview.svg" alt="Flow diagram showing a custom analyst, risk manager, and evaluator plugged into the fixed data, strategy, execution, memory, and trajectory stack" width="900">
+  <img src="docs/assets/extension_walkthrough_preview.svg"
+       alt="Custom analyst, risk manager, and evaluator plugin flow"
+       width="900">
 </p>
 
 The example contributes:
@@ -209,7 +258,9 @@ outputs/examples/retail_planning_report.html
 ```
 
 <p align="center">
-  <img src="docs/assets/retail_planning_preview.svg" alt="Retail planning preview with investor profiles, suitability checks, target allocations, futures margin estimates, and paper rebalance orders" width="900">
+  <img src="docs/assets/retail_planning_preview.svg"
+       alt="Retail planning preview with suitability checks and paper orders"
+       width="900">
 </p>
 
 The demo is deliberately conservative: no live brokerage calls, no automatic
@@ -227,7 +278,9 @@ fills, rejections, portfolio state, memory events, and reproducibility
 fingerprints in one browser-readable artifact.
 
 <p align="center">
-  <img src="docs/assets/audit_report_preview.svg" alt="HTML audit report preview linking observations, proposed decisions, risk-gate changes, execution outcomes, memory events, and reproducibility metadata" width="880">
+  <img src="docs/assets/audit_report_preview.svg"
+       alt="HTML audit report preview"
+       width="880">
 </p>
 
 Generate the same style of report locally:
@@ -259,17 +312,52 @@ The current diagnostic suite highlights three research axes:
   audit trust calibration
 - high-dimensional portfolio behavior under realistic execution constraints
 
-| Representation signature preview | Crisis-scene trajectory probe |
-| --- | --- |
-| <img src="docs/assets/representation_signature_preview.svg" alt="Representation signature preview" width="430"> | <img src="docs/assets/crisis/crisis_representation_trajectory.svg" alt="Crisis-scene representation trajectory" width="430"> |
-
-| Market correlation vs. LLM intent | Risk-feedback calibration |
-| --- | --- |
-| <img src="docs/assets/crisis/crisis_correlation_intent_heatmap.svg" alt="Market correlation versus LLM intent co-exposure" width="430"> | <img src="docs/assets/crisis/crisis_feedback_learning_curves.svg" alt="Risk-feedback calibration curves" width="430"> |
-
-| Mechanism probe dashboard | 51-stock intraday portfolio probe |
-| --- | --- |
-| <img src="docs/assets/mechanism_probe_summary.svg" alt="Mechanism probes for intent geometry, noise robustness, and false-audit trust calibration" width="430"> | <img src="docs/assets/intraday_portfolio_summary.svg" alt="51-stock intraday portfolio concentration and risk-gate pressure" width="430"> |
+<table>
+  <tr>
+    <th>Representation signature preview</th>
+    <th>Crisis-scene trajectory probe</th>
+  </tr>
+  <tr>
+    <td>
+      <img src="docs/assets/representation_signature_preview.svg"
+           alt="Representation signature preview" width="430">
+    </td>
+    <td>
+      <img src="docs/assets/crisis/crisis_representation_trajectory.svg"
+           alt="Crisis-scene representation trajectory" width="430">
+    </td>
+  </tr>
+  <tr>
+    <th>Market correlation vs. LLM intent</th>
+    <th>Risk-feedback calibration</th>
+  </tr>
+  <tr>
+    <td>
+      <img src="docs/assets/crisis/crisis_correlation_intent_heatmap.svg"
+           alt="Market correlation versus LLM intent co-exposure" width="430">
+    </td>
+    <td>
+      <img src="docs/assets/crisis/crisis_feedback_learning_curves.svg"
+           alt="Risk-feedback calibration curves" width="430">
+    </td>
+  </tr>
+  <tr>
+    <th>Mechanism probe dashboard</th>
+    <th>51-stock intraday portfolio probe</th>
+  </tr>
+  <tr>
+    <td>
+      <img src="docs/assets/mechanism_probe_summary.svg"
+           alt="Mechanism probes for intent geometry, noise robustness, and false-audit trust calibration"
+           width="430">
+    </td>
+    <td>
+      <img src="docs/assets/intraday_portfolio_summary.svg"
+           alt="51-stock intraday portfolio concentration and risk-gate pressure"
+           width="430">
+    </td>
+  </tr>
+</table>
 
 The crisis-scene probes use timestamp-masked historical stress paths, including
 a 2022 Tech/Rates drawdown scene and a 2023 SVB/regional-bank shock scene. The
@@ -395,13 +483,22 @@ A-share data can be downloaded through the optional AkShare bridge:
 
 ```bash
 python -m pip install -e ".[ashare]"
-python scripts/download_akshare_ashare_daily.py --symbols 600519.SS,300750.SZ --start 2021-01-01 --end 2026-05-14 --output-dir data/real/akshare_ashare_daily
+python scripts/download_akshare_ashare_daily.py \
+  --symbols 600519.SS,300750.SZ \
+  --start 2021-01-01 \
+  --end 2026-05-14 \
+  --output-dir data/real/akshare_ashare_daily
 ```
 
 Then reuse the same benchmark stack:
 
 ```bash
-python -m trading_agent_os.cli --benchmark tradearena-core --data-source csv --real-data-dir data/real/akshare_ashare_daily --symbols 600519.SS,300750.SZ --real-max-periods 80
+python -m trading_agent_os.cli \
+  --benchmark tradearena-core \
+  --data-source csv \
+  --real-data-dir data/real/akshare_ashare_daily \
+  --symbols 600519.SS,300750.SZ \
+  --real-max-periods 80
 ```
 
 ## LLM And Cache Policy
@@ -457,3 +554,7 @@ python scripts/check_release_readiness.py
 
 TradeArena is a research and engineering framework. It is not financial advice,
 and it is not a live trading system.
+
+[demo-video-page]: https://weich97.github.io/TradeArena/demo_video.html
+[demo-video-thumb]: docs/assets/demo_video_thumbnail.svg
+[motivation-fig]: docs/assets/motivation.svg

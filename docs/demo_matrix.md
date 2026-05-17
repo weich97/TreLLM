@@ -1,20 +1,114 @@
 # Demo Matrix
 
-This matrix maps framework capabilities to hands-on repository artifacts.
+This matrix maps TradeArena capabilities to hands-on repository artifacts. The
+goal is to help a new user find one runnable example for each framework surface
+without reading the full source tree.
 
-| Capability | Run | Main artifact | What it shows |
-| --- | --- | --- | --- |
-| Project landing page | `python scripts/run_showcase.py` | `outputs/examples/index.html` | One command builds the static GitHub Pages landing page. |
-| First-run repo tour | `python scripts/run_showcase.py` | `outputs/examples/showcase.html` | One command builds a public-facing demo surface. |
-| Benchmark v0.1 snapshot | `python scripts/build_benchmark_page.py` | `outputs/examples/benchmark-v0.1.html` and `docs/results/benchmark_v0_1.md` | Crisis scenes, intraday portfolio probes, execution-aware baselines, and representation robustness become a citable result page. |
-| Animated visual tour | `python examples/visual_tour_demo.py` | `outputs/examples/visual_tour_index.html` | README-style lifecycle, execution, and diagnostics GIFs become reproducible local artifacts. |
-| Auditable trajectories | `python examples/audit_trajectory_walkthrough.py` and `python scripts/render_audit_report.py` | `outputs/examples/audit_report.html` | A decision can be traced from observation to risk gate to fills and memory. |
-| Execution realism | `python examples/execution_realism_sweep_demo.py` | `outputs/examples/execution_realism_sweep.svg` | The same agent behaves differently under slippage, latency, liquidity, and rejections. |
-| Risk lifecycle | `python examples/ashare_market_rules_demo.py` | `outputs/examples/ashare_market_rules.svg` | Hard market rules become clipped or blocked risk reports. |
-| Data extensibility | `python examples/sidecar_data_demo.py` | `outputs/examples/sidecar_data/` | Optional news, macro, filings, and alt-data sidecars enter the observation schema. |
-| A-share data bridge | `python examples/akshare_csv_reuse_demo.py` | `outputs/examples/akshare_csv_reuse.svg` | AkShare data can be normalized once and reused by the standard CSV provider. |
-| Portfolio baselines | `python examples/portfolio_markowitz_demo.py` | `outputs/examples/portfolio_markowitz.svg` | Buy-and-hold, signal-weighted, and MVO strategies share the same evaluation stack. |
-| LLM manifest portability | `python examples/llm_cache_replay_demo.py` | `outputs/examples/llm_cache_replay_summary.json` | Redacted manifests expose provider, model, prompt mode, and parse coverage without raw provider text. |
-| Plugin extensibility | `python examples/custom_plugin_demo.py` | `outputs/examples/custom_plugin.svg` | A new analyst can be swapped in without editing the runner, risk, execution, memory, or evaluators. |
-| Contributor extension path | `python examples/extension_walkthrough_demo.py` | `outputs/examples/extension_walkthrough.svg` | A contributor can add an analyst, risk manager, and evaluator while reusing the rest of the framework. |
-| Retail planning sandbox | `python examples/retail_planner_demo.py` | `outputs/examples/retail_planning_report.html` | Investor profiles, suitability gates, stock/ETF allocation, futures margin estimates, and paper rebalance orders share an auditable report. |
+## First-Run Surfaces
+
+### Project Landing Page
+
+- Run: `python scripts/run_showcase.py`
+- Artifact: `outputs/examples/index.html`
+- Shows: the static GitHub Pages landing page and core entry points.
+
+### Quickstart Repo Tour
+
+- Run: `python scripts/run_showcase.py`
+- Artifact: `outputs/examples/showcase.html`
+- Shows: a public-facing demo surface with links to every generated artifact.
+
+### Benchmark v0.1 Card
+
+- Run: `python scripts/build_benchmark_page.py`
+- Artifacts:
+  - `outputs/examples/benchmark-v0.1.html`
+  - `docs/results/benchmark_v0_1.md`
+- Shows: crisis scenes, intraday portfolio probes, execution-aware baselines,
+  and representation robustness as a compact result page.
+
+## Audit And Execution
+
+### Auditable Trajectories
+
+- Run:
+  - `python examples/audit_trajectory_walkthrough.py`
+  - `python scripts/render_audit_report.py`
+- Artifact: `outputs/examples/audit_report.html`
+- Shows: a decision traced from observation to risk gate, fills, memory, and
+  reproducibility metadata.
+
+### Execution Realism
+
+- Run: `python examples/execution_realism_sweep_demo.py`
+- Artifact: `outputs/examples/execution_realism_sweep.svg`
+- Shows: the same agent under slippage, latency, liquidity limits, and
+  rejections.
+
+### Risk Lifecycle
+
+- Run: `python examples/ashare_market_rules_demo.py`
+- Artifact: `outputs/examples/ashare_market_rules.svg`
+- Shows: hard A-share market rules as clipped or blocked risk reports.
+
+## Data And Portfolio Baselines
+
+### Data Extensibility
+
+- Run: `python examples/sidecar_data_demo.py`
+- Artifact: `outputs/examples/sidecar_data/`
+- Shows: optional news, macro, filings, and alt-data sidecars entering the
+  observation schema.
+
+### A-Share Data Bridge
+
+- Run: `python examples/akshare_csv_reuse_demo.py`
+- Artifact: `outputs/examples/akshare_csv_reuse.svg`
+- Shows: AkShare-style data normalized once and reused by the standard CSV
+  provider.
+
+### Portfolio Baselines
+
+- Run: `python examples/portfolio_markowitz_demo.py`
+- Artifact: `outputs/examples/portfolio_markowitz.svg`
+- Shows: buy-and-hold, signal-weighted, and MVO strategies in the same
+  evaluation stack.
+
+## LLM And Diagnostics
+
+### LLM Manifest Portability
+
+- Run: `python examples/llm_cache_replay_demo.py`
+- Artifact: `outputs/examples/llm_cache_replay_summary.json`
+- Shows: redacted provider/model coverage, prompt mode counts, parse coverage,
+  and replay fingerprints without raw provider text.
+
+### Animated Visual Tour
+
+- Run: `python examples/visual_tour_demo.py`
+- Artifact: `outputs/examples/visual_tour_index.html`
+- Shows: README-style lifecycle, execution, and diagnostics animations as
+  reproducible local artifacts.
+
+## Extensibility
+
+### Plugin Extensibility
+
+- Run: `python examples/custom_plugin_demo.py`
+- Artifact: `outputs/examples/custom_plugin.svg`
+- Shows: a new analyst swapped in without editing the runner, risk, execution,
+  memory, or evaluators.
+
+### Contributor Extension Path
+
+- Run: `python examples/extension_walkthrough_demo.py`
+- Artifact: `outputs/examples/extension_walkthrough.svg`
+- Shows: a custom analyst, risk manager, and evaluator reusing the rest of the
+  framework.
+
+### Retail Planning Sandbox
+
+- Run: `python examples/retail_planner_demo.py`
+- Artifact: `outputs/examples/retail_planning_report.html`
+- Shows: investor profiles, suitability gates, target allocations, futures
+  margin estimates, and paper rebalance orders.

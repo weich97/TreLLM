@@ -5,6 +5,7 @@ import csv
 import html
 import json
 import statistics
+import textwrap
 from pathlib import Path
 from typing import Any
 
@@ -14,6 +15,14 @@ CRISIS_CSV = ROOT / "docs/results/crisis/crisis_summary.csv"
 REPRESENTATION_CSV = ROOT / "docs/results/representation/embedding_robustness.csv"
 INTRADAY_CSV = ROOT / "docs/results/intraday/intraday_complex.csv"
 QUICKSTART_JSON = ROOT / "outputs/examples/quickstart_core_metrics.json"
+RELEASE_TAG = "v0.1.0"
+RELEASE_COMMIT = "4238a9b"
+POLICY_LABELS = {
+    "gpt-5.5": "frontier-policy-A (redacted)",
+    "claude-opus-4.7": "frontier-policy-B (redacted)",
+    "gemini-3.1-pro": "frontier-policy-C (redacted)",
+    "deepseek-v4-pro": "frontier-policy-D (redacted)",
+}
 
 
 def main() -> int:
@@ -122,12 +131,51 @@ def _markdown(
     intraday_rows: list[dict[str, str]],
     representation_summary: list[dict[str, Any]],
 ) -> str:
+    provenance = _provenance_rows()
     lines = [
-        "# TradeArena v0.1 Benchmark Snapshot",
+        "# TradeArena v0.1 Benchmark Card",
         "",
-        "TradeArena is a benchmark and audit framework, not a profitability claim. This page gives a compact, citable snapshot of what the v0.1 artifacts show under execution realism, risk gates, and replayable trajectories.",
+        _wrap(
+            "TradeArena is a benchmark and audit framework, not a profitability "
+            "claim. This page gives a compact, citable snapshot of what the "
+            "v0.1 artifacts show under execution realism, risk gates, and "
+            "replayable trajectories."
+        ),
         "",
-        "**Core claim:** LLM trading agents can look materially different once their intended allocations pass through risk gates, slippage, latency, liquidity limits, partial fills, and rejected orders.",
+        "## One-Sentence Finding",
+        "",
+        _wrap(
+            "Execution realism and risk gates materially change LLM "
+            "trading-agent evaluation: intended allocations can look very "
+            "different after slippage, latency, liquidity limits, partial "
+            "fills, rejected orders, and pre-trade risk edits."
+        ),
+        "",
+        "## Result Provenance",
+        "",
+        "- Release: v0.1.0.",
+        "- Release commit: `4238a9b`.",
+        "- Benchmark card source: tracked snapshots under `docs/results/`.",
+        "- Reproduction command:",
+        "",
+        "  ```bash",
+        "  python -m pip install -e \".[dev]\"",
+        "  python scripts/run_showcase.py",
+        "  python scripts/build_benchmark_page.py",
+        "  ```",
+        "",
+        "- Data: tracked synthetic, timestamp-masked, and redacted artifacts.",
+        "- Live model calls: not required for first-run reproduction.",
+        "- Raw prompt/response caches: not included.",
+        "- Intended use: benchmark and audit research, not trading advice.",
+        "",
+        "## What Is Measured",
+        "",
+        "- Return and max drawdown.",
+        "- Fill rate, rejection rate, latency, slippage, and partial fills.",
+        "- Risk edits, clipped decisions, violations, and audit completeness.",
+        "- Concentration / Herfindahl for portfolio probes.",
+        "- Calibration and representation robustness diagnostics.",
         "",
         "## How To Reproduce",
         "",
@@ -137,7 +185,11 @@ def _markdown(
         "python scripts/build_benchmark_page.py",
         "```",
         "",
-        "The page uses tracked CSV snapshots under `docs/results/` plus deterministic first-run artifacts under `outputs/examples/`. It does not ship raw provider prompts or responses.",
+        _wrap(
+            "The page uses tracked CSV snapshots under `docs/results/` plus "
+            "deterministic first-run artifacts under `outputs/examples/`. "
+            "Live model calls are not required for first-run reproduction."
+        ),
         "",
     ]
 
@@ -165,9 +217,22 @@ def _markdown(
         ]
 
     lines += [
+        "## Key Result 1: Risk Gates Are Active, Not Cosmetic",
+        "",
+        _wrap(
+            "Across the crisis and intraday rows, risk gates repeatedly edit "
+            "or clip intended allocations before execution. The benchmark "
+            "therefore reports risk edits alongside return, instead of "
+            "treating risk control as a post-hoc metric."
+        ),
+        "",
         "## Crisis-Scene LLM Benchmark",
         "",
-        "The crisis snapshot aggregates timestamp-masked 2022 Tech/Rates and 2023 SVB-style stress paths. Rows below average across the tracked model policies for each feedback mode.",
+        _wrap(
+            "The crisis snapshot aggregates timestamp-masked 2022 Tech/Rates "
+            "and 2023 SVB-style stress paths. Rows below average across the "
+            "tracked model policies for each feedback mode."
+        ),
         "",
         _md_table(
             ["Scenario", "Agent / baseline", "Return", "Max drawdown", "Fill rate", "Rejection rate", "Risk edits", "Audit completeness"],
@@ -188,12 +253,17 @@ def _markdown(
         "",
         "## True-Feedback Model Rows",
         "",
+        _wrap(
+            "Model names are redacted or normalized labels for benchmark "
+            "policies. Raw provider prompts and responses are not shipped."
+        ),
+        "",
         _md_table(
-            ["Scenario", "Model", "Return", "Max drawdown", "Fill rate", "Risk edits", "Violations", "Calibration"],
+            ["Scenario", "Policy label", "Return", "Max drawdown", "Fill rate", "Risk edits", "Violations", "Calibration"],
             [
                 [
                     row["scene"],
-                    row["model"],
+                    _policy_label(row["model"]),
                     _pct(float(row["total_return"])),
                     _pct(float(row["max_drawdown"])),
                     _pct(float(row["execution_fill_rate"])),
@@ -209,9 +279,22 @@ def _markdown(
 
     if intraday_rows:
         lines += [
+            "## Key Result 2: Execution Assumptions Change Realized Exposure",
+            "",
+            _wrap(
+                "The 51-stock hourly probe shows that low-liquidity and "
+                "latency stress rows do not behave like ideal fills. Fill "
+                "rate, rejected orders, and realized exposure become part of "
+                "the benchmark outcome."
+            ),
+            "",
             "## 51-Stock Intraday Portfolio Probe",
             "",
-            "The intraday snapshot compares passive, deterministic, Markowitz/MVO, execution-stress, and LLM policies on the same 51-stock hourly panel.",
+            _wrap(
+                "The intraday snapshot compares passive, deterministic, "
+                "Markowitz/MVO, execution-stress, and redacted LLM policy "
+                "rows on the same 51-stock hourly panel."
+            ),
             "",
             _md_table(
                 ["Agent / baseline", "Return", "Max drawdown", "Fill rate", "Rejected", "Risk edits", "Herfindahl", "Audit completeness"],
@@ -233,9 +316,22 @@ def _markdown(
         ]
 
     lines += [
+        "## Key Result 3: Audit Completeness Is A Benchmark Dimension",
+        "",
+        _wrap(
+            "Every result row should be traceable to a trajectory rather "
+            "than only to a return curve. TradeArena therefore reports audit "
+            "completeness and keeps compact, redacted result manifests."
+        ),
+        "",
         "## Representation Robustness Snapshot",
         "",
-        "A result is more useful when the diagnostic survives multiple representation views. The v0.1 tracked snapshot includes 80 rolling failure anchors and 320 pre-failure steps across eight LLM trajectories.",
+        _wrap(
+            "A result is more useful when the diagnostic survives multiple "
+            "representation views. The v0.1 tracked snapshot includes 80 "
+            "rolling failure anchors and 320 pre-failure steps across eight "
+            "LLM trajectories."
+        ),
         "",
         _md_table(
             ["Embedding", "View", "Anchors", "Pre-failure steps", "Mean rank delta", "Contraction rate", "Mean pre-shift"],
@@ -253,12 +349,13 @@ def _markdown(
             ],
         ),
         "",
-        "## Interpretation",
+        "## Limitations",
         "",
-        "- Risk gates are not cosmetic: they repeatedly edit intended allocations before execution.",
-        "- Execution assumptions are first-order: fill rate, rejected orders, latency, and slippage change realized exposure.",
-        "- Audit completeness is a benchmark dimension: every result row should be traceable to a trajectory, not just a return.",
-        "- These artifacts support evaluation and diagnosis. They do not provide financial advice or a live-trading guarantee.",
+        "- This is a benchmark and audit artifact, not financial advice.",
+        "- It is not a live-trading system and does not promise profitability.",
+        "- First-run reproduction uses tracked artifacts, not live provider calls.",
+        "- Public rows use redacted or normalized policy labels.",
+        "- Raw provider prompts, responses, credentials, and caches are not shipped.",
         "",
     ]
     return "\n".join(lines)
@@ -271,6 +368,7 @@ def _html(
     intraday_rows: list[dict[str, str]],
     representation_summary: list[dict[str, Any]],
 ) -> str:
+    provenance = _provenance_rows()
     quickstart = ""
     if quickstart_rows:
         quickstart = _section(
@@ -317,13 +415,13 @@ def _html(
 
     true_feedback = _section(
         "True-Feedback Model Rows",
-        "Model-level rows under structured true risk feedback.",
+        "Policy-level rows under structured true risk feedback. Model names are redacted or normalized labels; raw provider prompts and responses are not shipped.",
         _html_table(
-            ["Scenario", "Model", "Return", "Max drawdown", "Fill rate", "Risk edits", "Violations", "Calibration"],
+            ["Scenario", "Policy label", "Return", "Max drawdown", "Fill rate", "Risk edits", "Violations", "Calibration"],
             [
                 [
                     row["scene"],
-                    row["model"],
+                    _policy_label(row["model"]),
                     _pct(float(row["total_return"])),
                     _pct(float(row["max_drawdown"])),
                     _pct(float(row["execution_fill_rate"])),
@@ -340,7 +438,7 @@ def _html(
     if intraday_rows:
         intraday = _section(
             "51-Stock Intraday Portfolio Probe",
-            "Passive, deterministic, Markowitz/MVO, execution-stress, and LLM policies on a 51-stock hourly panel.",
+            "Passive, deterministic, Markowitz/MVO, execution-stress, and redacted LLM policy rows on a 51-stock hourly panel.",
             _html_table(
                 ["Agent / baseline", "Return", "Max drawdown", "Fill rate", "Rejected", "Risk edits", "Herfindahl", "Audit completeness"],
                 [
@@ -378,12 +476,49 @@ def _html(
             ],
         ),
     )
+    provenance_section = _section(
+        "Result Provenance",
+        "Where this benchmark card comes from and how to reproduce it.",
+        _html_table(["Field", "Value"], provenance),
+    )
+    measured_section = _section(
+        "What Is Measured",
+        "The v0.1 card emphasizes audit and execution dimensions, not only return.",
+        (
+            "<ul>"
+            "<li>Return and max drawdown.</li>"
+            "<li>Fill rate, rejection rate, latency, slippage, and partial fills.</li>"
+            "<li>Risk edits, clipped decisions, violations, and audit completeness.</li>"
+            "<li>Concentration / Herfindahl for portfolio probes.</li>"
+            "<li>Calibration and representation robustness diagnostics.</li>"
+            "</ul>"
+        ),
+    )
+    risk_gate_section = _section(
+        "Key Result 1: Risk Gates Are Active, Not Cosmetic",
+        "Risk gates repeatedly edit or clip intended allocations before execution.",
+        '<p class="note">The benchmark reports risk edits alongside return so that risk control is visible in the result card.</p>',
+    )
+    execution_section = _section(
+        "Key Result 2: Execution Assumptions Change Realized Exposure",
+        "The 51-stock hourly probe separates intended allocation from realistic execution outcomes.",
+        '<p class="note">Fill rate, rejected orders, latency, and slippage become part of the benchmark outcome.</p>',
+    )
+    audit_section = _section(
+        "Key Result 3: Audit Completeness Is A Benchmark Dimension",
+        "Each row should be traceable to a trajectory, not just a return curve.",
+        (
+            '<p class="note">TradeArena keeps compact result snapshots and redacted '
+            "manifests so users can inspect what happened without shipping raw "
+            "provider text.</p>"
+        ),
+    )
 
     return f"""<!doctype html>
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TradeArena v0.1 Benchmark Snapshot</title>
+<title>TradeArena v0.1 Benchmark Card</title>
 <style>
 body {{ margin: 0; font-family: Inter, Arial, sans-serif; color: #0f172a; background: #f8fafc; }}
 main {{ max-width: 1180px; margin: 0 auto; padding: 42px 24px 58px; }}
@@ -406,8 +541,8 @@ code {{ background: #e2e8f0; border-radius: 5px; padding: 2px 5px; }}
 </style>
 <main>
   <div class="hero">
-    <h1>TradeArena v0.1 Benchmark Snapshot</h1>
-    <p class="lead">A compact, citable result page for auditable LLM trading-agent evaluation under realistic execution, risk gates, and replayable trajectories. This is an evaluation snapshot, not a profitability claim or financial advice.</p>
+    <h1>TradeArena v0.1 Benchmark Card</h1>
+    <p class="lead">Execution realism and risk gates materially change LLM trading-agent evaluation. This is a compact, citable result page for auditable agent evaluation, not a profitability claim or financial advice.</p>
     <div class="links">
       <a href="showcase.html">Showcase</a>
       <a href="audit_report.html">Audit report</a>
@@ -415,14 +550,19 @@ code {{ background: #e2e8f0; border-radius: 5px; padding: 2px 5px; }}
       <a href="https://github.com/weich97/TradeArena">GitHub</a>
     </div>
   </div>
+  {provenance_section}
+  {measured_section}
   {quickstart}
+  {risk_gate_section}
   {crisis}
   {true_feedback}
+  {execution_section}
   {intraday}
+  {audit_section}
   {representation}
   <section>
-    <h2>Interpretation</h2>
-    <p class="note">TradeArena makes failure modes inspectable: risk gates repeatedly edit intended allocations, execution assumptions change realized exposure, and audit completeness becomes a benchmark dimension rather than an afterthought. Reproduce locally with <code>python scripts/run_showcase.py</code>.</p>
+    <h2>Limitations</h2>
+    <p class="note">This page is a benchmark and audit artifact, not financial advice or a live-trading guarantee. First-run reproduction uses tracked artifacts, and public policy rows use redacted or normalized labels. Raw provider prompts, responses, credentials, and caches are not shipped.</p>
   </section>
 </main>
 </html>
@@ -449,6 +589,22 @@ def _md_table(headers: list[str], rows: list[list[str]]) -> str:
     return "\n".join(lines)
 
 
+def _provenance_rows() -> list[list[str]]:
+    return [
+        ["Release", RELEASE_TAG],
+        ["Release commit", RELEASE_COMMIT],
+        ["Benchmark card source", "`docs/results/` tracked snapshots plus first-run outputs"],
+        [
+            "Reproduction command",
+            "`python -m pip install -e \".[dev]\"`; `python scripts/run_showcase.py`; `python scripts/build_benchmark_page.py`",
+        ],
+        ["Data", "tracked synthetic / timestamp-masked / redacted artifacts under `docs/results/`"],
+        ["Live model calls", "not required for first-run reproduction"],
+        ["Raw prompt/response caches", "not included"],
+        ["Intended use", "benchmark and audit research, not trading advice"],
+    ]
+
+
 def _mean(rows: list[dict[str, str]], field: str) -> float:
     return statistics.fmean(float(row[field]) for row in rows)
 
@@ -461,6 +617,14 @@ def _pct(value: float) -> str:
     return f"{100.0 * value:.2f}%"
 
 
+def _policy_label(model: str) -> str:
+    return POLICY_LABELS.get(model, "frontier-policy (redacted)")
+
+
+def _wrap(text: str) -> str:
+    return textwrap.fill(text, width=88)
+
+
 def _pretty_case(case: str) -> str:
     text = case.replace("intraday_50_", "").replace("_risk_aware", "").replace("_", " ")
     replacements = {
@@ -469,8 +633,8 @@ def _pretty_case(case: str) -> str:
         "markowitz mvo": "Markowitz MVO",
         "low liquidity stress": "Low-Liquidity Stress",
         "latency stress": "Latency Stress",
-        "llm gpt 5 5": "LLM GPT-5.5",
-        "llm gemini 3 1 pro": "LLM Gemini 3.1 Pro",
+        "llm gpt 5 5": "Frontier Policy A (redacted)",
+        "llm gemini 3 1 pro": "Frontier Policy C (redacted)",
     }
     for needle, label in replacements.items():
         if text.startswith(needle):

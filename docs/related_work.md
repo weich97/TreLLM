@@ -4,16 +4,70 @@ TradeArena is designed to complement, not replace, existing financial AI and
 agent frameworks. Its niche is auditability, realistic execution, risk gates,
 and replayable benchmark artifacts for LLM trading agents.
 
-| Project | Primary orientation | How TradeArena differs |
-| --- | --- | --- |
-| TradingAgents | Multi-agent LLM trading workflows | TradeArena focuses on replayable trajectories, risk-gate intervention logs, execution realism, and benchmark artifacts. |
-| FinRobot | Financial analysis and equity-research agents | TradeArena is a simulation, audit, and evaluation layer for decision traces rather than an analyst-only assistant. |
-| FinRL / FinRL-Meta | Financial reinforcement learning environments and benchmarks | TradeArena can host quant/RL baselines, but centers LLM decision chains, tool traces, risk reports, and realistic order simulation. |
-| FinGPT | Financial LLM data and adaptation | TradeArena evaluates how model-backed agents behave under market constraints and risk feedback. |
-| Qlib | Quantitative investment research platform | TradeArena is lighter-weight and agent-native, with emphasis on reproducible audit logs and execution-aware evaluation. |
-| Backtrader / Zipline | Backtesting engines | TradeArena adds agent traces, risk lifecycle reports, memory state, and LLM-specific replay metadata. |
-| OpenBB | Financial data and research tooling | TradeArena can consume market data adapters, but its core contribution is benchmark and audit protocol. |
-| LangGraph / AutoGen / CrewAI | General agent orchestration | TradeArena provides finance-specific schemas, risk gates, execution simulators, and trading-agent metrics. |
+## Trading-Agent Frameworks
+
+### TradingAgents
+
+TradingAgents focuses on multi-agent LLM trading workflows.
+
+TradeArena is complementary: it focuses on replayable trajectories, risk-gate
+intervention logs, execution realism, and benchmark artifacts.
+
+### FinRobot
+
+FinRobot focuses on financial analysis and equity-research agents.
+
+TradeArena is a simulation, audit, and evaluation layer for decision traces
+rather than an analyst-only assistant.
+
+## Financial AI And Quant Platforms
+
+### FinRL / FinRL-Meta
+
+FinRL and FinRL-Meta focus on financial reinforcement learning environments and
+benchmarks.
+
+TradeArena can host quant or RL-style baselines, but centers LLM decision
+chains, tool traces, risk reports, and realistic order simulation.
+
+### FinGPT
+
+FinGPT focuses on financial LLM data and adaptation.
+
+TradeArena evaluates how model-backed agents behave under market constraints,
+risk feedback, and execution friction.
+
+### Qlib
+
+Qlib focuses on quantitative investment research workflows.
+
+TradeArena is lighter-weight and agent-native, with emphasis on reproducible
+audit logs and execution-aware evaluation.
+
+## Backtesting And Data Tooling
+
+### Backtrader / Zipline
+
+Backtrader and Zipline are classic backtesting engines.
+
+TradeArena adds agent traces, risk lifecycle reports, memory state, and
+LLM-specific replay metadata.
+
+### OpenBB
+
+OpenBB focuses on financial data and research tooling.
+
+TradeArena can consume market data adapters, but its core contribution is the
+benchmark and audit protocol.
+
+## General Agent Orchestration
+
+### LangGraph / AutoGen / CrewAI
+
+These systems focus on general agent orchestration.
+
+TradeArena provides finance-specific schemas, risk gates, execution simulators,
+and trading-agent metrics.
 
 ## Why This Distinction Matters
 

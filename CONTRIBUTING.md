@@ -11,7 +11,7 @@ python -m pytest tests -q
 python scripts/run_showcase.py --reuse-existing
 ```
 
-Run the full API-free showcase before a larger pull request:
+Run the full offline-friendly showcase before a larger pull request:
 
 ```bash
 python scripts/run_showcase.py

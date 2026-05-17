@@ -25,8 +25,8 @@ redacted metadata artifacts.
 
 No local install yet? Use:
 
-- [GitHub Codespaces](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=weich97/TradeArena)
-- [Colab quickstart](https://colab.research.google.com/github/weich97/TradeArena/blob/main/notebooks/tradearena_5min_colab.ipynb)
+- [GitHub Codespaces][codespaces-quickstart]
+- Colab notebook: [`notebooks/tradearena_5min_colab.ipynb`](../notebooks/tradearena_5min_colab.ipynb)
 
 ## Fifteen-Minute Path
 
@@ -76,3 +76,5 @@ python -m pytest tests -q
 python scripts/run_showcase.py --reuse-existing
 python scripts/check_release_readiness.py
 ```
+
+[codespaces-quickstart]: https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=weich97/TradeArena

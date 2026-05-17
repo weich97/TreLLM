@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <strong>Modular, execution-realistic, risk-aware benchmarks for LLM trading agents.</strong>
+  <strong>Open-source benchmark and audit framework for evaluating LLM trading agents under realistic execution, risk, and replayability constraints.</strong>
 </p>
 
 <p align="center">
@@ -15,27 +15,77 @@
   <a href="docs/schemas.md">Schemas</a> |
   <a href="docs/extension_walkthrough.md">Extension walkthrough</a> |
   <a href="docs/retail_planning.md">Retail planning</a> |
+  <a href="docs/launch/">Launch kit</a> |
   <a href="docs/plugin_interfaces.md">Plugin interfaces</a>
 </p>
 
 <p align="center">
+  <a href="https://github.com/weich97/TradeArena/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/weich97/TradeArena/actions/workflows/ci.yml/badge.svg"></a>
   <img alt="Python" src="https://img.shields.io/badge/python-3.10%2B-0f172a">
-  <img alt="Core benchmark requires no API key" src="https://img.shields.io/badge/core%20benchmark-no%20API%20key-059669">
+  <img alt="API-free showcase" src="https://img.shields.io/badge/showcase-no%20API%20key-059669">
   <img alt="Execution realistic" src="https://img.shields.io/badge/execution-fees%20%7C%20slippage%20%7C%20latency%20%7C%20partial%20fills-0284c7">
+  <img alt="Replayable trajectories" src="https://img.shields.io/badge/trajectories-replayable-7c3aed">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-f59e0b">
 </p>
 
 # TradeArena
 
-TradeArena is a modular framework for studying trading agents as auditable
-decision-making systems under realistic market constraints. It focuses on the
-full lifecycle of a trading decision: observations, signals, intended weights,
-risk-gate changes, orders, fills, slippage, rejected orders, memory events, and
-replayable trajectory logs.
+TradeArena is an open-source benchmark and audit framework for evaluating LLM
+trading agents under realistic execution, risk, and replayability constraints.
+It turns every trading decision into a traceable trajectory:
 
-This public repository is the framework and demo release.
+```text
+observation -> signal -> intended allocation -> risk gate -> order
+  -> fill/rejection -> portfolio state -> diagnostic report
+```
+
+TradeArena is not positioned as another "LLM trading bot." Its job is to help
+researchers and engineers answer a harder question: can an LLM trading agent be
+audited, reproduced, stress-tested, and constrained before anyone trusts its
+headline return?
+
+## Why TradeArena
+
+| If you need... | TradeArena gives you... |
+| --- | --- |
+| Agent behavior beyond final return | Replayable observe-plan-risk-act-reflect trajectories |
+| Realistic execution assumptions | Fees, slippage, latency, liquidity limits, partial fills, and rejections |
+| Risk-aware evaluation | Pre-trade suitability/risk gates, in-trade monitors, post-trade attribution |
+| First-run reproducibility | API-free showcase, tracked demo artifacts, and CI smoke tests |
+| Extensibility | Narrow plugins for data, analysts, strategies, risk modules, simulators, planners, and evaluators |
 
 ![TradeArena motivation: from leaderboard returns to accountable trading decisions](docs/assets/motivation.svg)
+
+## Quick Start
+
+```bash
+python -m pip install -e ".[dev]"
+python scripts/run_showcase.py
+```
+
+Open:
+
+```text
+outputs/examples/showcase.html
+```
+
+The first-run path is API-free: no OpenAI, DeepSeek, Poe, Hugging Face, AkShare,
+or Yahoo Finance key is required.
+
+## What It Is Not
+
+TradeArena does not promise profitable trading, does not provide financial
+advice, and does not execute live trades by default. It is an audit and
+benchmark layer for financial AI agents. The retail planning sandbox is
+paper-only and requires human approval for generated rebalance instructions.
+
+## How It Differs
+
+| Project | Primary focus | TradeArena difference |
+| --- | --- | --- |
+| TradingAgents | Multi-role LLM trading workflows | TradeArena focuses on audit trajectories, risk gates, execution realism, and reproducible evaluation |
+| FinRobot | Financial analysis and equity-research agents | TradeArena is a benchmark/simulation/audit layer for decision traces and execution constraints |
+| FinRL | Financial reinforcement learning | TradeArena can host quant/RL-style baselines, but centers LLM agent decision chains and risk-aware replay |
 
 ## Visual Tour
 
@@ -233,7 +283,7 @@ The showcase is API-free. It builds a local portal linking to:
 - a retail planning sandbox with paper rebalance instructions
 - redacted LLM cache manifest metadata
 
-## Quick Start
+## CLI Benchmark
 
 ```bash
 python -m pip install -e .

@@ -1,4 +1,4 @@
-# v0.1.0: No-Key Benchmark Release For Auditable LLM Trading Agents
+# v0.1.0: Auditable Benchmark Release For LLM Trading Agents
 
 TradeArena v0.1.0 is the first public benchmark release for evaluating LLM
 trading agents as auditable decision-making systems under realistic market
@@ -47,5 +47,5 @@ realistic constraints.
 ## Suggested GitHub Release Title
 
 ```text
-v0.1.0: No-key benchmark release for auditable LLM trading agents
+v0.1.0: Auditable benchmark release for LLM trading agents
 ```

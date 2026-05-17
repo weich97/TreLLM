@@ -8,7 +8,7 @@ Most LLM trading demos show a return curve.
 TradeArena asks a different question:
 Can every decision be replayed, audited, risk-gated, and stress-tested?
 
-No-key benchmark release:
+Auditable benchmark release:
 python -m pip install -e ".[dev]"
 python scripts/run_showcase.py
 

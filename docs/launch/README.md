@@ -19,7 +19,7 @@ Longer description:
 ```text
 TradeArena turns every trading decision into a traceable trajectory:
 observation -> signal -> intended allocation -> risk gate -> order ->
-fill/rejection -> portfolio state -> diagnostic report. It ships no-key demos
+fill/rejection -> portfolio state -> diagnostic report. It ships quickstart demos
 for audit reports, execution realism, risk gates, extension paths, A-share
 rules, retail planning, and reproducible benchmark artifacts.
 ```
@@ -72,7 +72,7 @@ outputs/examples/showcase.html
 ## Suggested Repository Description
 
 ```text
-Auditable, execution-realistic benchmark framework for LLM trading agents with replayable trajectories, risk gates, paper planning, and no-key demos.
+Auditable, execution-realistic benchmark framework for LLM trading agents with replayable trajectories, risk gates, paper planning, and quickstart demos.
 ```
 
 ## Suggested Social Tagline

@@ -58,7 +58,7 @@ def _write_sample_akshare_output(data_dir: Path) -> None:
     (data_dir / "manifest.json").write_text(
         "{\n"
         '  "source": "AkShare stock_zh_a_hist sample",\n'
-        '  "note": "no-key miniature fixture with the same normalized CSV shape as scripts/download_akshare_ashare_daily.py"\n'
+        '  "note": "offline miniature fixture with the same normalized CSV shape as scripts/download_akshare_ashare_daily.py"\n'
         "}\n",
         encoding="utf-8",
     )

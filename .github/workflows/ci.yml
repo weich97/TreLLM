@@ -20,3 +20,5 @@ jobs:
         run: python scripts/run_launch_demo.py --skip-paper-figures
       - name: Showcase index smoke test
         run: python scripts/run_showcase.py --reuse-existing
+      - name: Release readiness smoke test
+        run: python scripts/check_release_readiness.py

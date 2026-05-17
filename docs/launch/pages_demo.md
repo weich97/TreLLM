@@ -1,9 +1,10 @@
 # GitHub Pages Demo
 
-TradeArena publishes the quickstart showcase as a static GitHub Pages demo:
+TradeArena publishes the project landing page and quickstart showcase as a
+static GitHub Pages site:
 
 ```text
-https://weich97.github.io/TradeArena/showcase.html
+https://weich97.github.io/TradeArena/
 ```
 
 The Pages workflow lives in `.github/workflows/pages.yml`. On every push to
@@ -20,7 +21,9 @@ paper sources, or local credentials.
 
 Useful entry points:
 
-- `showcase.html`: top-level demo portal
+- `index.html`: landing page
+- `showcase.html`: demo portal
+- `benchmark-v0.1.html`: compact benchmark result page
 - `audit_report.html`: replayable audit report
 - `crisis_snapshot_gallery.html`: diagnostic visual gallery
 - `retail_planning_report.html`: planning sandbox report

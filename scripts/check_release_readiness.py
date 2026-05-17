@@ -1,0 +1,79 @@
+from __future__ import annotations
+
+import subprocess
+import sys
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+MAX_TRACKED_FILE_BYTES = 25 * 1024 * 1024
+REQUIRED_FILES = [
+    "README.md",
+    "CITATION.cff",
+    "docs/getting_started.md",
+    "docs/demo_matrix.md",
+    "docs/results/benchmark_v0_1.md",
+    "schemas/benchmark_submission.schema.json",
+    "scripts/run_showcase.py",
+]
+FORBIDDEN_TRACKED_PATTERNS = [
+    "data/llm_cache/*.jsonl",
+    "outputs/**/*.json",
+    "outputs/**/*.html",
+]
+PLACEHOLDER_PHRASES = [
+    "TODO",
+    "TBD",
+    "pending labels",
+    "insert result",
+]
+
+
+def main() -> int:
+    failures: list[str] = []
+    for rel in REQUIRED_FILES:
+        if not (ROOT / rel).exists():
+            failures.append(f"missing required file: {rel}")
+
+    tracked = _tracked_files()
+    for rel in tracked:
+        path = ROOT / rel
+        if path.is_file() and path.stat().st_size > MAX_TRACKED_FILE_BYTES:
+            failures.append(f"tracked file exceeds {MAX_TRACKED_FILE_BYTES} bytes: {rel}")
+
+    for pattern in FORBIDDEN_TRACKED_PATTERNS:
+        for match in _git_ls_files(pattern):
+            failures.append(f"forbidden tracked artifact: {match}")
+
+    public_text_files = [ROOT / "README.md", ROOT / "docs/results/benchmark_v0_1.md"]
+    for path in public_text_files:
+        if path.exists():
+            text = path.read_text(encoding="utf-8", errors="ignore").lower()
+            for phrase in PLACEHOLDER_PHRASES:
+                if phrase.lower() in text:
+                    failures.append(f"placeholder phrase '{phrase}' found in {path.relative_to(ROOT)}")
+
+    if failures:
+        print("Release readiness check failed:")
+        for failure in failures:
+            print(f"  - {failure}")
+        return 1
+
+    print("Release readiness check passed.")
+    return 0
+
+
+def _tracked_files() -> list[str]:
+    return _git_ls_files()
+
+
+def _git_ls_files(pattern: str | None = None) -> list[str]:
+    command = ["git", "ls-files"]
+    if pattern:
+        command.append(pattern)
+    result = subprocess.run(command, cwd=ROOT, check=True, capture_output=True, text=True)
+    return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

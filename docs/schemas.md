@@ -68,3 +68,12 @@ Each step records:
 - risk awareness: lifecycle coverage, blocked/clipped decisions, violations, warning/error checks
 - reproducibility: prompt/model/data/memory/tool/risk/portfolio/execution state coverage
 - reasoning consistency: action side and target weight agreement
+
+## Community Benchmark Submission Schema
+
+External benchmark rows can be shared without exposing raw provider prompts or
+responses. The minimal public submission contract lives at
+[`../schemas/benchmark_submission.schema.json`](../schemas/benchmark_submission.schema.json).
+It records the scenario, redacted agent metadata, data source, execution
+configuration, risk configuration, metrics, trajectory manifest, redaction
+policy, and reproducibility hash.

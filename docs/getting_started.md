@@ -1,6 +1,6 @@
 # Getting Started
 
-TradeArena is easiest to evaluate as a sequence of small, no-key artifacts.
+TradeArena is easiest to evaluate as a sequence of small, offline-friendly artifacts.
 The first run should show a working benchmark, an auditable trajectory, and a
 visual demo portal before asking you to configure any model or data provider.
 
@@ -16,12 +16,17 @@ python scripts/run_showcase.py
 Open:
 
 ```text
-outputs/examples/showcase.html
+outputs/examples/index.html
 ```
 
 The first-run path does not call DeepSeek, Poe, OpenAI, Hugging Face, AkShare,
 or Yahoo Finance. It uses tracked data, deterministic synthetic markets, and
 redacted metadata artifacts.
+
+No local install yet? Use:
+
+- [GitHub Codespaces](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=weich97/TradeArena)
+- [Colab quickstart](https://colab.research.google.com/github/weich97/TradeArena/blob/main/notebooks/tradearena_5min_colab.ipynb)
 
 ## Fifteen-Minute Path
 
@@ -39,6 +44,8 @@ python examples/retail_planner_demo.py
 Useful files:
 
 - `outputs/examples/audit_report.html`
+- `outputs/examples/benchmark-v0.1.html`
+- `outputs/examples/showcase.html`
 - `outputs/examples/execution_realism_sweep.svg`
 - `outputs/examples/portfolio_markowitz.svg`
 - `outputs/examples/visual_tour_index.html`
@@ -67,4 +74,5 @@ checks, paper rebalance instructions, and futures margin estimates.
 ```bash
 python -m pytest tests -q
 python scripts/run_showcase.py --reuse-existing
+python scripts/check_release_readiness.py
 ```

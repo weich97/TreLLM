@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import shutil
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +19,7 @@ def main() -> int:
         raise FileNotFoundError("Missing crisis summary snapshot. Run scripts/run_crisis_scene_experiments.py --collect-existing first.")
     summary = _summary(rows)
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    _copy_assets()
     write_json(OUTPUT_DIR / "crisis_snapshot_summary.json", summary)
     _write_html(OUTPUT_DIR / "crisis_snapshot_gallery.html", rows, summary)
 
@@ -62,7 +64,7 @@ def _compact_case(row: dict[str, Any]) -> dict[str, Any]:
 
 def _write_html(path: Path, rows: list[dict[str, Any]], summary: dict[str, Any]) -> None:
     cards = "\n".join(
-        f'<figure><img src="../../docs/assets/crisis/{name}" alt="{name}"><figcaption>{name}</figcaption></figure>'
+        f'<figure><img src="assets/crisis/{name}" alt="{name}"><figcaption>{name}</figcaption></figure>'
         for name in [
             "crisis_representation_trajectory.svg",
             "crisis_correlation_intent_heatmap.svg",
@@ -111,6 +113,13 @@ th {{ background: #eef2f7; }}
 </html>
 """
     path.write_text(html, encoding="utf-8")
+
+
+def _copy_assets() -> None:
+    target = OUTPUT_DIR / "assets/crisis"
+    target.mkdir(parents=True, exist_ok=True)
+    for source in ASSETS_DIR.glob("*.svg"):
+        shutil.copy2(source, target / source.name)
 
 
 if __name__ == "__main__":

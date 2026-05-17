@@ -4,7 +4,9 @@ This matrix maps framework capabilities to hands-on repository artifacts.
 
 | Capability | Run | Main artifact | What it shows |
 | --- | --- | --- | --- |
+| Project landing page | `python scripts/run_showcase.py` | `outputs/examples/index.html` | One command builds the static GitHub Pages landing page. |
 | First-run repo tour | `python scripts/run_showcase.py` | `outputs/examples/showcase.html` | One command builds a public-facing demo surface. |
+| Benchmark v0.1 snapshot | `python scripts/build_benchmark_page.py` | `outputs/examples/benchmark-v0.1.html` and `docs/results/benchmark_v0_1.md` | Crisis scenes, intraday portfolio probes, execution-aware baselines, and representation robustness become a citable result page. |
 | Animated visual tour | `python examples/visual_tour_demo.py` | `outputs/examples/visual_tour_index.html` | README-style lifecycle, execution, and diagnostics GIFs become reproducible local artifacts. |
 | Auditable trajectories | `python examples/audit_trajectory_walkthrough.py` and `python scripts/render_audit_report.py` | `outputs/examples/audit_report.html` | A decision can be traced from observation to risk gate to fills and memory. |
 | Execution realism | `python examples/execution_realism_sweep_demo.py` | `outputs/examples/execution_realism_sweep.svg` | The same agent behaves differently under slippage, latency, liquidity, and rejections. |

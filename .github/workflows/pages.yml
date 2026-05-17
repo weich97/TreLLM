@@ -35,7 +35,9 @@ jobs:
             python scripts/run_showcase.py
 
           Entry points:
+            index.html
             showcase.html
+            benchmark-v0.1.html
             audit_report.html
             crisis_snapshot_gallery.html
             retail_planning_report.html
@@ -51,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}showcase.html
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4

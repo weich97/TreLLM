@@ -9,22 +9,23 @@
 <p align="center">
   <a href="docs/getting_started.md">Getting started</a> |
   <a href="https://github.com/weich97/TradeArena/wiki">Wiki</a> |
-  <a href="https://weich97.github.io/TradeArena/showcase.html">Live demo</a> |
+  <a href="https://weich97.github.io/TradeArena/">Project site</a> |
+  <a href="https://weich97.github.io/TradeArena/benchmark-v0.1.html">Benchmark v0.1</a> |
   <a href="docs/demo_matrix.md">Demo matrix</a> |
   <a href="examples">Hands-on examples</a> |
   <a href="#visual-tour">Visual tour</a> |
   <a href="#research-grade-diagnostics">Diagnostics</a> |
   <a href="docs/schemas.md">Schemas</a> |
+  <a href="docs/contributor_roadmap.md">Roadmap</a> |
   <a href="docs/extension_walkthrough.md">Extension walkthrough</a> |
-  <a href="docs/retail_planning.md">Retail planning</a> |
-  <a href="docs/launch/">Project metadata</a> |
-  <a href="docs/plugin_interfaces.md">Plugin interfaces</a>
+  <a href="docs/related_work.md">Related work</a> |
+  <a href="docs/technical_report.md">Technical note</a>
 </p>
 
 <p align="center">
   <a href="https://github.com/weich97/TradeArena/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/weich97/TradeArena/actions/workflows/ci.yml/badge.svg"></a>
   <img alt="Python" src="https://img.shields.io/badge/python-3.10%2B-0f172a">
-  <img alt="Quickstart demo" src="https://img.shields.io/badge/quickstart-no%20keys-059669">
+  <img alt="Quickstart demo" src="https://img.shields.io/badge/quickstart-offline%20demo-059669">
   <img alt="Execution realistic" src="https://img.shields.io/badge/execution-fees%20%7C%20slippage%20%7C%20latency%20%7C%20partial%20fills-0284c7">
   <img alt="Replayable trajectories" src="https://img.shields.io/badge/trajectories-replayable-7c3aed">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-f59e0b">
@@ -68,15 +69,22 @@ python scripts/run_showcase.py
 Open:
 
 ```text
-outputs/examples/showcase.html
+outputs/examples/index.html
 ```
 
 The first-run path requires no API keys and makes no live model or
 market-data calls. Advanced experiments can still use DeepSeek, Poe, Hugging Face,
 AkShare, Yahoo Finance, and other provider APIs when you opt in.
 
-Prefer to click before cloning? Open the static demo:
-[`weich97.github.io/TradeArena/showcase.html`](https://weich97.github.io/TradeArena/showcase.html).
+Prefer to click before cloning? Open the static project site:
+[`weich97.github.io/TradeArena/`](https://weich97.github.io/TradeArena/).
+
+Try without a local install:
+
+<p>
+  <a href="https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=weich97/TradeArena"><img alt="Open in GitHub Codespaces" src="https://img.shields.io/badge/Open%20in-Codespaces-181717?logo=github"></a>
+  <a href="https://colab.research.google.com/github/weich97/TradeArena/blob/main/notebooks/tradearena_5min_colab.ipynb"><img alt="Open in Colab" src="https://colab.research.google.com/assets/colab-badge.svg"></a>
+</p>
 
 ## What It Is Not
 
@@ -92,6 +100,23 @@ paper-only and requires human approval for generated rebalance instructions.
 | TradingAgents | Multi-role LLM trading workflows | TradeArena focuses on audit trajectories, risk gates, execution realism, and reproducible evaluation |
 | FinRobot | Financial analysis and equity-research agents | TradeArena is a benchmark/simulation/audit layer for decision traces and execution constraints |
 | FinRL | Financial reinforcement learning | TradeArena can host quant/RL-style baselines, but centers LLM agent decision chains and risk-aware replay |
+
+For a broader non-adversarial comparison, see [`docs/related_work.md`](docs/related_work.md).
+
+## Benchmark v0.1 Snapshot
+
+The v0.1 result page turns the tracked artifacts into a compact benchmark claim:
+LLM trading agents look different once intended allocations pass through
+slippage, latency, liquidity limits, partial fills, rejected orders, and risk
+gates.
+
+- Static page: [`weich97.github.io/TradeArena/benchmark-v0.1.html`](https://weich97.github.io/TradeArena/benchmark-v0.1.html)
+- Citable Markdown: [`docs/results/benchmark_v0_1.md`](docs/results/benchmark_v0_1.md)
+- Rebuild command: `python scripts/build_benchmark_page.py`
+
+The benchmark snapshot includes deterministic quickstart baselines, crisis-scene
+LLM rows, 51-stock intraday portfolio probes, and representation robustness
+diagnostics.
 
 ## 3-Minute Demo Video
 
@@ -286,11 +311,12 @@ python scripts/run_showcase.py
 Open:
 
 ```text
-outputs/examples/showcase.html
+outputs/examples/index.html
 ```
 
-The showcase runs without API keys or live API calls. It builds a local portal linking to:
+The showcase path runs without API keys or live API calls. It builds a local site linking to:
 
+- the benchmark v0.1 result page
 - an auditable trajectory report
 - an animated lifecycle/execution/diagnostics tour
 - an execution-realism sweep
@@ -397,7 +423,8 @@ python scripts/build_llm_cache_manifest.py
 ## Development Direction
 
 TradeArena is designed to grow through plugins and benchmarks rather than a
-single fixed pipeline. Near-term extension areas include:
+single fixed pipeline. See [`docs/contributor_roadmap.md`](docs/contributor_roadmap.md)
+for the contribution routes. Near-term extension areas include:
 
 - more data bridges for equities, A-shares, crypto, prediction markets, news,
   filings, macro, and alternative data
@@ -414,7 +441,8 @@ single fixed pipeline. Near-term extension areas include:
 
 Start with [`examples/custom_plugin_demo.py`](examples/custom_plugin_demo.py) if
 you want to add a new analyst, strategy, risk gate, simulator, memory store, or
-metric. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+metric. See [`CONTRIBUTING.md`](CONTRIBUTING.md) and
+[`docs/contributor_roadmap.md`](docs/contributor_roadmap.md).
 
 Before opening a pull request:
 
@@ -422,6 +450,7 @@ Before opening a pull request:
 python -m compileall src scripts examples tests -q
 python -m pytest tests -q
 python scripts/run_showcase.py --reuse-existing
+python scripts/check_release_readiness.py
 ```
 
 ## Disclaimer

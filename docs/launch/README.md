@@ -51,7 +51,7 @@ ai-agents
 - Publish GitHub release `v0.1.0`.
 - Add the topics above.
 - Enable GitHub Discussions.
-- Verify the GitHub Pages demo at `https://weich97.github.io/TradeArena/showcase.html`.
+- Verify the GitHub Pages site at `https://weich97.github.io/TradeArena/`.
 - Create the issue backlog in `docs/launch/issue_backlog.md`.
 - Verify the browser-playable 3-minute demo and link it from the README.
 
@@ -65,7 +65,7 @@ python scripts/run_showcase.py
 Open:
 
 ```text
-outputs/examples/showcase.html
+outputs/examples/index.html
 ```
 
 Watch in the browser:

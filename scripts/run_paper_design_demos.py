@@ -39,7 +39,7 @@ DEMOS = [
 def main() -> int:
     print("TradeArena experiment-design demo suite")
     print("=======================================")
-    print("No-key demos aligned with core framework experiment axes.")
+    print("Offline-friendly demos aligned with core framework experiment axes.")
     for idx, (title, _, script, _) in enumerate(DEMOS, start=1):
         print(f"\n{idx}/{len(DEMOS)} {title}", flush=True)
         print("-" * (len(title) + 4), flush=True)
@@ -81,7 +81,7 @@ h1 {{ margin: 0 0 8px; font-size: 32px; letter-spacing: 0; }}
 </style>
 <main>
   <h1>TradeArena Experiment-Design Demos</h1>
-  <p class="lead">These no-key hands-on examples exercise four framework axes: execution realism, quant baselines, representation diagnostics, and modular extensibility.</p>
+  <p class="lead">These offline-friendly hands-on examples exercise four framework axes: execution realism, quant baselines, representation diagnostics, and modular extensibility.</p>
   <section class="grid">
     {cards}
   </section>

@@ -92,6 +92,20 @@ paper-only and requires human approval for generated rebalance instructions.
 | FinRobot | Financial analysis and equity-research agents | TradeArena is a benchmark/simulation/audit layer for decision traces and execution constraints |
 | FinRL | Financial reinforcement learning | TradeArena can host quant/RL-style baselines, but centers LLM agent decision chains and risk-aware replay |
 
+## 3-Minute Demo Video
+
+[![TradeArena 3-minute demo video](docs/assets/demo_video_thumbnail.svg)](https://github.com/weich97/TradeArena/releases/download/v0.1.0/tradearena_3min_demo.mp4)
+
+The video walks through the quickstart command, the showcase portal, the audit
+report, execution realism, extension walkthrough, and retail planning sandbox.
+Regenerate it locally with:
+
+```bash
+python scripts/build_demo_video.py
+```
+
+See [`docs/launch/demo_video.md`](docs/launch/demo_video.md).
+
 ## Visual Tour
 
 The fastest way to understand TradeArena is to watch the decision loop. These

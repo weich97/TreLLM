@@ -8,9 +8,16 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "outputs/examples"
+DEMO_VIDEO_URL = "https://github.com/weich97/TradeArena/releases/download/v0.1.0/tradearena_3min_demo.mp4"
 
 
 SECTIONS = [
+    (
+        "3-minute demo video",
+        "A captioned walkthrough of the quickstart command, audit report, execution realism, extension walkthrough, and retail planning sandbox.",
+        DEMO_VIDEO_URL,
+        "python scripts/build_demo_video.py",
+    ),
     (
         "First-run portal",
         "A guided quickstart tour of the audit report, A-share rules, crisis gallery, and redacted cache manifest.",
@@ -92,6 +99,9 @@ def main() -> int:
     print("\nShowcase artifacts", flush=True)
     print("------------------", flush=True)
     for _, _, href, _ in SECTIONS:
+        if href.startswith("http"):
+            print(f"[link] {href}", flush=True)
+            continue
         path = OUTPUT_DIR / href
         print(f"[{'ok' if path.exists() else 'missing'}] outputs/examples/{href}", flush=True)
     print("[ok] outputs/examples/showcase.html", flush=True)
@@ -148,7 +158,7 @@ h1 {{ margin: 0 0 8px; font-size: 36px; letter-spacing: 0; }}
 
 
 def _card_html(title: str, body: str, href: str, command: str) -> str:
-    status = "ready" if (OUTPUT_DIR / href).exists() else "generate first"
+    status = "external video" if href.startswith("http") else "ready" if (OUTPUT_DIR / href).exists() else "generate first"
     return (
         f'<a class="card" href="{href}">'
         f"<span>{title}</span>"

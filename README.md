@@ -8,6 +8,7 @@
 
 <p align="center">
   <a href="docs/getting_started.md">Getting started</a> |
+  <a href="https://github.com/weich97/TradeArena/wiki">Wiki</a> |
   <a href="https://weich97.github.io/TradeArena/showcase.html">Live demo</a> |
   <a href="docs/demo_matrix.md">Demo matrix</a> |
   <a href="examples">Hands-on examples</a> |

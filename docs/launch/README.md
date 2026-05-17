@@ -1,14 +1,14 @@
-# TradeArena Launch Kit
+# TradeArena Project Metadata
 
-TradeArena should be launched as an audit and benchmark framework, not as an
-"LLM trading bot." The core message:
+Use this page for repository setup, project listings, and quickstart links.
+TradeArena's public positioning is:
 
 > We make every LLM trading-agent decision reproducible, auditable, risk-gated,
 > execution-realistic, and stress-testable.
 
 ## Repository Positioning
 
-Use this one-liner in GitHub, social posts, and project listings:
+Use this one-liner in GitHub, package metadata, and project listings:
 
 ```text
 Open-source benchmark and audit framework for evaluating LLM trading agents under realistic execution, risk, and replayability constraints.
@@ -46,7 +46,7 @@ benchmark
 ai-agents
 ```
 
-## Launch Checklist
+## Repository Checklist
 
 - Publish GitHub release `v0.1.0`.
 - Add the topics above.
@@ -54,8 +54,6 @@ ai-agents
 - Verify the GitHub Pages demo at `https://weich97.github.io/TradeArena/showcase.html`.
 - Create the issue backlog in `docs/launch/issue_backlog.md`.
 - Attach the 3-minute demo video to the release and link it from the README.
-- Pin the `v0.1.0` release and README demo GIFs in external posts.
-- Share one command first: `python scripts/run_showcase.py`.
 
 ## Core Demo Command
 
@@ -80,11 +78,4 @@ https://github.com/weich97/TradeArena/releases/download/v0.1.0/tradearena_3min_d
 
 ```text
 Auditable, execution-realistic benchmark framework for LLM trading agents with replayable trajectories, risk gates, paper planning, and quickstart demos.
-```
-
-## Suggested Social Tagline
-
-```text
-Do not just ask whether an LLM trading agent made money. Ask whether every
-decision can be replayed, audited, risk-gated, and stress-tested.
 ```

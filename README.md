@@ -16,7 +16,7 @@
   <a href="docs/schemas.md">Schemas</a> |
   <a href="docs/extension_walkthrough.md">Extension walkthrough</a> |
   <a href="docs/retail_planning.md">Retail planning</a> |
-  <a href="docs/launch/">Launch kit</a> |
+  <a href="docs/launch/">Project metadata</a> |
   <a href="docs/plugin_interfaces.md">Plugin interfaces</a>
 </p>
 

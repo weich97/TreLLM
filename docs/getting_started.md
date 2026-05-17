@@ -54,6 +54,11 @@ Useful files:
 - `outputs/examples/retail_planning_report.html`
 - `outputs/examples/audit_walkthrough_trajectory.json`
 
+The execution realism sweep includes a `high_spread` preset. It keeps the same
+agent and synthetic market but adds a quoted bid-ask spread so users can see
+how crossing cost changes realized return and slippage even when fill rates do
+not collapse.
+
 ## Extension Path
 
 Start from `examples/custom_plugin_demo.py`. It defines one local analyst class

@@ -15,8 +15,7 @@ CRISIS_CSV = ROOT / "docs/results/crisis/crisis_summary.csv"
 REPRESENTATION_CSV = ROOT / "docs/results/representation/embedding_robustness.csv"
 INTRADAY_CSV = ROOT / "docs/results/intraday/intraday_complex.csv"
 QUICKSTART_JSON = ROOT / "outputs/examples/quickstart_core_metrics.json"
-RELEASE_TAG = "v0.1.0"
-RELEASE_COMMIT = "4238a9b"
+RELEASE_TAG = "v0.1.1"
 POLICY_LABELS = {
     "gpt-5.5": "frontier-policy-A (redacted)",
     "claude-opus-4.7": "frontier-policy-B (redacted)",
@@ -147,14 +146,14 @@ def _markdown(
         _wrap(
             "Execution realism and risk gates materially change LLM "
             "trading-agent evaluation: intended allocations can look very "
-            "different after slippage, latency, liquidity limits, partial "
+            "different after spread, slippage, latency, liquidity limits, partial "
             "fills, rejected orders, and pre-trade risk edits."
         ),
         "",
         "## Result Provenance",
         "",
-        "- Release: v0.1.0.",
-        "- Release commit: `4238a9b`.",
+        f"- Software release: {RELEASE_TAG}.",
+        "- Benchmark snapshot lineage: v0.1.",
         "- Benchmark card source: tracked snapshots under `docs/results/`.",
         "- Reproduction command:",
         "",
@@ -172,7 +171,7 @@ def _markdown(
         "## What Is Measured",
         "",
         "- Return and max drawdown.",
-        "- Fill rate, rejection rate, latency, slippage, and partial fills.",
+        "- Fill rate, rejection rate, spread, latency, slippage, and partial fills.",
         "- Risk edits, clipped decisions, violations, and audit completeness.",
         "- Concentration / Herfindahl for portfolio probes.",
         "- Calibration and representation robustness diagnostics.",
@@ -487,7 +486,7 @@ def _html(
         (
             "<ul>"
             "<li>Return and max drawdown.</li>"
-            "<li>Fill rate, rejection rate, latency, slippage, and partial fills.</li>"
+            "<li>Fill rate, rejection rate, spread, latency, slippage, and partial fills.</li>"
             "<li>Risk edits, clipped decisions, violations, and audit completeness.</li>"
             "<li>Concentration / Herfindahl for portfolio probes.</li>"
             "<li>Calibration and representation robustness diagnostics.</li>"
@@ -591,8 +590,8 @@ def _md_table(headers: list[str], rows: list[list[str]]) -> str:
 
 def _provenance_rows() -> list[list[str]]:
     return [
-        ["Release", RELEASE_TAG],
-        ["Release commit", RELEASE_COMMIT],
+        ["Software release", RELEASE_TAG],
+        ["Benchmark lineage", "v0.1 snapshot"],
         ["Benchmark card source", "`docs/results/` tracked snapshots plus first-run outputs"],
         [
             "Reproduction command",

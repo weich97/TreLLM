@@ -77,6 +77,10 @@
       "properties": {
         "commission_bps": { "type": "number" },
         "base_slippage_bps": { "type": "number" },
+        "spread_bps": {
+          "type": "number",
+          "description": "Full quoted bid-ask spread in basis points; market orders cross half the spread."
+        },
         "latency_steps": { "type": "number" },
         "participation_rate": { "type": "number" }
       }

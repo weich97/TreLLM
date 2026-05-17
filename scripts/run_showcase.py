@@ -245,7 +245,7 @@ python scripts/run_showcase.py
   </section>
   <section class="strip" aria-label="Use cases">
     <div class="panel"><h2>Evaluate LLM Trading Agents</h2><p>Compare decisions with return, drawdown, risk edits, rejection rate, reproducibility, and audit coverage.</p></div>
-    <div class="panel"><h2>Stress-Test Execution Assumptions</h2><p>Inspect how slippage, latency, liquidity limits, partial fills, and rejected orders change realized exposure.</p></div>
+    <div class="panel"><h2>Stress-Test Execution Assumptions</h2><p>Inspect how spread, slippage, latency, liquidity limits, partial fills, and rejected orders change realized exposure.</p></div>
     <div class="panel"><h2>Build Auditable Workflows</h2><p>Plug in data adapters, analysts, strategies, risk gates, execution simulators, memory, and evaluators.</p></div>
   </section>
   <section class="flow">
@@ -306,7 +306,7 @@ h1 {{ margin: 0 0 8px; font-size: 36px; letter-spacing: 0; }}
   <h1>TradeArena Showcase: Quickstart Tour</h1>
   <p class="lead">Run one command, open one page, and inspect the artifacts that demonstrate auditable trajectories, realistic execution, risk gates, diagnostic visuals, and extensible plugins. Each card names the artifact and the command that regenerates it; the first-run path uses deterministic agents, tracked snapshots, and no live provider calls.</p>
   <div class="strip">
-    <span class="pill">No API key required</span>
+    <span class="pill">First run: no provider key</span>
     <span class="pill">Execution realism</span>
     <span class="pill">Risk lifecycle</span>
     <span class="pill">Replayable trajectories</span>

@@ -98,7 +98,11 @@ Live download command:
 
 ```bash
 python -m pip install -e ".[ashare]"
-python scripts/download_akshare_ashare_daily.py --symbols 600519.SS,300750.SZ --start 2021-01-01 --end 2026-05-14 --output-dir data/real/akshare_ashare_daily
+python scripts/download_akshare_ashare_daily.py \
+  --symbols 600519.SS,300750.SZ \
+  --start 2021-01-01 \
+  --end 2026-05-14 \
+  --output-dir data/real/akshare_ashare_daily
 ```
 
 ## 6. A-Share Market Rules
@@ -122,8 +126,11 @@ Output:
 python examples/execution_realism_sweep_demo.py
 ```
 
-Shows how fees, slippage, latency, liquidity limits, and rejections change
-agent behavior.
+Shows how fees, quoted spread, slippage, latency, liquidity limits, and
+rejections change agent behavior. The `high_spread` preset isolates a wide
+bid-ask spread while keeping fill eligibility close to the default case, so the
+artifact makes crossing cost visible rather than hiding it inside generic
+slippage.
 
 Output:
 

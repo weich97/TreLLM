@@ -9,8 +9,8 @@ authors:
 repository-code: "https://github.com/weich97/TradeArena"
 url: "https://github.com/weich97/TradeArena"
 license: MIT
-version: "0.1.0"
-date-released: "2026-05-16"
+version: "0.1.1"
+date-released: "2026-05-17"
 keywords:
   - LLM agents
   - trading agents

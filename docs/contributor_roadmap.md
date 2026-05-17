@@ -10,7 +10,7 @@ where they fit.
 Good first contributions should be small, offline-friendly, and easy to review.
 
 - Add a holdings CSV importer for the retail planning sandbox.
-- Add a high-spread execution preset to `examples/execution_realism_sweep_demo.py`.
+- Add another execution stress preset after the v0.1.1 high-spread example.
 - Improve alt text, captions, and keyboard-readable HTML for generated reports.
 - Add one new deterministic scenario to `examples/quickstart_core_benchmark.py`.
 

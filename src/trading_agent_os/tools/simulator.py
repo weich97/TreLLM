@@ -85,6 +85,7 @@ class RealisticOrderSimulator:
 
     commission_bps: float = 1.0
     base_slippage_bps: float = 2.0
+    spread_bps: float = 0.0
     participation_rate: float = 0.05
     latency_steps: int = 1
     market_impact: float = 0.15
@@ -135,7 +136,14 @@ class RealisticOrderSimulator:
 
             participation = quantity / max(1.0, bar.volume)
             intraday_vol = max(0.0, (bar.high - bar.low) / max(1e-9, bar.close))
-            slip_rate = (self.base_slippage_bps / 10_000.0) + self.market_impact * participation + 0.1 * intraday_vol
+            # Market orders cross half the quoted bid-ask spread before impact and volatility slippage.
+            half_spread_rate = max(0.0, self.spread_bps) / 20_000.0
+            slip_rate = (
+                half_spread_rate
+                + (self.base_slippage_bps / 10_000.0)
+                + self.market_impact * participation
+                + 0.1 * intraday_vol
+            )
             mid = bar.close
             price = mid * (1.0 + slip_rate if order.side == Side.BUY else 1.0 - slip_rate)
 
@@ -198,6 +206,7 @@ class RealisticOrderSimulator:
                 "participation_rate": self.participation_rate,
                 "latency_steps": self.latency_steps,
                 "market_impact": self.market_impact,
+                "spread_bps": self.spread_bps,
             },
         )
         self._step += 1

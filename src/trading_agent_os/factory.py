@@ -71,6 +71,7 @@ def build_default_system(
     execution_mode: str = "realistic",
     commission_bps: float = 1.0,
     slippage_bps: float = 2.0,
+    spread_bps: float = 0.0,
     participation_rate: float = 0.05,
     latency_steps: int = 1,
     market_impact: float = 0.15,
@@ -160,7 +161,7 @@ def build_default_system(
             max_single_step_turnover=max_turnover,
             max_order_participation=participation_rate,
             max_latency_steps=max(2, latency_steps + 1),
-            max_slippage_bps=max(50.0, slippage_bps * 10.0),
+            max_slippage_bps=max(50.0, (slippage_bps + spread_bps / 2.0) * 10.0),
         )
     )
     simulator = (
@@ -169,6 +170,7 @@ def build_default_system(
         else RealisticOrderSimulator(
             commission_bps=commission_bps,
             base_slippage_bps=slippage_bps,
+            spread_bps=spread_bps,
             participation_rate=participation_rate,
             latency_steps=latency_steps,
             market_impact=market_impact,

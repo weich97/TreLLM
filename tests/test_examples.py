@@ -62,6 +62,20 @@ def test_paper_design_demo_suite_builds_advanced_artifacts():
     assert (ROOT / "outputs/examples/custom_plugin.svg").exists()
 
 
+def test_execution_realism_sweep_includes_high_spread_preset():
+    _run_example("examples/execution_realism_sweep_demo.py")
+    summary = _read_json("outputs/examples/execution_realism_sweep_summary.json")
+    rows = {row["case"]: row for row in summary["rows"]}
+
+    assert "high_spread" in rows
+    assert rows["high_spread"]["spread_bps"] > 0
+    assert rows["high_spread"]["fill_rate"] >= 0.75
+    assert rows["high_spread"]["slippage_cost"] > rows["realistic_default"]["slippage_cost"]
+    assert "bid-ask spread" in summary["interpretation"]["high_spread"]
+    assert (ROOT / "outputs/examples/execution_realism_sweep.csv").exists()
+    assert (ROOT / "outputs/examples/execution_realism_sweep.svg").exists()
+
+
 def test_visual_tour_demo_generates_animated_artifacts():
     _run_example("examples/visual_tour_demo.py")
     summary = _read_json("outputs/examples/visual_tour_summary.json")

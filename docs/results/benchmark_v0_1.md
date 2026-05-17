@@ -7,13 +7,13 @@ realism, risk gates, and replayable trajectories.
 ## One-Sentence Finding
 
 Execution realism and risk gates materially change LLM trading-agent evaluation:
-intended allocations can look very different after slippage, latency, liquidity limits,
-partial fills, rejected orders, and pre-trade risk edits.
+intended allocations can look very different after spread, slippage, latency, liquidity
+limits, partial fills, rejected orders, and pre-trade risk edits.
 
 ## Result Provenance
 
-- Release: v0.1.0.
-- Release commit: `4238a9b`.
+- Software release: v0.1.1.
+- Benchmark snapshot lineage: v0.1.
 - Benchmark card source: tracked snapshots under `docs/results/`.
 - Reproduction command:
 
@@ -31,7 +31,7 @@ partial fills, rejected orders, and pre-trade risk edits.
 ## What Is Measured
 
 - Return and max drawdown.
-- Fill rate, rejection rate, latency, slippage, and partial fills.
+- Fill rate, rejection rate, spread, latency, slippage, and partial fills.
 - Risk edits, clipped decisions, violations, and audit completeness.
 - Concentration / Herfindahl for portfolio probes.
 - Calibration and representation robustness diagnostics.

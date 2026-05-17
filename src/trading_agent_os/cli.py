@@ -22,6 +22,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--periods", type=int, default=120)
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--execution", default="realistic", choices=["realistic", "ideal"])
+    parser.add_argument(
+        "--spread-bps",
+        type=float,
+        default=0.0,
+        help="Full bid-ask spread in basis points for realistic execution; market orders cross half the spread.",
+    )
     parser.add_argument("--risk", default="max-position", choices=["max-position", "none"])
     parser.add_argument("--data-source", default="synthetic", choices=["synthetic", "csv"], help="Data source for non-paper benchmarks.")
     parser.add_argument("--output", default="", help="Optional JSON trajectory output path.")
@@ -149,6 +155,7 @@ def main(argv: list[str] | None = None) -> int:
                 strategy_name="signal-weighted",
                 risk_name=args.risk,
                 execution_mode=args.execution,
+                spread_bps=args.spread_bps,
                 **benchmark_data_kwargs,
             ),
             description="Momentum plus macro/news agent with configurable risk and execution realism.",
@@ -163,6 +170,7 @@ def main(argv: list[str] | None = None) -> int:
                 strategy_name="buy-and-hold",
                 risk_name=args.risk,
                 execution_mode=args.execution,
+                spread_bps=args.spread_bps,
                 **benchmark_data_kwargs,
             ),
             description="Equal-weight buy-and-hold baseline.",
@@ -177,6 +185,7 @@ def main(argv: list[str] | None = None) -> int:
                 strategy_name="signal-weighted",
                 risk_name=args.risk,
                 execution_mode="ideal",
+                spread_bps=0.0,
                 **benchmark_data_kwargs,
             ),
             description="Same agent under idealized execution for cost/realism ablation.",
@@ -191,6 +200,7 @@ def main(argv: list[str] | None = None) -> int:
                 strategy_name="signal-weighted",
                 risk_name="none",
                 execution_mode=args.execution,
+                spread_bps=args.spread_bps,
                 **benchmark_data_kwargs,
             ),
             description="Same agent with the risk gate disabled.",

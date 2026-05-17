@@ -157,17 +157,18 @@ def _write_execution_realism(path: Path) -> None:
     scenarios = [
         ("Ideal fills", 1.00, 0.05, 0.02, BLUE),
         ("Realistic", 0.94, 0.45, 0.18, GREEN),
+        ("High spread", 0.92, 0.88, 0.20, AMBER),
         ("Low liquidity", 0.82, 0.68, 0.34, AMBER),
         ("High latency", 0.52, 0.82, 0.70, RED),
     ]
     frames: list[Image.Image] = []
-    for i in range(44):
+    for i in range(50):
         image = Image.new("RGB", (WIDTH, HEIGHT), BG)
         draw = ImageDraw.Draw(image)
         _text(draw, (36, 32), "Execution-realistic simulator", INK, _font(28, bold=True))
-        _text(draw, (38, 66), "The same target intent is filtered through fees, slippage, latency, liquidity, partial fills, and rejections.", MUTED)
-        t = (math.sin(i / 43 * math.pi * 2 - math.pi / 2) + 1) / 2
-        active = (i // 11) % len(scenarios)
+        _text(draw, (38, 66), "The same target intent is filtered through fees, spread, slippage, latency, liquidity, partial fills, and rejections.", MUTED)
+        t = (math.sin(i / 49 * math.pi * 2 - math.pi / 2) + 1) / 2
+        active = (i // 10) % len(scenarios)
 
         _rounded(draw, (48, 122, 245, 335), 14, WHITE, LINE, 1)
         _text(draw, (72, 154), "Agent intent", INK, _font(17, bold=True))
@@ -180,7 +181,7 @@ def _write_execution_realism(path: Path) -> None:
         _arrow(draw, 260, 226, 330, 226, SLATE, 3)
         _rounded(draw, (338, 122, 558, 335), 14, (255, 251, 235), AMBER, 2)
         _text(draw, (365, 154), "Order simulator", AMBER, _font(17, bold=True))
-        for idx, label in enumerate(["commission", "market impact", "latency queue", "participation cap", "partial fill"]):
+        for idx, label in enumerate(["commission", "bid-ask spread", "market impact", "latency queue", "participation cap"]):
             alpha = 0.12 + 0.18 * ((i + idx * 3) % 18) / 18
             _rounded(draw, (366, 186 + idx * 26, 526, 206 + idx * 26), 6, _blend(WHITE, AMBER, alpha), _blend(LINE, AMBER, 0.5), 1)
             _text(draw, (382, 202 + idx * 26), label, SLATE, _font(12))
@@ -279,7 +280,7 @@ def _write_index(path: Path, artifacts: dict[str, Path]) -> None:
         ),
         (
             "Execution realism",
-            "Animated execution comparison using fill-rate, slippage, and rejection bars.",
+            "Animated execution comparison using fill-rate, spread/slippage, and rejection bars.",
             artifacts["execution_realism"],
         ),
         (

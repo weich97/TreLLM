@@ -32,3 +32,21 @@ def test_realistic_simulator_records_partial_fill_and_latency():
     assert fills[0].fill_ratio < 1.0
     assert simulator.last_report is not None
     assert simulator.last_report.partial_fills == 1
+
+
+def test_realistic_simulator_spread_bps_increases_crossing_cost():
+    snapshot = SyntheticMarketDataProvider(symbols=("SYN",), periods=2, seed=3).stream()[0]
+    orders = [Order(symbol="SYN", side=Side.BUY, quantity=10)]
+
+    no_spread_portfolio = PortfolioState(cash=1_000_000.0)
+    wide_spread_portfolio = PortfolioState(cash=1_000_000.0)
+    no_spread = RealisticOrderSimulator(participation_rate=1.0, latency_steps=0, spread_bps=0.0)
+    wide_spread = RealisticOrderSimulator(participation_rate=1.0, latency_steps=0, spread_bps=100.0)
+
+    no_spread_fill = no_spread.execute(snapshot, orders, no_spread_portfolio)[0]
+    wide_spread_fill = wide_spread.execute(snapshot, orders, wide_spread_portfolio)[0]
+
+    assert wide_spread_fill.price > no_spread_fill.price
+    assert wide_spread.last_report is not None
+    assert wide_spread.last_report.metadata["spread_bps"] == 100.0
+    assert wide_spread.last_report.total_slippage > no_spread.last_report.total_slippage

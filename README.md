@@ -62,7 +62,7 @@ headline return?
 | If you need... | TradeArena gives you... |
 | --- | --- |
 | Agent behavior beyond final return | Replayable observe-plan-risk-act-reflect trajectories |
-| Realistic execution assumptions | Fees, slippage, latency, liquidity limits, partial fills, and rejections |
+| Realistic execution assumptions | Fees, spread, slippage, latency, liquidity limits, partial fills, and rejections |
 | Risk-aware evaluation | Pre-trade suitability/risk gates, in-trade monitors, post-trade attribution |
 | First-run reproducibility | Quickstart showcase, tracked demo artifacts, and CI smoke tests |
 | Extensibility | Narrow plugins for data, analysts, strategies, risk modules, simulators, planners, and evaluators |
@@ -127,7 +127,7 @@ For a broader non-adversarial comparison, see [`docs/related_work.md`](docs/rela
 
 The v0.1 result page turns the tracked artifacts into a compact benchmark claim:
 LLM trading agents look different once intended allocations pass through
-slippage, latency, liquidity limits, partial fills, rejected orders, and risk
+spread, slippage, latency, liquidity limits, partial fills, rejected orders, and risk
 gates.
 
 - Static page:
@@ -179,7 +179,8 @@ diagnostics.
     </td>
     <td>
       <img src="docs/assets/readme_execution_realism.gif"
-           alt="Animated execution comparison of ideal fills, realistic fills, low liquidity, and high latency"
+           alt="Animated execution comparison of ideal fills, realistic fills,
+                high spread, low liquidity, and high latency"
            width="280">
     </td>
     <td>

@@ -8,6 +8,7 @@ contributor is reading the source tree rather than the GitHub Issues UI.
 
 Goal: make the first public benchmark easier to cite, reproduce, and review.
 
+- Add a high-spread execution stress preset with CSV, JSON, and SVG artifacts.
 - Reflow public Markdown files for readable diffs.
 - Add benchmark provenance and limitations blocks.
 - Keep `https://weich97.github.io/TradeArena/` as a stable root landing page.

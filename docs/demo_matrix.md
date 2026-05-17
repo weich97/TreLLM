@@ -42,8 +42,8 @@ without reading the full source tree.
 
 - Run: `python examples/execution_realism_sweep_demo.py`
 - Artifact: `outputs/examples/execution_realism_sweep.svg`
-- Shows: the same agent under slippage, latency, liquidity limits, and
-  rejections.
+- Shows: the same agent under spread, slippage, latency, liquidity limits,
+  and rejections.
 
 ### Risk Lifecycle
 

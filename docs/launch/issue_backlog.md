@@ -31,8 +31,8 @@ Add a helper that loads holdings from a CSV with columns `symbol`, `market_value
 
 Labels: `good first issue`, `execution`, `benchmark`
 
-Add one new preset to the execution realism sweep, such as high-spread small-cap
-conditions or low-volume end-of-day conditions.
+Add one new preset to the execution realism sweep, such as low-volume
+end-of-day conditions. The first high-spread preset landed in v0.1.1.
 
 ### Improve the visual tour accessibility text
 

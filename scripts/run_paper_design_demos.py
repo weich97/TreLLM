@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEMOS = [
     (
         "Execution Realism",
-        "Same agent under ideal fills, realistic fills, low liquidity, and high latency.",
+        "Same agent under ideal fills, realistic fills, high spread, low liquidity, and high latency.",
         "examples/execution_realism_sweep_demo.py",
         "execution_realism_sweep.svg",
     ),

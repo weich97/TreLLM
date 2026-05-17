@@ -8,6 +8,7 @@
 
 <p align="center">
   <a href="docs/getting_started.md">Getting started</a> |
+  <a href="https://weich97.github.io/TradeArena/showcase.html">Live demo</a> |
   <a href="docs/demo_matrix.md">Demo matrix</a> |
   <a href="examples">Hands-on examples</a> |
   <a href="#visual-tour">Visual tour</a> |
@@ -71,6 +72,9 @@ outputs/examples/showcase.html
 
 The first-run path is API-free: no OpenAI, DeepSeek, Poe, Hugging Face, AkShare,
 or Yahoo Finance key is required.
+
+Prefer to click before cloning? Open the static demo:
+[`weich97.github.io/TradeArena/showcase.html`](https://weich97.github.io/TradeArena/showcase.html).
 
 ## What It Is Not
 

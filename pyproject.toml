@@ -8,7 +8,7 @@ version = "0.1.2"
 description = "Auditable benchmark for LLM trading agents with realistic execution, risk gates, and replayable trajectories."
 readme = "README.md"
 requires-python = ">=3.10"
-authors = [{ name = "Trading Agent OS Contributors" }]
+authors = [{ name = "TradeArena Contributors" }]
 license = "MIT"
 dependencies = []
 
@@ -25,7 +25,6 @@ embeddings = ["sentence-transformers>=3.0"]
 ashare = ["akshare>=1.18"]
 
 [project.scripts]
-taos-run-benchmark = "trading_agent_os.cli:main"
 tradearena = "tradearena.cli:main"
 
 [tool.setuptools.packages.find]

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from trading_agent_os.planning import FinancialGoal, Holding, InvestorProfile, RetailPlanningAgent, default_retail_universe
+from tradearena.planning import FinancialGoal, Holding, InvestorProfile, RetailPlanningAgent, default_retail_universe
 
 
 def test_retail_planner_blocks_unapproved_futures_and_requires_paper_approval():

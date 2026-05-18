@@ -3,8 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from trading_agent_os.agents import MaxPositionRiskManager, SignalWeightedStrategy, TargetWeightExecutionAgent
-from trading_agent_os.core.domain import (
+from tradearena.agents import MaxPositionRiskManager, SignalWeightedStrategy, TargetWeightExecutionAgent
+from tradearena.core.domain import (
     Decision,
     ExperimentConfig,
     MarketSnapshot,
@@ -16,13 +16,13 @@ from trading_agent_os.core.domain import (
     Side,
     Signal,
 )
-from trading_agent_os.core.runner import TradingAgentOS
-from trading_agent_os.core.serialization import write_json
-from trading_agent_os.core.trajectory import Trajectory
-from trading_agent_os.data import SyntheticMarketDataProvider
-from trading_agent_os.evaluation import ExecutionRealismEvaluator, PerformanceEvaluator, RiskAuditEvaluator
-from trading_agent_os.memory import InMemoryResearchMemory
-from trading_agent_os.tools import RealisticOrderSimulator
+from tradearena.core.runner import TradeArena
+from tradearena.core.serialization import write_json
+from tradearena.core.trajectory import Trajectory
+from tradearena.data import SyntheticMarketDataProvider
+from tradearena.evaluation import ExecutionRealismEvaluator, PerformanceEvaluator, RiskAuditEvaluator
+from tradearena.memory import InMemoryResearchMemory
+from tradearena.tools import RealisticOrderSimulator
 
 
 OUTPUT_DIR = Path("outputs/examples")
@@ -186,7 +186,7 @@ class ExtensionCoverageEvaluator:
 
 
 def main() -> int:
-    system = TradingAgentOS(
+    system = TradeArena(
         config=ExperimentConfig(name="extension_walkthrough_demo", symbols=("SYN", "ALT", "DEF"), seed=77),
         data_provider=SyntheticMarketDataProvider(
             symbols=("SYN", "ALT", "DEF"),
@@ -230,7 +230,7 @@ def main() -> int:
     return 0
 
 
-def _summary(system: TradingAgentOS, trajectory: Trajectory, metrics: dict[str, float | int | str]) -> dict[str, object]:
+def _summary(system: TradeArena, trajectory: Trajectory, metrics: dict[str, float | int | str]) -> dict[str, object]:
     first_trace = trajectory.steps[0].agent_trace
     return {
         "purpose": "show how a contributor can add modules without modifying the runner",

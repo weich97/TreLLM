@@ -1,4 +1,4 @@
-from trading_agent_os.examples.momentum_demo import main
+from tradearena.examples.momentum_demo import main
 
 
 if __name__ == "__main__":

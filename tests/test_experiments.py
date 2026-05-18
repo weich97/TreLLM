@@ -1,9 +1,9 @@
 from pathlib import Path
 from datetime import datetime, timedelta
 
-from trading_agent_os.experiments import PaperExperimentConfig, run_paper_experiment
-from trading_agent_os.core.trajectory import StepRecord, Trajectory
-from trading_agent_os.experiments.paper import (
+from tradearena.experiments import PaperExperimentConfig, run_paper_experiment
+from tradearena.core.trajectory import StepRecord, Trajectory
+from tradearena.experiments.paper import (
     _annotate_contrarian_effects,
     _hallucination_calibration_rows,
     _language_collapse_control_rows,

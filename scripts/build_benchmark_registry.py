@@ -4,7 +4,7 @@ import argparse
 import csv
 from pathlib import Path
 
-from trading_agent_os.evaluation.submissions import build_registry_rows, write_registry_html, write_registry_markdown
+from tradearena.evaluation.submissions import build_registry_rows, write_registry_html, write_registry_markdown
 
 
 def main(argv: list[str] | None = None) -> int:

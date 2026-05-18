@@ -6,8 +6,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from trading_agent_os.core.serialization import write_json
-from trading_agent_os.planning import (
+from tradearena.core.serialization import write_json
+from tradearena.planning import (
     FinancialGoal,
     Holding,
     InvestorProfile,

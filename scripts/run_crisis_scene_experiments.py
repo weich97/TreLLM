@@ -9,8 +9,8 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-from trading_agent_os.core.serialization import to_jsonable, write_json
-from trading_agent_os.factory import build_default_system
+from tradearena.core.serialization import to_jsonable, write_json
+from tradearena.factory import build_default_system
 
 
 TECH_51 = (

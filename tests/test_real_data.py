@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from trading_agent_os.agents import MacroNewsAnalyst
-from trading_agent_os.core.domain import PortfolioState
-from trading_agent_os.data import CsvMarketDataProvider
+from tradearena.agents import MacroNewsAnalyst
+from tradearena.core.domain import PortfolioState
+from tradearena.data import CsvMarketDataProvider
 
 
 def test_csv_market_provider_reads_common_weekly_snapshots(tmp_path: Path):

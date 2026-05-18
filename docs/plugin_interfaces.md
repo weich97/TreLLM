@@ -1,6 +1,6 @@
 # TradeArena Plugin Interfaces
 
-The core interfaces live in `src/trading_agent_os/core/interfaces.py`.
+The core interfaces live in `src/tradearena/core/interfaces.py`.
 
 Recommended extension categories:
 

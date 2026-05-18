@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from trading_agent_os.evaluation.submissions import validate_submission_file
+from tradearena.evaluation.submissions import validate_submission_file
 
 
 def main(argv: list[str] | None = None) -> int:

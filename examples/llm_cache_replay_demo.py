@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from trading_agent_os.core.serialization import read_json, write_json
+from tradearena.core.serialization import read_json, write_json
 
 
 MANIFEST_PATH = Path("data/llm_cache_manifest/crisis_scene_llm_summary.json")

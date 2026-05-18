@@ -59,7 +59,7 @@ class MyAnalyst:
 Then wire it into the existing stack:
 
 ```python
-system = TradingAgentOS(
+system = TradeArena(
     config=config,
     data_provider=data_provider,
     analysts=[MyAnalyst()],

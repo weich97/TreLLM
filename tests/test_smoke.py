@@ -1,4 +1,4 @@
-from trading_agent_os.factory import build_default_system, default_registry
+from tradearena.factory import build_default_system, default_registry
 
 
 def test_default_system_runs_and_records_trajectory():

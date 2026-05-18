@@ -6,7 +6,7 @@ import shutil
 from pathlib import Path
 from typing import Iterable
 
-from trading_agent_os.core.serialization import write_json
+from tradearena.core.serialization import write_json
 
 try:
     from PIL import Image, ImageDraw, ImageFont

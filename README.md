@@ -112,9 +112,6 @@ python -m pip install "git+https://github.com/weich97/TradeArena.git"
 tradearena --benchmark tradearena-core
 ```
 
-The historical implementation package `trading_agent_os` remains available as a
-compatibility namespace.
-
 ## Benchmark Result
 
 The v0.1 benchmark card makes one compact claim:

@@ -15,7 +15,7 @@ version should not submit live orders.
 
 Acceptance criteria:
 
-- add a small adapter under `src/trading_agent_os/tools/` or `planning/`
+- add a small adapter under `src/tradearena/tools/` or `planning/`
 - write output under `outputs/examples/`
 - add one smoke test
 - document the human-approval boundary

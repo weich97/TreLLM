@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from trading_agent_os.factory import build_default_system
+from tradearena.factory import build_default_system
 
 
 DATA_DIR = Path("outputs/examples/sidecar_data")

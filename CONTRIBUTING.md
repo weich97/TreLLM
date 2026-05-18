@@ -38,7 +38,7 @@ python scripts/check_release_readiness.py
 
 ## Interface Pointers
 
-Core protocols live in `src/trading_agent_os/core/interfaces.py`.
+Core protocols live in `src/tradearena/core/interfaces.py`.
 
 Common extension points:
 

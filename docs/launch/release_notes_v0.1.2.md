@@ -7,7 +7,7 @@ TradeArena v0.1.2 is the first PyPI-ready release under the
 ## Highlights
 
 - Prepared the installable PyPI distribution `tradearena-benchmark`.
-- Added `tradearena` compatibility shims for module and CLI entrypoints.
+- Promoted `tradearena` as the canonical module and CLI entrypoint.
 - Added redacted benchmark submission validation and community registry
   generation.
 - Added reproducibility hashes for benchmark and trajectory artifacts.

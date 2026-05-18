@@ -3,20 +3,20 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-from trading_agent_os.agents import MaxPositionRiskManager, SignalWeightedStrategy, TargetWeightExecutionAgent
-from trading_agent_os.core.domain import ExperimentConfig, MarketSnapshot, PortfolioState, Signal
-from trading_agent_os.core.runner import TradingAgentOS
-from trading_agent_os.core.serialization import write_json
-from trading_agent_os.data import SyntheticMarketDataProvider
-from trading_agent_os.evaluation import (
+from tradearena.agents import MaxPositionRiskManager, SignalWeightedStrategy, TargetWeightExecutionAgent
+from tradearena.core.domain import ExperimentConfig, MarketSnapshot, PortfolioState, Signal
+from tradearena.core.runner import TradeArena
+from tradearena.core.serialization import write_json
+from tradearena.data import SyntheticMarketDataProvider
+from tradearena.evaluation import (
     BehavioralEvaluator,
     ExecutionRealismEvaluator,
     PerformanceEvaluator,
     ReasoningConsistencyEvaluator,
     RiskAuditEvaluator,
 )
-from trading_agent_os.memory import InMemoryResearchMemory
-from trading_agent_os.tools import RealisticOrderSimulator
+from tradearena.memory import InMemoryResearchMemory
+from tradearena.tools import RealisticOrderSimulator
 
 
 OUTPUT_DIR = Path("outputs/examples")
@@ -49,7 +49,7 @@ class IntraperiodReversalAnalyst:
 
 
 def main() -> int:
-    system = TradingAgentOS(
+    system = TradeArena(
         config=ExperimentConfig(name="custom_plugin_demo", symbols=("SYN", "ALT", "DEF"), seed=41),
         data_provider=SyntheticMarketDataProvider(symbols=("SYN", "ALT", "DEF"), periods=36, seed=41, volatility_scale=1.15),
         analysts=[IntraperiodReversalAnalyst()],

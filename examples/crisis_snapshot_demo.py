@@ -5,7 +5,7 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-from trading_agent_os.core.serialization import write_json
+from tradearena.core.serialization import write_json
 
 
 OUTPUT_DIR = Path("outputs/examples")

@@ -1,7 +1,7 @@
 * @weich97
 
 /schemas/ @weich97
-/src/trading_agent_os/core/ @weich97
-/src/trading_agent_os/tools/simulator.py @weich97
-/src/trading_agent_os/evaluation/ @weich97
+/src/tradearena/core/ @weich97
+/src/tradearena/tools/simulator.py @weich97
+/src/tradearena/evaluation/ @weich97
 /.github/workflows/ @weich97

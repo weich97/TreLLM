@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from trading_agent_os.core.serialization import write_json
-from trading_agent_os.factory import build_default_system
+from tradearena.core.serialization import write_json
+from tradearena.factory import build_default_system
 
 
 OUTPUT_DIR = Path("outputs/examples")

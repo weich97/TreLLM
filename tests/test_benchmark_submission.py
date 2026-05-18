@@ -5,8 +5,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-from trading_agent_os.core.reproducibility import compute_reproducibility_hash, hash_trajectory_file
-from trading_agent_os.evaluation.submissions import validate_submission_file
+from tradearena.core.reproducibility import compute_reproducibility_hash, hash_trajectory_file
+from tradearena.evaluation.submissions import validate_submission_file
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -74,9 +74,9 @@ def test_hash_run_produces_stable_trajectory_fingerprint():
     assert via_cli["reproducibility_hash"] == direct["reproducibility_hash"]
 
 
-def test_tradearena_public_alias_imports_core_modules():
+def test_tradearena_public_namespace_imports_core_modules():
     import tradearena
     import tradearena.core.domain
 
-    assert tradearena.TradingAgentOS.__name__ == "TradingAgentOS"
+    assert tradearena.TradeArena.__name__ == "TradeArena"
     assert tradearena.core.domain.Bar.__name__ == "Bar"

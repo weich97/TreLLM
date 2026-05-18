@@ -12,8 +12,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from trading_agent_os.core.trajectory import StepRecord, Trajectory
-from trading_agent_os.experiments.paper import _embed_text, _mean, _plan_text, _rolling_failure_events
+from tradearena.core.trajectory import StepRecord, Trajectory
+from tradearena.experiments.paper import _embed_text, _mean, _plan_text, _rolling_failure_events
 
 
 def parse_args() -> argparse.Namespace:

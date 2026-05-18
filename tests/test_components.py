@@ -1,6 +1,6 @@
-from trading_agent_os.core.domain import Order, PortfolioState, Side
-from trading_agent_os.data import SyntheticMarketDataProvider
-from trading_agent_os.tools import RealisticOrderSimulator, RiskCalculator, SimpleOrderSimulator
+from tradearena.core.domain import Order, PortfolioState, Side
+from tradearena.data import SyntheticMarketDataProvider
+from tradearena.tools import RealisticOrderSimulator, RiskCalculator, SimpleOrderSimulator
 
 
 def test_order_simulator_never_overspends_cash():

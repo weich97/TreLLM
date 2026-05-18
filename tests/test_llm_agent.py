@@ -3,8 +3,8 @@ from pathlib import Path
 
 import pytest
 
-from trading_agent_os.agents.llm import DeepSeekLLMAnalyst
-from trading_agent_os.core.domain import Bar, MarketSnapshot, PortfolioState
+from tradearena.agents.llm import DeepSeekLLMAnalyst
+from tradearena.core.domain import Bar, MarketSnapshot, PortfolioState
 
 
 def test_deepseek_llm_analyst_replays_cache_without_key(tmp_path: Path, monkeypatch):

@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 
-from trading_agent_os.core.reproducibility import hash_trajectory_file
+from tradearena.core.reproducibility import hash_trajectory_file
 
 
 def main(argv: list[str] | None = None) -> int:

@@ -8,8 +8,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from trading_agent_os.experiments.paper import PaperExperimentConfig, _intraday_complex_rows
-from trading_agent_os.experiments.reporting import write_csv, write_markdown_table
+from tradearena.experiments.paper import PaperExperimentConfig, _intraday_complex_rows
+from tradearena.experiments.reporting import write_csv, write_markdown_table
 
 
 def parse_args() -> argparse.Namespace:

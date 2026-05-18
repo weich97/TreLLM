@@ -43,12 +43,13 @@
 # TradeArena
 
 TradeArena is an early-stage research prototype that experiments with turning
-trading-agent decisions into traceable trajectories:
+trading-agent decisions into traceable trajectories.
 
-```text
-observation -> signal -> intended allocation -> risk gate -> order
-  -> fill/rejection -> portfolio state -> diagnostic report
-```
+<p align="center">
+  <img src="docs/assets/readme_pipeline_architecture.svg"
+       alt="TradeArena runtime architecture: market inputs feed an agent observe-plan loop, a risk gate, an execution simulator, portfolio state, memory feedback, and replayable audit artifacts."
+       width="980">
+</p>
 
 It is not a trading bot and not a mature production benchmark. The current
 prototype asks a narrower research question: whether an LLM trading agent's
@@ -59,17 +60,10 @@ captured clearly enough to support careful analysis.
 
 TradeArena is organized as a deterministic agent loop. The runner in
 [`src/tradearena/core/runner.py`](src/tradearena/core/runner.py) executes the
-same lifecycle at every market timestamp:
-
-```text
-observe market snapshot
-  -> collect analyst signals
-  -> convert signals into target-weight decisions
-  -> clip or block decisions with the risk manager
-  -> convert approved targets into orders
-  -> simulate fills under latency, liquidity, spread, slippage, and commission
-  -> write risk reports, execution reports, memory events, and trajectory rows
-```
+same lifecycle shown above at every market timestamp: observe market state,
+collect analyst signals, propose target-weight decisions, pass them through the
+risk gate, simulate execution frictions, update portfolio state, and write
+replayable diagnostics.
 
 The default allocation logic is intentionally simple and inspectable. In
 [`SignalWeightedStrategy`](src/tradearena/agents/strategy.py), analyst signals

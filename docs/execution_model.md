@@ -24,6 +24,21 @@ For buys, `fill_price = close * (1 + slip_rate)`. For sells,
 `fill_price = close * (1 - slip_rate)`. Commissions are charged as basis points
 of traded notional.
 
+This is a transparent stress equation, not a full limit-order-book simulator.
+Its components are deliberately simple:
+
+| Component | Formula | Rationale |
+| --- | --- | --- |
+| Spread crossing | `spread_bps / 2` | Marketable orders pay half the quoted bid-ask spread relative to mid/reference price. |
+| Base slippage | `base_slippage_bps` | Residual shortfall not explained by spread, participation, or bar range. |
+| Participation impact | `market_impact * (filled_quantity / volume) * 10000` | Linear market-impact proxy in the spirit of Kyle/Almgren-Chriss style impact terms. |
+| Bar-range volatility | `0.1 * ((high - low) / close) * 10000` | OHLCV-observable volatility stress term when no quote path is available. |
+
+The model intentionally uses a linear impact term for readability and
+reproducibility. Market-impact literature often finds nonlinear or concave
+relationships in real order-flow data, so any broker-grade study should fit the
+impact term from fills rather than reuse the default coefficient.
+
 ## Parameter Provenance
 
 | Parameter | Role in simulator | Default | What is needed for calibration | Current default status |
@@ -56,6 +71,91 @@ They do not contain:
 As a result, OHLCV-based calibration can only produce a bar-level diagnostic. A
 proper transaction-cost calibration should use quote and fill logs, then fit the
 spread, residual slippage, latency, and impact terms against realized shortfall.
+
+## Historical Fill Comparison
+
+A real calibration comparison requires historical order/fill data. The public
+repository does **not** ship broker fills, account statements, or exchange
+execution logs, so the default public artifacts should be described as
+execution-stress diagnostics rather than realized execution calibration.
+
+If you have private or licensed fills, keep them under an ignored path such as
+`data/private/` or `data/broker/`, then run:
+
+```bash
+python scripts/compare_execution_to_fills.py \
+  --fills data/private/historical_fills.csv \
+  --base-slippage-bps 2.0 \
+  --market-impact 0.15 \
+  --default-spread-bps 4.0 \
+  --output docs/results/execution_fill_comparison.json \
+  --markdown-output docs/results/execution_fill_comparison.md
+```
+
+Required CSV columns:
+
+| Column | Meaning |
+| --- | --- |
+| `symbol` | Instrument identifier |
+| `side` | `buy` or `sell` |
+| `quantity` | Filled quantity |
+| `reference_price` | Arrival mid, decision close, or other documented benchmark price |
+| `fill_price` | Realized fill price |
+
+Optional columns improve the comparison:
+
+| Column | Meaning |
+| --- | --- |
+| `commission` | Realized commission or explicit fee |
+| `spread_bps` | Full quoted spread at arrival or fill time |
+| `bar_volume` | Volume over the bar used by the simulator |
+| `bar_high`, `bar_low`, `bar_close` | Bar range used for the volatility component |
+| `submitted_at`, `filled_at` | Timestamps for latency analysis |
+
+The comparison computes:
+
+```text
+observed_shortfall_bps =
+  +10000 * (fill_price - reference_price) / reference_price   for buys
+  +10000 * (reference_price - fill_price) / reference_price   for sells
+
+modeled_shortfall_bps =
+  spread_bps / 2
+  + base_slippage_bps
+  + market_impact * (quantity / bar_volume) * 10000
+  + 0.1 * ((bar_high - bar_low) / bar_close) * 10000
+  + commission_bps
+
+residual_bps = observed_shortfall_bps - modeled_shortfall_bps
+```
+
+Large positive residuals mean the simulator underestimates execution cost for
+the supplied fills. Large negative residuals mean the stress settings are too
+conservative for those fills. Report residual mean, residual MAE, sample size,
+asset universe, venue, broker, order type, and date range before making any
+claim that the simulator is calibrated.
+
+## Reference Anchors
+
+The current implementation is closer to a compact transaction-cost stress proxy
+than to Nautilus Trader, Backtrader, or QuantConnect LEAN. The following
+references explain why spread, participation, impact, volume, and realized fills
+are the right calibration surfaces:
+
+- Kyle, A. S. (1985). "Continuous Auctions and Insider Trading." Econometrica
+  53(6), 1315-1335. DOI: [`10.2307/1913210`](https://doi.org/10.2307/1913210).
+- Almgren, R. and Chriss, N. (2001). "Optimal Execution of Portfolio
+  Transactions." Journal of Risk 3, 5-39. DOI:
+  [`10.21314/JOR.2001.041`](https://doi.org/10.21314/JOR.2001.041).
+- Almgren, R., Thum, C., Hauptmann, E., and Li, H. (2005). "Direct Estimation
+  of Equity Market Impact." This is the model class most relevant to replacing
+  TradeArena's default `market_impact` coefficient with a fill-log estimate;
+  see the Risk article summary:
+  [`Equity market impact`](https://www.risk.net/derivatives/structured-products/1500270/equity-market-impact).
+- Bouchaud, J.-P., Farmer, J. D., and Lillo, F. (2009). "How Markets Slowly
+  Digest Changes in Supply and Demand." Handbook of Financial Markets:
+  Dynamics and Evolution, 57-160. Preprint:
+  [`arXiv:0809.0822`](https://arxiv.org/abs/0809.0822).
 
 ## Reproducible Diagnostic
 

@@ -149,7 +149,9 @@ python scripts/calibrate_execution_model.py --data-dir data/real/yahoo_intraday_
 
 This writes `docs/results/execution_calibration_intraday_1h.json` and
 `docs/results/execution_calibration_intraday_1h.md`. Full details are in
-[`docs/execution_model.md`](docs/execution_model.md).
+[`docs/execution_model.md`](docs/execution_model.md), including the
+`scripts/compare_execution_to_fills.py` workflow for comparing private or
+licensed historical fills against the simulator equation.
 
 Risk control is an auditable gate, not a hidden post-processing step.
 [`MaxPositionRiskManager`](src/tradearena/agents/risk.py) runs three checks:

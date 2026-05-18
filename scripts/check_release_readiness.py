@@ -26,6 +26,7 @@ REQUIRED_FILES = [
     "schemas/demo_artifact_contract.schema.json",
     "examples/benchmark_submissions/example_redacted_submission.json",
     "scripts/run_showcase.py",
+    "scripts/compare_execution_to_fills.py",
     "scripts/validate_benchmark_submission.py",
     "scripts/validate_demo_artifacts.py",
     "SECURITY.md",

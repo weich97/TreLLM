@@ -53,6 +53,24 @@ Backtrader and Zipline are classic backtesting engines.
 TradeArena adds agent traces, risk lifecycle reports, memory state, and
 LLM-specific replay metadata.
 
+### Nautilus Trader / QuantConnect LEAN
+
+Nautilus Trader and QuantConnect LEAN are mature trading and backtesting
+systems with richer execution, brokerage, and venue abstractions than
+TradeArena's current prototype. TradeArena's execution layer should therefore
+be read as an auditable stress model unless its parameters are calibrated
+against quote and fill logs.
+
+### Execution And Market-Impact Literature
+
+TradeArena's spread, participation, slippage, and impact surfaces are aligned
+with standard market-microstructure calibration questions: Kyle-style order-flow
+impact, Almgren-Chriss optimal execution, direct estimation of equity market
+impact from fills, and empirical studies of how markets absorb supply and
+demand. The project does not claim that its default parameters reproduce those
+models; they are explicit stress assumptions until a fill-log comparison is
+provided.
+
 ### OpenBB
 
 OpenBB focuses on financial data and research tooling.

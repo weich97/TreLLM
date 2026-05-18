@@ -183,6 +183,60 @@ The report summarizes OHLCV-derived range and volume statistics, parameter
 assumptions, and implied slippage components. If `spread_bps` is not supplied,
 the diagnostic marks spread as unobserved rather than estimating it from bars.
 
+### 3.4 Real Fill Comparison
+
+The public repository does not include historical broker fills or account-level
+execution logs. Therefore TradeArena does not claim that the default execution
+parameters have been calibrated against real fills. A proper calibration study
+should compare side-adjusted realized shortfall against the simulator equation:
+
+```text
+observed_shortfall_bps =
+  +10000 * (fill_price - reference_price) / reference_price   for buys
+  +10000 * (reference_price - fill_price) / reference_price   for sells
+
+modeled_shortfall_bps =
+  spread_bps / 2
+  + base_slippage_bps
+  + market_impact * (quantity / bar_volume) * 10000
+  + 0.1 * ((bar_high - bar_low) / bar_close) * 10000
+  + commission_bps
+```
+
+The helper script for private or licensed fills is:
+
+```bash
+python scripts/compare_execution_to_fills.py \
+  --fills data/private/historical_fills.csv \
+  --output docs/results/execution_fill_comparison.json \
+  --markdown-output docs/results/execution_fill_comparison.md
+```
+
+The required columns are `symbol`, `side`, `quantity`, `reference_price`, and
+`fill_price`. Optional columns include `commission`, `spread_bps`, `bar_volume`,
+`bar_high`, `bar_low`, `bar_close`, `submitted_at`, and `filled_at`. A credible
+calibration report should include sample size, asset universe, venue, broker,
+order type, date range, residual mean, residual MAE, and whether the impact
+relationship remains linear or should be replaced by a nonlinear model.
+
+### 3.5 Literature Anchors
+
+The current simulator is intentionally simpler than production-grade execution
+engines. Its components are motivated by standard microstructure and optimal
+execution work:
+
+- Kyle (1985) motivates price impact as a function of order flow.
+- Almgren and Chriss (2001) provide the classic optimal-execution framework
+  with temporary/permanent impact and risk-cost tradeoffs.
+- Almgren, Thum, Hauptmann, and Li (2005) describe estimating equity market
+  impact from realized execution data.
+- Bouchaud, Farmer, and Lillo (2009) review empirical market-impact, spread,
+  order-book, and volume effects.
+
+Those references justify the calibration surfaces, not the default numerical
+values. The default values remain stress assumptions until a fill-log comparison
+is supplied.
+
 ## 4. Risk Gate Rules
 
 The default risk manager is `MaxPositionRiskManager`. It has three phases:

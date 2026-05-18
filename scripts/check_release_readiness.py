@@ -12,6 +12,7 @@ REQUIRED_FILES = [
     "CITATION.cff",
     "docs/getting_started.md",
     "docs/advanced_integrations_security.md",
+    "docs/technical_report.md",
     "docs/demo_matrix.md",
     "docs/results/benchmark_v0_1.md",
     "docs/results/community_registry.md",

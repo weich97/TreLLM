@@ -399,6 +399,7 @@ Useful entry points:
 - Quickstart: [`docs/getting_started.md`](docs/getting_started.md)
 - Advanced integration safety:
   [`docs/advanced_integrations_security.md`](docs/advanced_integrations_security.md)
+- Technical white paper: [`docs/technical_report.md`](docs/technical_report.md)
 - Schemas: [`docs/schemas.md`](docs/schemas.md)
 - Execution model: [`docs/execution_model.md`](docs/execution_model.md)
 - Benchmark submissions: [`docs/benchmark_submissions.md`](docs/benchmark_submissions.md)

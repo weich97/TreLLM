@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>
-    Open-source benchmark and audit framework for evaluating LLM trading agents
+    Early-stage research prototype for studying LLM trading-agent behavior
     under explicit execution, risk, and replayability constraints.
   </strong>
 </p>
@@ -33,24 +33,26 @@
   <a href="https://pypi.org/project/tradearena-benchmark/">PyPI</a> |
   <a href="https://weich97.github.io/TradeArena/">Project site</a> |
   <a href="https://weich97.github.io/TradeArena/benchmark-v0.1.html">Benchmark card</a> |
-  <a href="docs/benchmark_submissions.md">Submit results</a> |
+  <a href="docs/benchmark_submissions.md">Redacted manifests</a> |
   <a href="docs/demo_matrix.md">Demo matrix</a> |
-  <a href="docs/contributor_roadmap.md">Contribute</a> |
+  <a href="docs/contributor_roadmap.md">Roadmap</a> |
   <a href="SECURITY.md">Security</a>
 </p>
 
 # TradeArena
 
-TradeArena turns every trading-agent decision into a traceable trajectory:
+TradeArena is an early-stage research prototype that experiments with turning
+trading-agent decisions into traceable trajectories:
 
 ```text
 observation -> signal -> intended allocation -> risk gate -> order
   -> fill/rejection -> portfolio state -> diagnostic report
 ```
 
-It is not another "LLM trading bot." It is a framework for asking whether an
-LLM trading agent can be audited, reproduced, stress-tested, and constrained
-before anyone trusts its headline return.
+It is not a trading bot and not a mature production benchmark. The current
+prototype asks a narrower research question: whether an LLM trading agent's
+intent, risk interventions, execution effects, and diagnostic artifacts can be
+captured clearly enough to support careful analysis.
 
 ## Technical Mechanics
 
@@ -135,7 +137,7 @@ therefore separates the simulator equation from parameter calibration:
 The tracked Yahoo Finance OHLCV files can estimate bar range, tail range, dollar
 volume, and participation-cap diagnostics. They cannot identify quoted spread,
 queue depth, fee tier, latency, or realized shortfall. For that reason, current
-public benchmark results should be read as execution-stress comparisons under
+example benchmark results should be read as execution-stress comparisons under
 shared assumptions. Live-market execution claims require replacing the defaults
 with quote/fill-calibrated parameters.
 
@@ -185,7 +187,7 @@ The PyPI distribution is `tradearena-benchmark` because `tradearena` is already
 occupied on PyPI by an unrelated project. The import namespace and CLI remain
 `tradearena`.
 
-To run the full local showcase:
+To run the local demo portal:
 
 ```bash
 git clone https://github.com/weich97/TradeArena.git
@@ -310,25 +312,22 @@ Open:
   [`weich97.github.io/TradeArena/benchmark-v0.1.html`](https://weich97.github.io/TradeArena/benchmark-v0.1.html)
 - Markdown artifact:
   [`docs/results/benchmark_v0_1.md`](docs/results/benchmark_v0_1.md)
-- Community registry:
-  [`docs/results/community_registry.md`](docs/results/community_registry.md)
 
 Rebuild:
 
 ```bash
 python scripts/build_benchmark_page.py
-python scripts/build_benchmark_registry.py examples/benchmark_submissions
 ```
 
-## Submit Or Validate A Benchmark Row
+## Validate A Redacted Benchmark Row
 
-TradeArena supports redacted benchmark submissions. They share scenario,
+TradeArena can validate redacted benchmark manifests. They share scenario,
 execution, risk, metrics, and reproducibility metadata without exposing raw
-provider prompts, responses, credentials, or private portfolios.
+provider prompts, responses, credentials, or private portfolios. This is a local
+research artifact format, not an adoption signal.
 
 ```bash
 tradearena validate-submission examples/benchmark_submissions/example_redacted_submission.json
-tradearena build-registry examples/benchmark_submissions --output docs/results/community_registry.md
 tradearena hash-run outputs/examples/audit_walkthrough_trajectory.json
 ```
 
@@ -362,7 +361,7 @@ See [`docs/benchmark_submissions.md`](docs/benchmark_submissions.md).
   </tr>
 </table>
 
-The browser-playable launch video is here:
+The browser-playable demo video is here:
 [`weich97.github.io/TradeArena/demo_video.html`](https://weich97.github.io/TradeArena/demo_video.html).
 
 ## What TradeArena Provides
@@ -373,7 +372,7 @@ The browser-playable launch video is here:
 | Execution stress model | Configurable fees, spread, slippage, latency, liquidity caps, partial fills, rejections, and calibration diagnostics |
 | Risk-aware evaluation | Pre-trade gates, in-trade monitors, post-trade attribution, violations |
 | Extensibility | Data, analyst, strategy, risk, simulator, memory, planner, evaluator plugins |
-| Community benchmarks | Redacted submission schema, registry builder, reproducibility hashes |
+| Redacted benchmark manifests | Manifest schema, registry builder, reproducibility hashes |
 
 ## Extension Path
 

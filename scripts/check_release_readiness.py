@@ -11,6 +11,7 @@ REQUIRED_FILES = [
     "README.md",
     "CITATION.cff",
     "docs/getting_started.md",
+    "docs/advanced_integrations_security.md",
     "docs/demo_matrix.md",
     "docs/results/benchmark_v0_1.md",
     "docs/results/community_registry.md",

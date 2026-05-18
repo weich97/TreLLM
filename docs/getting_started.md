@@ -66,6 +66,12 @@ tradearena --benchmark llm-smoke `
 `tradearena-core` benchmark remains deterministic unless you explicitly set
 `--analysts deepseek-llm` or `--analysts poe-llm`.
 
+Before running live model providers, market-data downloads, or broker-facing
+exports, read the advanced integration checklist:
+[`advanced_integrations_security.md`](advanced_integrations_security.md).
+Live provider runs should use environment-variable secrets, ignored local caches,
+and redacted manifests for shared artifacts.
+
 ## Fifteen-Minute Path
 
 ```bash

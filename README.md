@@ -245,6 +245,28 @@ These commands run one LLM analyst case and write cache entries locally. The
 cache is deliberately ignored by Git because raw prompts and responses can carry
 provider, licensing, privacy, or portfolio constraints.
 
+## Advanced Integrations Safety
+
+DeepSeek, Poe-hosted models, OpenAI-compatible chat endpoints, AkShare, Yahoo
+Finance, and broker-facing workflows are opt-in advanced paths. They are not
+part of the first-run command, and they must stay inside an explicit audit
+boundary:
+
+| Surface | Default boundary | Public artifact policy |
+| --- | --- | --- |
+| LLM providers | Environment-variable keys, cache-first replay, signals only | Track metrics and redacted manifests, not raw prompt/response caches |
+| Yahoo Finance / AkShare | Download to normalized OHLCV CSV with source metadata | Record source, frequency, symbols, timestamp policy, and adjustment mode |
+| Execution model | Stress assumptions unless calibrated with quote/fill logs | State parameter sources; do not call bar-only diagnostics broker-grade |
+| Broker adapters | Paper export or human-review sandbox only | No live submission in default examples; no credentials in artifacts |
+
+Use per-session environment variables or an OS secret manager. Do not commit
+`.env` files, provider JSONL caches, broker tokens, account statements, or
+private holdings. If a run needs to be shared, publish a redacted submission or
+cache manifest instead of raw provider text.
+
+The full checklist is in
+[`docs/advanced_integrations_security.md`](docs/advanced_integrations_security.md).
+
 No local install yet?
 
 <p>
@@ -376,6 +398,8 @@ Useful entry points:
 ## Documentation Map
 
 - Quickstart: [`docs/getting_started.md`](docs/getting_started.md)
+- Advanced integration safety:
+  [`docs/advanced_integrations_security.md`](docs/advanced_integrations_security.md)
 - Schemas: [`docs/schemas.md`](docs/schemas.md)
 - Execution model: [`docs/execution_model.md`](docs/execution_model.md)
 - Benchmark submissions: [`docs/benchmark_submissions.md`](docs/benchmark_submissions.md)
@@ -403,7 +427,8 @@ artifact-contract validation, and JSON validation.
 TradeArena does not promise profitable trading, does not provide financial
 advice, and does not execute live trades by default. Public examples are
 offline, paper-only, or human-review oriented. Broker and provider integrations
-must follow [`SECURITY.md`](SECURITY.md) and [`GOVERNANCE.md`](GOVERNANCE.md).
+must follow [`docs/advanced_integrations_security.md`](docs/advanced_integrations_security.md),
+[`SECURITY.md`](SECURITY.md), and [`GOVERNANCE.md`](GOVERNANCE.md).
 
 ## Cite
 

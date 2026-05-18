@@ -10,6 +10,8 @@ by default, and public examples are paper-only or offline-friendly.
 - Private portfolios, account statements, or personally identifiable data.
 - Live-order adapters that submit trades without explicit sandboxing and human
   approval.
+- `.env` files, cookies, private notebook outputs, or local broker/account
+  exports.
 
 ## Reporting Security Issues
 
@@ -35,3 +37,32 @@ these modes:
 
 Live execution is out of scope for the public benchmark unless it is explicitly
 sandboxed and documented as unsafe for unattended use.
+
+## Advanced Integrations
+
+Provider and data integrations are opt-in. A safe run should satisfy all of the
+following:
+
+- keys are read from environment variables or an OS secret manager, never from
+  committed files or command-line flags;
+- raw LLM caches stay under ignored local paths such as `data/llm_cache/` or
+  `outputs/`;
+- public artifacts use redacted benchmark submissions or cache manifests;
+- Yahoo Finance, AkShare, and other market-data downloads record source,
+  frequency, symbol universe, timestamp policy, and adjustment assumptions;
+- broker-facing examples remain paper-only, export-only, or human-approved by
+  default;
+- errors from provider APIs omit response bodies when those bodies may contain
+  sensitive details.
+
+See [`docs/advanced_integrations_security.md`](docs/advanced_integrations_security.md)
+for the operational checklist.
+
+## If A Secret Is Exposed
+
+1. Revoke or rotate the provider or broker credential immediately.
+2. Remove local cache files that contain the exposed value.
+3. Do not paste the secret into a public issue. Report privately using the
+   address above.
+4. If the secret reached Git history, treat it as compromised even after the
+   file is deleted.

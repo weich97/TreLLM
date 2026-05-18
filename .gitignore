@@ -5,6 +5,9 @@ __pycache__/
 .ruff_cache/
 .venv/
 venv/
+.env
+.env.*
+.secrets/
 build/
 dist/
 *.egg-info/
@@ -14,5 +17,9 @@ paper/
 *.pdf
 overleaf_upload.zip
 data/llm_cache/*.jsonl
+data/private/
+data/broker/
+broker_credentials*
+broker_tokens*
 .tmp/
 pytest-tmp-*/

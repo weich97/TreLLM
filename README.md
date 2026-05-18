@@ -219,6 +219,11 @@ to verify:
 | `tradearena --benchmark llm-smoke ...` | Yes, unless a matching cache row exists | Minimal live/cache-backed LLM analyst run |
 | `tradearena --paper-output ...` | Optional | Larger paper-grade suite with cache-first LLM sections |
 
+One real provider-backed smoke baseline is tracked here:
+[`docs/results/llm_live_baseline.md`](docs/results/llm_live_baseline.md).
+It records a 2026-05-18 Poe-hosted `gpt-5.5` run with redacted cache manifests
+and no raw prompt/response text in Git.
+
 Minimal live LLM smoke test through Poe:
 
 ```powershell

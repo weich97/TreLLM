@@ -47,6 +47,9 @@ PLACEHOLDER_PHRASES = [
     "pending labels",
     "insert result",
 ]
+BANNED_PUBLIC_TERMS = [
+    "_".join(("trading", "agent", "os")),
+]
 
 
 def main() -> int:
@@ -73,6 +76,14 @@ def main() -> int:
                 if phrase.lower() in text:
                     failures.append(f"placeholder phrase '{phrase}' found in {path.relative_to(ROOT)}")
 
+    for rel in tracked:
+        path = ROOT / rel
+        if path.is_file() and _is_public_text_file(path):
+            text = path.read_text(encoding="utf-8", errors="ignore").lower()
+            for term in BANNED_PUBLIC_TERMS:
+                if term in text:
+                    failures.append(f"banned legacy namespace '{term}' found in {rel}")
+
     if failures:
         print("Release readiness check failed:")
         for failure in failures:
@@ -93,6 +104,13 @@ def _git_ls_files(pattern: str | None = None) -> list[str]:
         command.append(pattern)
     result = subprocess.run(command, cwd=ROOT, check=True, capture_output=True, text=True)
     return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+
+
+def _is_public_text_file(path: Path) -> bool:
+    if path.suffix.lower() not in {".md", ".py", ".toml", ".yml", ".yaml", ".json", ".txt", ".cff"}:
+        return False
+    parts = set(path.relative_to(ROOT).parts)
+    return ".git" not in parts
 
 
 if __name__ == "__main__":

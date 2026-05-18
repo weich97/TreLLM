@@ -1,5 +1,6 @@
 from tradearena.core.domain import Order, PortfolioState, Side
 from tradearena.data import SyntheticMarketDataProvider
+from tradearena.tools.calibration import ExecutionCalibrationConfig, summarize_execution_calibration
 from tradearena.tools import RealisticOrderSimulator, RiskCalculator, SimpleOrderSimulator
 
 
@@ -50,3 +51,27 @@ def test_realistic_simulator_spread_bps_increases_crossing_cost():
     assert wide_spread.last_report is not None
     assert wide_spread.last_report.metadata["spread_bps"] == 100.0
     assert wide_spread.last_report.total_slippage > no_spread.last_report.total_slippage
+
+
+def test_execution_calibration_marks_ohlcv_limits(tmp_path):
+    csv_path = tmp_path / "SYN_Hourly_1h.csv"
+    csv_path.write_text(
+        "\n".join(
+            [
+                "Date,Open,High,Low,Close,Volume",
+                "2026-01-01T09:30:00,100,102,99,101,1000",
+                "2026-01-01T10:30:00,101,103,100,102,2000",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    summary = summarize_execution_calibration(
+        [csv_path],
+        ExecutionCalibrationConfig(spread_bps=None, participation_rate=0.05, market_impact=0.15),
+    )
+
+    assert summary["data"]["symbol_count"] == 1
+    assert summary["data"]["row_count"] == 2
+    assert summary["diagnostics"]["spread_status"] == "assumed_zero_or_external"
+    assert "OHLCV bars do not contain bid-ask quotes" in summary["diagnostics"]["identification_warning"]

@@ -7,7 +7,7 @@
 <p align="center">
   <strong>
     Open-source benchmark and audit framework for evaluating LLM trading agents
-    under realistic execution, risk, and replayability constraints.
+    under explicit execution, risk, and replayability constraints.
   </strong>
 </p>
 
@@ -93,7 +93,7 @@ approved target weights into market orders by comparing current position value
 with target portfolio value. Trades below `min_trade_value` are skipped to avoid
 noise. Second,
 [`RealisticOrderSimulator`](src/tradearena/tools/simulator.py) applies a
-microstructure-style fill model:
+configurable paper-execution stress model:
 
 - submitted orders enter a pending queue and become eligible after
   `latency_steps`;
@@ -114,7 +114,40 @@ slip_rate =
 
 The simulator records requested quantity, filled quantity, fill ratio, latency,
 liquidity available, commission, slippage cost, partial fills, pending orders,
-and rejections in an `ExecutionReport`.
+and rejections in an `ExecutionReport`. Its default settings are transparent
+stress-test assumptions, not a claim of broker-grade transaction-cost
+calibration.
+
+## Execution Calibration Boundary
+
+Execution realism is only meaningful when its assumptions are visible. TradeArena
+therefore separates the simulator equation from parameter calibration:
+
+| Parameter | Default role | Calibration source needed |
+| --- | --- | --- |
+| `commission_bps` | explicit fee on traded notional | broker or exchange fee schedule |
+| `spread_bps` | full quoted spread; market orders cross half | quote/NBBO or order-book snapshots |
+| `base_slippage_bps` | residual shortfall before spread, impact, and bar volatility | historical order/fill logs |
+| `participation_rate` | cap on fillable bar volume | execution policy or parent-order participation target |
+| `latency_steps` | bar-delay before an order is eligible | submission, acknowledgement, and fill timestamps |
+| `market_impact` | coefficient on participation | regression of implementation shortfall on participation |
+
+The tracked Yahoo Finance OHLCV files can estimate bar range, tail range, dollar
+volume, and participation-cap diagnostics. They cannot identify quoted spread,
+queue depth, fee tier, latency, or realized shortfall. For that reason, current
+public benchmark results should be read as execution-stress comparisons under
+shared assumptions. Live-market execution claims require replacing the defaults
+with quote/fill-calibrated parameters.
+
+Run the diagnostic:
+
+```bash
+python scripts/calibrate_execution_model.py --data-dir data/real/yahoo_intraday_1h_50
+```
+
+This writes `docs/results/execution_calibration_intraday_1h.json` and
+`docs/results/execution_calibration_intraday_1h.md`. Full details are in
+[`docs/execution_model.md`](docs/execution_model.md).
 
 Risk control is an auditable gate, not a hidden post-processing step.
 [`MaxPositionRiskManager`](src/tradearena/agents/risk.py) runs three checks:
@@ -200,7 +233,7 @@ tradearena --benchmark tradearena-core
 The v0.1 benchmark card makes one compact claim:
 
 > LLM trading-agent evaluation changes materially once intended allocations
-> pass through auditable risk gates and realistic execution constraints.
+> pass through auditable risk gates and explicit execution-stress constraints.
 
 Open:
 
@@ -237,7 +270,7 @@ See [`docs/benchmark_submissions.md`](docs/benchmark_submissions.md).
 <table>
   <tr>
     <th>Audit lifecycle</th>
-    <th>Execution realism</th>
+    <th>Execution stress</th>
     <th>Diagnostic loop</th>
   </tr>
   <tr>
@@ -268,7 +301,7 @@ The browser-playable launch video is here:
 | Need | TradeArena surface |
 | --- | --- |
 | Replayable decisions | Trajectory logs with prompts, memory digests, risk reports, fills, and metrics |
-| Execution realism | Fees, spread, slippage, latency, liquidity caps, partial fills, and rejections |
+| Execution stress model | Configurable fees, spread, slippage, latency, liquidity caps, partial fills, rejections, and calibration diagnostics |
 | Risk-aware evaluation | Pre-trade gates, in-trade monitors, post-trade attribution, violations |
 | Extensibility | Data, analyst, strategy, risk, simulator, memory, planner, evaluator plugins |
 | Community benchmarks | Redacted submission schema, registry builder, reproducibility hashes |
@@ -297,6 +330,7 @@ Useful entry points:
 
 - Quickstart: [`docs/getting_started.md`](docs/getting_started.md)
 - Schemas: [`docs/schemas.md`](docs/schemas.md)
+- Execution model: [`docs/execution_model.md`](docs/execution_model.md)
 - Benchmark submissions: [`docs/benchmark_submissions.md`](docs/benchmark_submissions.md)
 - Related work: [`docs/related_work.md`](docs/related_work.md)
 - Retail planning sandbox: [`docs/retail_planning.md`](docs/retail_planning.md)

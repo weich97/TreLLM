@@ -32,6 +32,8 @@ The tracked leaderboard is generated from redacted manifests:
 - HTML: [`docs/results/community_registry.html`](results/community_registry.html)
 - Multi-scenario LLM model matrix:
   [`docs/results/model_matrix/leaderboard_model_matrix.md`](results/model_matrix/leaderboard_model_matrix.md)
+- Real-market Yahoo matrix:
+  [`docs/results/real_market_matrix/real_market_model_matrix.md`](results/real_market_matrix/real_market_model_matrix.md)
 
 The HTML page supports search, sortable columns, and row details. Each accepted
 row carries a reproducibility badge when its manifest passes schema validation

@@ -1,0 +1,32 @@
+{
+  "end": "2022-12-31",
+  "frequency": "weekly",
+  "max_periods": 12,
+  "metrics": {
+    "execution_fill_rate": 0.7272727272727273,
+    "max_drawdown": -0.20577384534423304,
+    "rejected_order_count": 4,
+    "risk_clipped_decisions": 19,
+    "risk_violation_count": 4,
+    "sharpe": -4.144856262446209,
+    "total_return": -0.16005308929434525,
+    "trajectory_reproducibility_coverage": 1.0
+  },
+  "model": "deepseek-v4-flash",
+  "parse_coverage": 1.0,
+  "provider": "deepseek",
+  "redaction": {
+    "raw_prompts_included": false,
+    "raw_responses_included": false,
+    "timestamps_masked": true
+  },
+  "scenario_id": "leaderboard_real_yahoo_2022_gspc_btc_btcf_weekly_v0_1",
+  "scenario_label": "Yahoo 2022 rates drawdown",
+  "schema_version": "0.1",
+  "start": "2022-01-01",
+  "symbols": [
+    "GSPC",
+    "BTC-USD",
+    "BTC=F"
+  ]
+}

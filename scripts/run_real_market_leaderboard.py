@@ -13,7 +13,7 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from tradearena.core.reproducibility import attach_reproducibility_hash, sha256_file  # noqa: E402
+from tradearena.core.reproducibility import attach_reproducibility_hash, sha256_file, sha256_text  # noqa: E402
 from tradearena.factory import build_default_system  # noqa: E402
 
 
@@ -27,62 +27,39 @@ DEFAULT_MODELS = (
     "deepseek:deepseek-v4-pro",
 )
 
-SCENARIOS: dict[str, dict[str, Any]] = {
-    "calm_trend": {
-        "scenario_id": "leaderboard_llm_calm_trend_synthetic_v0_1",
-        "label": "Calm trend",
-        "seed_offset": 0,
-        "synthetic": {
-            "synthetic_volatility_scale": 1.0,
-            "synthetic_trend_scale": 1.0,
-            "synthetic_seasonal_scale": 1.0,
-            "synthetic_macro_scale": 1.0,
-        },
+REAL_SCENARIOS: dict[str, dict[str, Any]] = {
+    "recent_cross_asset": {
+        "scenario_id": "leaderboard_real_yahoo_recent_gspc_btc_btcf_weekly_v0_1",
+        "label": "Yahoo recent GSPC/BTC/BTC futures",
+        "start": "2025-05-01",
+        "end": "2026-05-14",
     },
-    "high_vol": {
-        "scenario_id": "leaderboard_llm_high_vol_synthetic_v0_1",
-        "label": "High volatility",
-        "seed_offset": 10,
-        "synthetic": {
-            "synthetic_volatility_scale": 2.25,
-            "synthetic_trend_scale": 0.65,
-            "synthetic_seasonal_scale": 1.2,
-            "synthetic_macro_scale": 1.4,
-        },
-    },
-    "jump_tail": {
-        "scenario_id": "leaderboard_llm_jump_tail_synthetic_v0_1",
-        "label": "Jump and tail risk",
-        "seed_offset": 22,
-        "synthetic": {
-            "synthetic_volatility_scale": 1.65,
-            "synthetic_trend_scale": 0.85,
-            "synthetic_seasonal_scale": 1.0,
-            "synthetic_macro_scale": 1.5,
-            "synthetic_tail_df": 3,
-            "synthetic_jump_probability": 0.15,
-            "synthetic_jump_scale": 0.08,
-        },
+    "rates_drawdown": {
+        "scenario_id": "leaderboard_real_yahoo_2022_gspc_btc_btcf_weekly_v0_1",
+        "label": "Yahoo 2022 rates drawdown",
+        "start": "2022-01-01",
+        "end": "2022-12-31",
     },
 }
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Run a small provider-backed model matrix and write redacted benchmark manifests."
+        description="Run provider-backed LLM leaderboard rows on real Yahoo Finance market data."
     )
     parser.add_argument("--models", default=",".join(DEFAULT_MODELS), help="Comma-separated provider:model entries.")
     parser.add_argument(
         "--scenarios",
-        default="calm_trend,high_vol,jump_tail",
-        help=f"Comma-separated scenario presets. Available: {', '.join(SCENARIOS)}.",
+        default="recent_cross_asset,rates_drawdown",
+        help=f"Comma-separated real-data scenario presets. Available: {', '.join(REAL_SCENARIOS)}.",
     )
-    parser.add_argument("--periods", type=int, default=8)
-    parser.add_argument("--seed", type=int, default=7)
-    parser.add_argument("--symbols", default="SYN,ALT")
-    parser.add_argument("--output-dir", default="docs/results/model_matrix")
-    parser.add_argument("--submission-dir", default="examples/benchmark_submissions/model_matrix")
-    parser.add_argument("--cache-dir", default="outputs/llm_cache/leaderboard_model_matrix")
+    parser.add_argument("--data-dir", default="data/real/yahoo_daily_leaderboard_2021_2026")
+    parser.add_argument("--symbols", default="GSPC,BTC-USD,BTC=F")
+    parser.add_argument("--frequency", default="weekly", choices=["daily", "weekly"])
+    parser.add_argument("--max-periods", type=int, default=12)
+    parser.add_argument("--output-dir", default="docs/results/real_market_matrix")
+    parser.add_argument("--submission-dir", default="examples/benchmark_submissions/real_market_matrix")
+    parser.add_argument("--cache-dir", default="outputs/llm_cache/real_market_matrix")
     parser.add_argument("--update-registry", action="store_true")
     args = parser.parse_args(argv)
 
@@ -95,12 +72,14 @@ def main(argv: list[str] | None = None) -> int:
     submission_dir.mkdir(parents=True, exist_ok=True)
     cache_dir.mkdir(parents=True, exist_ok=True)
 
+    data_dir = ROOT / args.data_dir
     symbols = tuple(symbol.strip() for symbol in args.symbols.split(",") if symbol.strip())
     model_specs = [_parse_model_spec(item) for item in args.models.split(",") if item.strip()]
     scenarios = [_scenario(name) for name in args.scenarios.split(",") if name.strip()]
+    data_hash = _data_hash(data_dir, symbols)
+
     rows: list[dict[str, Any]] = []
     failures: list[dict[str, str]] = []
-
     for scenario in scenarios:
         for provider, model in model_specs:
             try:
@@ -109,15 +88,17 @@ def main(argv: list[str] | None = None) -> int:
                     model=model,
                     scenario=scenario,
                     symbols=symbols,
-                    periods=args.periods,
-                    seed=args.seed + int(scenario["seed_offset"]),
+                    frequency=args.frequency,
+                    max_periods=args.max_periods,
+                    data_dir=data_dir,
+                    data_hash=data_hash,
                     output_dir=output_dir,
                     submission_dir=submission_dir,
                     cache_dir=cache_dir,
                 )
                 rows.append(row)
-                print(f"OK {row['scenario_key']} {provider}:{model} -> {row['submission']}")
-            except Exception as exc:  # pragma: no cover - exercised only by live provider failures
+                print(f"OK {row['scenario_key']} {provider}:{model} -> {row['submission']}", flush=True)
+            except Exception as exc:  # pragma: no cover - live provider/data failures
                 failures.append(
                     {
                         "scenario": str(scenario["key"]),
@@ -129,14 +110,15 @@ def main(argv: list[str] | None = None) -> int:
                 print(
                     f"FAILED {scenario['key']} {provider}:{model}: {type(exc).__name__}: {exc}",
                     file=sys.stderr,
+                    flush=True,
                 )
 
-    _write_matrix_table(output_dir / "leaderboard_model_matrix.csv", rows)
+    _write_matrix_table(output_dir / "real_market_model_matrix.csv", rows)
     aggregate_rows = _aggregate_rows(rows)
-    _write_aggregate_table(output_dir / "leaderboard_model_matrix_aggregate.csv", aggregate_rows)
-    _write_matrix_markdown(output_dir / "leaderboard_model_matrix.md", rows, aggregate_rows, failures)
+    _write_aggregate_table(output_dir / "real_market_model_matrix_aggregate.csv", aggregate_rows)
+    _write_matrix_markdown(output_dir / "real_market_model_matrix.md", rows, aggregate_rows, failures)
     if failures:
-        (output_dir / "leaderboard_model_matrix_failures.json").write_text(
+        (output_dir / "real_market_model_matrix_failures.json").write_text(
             json.dumps(failures, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",
         )
@@ -158,9 +140,9 @@ def main(argv: list[str] | None = None) -> int:
         write_registry_html(registry_rows, ROOT / "docs/results/community_registry.html")
         _write_registry_csv(registry_rows, ROOT / "docs/results/community_registry.csv")
 
-    print(f"Successful model rows: {len(rows)}")
+    print(f"Successful real-market rows: {len(rows)}")
     if failures:
-        print(f"Failed model rows: {len(failures)}")
+        print(f"Failed real-market rows: {len(failures)}")
     return 0 if rows else 1
 
 
@@ -170,8 +152,10 @@ def _run_one(
     model: str,
     scenario: dict[str, Any],
     symbols: tuple[str, ...],
-    periods: int,
-    seed: int,
+    frequency: str,
+    max_periods: int,
+    data_dir: Path,
+    data_hash: str,
     output_dir: Path,
     submission_dir: Path,
     cache_dir: Path,
@@ -181,23 +165,38 @@ def _run_one(
     slug = f"{scenario_key}__{model_slug}"
     analyst_name = "poe-llm" if provider == "poe" else "deepseek-llm"
     trajectory, metrics = build_default_system(
-        name=f"leaderboard_{slug}",
+        name=f"real_leaderboard_{slug}",
         symbols=symbols,
-        periods=periods,
-        seed=seed,
+        periods=max_periods,
+        seed=7,
         analyst_names=(analyst_name,),
         strategy_name="signal-weighted",
         risk_name="max-position",
         execution_mode="realistic",
+        data_source="csv",
+        real_data_dir=str(data_dir),
+        real_data_frequency=frequency,
+        real_data_start=str(scenario["start"]),
+        real_data_end=str(scenario["end"]),
+        real_data_max_periods=max_periods,
         llm_model=model,
-        llm_cache_path=str(cache_dir / f"{model_slug}.jsonl"),
+        llm_cache_path=str(cache_dir / f"{slug}.jsonl"),
         llm_mask_timestamps=True,
         llm_use_risk_feedback=True,
         llm_risk_feedback_mode="true",
-        **scenario["synthetic"],
     ).run()
 
     parse_coverage = _parse_coverage(trajectory.to_dict(), symbols)
+    metrics_payload = {
+        "total_return": float(metrics.get("total_return", 0.0)),
+        "max_drawdown": float(metrics.get("max_drawdown", 0.0)),
+        "sharpe": float(metrics.get("sharpe", 0.0)),
+        "execution_fill_rate": float(metrics.get("execution_fill_rate", 0.0)),
+        "rejected_order_count": int(metrics.get("rejected_order_count", 0)),
+        "risk_clipped_decisions": int(metrics.get("risk_clipped_decisions", 0)),
+        "risk_violation_count": int(metrics.get("risk_violation_count", 0)),
+        "trajectory_reproducibility_coverage": float(metrics.get("trajectory_reproducibility_coverage", 0.0)),
+    }
     summary = {
         "schema_version": "0.1",
         "scenario_id": scenario["scenario_id"],
@@ -205,10 +204,12 @@ def _run_one(
         "provider": provider,
         "model": model,
         "symbols": list(symbols),
-        "periods": periods,
-        "seed": seed,
+        "frequency": frequency,
+        "start": scenario["start"],
+        "end": scenario["end"],
+        "max_periods": max_periods,
         "parse_coverage": parse_coverage,
-        "metrics": metrics,
+        "metrics": metrics_payload,
         "redaction": {
             "raw_prompts_included": False,
             "raw_responses_included": False,
@@ -237,14 +238,11 @@ def _run_one(
                 "agent_commit": "redacted-or-local",
             },
             "data_source": {
-                "name": "synthetic-market",
-                "frequency": "daily",
+                "name": "yahoo-finance-csv",
+                "frequency": frequency,
                 "symbols": list(symbols),
                 "timestamp_policy": "relative_masked",
-                "data_hash": (
-                    f"sha256:{scenario_key}-synthetic-seed-{seed}-symbols-"
-                    f"{'-'.join(symbols)}-periods-{periods}"
-                ),
+                "data_hash": data_hash,
             },
             "execution_config": {
                 "commission_bps": 1.0,
@@ -263,18 +261,7 @@ def _run_one(
                     "risk_feedback_mode": "true",
                 },
             },
-            "metrics": {
-                "total_return": float(metrics.get("total_return", 0.0)),
-                "max_drawdown": float(metrics.get("max_drawdown", 0.0)),
-                "sharpe": float(metrics.get("sharpe", 0.0)),
-                "execution_fill_rate": float(metrics.get("execution_fill_rate", 0.0)),
-                "rejected_order_count": int(metrics.get("rejected_order_count", 0)),
-                "risk_clipped_decisions": int(metrics.get("risk_clipped_decisions", 0)),
-                "risk_violation_count": int(metrics.get("risk_violation_count", 0)),
-                "trajectory_reproducibility_coverage": float(
-                    metrics.get("trajectory_reproducibility_coverage", 0.0)
-                ),
-            },
+            "metrics": metrics_payload,
             "trajectory_manifest": {
                 "format": "redacted_manifest",
                 "path_or_uri": _rel(summary_path),
@@ -288,8 +275,8 @@ def _run_one(
                 "timestamps_masked": True,
                 "raw_provider_text_removed": True,
                 "notes": (
-                    "Leaderboard smoke manifest generated from a live or cache-backed provider run; "
-                    "raw prompts and responses remain in ignored local cache files."
+                    "Real-market leaderboard manifest generated from Yahoo Finance CSV data. "
+                    "Raw prompts and responses remain in ignored local cache files."
                 ),
             },
         }
@@ -304,12 +291,7 @@ def _run_one(
         "provider": provider,
         "model": model,
         "parse_coverage": parse_coverage,
-        "total_return": submission["metrics"]["total_return"],
-        "max_drawdown": submission["metrics"]["max_drawdown"],
-        "sharpe": submission["metrics"]["sharpe"],
-        "execution_fill_rate": submission["metrics"]["execution_fill_rate"],
-        "rejected_order_count": submission["metrics"]["rejected_order_count"],
-        "risk_clipped_decisions": submission["metrics"]["risk_clipped_decisions"],
+        **metrics_payload,
         "reproducibility_hash": submission["reproducibility_hash"],
         "submission": _rel(submission_path),
         "summary": _rel(summary_path),
@@ -332,11 +314,10 @@ def _parse_model_spec(value: str) -> tuple[str, str]:
 
 def _scenario(name: str) -> dict[str, Any]:
     key = name.strip()
-    if key not in SCENARIOS:
-        raise ValueError(f"Unknown scenario preset: {key}. Available: {', '.join(SCENARIOS)}")
-    scenario = dict(SCENARIOS[key])
+    if key not in REAL_SCENARIOS:
+        raise ValueError(f"Unknown real scenario preset: {key}. Available: {', '.join(REAL_SCENARIOS)}")
+    scenario = dict(REAL_SCENARIOS[key])
     scenario["key"] = key
-    scenario["synthetic"] = dict(scenario["synthetic"])
     return scenario
 
 
@@ -351,28 +332,17 @@ def _parse_coverage(trajectory: dict[str, Any], symbols: tuple[str, ...]) -> flo
     return round(min(1.0, observed / expected), 4)
 
 
-def _write_matrix_table(path: Path, rows: list[dict[str, Any]]) -> None:
-    fieldnames = [
-        "scenario_key",
-        "scenario_id",
-        "scenario_label",
-        "provider",
-        "model",
-        "parse_coverage",
-        "total_return",
-        "max_drawdown",
-        "sharpe",
-        "execution_fill_rate",
-        "rejected_order_count",
-        "risk_clipped_decisions",
-        "reproducibility_hash",
-        "submission",
-        "summary",
-    ]
-    with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
+def _data_hash(data_dir: Path, symbols: tuple[str, ...]) -> str:
+    file_hashes = []
+    for symbol in symbols:
+        path = data_dir / f"{_safe_symbol(symbol)}_Daily_2021_2026.csv"
+        if not path.exists():
+            raise FileNotFoundError(f"Missing Yahoo CSV for {symbol}: {path}")
+        file_hashes.append({"symbol": symbol, "sha256": sha256_file(path)})
+    manifest = data_dir / "manifest.json"
+    if manifest.exists():
+        file_hashes.append({"symbol": "__manifest__", "sha256": sha256_file(manifest)})
+    return sha256_text(json.dumps(file_hashes, sort_keys=True, separators=(",", ":")))
 
 
 def _aggregate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -405,6 +375,32 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     )
 
 
+def _write_matrix_table(path: Path, rows: list[dict[str, Any]]) -> None:
+    fieldnames = [
+        "scenario_key",
+        "scenario_id",
+        "scenario_label",
+        "provider",
+        "model",
+        "parse_coverage",
+        "total_return",
+        "max_drawdown",
+        "sharpe",
+        "execution_fill_rate",
+        "rejected_order_count",
+        "risk_clipped_decisions",
+        "risk_violation_count",
+        "trajectory_reproducibility_coverage",
+        "reproducibility_hash",
+        "submission",
+        "summary",
+    ]
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
 def _write_aggregate_table(path: Path, rows: list[dict[str, Any]]) -> None:
     fieldnames = [
         "provider",
@@ -431,10 +427,11 @@ def _write_matrix_markdown(
     failures: list[dict[str, str]],
 ) -> None:
     lines = [
-        "# Leaderboard Model Matrix",
+        "# Real-Market Leaderboard Matrix",
         "",
-        "This table is generated by `python scripts/run_leaderboard_model_matrix.py --update-registry`.",
-        "It records redacted model manifests only; raw provider prompts and responses remain in ignored local caches.",
+        "This table is generated by `python scripts/run_real_market_leaderboard.py --update-registry`.",
+        "It uses Yahoo Finance daily CSVs for `GSPC`, `BTC-USD`, and `BTC=F` and records redacted manifests only.",
+        "Raw provider prompts and responses remain in ignored local caches.",
         "",
         "## Cross-Scenario Aggregate",
         "",
@@ -465,7 +462,7 @@ def _write_matrix_markdown(
         [
             "",
             "## Scenario Rows",
-        "",
+            "",
             "| Scenario | Provider | Model | Parse | Return | Max DD | Sharpe | Fill | Rejected | Risk edits | Submission |",
             "| --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
         ]
@@ -493,7 +490,9 @@ def _write_matrix_markdown(
     if failures:
         lines.extend(["", "## Provider Failures", ""])
         for failure in failures:
-            lines.append(f"- `{failure['provider']}:{failure['model']}` failed with `{failure['error']}`.")
+            lines.append(
+                f"- `{failure['scenario']}:{failure['provider']}:{failure['model']}` failed with `{failure['error']}`."
+            )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -511,6 +510,10 @@ def _clean_generated_dir(path: Path) -> None:
     for child in path.iterdir():
         if child.is_file() and child.suffix.lower() in {".json", ".csv", ".md"}:
             child.unlink()
+
+
+def _safe_symbol(symbol: str) -> str:
+    return symbol.replace("^", "").replace("/", "-")
 
 
 def _slug(value: str) -> str:

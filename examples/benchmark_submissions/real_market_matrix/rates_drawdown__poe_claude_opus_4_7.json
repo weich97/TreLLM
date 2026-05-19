@@ -1,0 +1,72 @@
+{
+  "agent": {
+    "agent_commit": "redacted-or-local",
+    "agent_type": "llm_policy",
+    "model_display_name": "claude-opus-4.7",
+    "model_family": "claude-opus-4.7",
+    "model_identifier_redacted": false,
+    "parse_coverage": 1.0,
+    "prompt_mode": "rationale",
+    "prompt_version": "risk-feedback-v1",
+    "provider": "poe",
+    "response_format": "json_object",
+    "risk_feedback_mode": "true"
+  },
+  "data_source": {
+    "data_hash": "sha256:a5cc889c07bd7a70b9413b00e624e2713f3c22dd61c99fa0e320b64229637948",
+    "frequency": "weekly",
+    "name": "yahoo-finance-csv",
+    "symbols": [
+      "GSPC",
+      "BTC-USD",
+      "BTC=F"
+    ],
+    "timestamp_policy": "relative_masked"
+  },
+  "execution_config": {
+    "base_slippage_bps": 2.0,
+    "commission_bps": 1.0,
+    "latency_steps": 1,
+    "market_impact": 0.15,
+    "participation_rate": 0.05,
+    "spread_bps": 0.0
+  },
+  "metrics": {
+    "execution_fill_rate": 0.72,
+    "max_drawdown": -0.185388751584192,
+    "rejected_order_count": 5,
+    "risk_clipped_decisions": 22,
+    "risk_violation_count": 5,
+    "sharpe": -3.5748313314253326,
+    "total_return": -0.13849449867400387,
+    "trajectory_reproducibility_coverage": 1.0
+  },
+  "redaction": {
+    "notes": "Real-market leaderboard manifest generated from Yahoo Finance CSV data. Raw prompts and responses remain in ignored local cache files.",
+    "provider_secrets_removed": true,
+    "raw_provider_text_removed": true,
+    "timestamps_masked": true
+  },
+  "reproducibility_hash": "sha256:a2b360292d213c7656869c422486c9645fff22b8663a55ef3aa7821622354daa",
+  "risk_config": {
+    "risk_budget": {
+      "max_gross_exposure": 1.0,
+      "max_position_weight": 0.35,
+      "max_single_step_turnover": 0.75,
+      "risk_feedback_mode": "true"
+    },
+    "risk_manager": "max-position"
+  },
+  "scenario_id": "leaderboard_real_yahoo_2022_gspc_btc_btcf_weekly_v0_1",
+  "schema_version": "0.1",
+  "trajectory_manifest": {
+    "artifact_hashes": {
+      "redacted_summary": "sha256:ae681f4a1ecdd4584d59dab6ed8526929266e510d8311e4ff69c6622700d0bcc"
+    },
+    "format": "redacted_manifest",
+    "manifest_hash": "sha256:ae681f4a1ecdd4584d59dab6ed8526929266e510d8311e4ff69c6622700d0bcc",
+    "path_or_uri": "docs/results/real_market_matrix/rates_drawdown__poe_claude_opus_4_7_summary.json",
+    "raw_prompts_included": false,
+    "raw_responses_included": false
+  }
+}

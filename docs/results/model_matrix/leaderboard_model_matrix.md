@@ -19,24 +19,24 @@ It records redacted model manifests only; raw provider prompts and responses rem
 
 | Scenario | Provider | Model | Parse | Return | Max DD | Sharpe | Fill | Rejected | Risk edits | Submission |
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| Calm trend | poe | gpt-5.5 | 1.0000 | 0.0288 | -0.0008 | 18.1355 | 0.8333 | 0 | 11 | [manifest](../../examples/benchmark_submissions/model_matrix/calm_trend__poe_gpt_5_5.json) |
-| Calm trend | poe | gemini-3.1-pro | 1.0000 | 0.0253 | -0.0008 | 16.0297 | 0.6667 | 2 | 6 | [manifest](../../examples/benchmark_submissions/model_matrix/calm_trend__poe_gemini_3_1_pro.json) |
-| Calm trend | poe | kimi-k2.5 | 1.0000 | 0.0319 | -0.0008 | 15.6837 | 0.7500 | 1 | 11 | [manifest](../../examples/benchmark_submissions/model_matrix/calm_trend__poe_kimi_k2_5.json) |
-| Calm trend | poe | glm-5 | 1.0000 | 0.0257 | -0.0008 | 17.1992 | 0.8333 | 0 | 12 | [manifest](../../examples/benchmark_submissions/model_matrix/calm_trend__poe_glm_5.json) |
-| Calm trend | poe | claude-opus-4.7 | 1.0000 | 0.0309 | -0.0008 | 20.3419 | 0.8462 | 0 | 12 | [manifest](../../examples/benchmark_submissions/model_matrix/calm_trend__poe_claude_opus_4_7.json) |
-| Calm trend | deepseek | deepseek-v4-flash | 1.0000 | 0.0257 | -0.0008 | 17.1992 | 0.8333 | 0 | 12 | [manifest](../../examples/benchmark_submissions/model_matrix/calm_trend__deepseek_deepseek_v4_flash.json) |
-| Calm trend | deepseek | deepseek-v4-pro | 1.0000 | 0.0240 | -0.0005 | 7.2857 | 0.6667 | 1 | 4 | [manifest](../../examples/benchmark_submissions/model_matrix/calm_trend__deepseek_deepseek_v4_pro.json) |
-| High volatility | poe | gpt-5.5 | 1.0000 | 0.0038 | -0.0065 | 1.6472 | 0.7500 | 1 | 8 | [manifest](../../examples/benchmark_submissions/model_matrix/high_vol__poe_gpt_5_5.json) |
-| High volatility | poe | gemini-3.1-pro | 1.0000 | 0.0144 | -0.0040 | 6.9365 | 0.7500 | 2 | 6 | [manifest](../../examples/benchmark_submissions/model_matrix/high_vol__poe_gemini_3_1_pro.json) |
-| High volatility | poe | kimi-k2.5 | 1.0000 | 0.0037 | -0.0052 | 1.7215 | 0.8462 | 0 | 8 | [manifest](../../examples/benchmark_submissions/model_matrix/high_vol__poe_kimi_k2_5.json) |
-| High volatility | poe | glm-5 | 1.0000 | 0.0030 | -0.0058 | 1.3821 | 0.8462 | 0 | 8 | [manifest](../../examples/benchmark_submissions/model_matrix/high_vol__poe_glm_5.json) |
-| High volatility | poe | claude-opus-4.7 | 1.0000 | 0.0045 | -0.0058 | 1.9820 | 0.7500 | 1 | 8 | [manifest](../../examples/benchmark_submissions/model_matrix/high_vol__poe_claude_opus_4_7.json) |
-| High volatility | deepseek | deepseek-v4-flash | 1.0000 | 0.0033 | -0.0075 | 1.3610 | 0.7692 | 1 | 10 | [manifest](../../examples/benchmark_submissions/model_matrix/high_vol__deepseek_deepseek_v4_flash.json) |
-| High volatility | deepseek | deepseek-v4-pro | 1.0000 | 0.0043 | -0.0065 | 1.8656 | 0.7500 | 1 | 9 | [manifest](../../examples/benchmark_submissions/model_matrix/high_vol__deepseek_deepseek_v4_pro.json) |
-| Jump and tail risk | poe | gpt-5.5 | 1.0000 | 0.0167 | -0.0214 | 2.9762 | 0.6667 | 3 | 12 | [manifest](../../examples/benchmark_submissions/model_matrix/jump_tail__poe_gpt_5_5.json) |
-| Jump and tail risk | poe | gemini-3.1-pro | 1.0000 | 0.0157 | -0.0075 | 3.8126 | 0.6429 | 3 | 9 | [manifest](../../examples/benchmark_submissions/model_matrix/jump_tail__poe_gemini_3_1_pro.json) |
-| Jump and tail risk | poe | kimi-k2.5 | 1.0000 | 0.0167 | -0.0214 | 2.9762 | 0.6667 | 3 | 11 | [manifest](../../examples/benchmark_submissions/model_matrix/jump_tail__poe_kimi_k2_5.json) |
-| Jump and tail risk | poe | glm-5 | 1.0000 | 0.0167 | -0.0214 | 2.9762 | 0.7143 | 3 | 11 | [manifest](../../examples/benchmark_submissions/model_matrix/jump_tail__poe_glm_5.json) |
-| Jump and tail risk | poe | claude-opus-4.7 | 1.0000 | 0.0167 | -0.0214 | 2.9762 | 0.6667 | 3 | 10 | [manifest](../../examples/benchmark_submissions/model_matrix/jump_tail__poe_claude_opus_4_7.json) |
-| Jump and tail risk | deepseek | deepseek-v4-flash | 1.0000 | 0.0167 | -0.0214 | 2.9762 | 0.6667 | 3 | 12 | [manifest](../../examples/benchmark_submissions/model_matrix/jump_tail__deepseek_deepseek_v4_flash.json) |
-| Jump and tail risk | deepseek | deepseek-v4-pro | 1.0000 | 0.0167 | -0.0214 | 2.9762 | 0.7692 | 2 | 9 | [manifest](../../examples/benchmark_submissions/model_matrix/jump_tail__deepseek_deepseek_v4_pro.json) |
+| Calm trend | poe | gpt-5.5 | 1.0000 | 0.0288 | -0.0008 | 18.1355 | 0.8333 | 0 | 11 | [manifest](../../../examples/benchmark_submissions/model_matrix/calm_trend__poe_gpt_5_5.json) |
+| Calm trend | poe | gemini-3.1-pro | 1.0000 | 0.0253 | -0.0008 | 16.0297 | 0.6667 | 2 | 6 | [manifest](../../../examples/benchmark_submissions/model_matrix/calm_trend__poe_gemini_3_1_pro.json) |
+| Calm trend | poe | kimi-k2.5 | 1.0000 | 0.0319 | -0.0008 | 15.6837 | 0.7500 | 1 | 11 | [manifest](../../../examples/benchmark_submissions/model_matrix/calm_trend__poe_kimi_k2_5.json) |
+| Calm trend | poe | glm-5 | 1.0000 | 0.0257 | -0.0008 | 17.1992 | 0.8333 | 0 | 12 | [manifest](../../../examples/benchmark_submissions/model_matrix/calm_trend__poe_glm_5.json) |
+| Calm trend | poe | claude-opus-4.7 | 1.0000 | 0.0309 | -0.0008 | 20.3419 | 0.8462 | 0 | 12 | [manifest](../../../examples/benchmark_submissions/model_matrix/calm_trend__poe_claude_opus_4_7.json) |
+| Calm trend | deepseek | deepseek-v4-flash | 1.0000 | 0.0257 | -0.0008 | 17.1992 | 0.8333 | 0 | 12 | [manifest](../../../examples/benchmark_submissions/model_matrix/calm_trend__deepseek_deepseek_v4_flash.json) |
+| Calm trend | deepseek | deepseek-v4-pro | 1.0000 | 0.0240 | -0.0005 | 7.2857 | 0.6667 | 1 | 4 | [manifest](../../../examples/benchmark_submissions/model_matrix/calm_trend__deepseek_deepseek_v4_pro.json) |
+| High volatility | poe | gpt-5.5 | 1.0000 | 0.0038 | -0.0065 | 1.6472 | 0.7500 | 1 | 8 | [manifest](../../../examples/benchmark_submissions/model_matrix/high_vol__poe_gpt_5_5.json) |
+| High volatility | poe | gemini-3.1-pro | 1.0000 | 0.0144 | -0.0040 | 6.9365 | 0.7500 | 2 | 6 | [manifest](../../../examples/benchmark_submissions/model_matrix/high_vol__poe_gemini_3_1_pro.json) |
+| High volatility | poe | kimi-k2.5 | 1.0000 | 0.0037 | -0.0052 | 1.7215 | 0.8462 | 0 | 8 | [manifest](../../../examples/benchmark_submissions/model_matrix/high_vol__poe_kimi_k2_5.json) |
+| High volatility | poe | glm-5 | 1.0000 | 0.0030 | -0.0058 | 1.3821 | 0.8462 | 0 | 8 | [manifest](../../../examples/benchmark_submissions/model_matrix/high_vol__poe_glm_5.json) |
+| High volatility | poe | claude-opus-4.7 | 1.0000 | 0.0045 | -0.0058 | 1.9820 | 0.7500 | 1 | 8 | [manifest](../../../examples/benchmark_submissions/model_matrix/high_vol__poe_claude_opus_4_7.json) |
+| High volatility | deepseek | deepseek-v4-flash | 1.0000 | 0.0033 | -0.0075 | 1.3610 | 0.7692 | 1 | 10 | [manifest](../../../examples/benchmark_submissions/model_matrix/high_vol__deepseek_deepseek_v4_flash.json) |
+| High volatility | deepseek | deepseek-v4-pro | 1.0000 | 0.0043 | -0.0065 | 1.8656 | 0.7500 | 1 | 9 | [manifest](../../../examples/benchmark_submissions/model_matrix/high_vol__deepseek_deepseek_v4_pro.json) |
+| Jump and tail risk | poe | gpt-5.5 | 1.0000 | 0.0167 | -0.0214 | 2.9762 | 0.6667 | 3 | 12 | [manifest](../../../examples/benchmark_submissions/model_matrix/jump_tail__poe_gpt_5_5.json) |
+| Jump and tail risk | poe | gemini-3.1-pro | 1.0000 | 0.0157 | -0.0075 | 3.8126 | 0.6429 | 3 | 9 | [manifest](../../../examples/benchmark_submissions/model_matrix/jump_tail__poe_gemini_3_1_pro.json) |
+| Jump and tail risk | poe | kimi-k2.5 | 1.0000 | 0.0167 | -0.0214 | 2.9762 | 0.6667 | 3 | 11 | [manifest](../../../examples/benchmark_submissions/model_matrix/jump_tail__poe_kimi_k2_5.json) |
+| Jump and tail risk | poe | glm-5 | 1.0000 | 0.0167 | -0.0214 | 2.9762 | 0.7143 | 3 | 11 | [manifest](../../../examples/benchmark_submissions/model_matrix/jump_tail__poe_glm_5.json) |
+| Jump and tail risk | poe | claude-opus-4.7 | 1.0000 | 0.0167 | -0.0214 | 2.9762 | 0.6667 | 3 | 10 | [manifest](../../../examples/benchmark_submissions/model_matrix/jump_tail__poe_claude_opus_4_7.json) |
+| Jump and tail risk | deepseek | deepseek-v4-flash | 1.0000 | 0.0167 | -0.0214 | 2.9762 | 0.6667 | 3 | 12 | [manifest](../../../examples/benchmark_submissions/model_matrix/jump_tail__deepseek_deepseek_v4_flash.json) |
+| Jump and tail risk | deepseek | deepseek-v4-pro | 1.0000 | 0.0167 | -0.0214 | 2.9762 | 0.7692 | 2 | 9 | [manifest](../../../examples/benchmark_submissions/model_matrix/jump_tail__deepseek_deepseek_v4_pro.json) |

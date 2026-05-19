@@ -44,6 +44,19 @@ The matrix summary is tracked at
 Model rows live under
 [`examples/benchmark_submissions/model_matrix/`](../examples/benchmark_submissions/model_matrix/).
 
+The registry also includes a 14-row real-market matrix over Yahoo Finance
+`^GSPC`, `BTC-USD`, and CME Bitcoin futures (`BTC=F`) data. It compares the
+same seven models over a recent cross-asset window and a 2022 drawdown window:
+
+```bash
+python scripts/run_real_market_leaderboard.py --update-registry
+```
+
+The real-market summary is tracked at
+[`docs/results/real_market_matrix/real_market_model_matrix.md`](results/real_market_matrix/real_market_model_matrix.md).
+Real-market rows live under
+[`examples/benchmark_submissions/real_market_matrix/`](../examples/benchmark_submissions/real_market_matrix/).
+
 The registry format is designed for both deterministic baselines and redacted
 LLM policy runs. Public submissions can include provider family, public-safe
 model display name, prompt mode, risk-feedback mode, parse coverage, metrics,
@@ -53,6 +66,7 @@ See:
 - [`examples/benchmark_submissions/example_redacted_submission.json`](../examples/benchmark_submissions/example_redacted_submission.json)
 - [`examples/benchmark_submissions/example_llm_redacted_submission.json`](../examples/benchmark_submissions/example_llm_redacted_submission.json)
 - [`examples/benchmark_submissions/model_matrix/`](../examples/benchmark_submissions/model_matrix/)
+- [`examples/benchmark_submissions/real_market_matrix/`](../examples/benchmark_submissions/real_market_matrix/)
 - [`schemas/benchmark_submission.schema.json`](../schemas/benchmark_submission.schema.json)
 
 ## Hash A Trajectory

@@ -367,12 +367,17 @@ The v0.1 benchmark card makes one limited claim:
 > LLM trading-agent results can change materially once risk gates and
 > paper-execution costs are included.
 
-The public leaderboard now includes a 21-row model matrix: seven LLMs across
-calm-trend, high-volatility, and jump/tail synthetic market scenarios. Models
-include Poe-hosted `gpt-5.5`, `gemini-3.1-pro`, `kimi-k2.5`, `glm-5`,
+The public leaderboard includes two tracked model comparisons:
+
+- a 21-row synthetic matrix: seven LLMs across calm-trend, high-volatility,
+  and jump/tail scenarios;
+- a 14-row real-market matrix: the same seven models across Yahoo Finance
+  `^GSPC`, `BTC-USD`, and CME Bitcoin futures (`BTC=F`) windows.
+
+Models include Poe-hosted `gpt-5.5`, `gemini-3.1-pro`, `kimi-k2.5`, `glm-5`,
 `claude-opus-4.7`, plus direct `deepseek-v4-flash` and `deepseek-v4-pro`.
-The model-matrix rows are redacted benchmark manifests; raw provider prompts
-and responses remain in ignored local caches.
+The rows are redacted benchmark manifests; raw provider prompts and responses
+remain in ignored local caches.
 
 Open:
 
@@ -384,12 +389,15 @@ Open:
   [`docs/results/benchmark_v0_1.md`](docs/results/benchmark_v0_1.md)
 - Model matrix:
   [`docs/results/model_matrix/leaderboard_model_matrix.md`](docs/results/model_matrix/leaderboard_model_matrix.md)
+- Real-market matrix:
+  [`docs/results/real_market_matrix/real_market_model_matrix.md`](docs/results/real_market_matrix/real_market_model_matrix.md)
 
 Rebuild:
 
 ```bash
 python scripts/build_benchmark_page.py
 python scripts/run_leaderboard_model_matrix.py --update-registry
+python scripts/run_real_market_leaderboard.py --update-registry
 ```
 
 ## Benchmark Maturity

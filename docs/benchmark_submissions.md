@@ -29,6 +29,8 @@ The generated registry is tracked at
 [`docs/results/community_registry.md`](results/community_registry.md).
 The browser-readable version is
 [`docs/results/community_registry.html`](results/community_registry.html).
+Challenge format, leaderboard badges, anonymous rows, and citation guidance are
+defined in [`docs/benchmark_challenges.md`](benchmark_challenges.md).
 
 The registry format is designed for both deterministic baselines and redacted
 LLM policy runs. Public submissions can include provider family, public-safe

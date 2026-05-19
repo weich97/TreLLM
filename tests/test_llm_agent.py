@@ -62,6 +62,39 @@ def test_deepseek_llm_analyst_replays_cache_without_key(tmp_path: Path, monkeypa
     assert signals[0].metadata["llm_call"] is True
 
 
+def test_llm_cache_is_lazy_loaded_until_file_changes(tmp_path: Path):
+    cache = tmp_path / "cache.jsonl"
+    cache.write_text(
+        json.dumps(
+            {
+                "cache_key": "provider:model:prompt",
+                "provider": "provider",
+                "model": "model",
+                "prompt_hash": "prompt",
+                "response_text": "{}",
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    analyst = DeepSeekLLMAnalyst(cache_path=str(cache), model="model", provider="provider")
+
+    first = analyst._cache()
+    second = analyst._cache()
+
+    assert first is second
+    analyst._append_cache(
+        {
+            "cache_key": "provider:model:prompt-2",
+            "provider": "provider",
+            "model": "model",
+            "prompt_hash": "prompt-2",
+            "response_text": "{}",
+        }
+    )
+    assert "provider:model:prompt-2" in analyst._cache()
+
+
 def test_placebo_risk_feedback_keeps_prompt_shape():
     analyst = DeepSeekLLMAnalyst(model="test-model", risk_feedback_mode="placebo")
     snapshot = MarketSnapshot(

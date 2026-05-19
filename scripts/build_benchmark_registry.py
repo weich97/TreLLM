@@ -36,6 +36,7 @@ def _write_csv(rows: list[dict[str, object]], path: str | Path) -> None:
     output_path = Path(path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fieldnames = [
+        "entry_id",
         "scenario_id",
         "agent_type",
         "provider",
@@ -54,6 +55,8 @@ def _write_csv(rows: list[dict[str, object]], path: str | Path) -> None:
         "risk_edits",
         "audit_coverage",
         "reproducibility_hash",
+        "reproducibility_status",
+        "redaction_status",
         "source_file",
     ]
     with output_path.open("w", newline="", encoding="utf-8") as handle:

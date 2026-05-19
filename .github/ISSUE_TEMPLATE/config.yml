@@ -3,3 +3,6 @@ contact_links:
   - name: Quickstart and demo matrix
     url: https://github.com/weich97/TradeArena/blob/main/docs/getting_started.md
     about: Start here before filing setup or demo questions.
+  - name: Contributor task backlog
+    url: https://github.com/weich97/TradeArena/blob/main/docs/community_tasks.md
+    about: Browse small issue-sized tasks and suggested labels.

@@ -37,5 +37,6 @@ realistic order simulator, memory store, trajectory logger, and baseline
 evaluators. Open `outputs/examples/extension_walkthrough.svg` to see the module
 boundary visually.
 
-For a contributor-oriented checklist, see
-[`docs/extension_walkthrough.md`](extension_walkthrough.md).
+For a contributor-oriented checklist and scaffold command, see
+[`docs/extension_walkthrough.md`](extension_walkthrough.md) and
+[`docs/plugin_development.md`](plugin_development.md).

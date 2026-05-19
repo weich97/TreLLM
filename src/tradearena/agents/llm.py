@@ -7,7 +7,7 @@ import os
 import time
 import urllib.error
 import urllib.request
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -35,6 +35,8 @@ class DeepSeekLLMAnalyst:
     output_mode: str = "rationale"
     mask_timestamps: bool = False
     name: str = "deepseek-llm-analyst"
+    _cache_entries: dict[str, dict[str, Any]] | None = field(default=None, init=False, repr=False)
+    _cache_mtime_ns: int | None = field(default=None, init=False, repr=False)
 
     def analyze(self, snapshot: MarketSnapshot, portfolio: PortfolioState, memory: object) -> list[Signal]:
         prompt = self._prompt(snapshot, portfolio, memory)
@@ -264,7 +266,12 @@ class DeepSeekLLMAnalyst:
     def _cache(self) -> dict[str, dict[str, Any]]:
         path = Path(self.cache_path)
         if not path.exists():
+            self._cache_entries = {}
+            self._cache_mtime_ns = None
             return {}
+        mtime_ns = path.stat().st_mtime_ns
+        if self._cache_entries is not None and self._cache_mtime_ns == mtime_ns:
+            return self._cache_entries
         cache: dict[str, dict[str, Any]] = {}
         with path.open(encoding="utf-8") as handle:
             for line in handle:
@@ -274,6 +281,8 @@ class DeepSeekLLMAnalyst:
                 cache[str(item["cache_key"])] = item
                 provider_key = f"{item.get('provider', self.provider)}:{item.get('model', '')}:{item.get('prompt_hash', '')}"
                 cache[provider_key] = item
+        self._cache_entries = cache
+        self._cache_mtime_ns = mtime_ns
         return cache
 
     def _append_cache(self, item: dict[str, Any]) -> None:
@@ -281,6 +290,12 @@ class DeepSeekLLMAnalyst:
         path.parent.mkdir(parents=True, exist_ok=True)
         with path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(item, sort_keys=True) + "\n")
+        if self._cache_entries is None:
+            self._cache_entries = {}
+        self._cache_entries[str(item["cache_key"])] = item
+        provider_key = f"{item.get('provider', self.provider)}:{item.get('model', '')}:{item.get('prompt_hash', '')}"
+        self._cache_entries[provider_key] = item
+        self._cache_mtime_ns = path.stat().st_mtime_ns
 
 
 def _get_secret(name: str) -> str:

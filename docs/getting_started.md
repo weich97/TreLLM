@@ -7,6 +7,15 @@ agent runs are opt-in once you configure a provider key or a local cache.
 
 ## Five-Minute Path
 
+If the package is already installed, one command writes a replayable trajectory:
+
+```bash
+tradearena --benchmark tradearena-core --periods 30 --output outputs/examples/quickstart_trajectory.json
+tradearena hash-run outputs/examples/quickstart_trajectory.json
+```
+
+For the full local demo portal:
+
 ```bash
 git clone https://github.com/weich97/TradeArena.git
 cd TradeArena
@@ -32,6 +41,8 @@ No local install yet? Use:
 
 - [GitHub Codespaces][codespaces-quickstart]
 - Colab notebook: [`notebooks/tradearena_5min_colab.ipynb`](../notebooks/tradearena_5min_colab.ipynb)
+- [Binder][binder-quickstart]
+- [nbviewer][nbviewer-quickstart]
 
 ## LLM Paths
 
@@ -109,9 +120,15 @@ not collapse.
 
 ## Extension Path
 
-Start from `examples/custom_plugin_demo.py`. It defines one local analyst class
-and reuses the existing runner, risk manager, execution simulator, memory store,
-and evaluators.
+Start from a generated skeleton:
+
+```bash
+tradearena new-plugin --type risk --name max-drawdown-guard
+```
+
+Then compare with `examples/custom_plugin_demo.py`. It defines one local analyst
+class and reuses the existing runner, risk manager, execution simulator, memory
+store, and evaluators.
 
 Then run `examples/extension_walkthrough_demo.py`. It shows the fuller
 contributor path: a custom analyst, a custom risk manager, and a custom
@@ -131,3 +148,5 @@ python scripts/check_release_readiness.py
 ```
 
 [codespaces-quickstart]: https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=weich97/TradeArena
+[binder-quickstart]: https://mybinder.org/v2/gh/weich97/TradeArena/main?filepath=notebooks%2Ftradearena_5min_colab.ipynb
+[nbviewer-quickstart]: https://nbviewer.org/github/weich97/TradeArena/blob/main/notebooks/tradearena_5min_colab.ipynb

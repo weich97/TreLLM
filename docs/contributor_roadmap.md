@@ -5,6 +5,9 @@ evaluate, audit, reproduce, or extend. This roadmap groups good issues and
 research extensions by contributor profile so newcomers do not need to infer
 where they fit.
 
+For concrete issue-sized tasks, use
+[`docs/community_tasks.md`](community_tasks.md).
+
 ## Route A: Newcomer / First PR
 
 Good first contributions should be small, offline-friendly, and easy to review.

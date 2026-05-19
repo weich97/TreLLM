@@ -34,11 +34,32 @@
   <a href="https://pypi.org/project/tradearena-benchmark/">PyPI</a> |
   <a href="https://weich97.github.io/TradeArena/">Project site</a> |
   <a href="https://weich97.github.io/TradeArena/benchmark-v0.1.html">Benchmark card</a> |
+  <a href="https://weich97.github.io/TradeArena/community_registry.html">Leaderboard</a> |
   <a href="docs/benchmark_submissions.md">Redacted manifests</a> |
+  <a href="docs/plugin_development.md">Plugins</a> |
   <a href="docs/benchmark_maturity.md">Maturity track</a> |
-  <a href="docs/demo_matrix.md">Demo matrix</a> |
+  <a href="docs/community_tasks.md">First issues</a> |
   <a href="docs/contributor_roadmap.md">Roadmap</a> |
   <a href="SECURITY.md">Security</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=weich97/TradeArena">
+    <img alt="Open in GitHub Codespaces"
+         src="https://img.shields.io/badge/Open%20in-Codespaces-181717?logo=github">
+  </a>
+  <a href="https://colab.research.google.com/github/weich97/TradeArena/blob/main/notebooks/tradearena_5min_colab.ipynb">
+    <img alt="Open in Colab"
+         src="https://colab.research.google.com/assets/colab-badge.svg">
+  </a>
+  <a href="https://mybinder.org/v2/gh/weich97/TradeArena/main?filepath=notebooks%2Ftradearena_5min_colab.ipynb">
+    <img alt="Launch Binder"
+         src="https://mybinder.org/badge_logo.svg">
+  </a>
+  <a href="https://nbviewer.org/github/weich97/TradeArena/blob/main/notebooks/tradearena_5min_colab.ipynb">
+    <img alt="View notebook"
+         src="https://img.shields.io/badge/View-nbviewer-f37626">
+  </a>
 </p>
 
 # TradeArena
@@ -46,6 +67,12 @@
 TradeArena runs paper-trading experiments for LLM and deterministic agents. For
 each step it records the market input, proposed weights, risk edits, simulated
 fills, portfolio state, and metrics.
+
+<p align="center">
+  <img src="docs/assets/readme_audit_lifecycle.gif"
+       alt="Animated TradeArena audit trace showing observation, plan, risk review, execution, and reflection records."
+       width="920">
+</p>
 
 <p align="center">
   <img src="docs/assets/readme_pipeline_architecture.svg"
@@ -56,6 +83,19 @@ fills, portfolio state, and metrics.
 TradeArena only runs paper experiments. The default examples never submit live
 orders. The benchmark is still early; the repo is most useful for checking how
 agent intent changes after risk checks and paper-execution costs.
+
+## Why TradeArena?
+
+TradeArena is not a replacement for mature backtesting engines. It is a small
+audit harness for asking what happened between an agent's stated intent and the
+paper order that survived risk and execution stress.
+
+| Tool | Best fit | TradeArena relationship |
+| --- | --- | --- |
+| Backtrader | Event-driven strategy backtests and broker-style order workflows | Use when the main object is a classical strategy backtest; TradeArena focuses on agent traces, risk edits, and redacted LLM manifests. |
+| vectorbt | Fast vectorized research over many parameter settings | Use when large array sweeps matter most; TradeArena trades speed for step-level audit records and execution/risk reports. |
+| FinRL | Reinforcement-learning market environments and policy training | Use for RL policy development; TradeArena can wrap learned or deterministic policies as agents and compare their risk/execution behavior. |
+| TradeArena | Paper-only LLM/deterministic agent evaluation with reproducible trajectories | Use when prompts, decisions, risk gates, fills, memory, and benchmark manifests need to be inspected together. |
 
 ## How A Run Works
 
@@ -178,6 +218,25 @@ The PyPI distribution is `tradearena-benchmark` because `tradearena` is already
 occupied on PyPI by an unrelated project. The import namespace and CLI remain
 `tradearena`.
 
+## 5 Minutes To A Result
+
+One command writes a replayable trajectory JSON:
+
+```bash
+tradearena --benchmark tradearena-core --periods 30 --output outputs/examples/quickstart_trajectory.json
+```
+
+Then verify the run identity:
+
+```bash
+tradearena hash-run outputs/examples/quickstart_trajectory.json
+```
+
+The first artifact to inspect is
+`outputs/examples/quickstart_trajectory.json`: it contains the decisions,
+pre-trade risk reports, simulated fills, portfolio states, and metrics for each
+case. For a browser report, run the local showcase below.
+
 To run the local demo portal:
 
 ```bash
@@ -200,6 +259,22 @@ downloads, or broker-facing code.
 The first-run path uses deterministic agents, tracked snapshots, and local demo
 files. It does not call DeepSeek, Poe, OpenAI, Hugging Face, AkShare, Yahoo
 Finance, or broker APIs unless you run the opt-in commands below.
+
+## Contributor Entry Points
+
+Small, reviewable contributions are the intended path for outside users:
+
+- Start with the task list in
+  [`docs/community_tasks.md`](docs/community_tasks.md).
+- Create a plugin with
+  `tradearena new-plugin --type risk --name max-drawdown-guard`.
+- Follow the plugin contracts in
+  [`docs/plugin_development.md`](docs/plugin_development.md).
+- Submit redacted benchmark rows through
+  [`docs/benchmark_submissions.md`](docs/benchmark_submissions.md).
+- Use the challenge format in
+  [`docs/benchmark_challenges.md`](docs/benchmark_challenges.md) for
+  reproducible comparisons.
 
 ## LLM Run Paths
 
@@ -267,19 +342,6 @@ submission or cache manifest instead of raw provider text.
 
 The full checklist is in
 [`docs/advanced_integrations_security.md`](docs/advanced_integrations_security.md).
-
-No local install yet?
-
-<p>
-  <a href="https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=weich97/TradeArena">
-    <img alt="Open in GitHub Codespaces"
-         src="https://img.shields.io/badge/Open%20in-Codespaces-181717?logo=github">
-  </a>
-  <a href="https://colab.research.google.com/github/weich97/TradeArena/blob/main/notebooks/tradearena_5min_colab.ipynb">
-    <img alt="Open in Colab"
-         src="https://colab.research.google.com/assets/colab-badge.svg">
-  </a>
-</p>
 
 ## Install And Run
 
@@ -405,6 +467,8 @@ Useful entry points:
 - [`examples/README.md`](examples/README.md)
 - [`docs/demo_matrix.md`](docs/demo_matrix.md)
 - [`docs/extension_walkthrough.md`](docs/extension_walkthrough.md)
+- [`docs/plugin_development.md`](docs/plugin_development.md)
+- [`plugins/README.md`](plugins/README.md)
 - [`docs/contributor_roadmap.md`](docs/contributor_roadmap.md)
 
 ## Documentation Map
@@ -421,6 +485,18 @@ Useful entry points:
   [`docs/external_validation.md`](docs/external_validation.md)
 - Community participation:
   [`docs/community_participation.md`](docs/community_participation.md)
+- Contributor tasks:
+  [`docs/community_tasks.md`](docs/community_tasks.md)
+- Plugin development:
+  [`docs/plugin_development.md`](docs/plugin_development.md)
+- Benchmark challenges:
+  [`docs/benchmark_challenges.md`](docs/benchmark_challenges.md)
+- Community operations:
+  [`docs/community_operations.md`](docs/community_operations.md)
+- Market rules and stress presets:
+  [`docs/market_rules.md`](docs/market_rules.md)
+- Observability:
+  [`docs/observability.md`](docs/observability.md)
 - Schemas: [`docs/schemas.md`](docs/schemas.md)
 - Execution model: [`docs/execution_model.md`](docs/execution_model.md)
 - Benchmark submissions: [`docs/benchmark_submissions.md`](docs/benchmark_submissions.md)

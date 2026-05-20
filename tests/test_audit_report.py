@@ -74,6 +74,7 @@ def test_render_audit_report_from_minimal_trajectory(tmp_path: Path):
     }
     trajectory_path = tmp_path / "trajectory.json"
     output_path = tmp_path / "report.html"
+    autopsy_path = tmp_path / "autopsy.html"
     trajectory_path.write_text(json.dumps(trajectory), encoding="utf-8")
 
     subprocess.run(
@@ -93,6 +94,67 @@ def test_render_audit_report_from_minimal_trajectory(tmp_path: Path):
     assert "Proposed vs Risk-Approved Decisions" in html
     assert "unit decision" in html
     assert "abc123" in html
+
+    subprocess.run(
+        [
+            sys.executable,
+            "scripts/render_agent_autopsy_dashboard.py",
+            "--trajectory",
+            str(trajectory_path),
+            "--output",
+            str(autopsy_path),
+        ],
+        check=True,
+    )
+
+    autopsy = autopsy_path.read_text(encoding="utf-8")
+    assert "Agent Autopsy Dashboard" in autopsy
+    assert "Intent vs Executed Weights Time-Series" in autopsy
+    assert "Slippage Attribution Waterfall" in autopsy
+    assert "Risk Intervention Timeline" in autopsy
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "tradearena.cli",
+            "replay",
+            str(trajectory_path),
+            "--step",
+            "1",
+        ],
+        check=True,
+        text=True,
+        capture_output=True,
+    )
+
+    assert "TradeArena Replay: unit_audit step 1 / 1" in result.stdout
+    assert "Intent -> Approved" in result.stdout
+    assert "0.750 -> 0.250" in result.stdout
+
+    bundle_path = tmp_path / "bundle.json"
+    bundle_path.write_text(json.dumps({"case_a": {"trajectory": trajectory, "metrics": {}}}), encoding="utf-8")
+    json_result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "tradearena.cli",
+            "replay",
+            str(bundle_path),
+            "--case",
+            "case_a",
+            "--step",
+            "1",
+            "--json",
+        ],
+        check=True,
+        text=True,
+        capture_output=True,
+    )
+
+    replay_payload = json.loads(json_result.stdout)
+    assert replay_payload["experiment"] == "unit_audit"
+    assert replay_payload["decisions"][0]["approved_weight"] == 0.25
 
 
 def _risk_report(phase: str, clipped: int) -> dict:

@@ -131,6 +131,7 @@ def test_showcase_index_can_be_built_from_existing_or_missing_artifacts():
     assert "TradeArena Showcase" in html
     assert "Experiment-design demos" in html
     assert "Animated visual tour" in html
+    assert "Agent Autopsy Dashboard" in html
     assert "Custom plugin extension" in html
     assert "Contributor extension walkthrough" in html
     assert "Retail planning sandbox" in html

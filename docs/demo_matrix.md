@@ -38,6 +38,22 @@ without reading the full source tree.
 - Shows: a decision traced from observation to risk gate, fills, memory, and
   reproducibility metadata.
 
+### Agent Autopsy Dashboard
+
+- Run:
+  - `python examples/audit_trajectory_walkthrough.py`
+  - `python scripts/render_agent_autopsy_dashboard.py`
+- Artifact: `outputs/examples/agent_autopsy_dashboard.html`
+- Shows: intent versus executed weights, slippage attribution, and a risk
+  intervention timeline from the same replayable trajectory.
+
+### Replay Mode
+
+- Run: `tradearena replay outputs/examples/audit_walkthrough_trajectory.json --step 17`
+- Artifact: terminal step summary, or JSON with `--json`
+- Shows: one timestamp's observation, signals, proposed decisions, risk edits,
+  execution state, portfolio, and reproducibility fingerprint.
+
 ### Execution Realism
 
 - Run: `python examples/execution_realism_sweep_demo.py`

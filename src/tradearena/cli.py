@@ -5,7 +5,9 @@ import csv
 import json
 import re
 import sys
+import textwrap
 from pathlib import Path
+from typing import Any
 
 from tradearena.core.reproducibility import hash_trajectory_file
 from tradearena.core.serialization import to_jsonable, write_json
@@ -94,7 +96,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
-    if argv and argv[0] in {"validate-submission", "build-registry", "hash-run", "new-plugin"}:
+    if argv and argv[0] in {"validate-submission", "build-registry", "hash-run", "new-plugin", "replay"}:
         return _run_utility_command(argv)
 
     parser = build_parser()
@@ -348,6 +350,21 @@ def _run_utility_command(argv: list[str]) -> int:
         print(json.dumps(hash_trajectory_file(args.trajectory), indent=2))
         return 0
 
+    if command == "replay":
+        parser = argparse.ArgumentParser(description="Replay one step from a TradeArena trajectory JSON.")
+        parser.add_argument("trajectory", help="Trajectory JSON, or a multi-case JSON written by --output.")
+        parser.add_argument("--step", type=int, default=1, help="1-based trajectory step to render.")
+        parser.add_argument("--case", default="", help="Case name when replaying a multi-case --output file.")
+        parser.add_argument("--json", action="store_true", help="Emit a compact machine-readable step summary.")
+        args = parser.parse_args(argv[1:])
+        payload = _load_replay_payload(Path(args.trajectory), args.case)
+        summary = _replay_step_summary(payload, args.step)
+        if args.json:
+            print(json.dumps(summary, indent=2))
+        else:
+            print(_format_replay_summary(summary))
+        return 0
+
     if command == "new-plugin":
         parser = argparse.ArgumentParser(description="Create a local TradeArena plugin skeleton.")
         parser.add_argument("--type", required=True, choices=["data", "analyst", "strategy", "risk", "execution", "simulator", "memory", "evaluator"])
@@ -515,6 +532,289 @@ Implement the protocol for `{class_name}` and add a small deterministic fixture
 before submitting a PR. Keep live API keys, raw provider text, broker files, and
 private holdings out of Git.
 '''
+
+
+def _load_replay_payload(path: Path, case_name: str = "") -> dict[str, Any]:
+    if not path.exists():
+        raise SystemExit(f"Trajectory not found: {path}")
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if isinstance(payload, dict) and isinstance(payload.get("steps"), list):
+        return payload
+    if not isinstance(payload, dict):
+        raise SystemExit(f"Unsupported replay file: {path}")
+
+    cases = {
+        name: value
+        for name, value in payload.items()
+        if isinstance(value, dict) and isinstance(value.get("trajectory"), dict)
+    }
+    if not cases:
+        raise SystemExit(f"Unsupported replay file: {path}. Expected a trajectory with steps or a multi-case output.")
+    if case_name:
+        if case_name not in cases:
+            available = ", ".join(sorted(cases))
+            raise SystemExit(f"Case not found: {case_name}. Available cases: {available}")
+        return cases[case_name]["trajectory"]
+    if len(cases) == 1:
+        return next(iter(cases.values()))["trajectory"]
+    available = ", ".join(sorted(cases))
+    raise SystemExit(f"Multiple cases found. Pass --case with one of: {available}")
+
+
+def _replay_step_summary(trajectory: dict[str, Any], step_number: int) -> dict[str, Any]:
+    steps = trajectory.get("steps", [])
+    if not isinstance(steps, list) or not steps:
+        raise SystemExit("Trajectory has no replayable steps.")
+    if step_number < 1 or step_number > len(steps):
+        raise SystemExit(f"--step must be between 1 and {len(steps)}; got {step_number}.")
+    step = steps[step_number - 1]
+    risk = step.get("risk_report", {}) if isinstance(step.get("risk_report", {}), dict) else {}
+    execution = step.get("execution_report", {}) if isinstance(step.get("execution_report", {}), dict) else {}
+    portfolio = step.get("portfolio", {}) if isinstance(step.get("portfolio", {}), dict) else {}
+    decisions = step.get("decisions", []) if isinstance(step.get("decisions", []), list) else []
+    approved = step.get("approved_decisions", []) if isinstance(step.get("approved_decisions", []), list) else []
+    fills = step.get("fills", []) if isinstance(step.get("fills", []), list) else []
+    reproducibility = (
+        step.get("reproducibility_state", {})
+        if isinstance(step.get("reproducibility_state", {}), dict)
+        else {}
+    )
+    return {
+        "experiment": trajectory.get("experiment_name", ""),
+        "seed": trajectory.get("seed", ""),
+        "step": step_number,
+        "step_count": len(steps),
+        "timestamp": step.get("timestamp", ""),
+        "observation": _replay_observation_summary(step.get("observation", {})),
+        "signals": _replay_signal_summary(step.get("signals", [])),
+        "decisions": _replay_decision_summary(decisions, approved),
+        "risk": {
+            "phase": risk.get("phase", ""),
+            "approved_count": risk.get("approved_count", 0),
+            "blocked_count": risk.get("blocked_count", 0),
+            "clipped_count": risk.get("clipped_count", 0),
+            "checks": _replay_check_summary(risk.get("checks", [])),
+        },
+        "execution": {
+            "orders": len(step.get("orders", []) or []),
+            "fills": len(fills),
+            "submitted_orders": execution.get("submitted_orders", 0),
+            "filled_orders": execution.get("filled_orders", 0),
+            "partial_fills": execution.get("partial_fills", 0),
+            "pending_orders": execution.get("pending_orders", 0),
+            "rejected_orders": execution.get("rejected_orders", 0),
+            "total_commission": execution.get("total_commission", 0.0),
+            "total_slippage": execution.get("total_slippage", 0.0),
+            "average_latency_steps": execution.get("average_latency_steps", 0.0),
+            "first_fill": fills[0] if fills else {},
+        },
+        "portfolio": {
+            "cash": portfolio.get("cash", 0.0),
+            "equity": portfolio.get("equity", 0.0),
+            "positions": portfolio.get("positions", {}),
+        },
+        "memory_events": len(step.get("memory_events", []) or []),
+        "reproducibility": {
+            "prompt_version": reproducibility.get("prompt_version", ""),
+            "model_version": reproducibility.get("model_version", ""),
+            "memory_digest": reproducibility.get("memory_digest", ""),
+            "random_seed": reproducibility.get("random_seed", ""),
+        },
+    }
+
+
+def _replay_observation_summary(observation: object) -> dict[str, Any]:
+    if not isinstance(observation, dict):
+        return {"prices": {}, "news_count": 0, "macro_count": 0, "filings_count": 0, "alt_data_count": 0}
+    return {
+        "prices": observation.get("prices", {}),
+        "news_count": observation.get("news_count", 0),
+        "macro_count": observation.get("macro_count", 0),
+        "filings_count": observation.get("filings_count", 0),
+        "alt_data_count": observation.get("alt_data_count", 0),
+    }
+
+
+def _replay_signal_summary(signals: object, limit: int = 5) -> list[dict[str, Any]]:
+    if not isinstance(signals, list):
+        return []
+    rows = []
+    for signal in signals[:limit]:
+        if not isinstance(signal, dict):
+            continue
+        rows.append(
+            {
+                "symbol": signal.get("symbol", ""),
+                "score": signal.get("score", 0.0),
+                "confidence": signal.get("confidence", 0.0),
+                "analyst": signal.get("metadata", {}).get("analyst", "") if isinstance(signal.get("metadata", {}), dict) else "",
+                "rationale": signal.get("rationale", ""),
+            }
+        )
+    return rows
+
+
+def _replay_decision_summary(decisions: list[object], approved: list[object]) -> list[dict[str, Any]]:
+    approved_by_symbol = {
+        str(item.get("symbol", "")): item
+        for item in approved
+        if isinstance(item, dict)
+    }
+    rows = []
+    for decision in decisions:
+        if not isinstance(decision, dict):
+            continue
+        symbol = str(decision.get("symbol", ""))
+        approved_decision = approved_by_symbol.get(symbol, {})
+        target = _to_float(decision.get("target_weight"))
+        approved_target = _to_float(approved_decision.get("target_weight", target)) if isinstance(approved_decision, dict) else target
+        rows.append(
+            {
+                "symbol": symbol,
+                "side": decision.get("side", ""),
+                "target_weight": target,
+                "approved_weight": approved_target,
+                "delta": approved_target - target,
+                "rationale": decision.get("rationale", ""),
+            }
+        )
+    return rows
+
+
+def _replay_check_summary(checks: object, limit: int = 6) -> list[dict[str, Any]]:
+    if not isinstance(checks, list):
+        return []
+    rows = []
+    for check in checks[:limit]:
+        if not isinstance(check, dict):
+            continue
+        rows.append(
+            {
+                "name": check.get("name", ""),
+                "passed": bool(check.get("passed", False)),
+                "severity": check.get("severity", ""),
+                "message": check.get("message", ""),
+            }
+        )
+    return rows
+
+
+def _format_replay_summary(summary: dict[str, Any]) -> str:
+    lines = [
+        f"TradeArena Replay: {summary['experiment']} step {summary['step']} / {summary['step_count']}",
+        f"timestamp: {summary['timestamp']}",
+        "",
+        "Observation",
+        f"  prices: {_format_prices(summary['observation'].get('prices', {}))}",
+        (
+            f"  news={summary['observation'].get('news_count', 0)} "
+            f"macro={summary['observation'].get('macro_count', 0)} "
+            f"filings={summary['observation'].get('filings_count', 0)} "
+            f"alt={summary['observation'].get('alt_data_count', 0)}"
+        ),
+        "",
+        "Signals",
+    ]
+    for signal in summary["signals"]:
+        lines.append(
+            "  "
+            + f"{signal['symbol']}: score={_to_float(signal['score']):+.3f}, "
+            + f"confidence={_to_float(signal['confidence']):.3f}, analyst={signal['analyst'] or 'unknown'}"
+        )
+        lines.append(f"    {_shorten(signal['rationale'])}")
+    if not summary["signals"]:
+        lines.append("  none")
+
+    lines.extend(["", "Intent -> Approved"])
+    for decision in summary["decisions"]:
+        lines.append(
+            "  "
+            + f"{decision['symbol']} {decision['side']}: "
+            + f"{decision['target_weight']:.3f} -> {decision['approved_weight']:.3f} "
+            + f"(delta {decision['delta']:+.3f})"
+        )
+        lines.append(f"    {_shorten(decision['rationale'])}")
+    if not summary["decisions"]:
+        lines.append("  none")
+
+    lines.extend(
+        [
+            "",
+            "Risk Gate",
+            (
+                f"  phase={summary['risk']['phase']} approved={summary['risk']['approved_count']} "
+                f"clipped={summary['risk']['clipped_count']} blocked={summary['risk']['blocked_count']}"
+            ),
+        ]
+    )
+    for check in summary["risk"]["checks"]:
+        status = "pass" if check["passed"] else "fail"
+        lines.append(f"  [{status}] {check['name']} ({check['severity']}): {_shorten(check['message'])}")
+
+    first_fill = summary["execution"].get("first_fill", {})
+    fill_line = ""
+    if first_fill:
+        fill_line = (
+            f" first_fill={first_fill.get('side', '')} {first_fill.get('symbol', '')} "
+            f"qty={_to_float(first_fill.get('quantity')):.2f} price={_to_float(first_fill.get('price')):.2f}"
+        )
+    lines.extend(
+        [
+            "",
+            "Execution",
+            (
+                f"  orders={summary['execution']['orders']} fills={summary['execution']['fills']} "
+                f"submitted={summary['execution']['submitted_orders']} filled={summary['execution']['filled_orders']} "
+                f"pending={summary['execution']['pending_orders']} rejected={summary['execution']['rejected_orders']} "
+                f"partial={summary['execution']['partial_fills']}"
+            ),
+            (
+                f"  commission={_money(summary['execution']['total_commission'])} "
+                f"slippage={_money(summary['execution']['total_slippage'])} "
+                f"latency={_to_float(summary['execution']['average_latency_steps']):.2f} steps{fill_line}"
+            ),
+            "",
+            "Portfolio",
+            f"  equity={_money(summary['portfolio']['equity'])} cash={_money(summary['portfolio']['cash'])}",
+            f"  positions: {_format_positions(summary['portfolio'].get('positions', {}))}",
+            "",
+            "Reproducibility",
+            (
+                f"  model={summary['reproducibility']['model_version']} "
+                f"prompt={summary['reproducibility']['prompt_version']} "
+                f"memory={summary['reproducibility']['memory_digest']} "
+                f"seed={summary['reproducibility']['random_seed']}"
+            ),
+        ]
+    )
+    return "\n".join(lines)
+
+
+def _format_prices(prices: object) -> str:
+    if not isinstance(prices, dict) or not prices:
+        return "none"
+    return ", ".join(f"{symbol}={_to_float(price):.2f}" for symbol, price in list(prices.items())[:8])
+
+
+def _format_positions(positions: object) -> str:
+    if not isinstance(positions, dict) or not positions:
+        return "flat"
+    return ", ".join(f"{symbol}={_to_float(quantity):.4f}" for symbol, quantity in list(positions.items())[:8])
+
+
+def _shorten(value: object, width: int = 140) -> str:
+    return textwrap.shorten(str(value or ""), width=width, placeholder="...")
+
+
+def _to_float(value: object) -> float:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def _money(value: object) -> str:
+    return f"${_to_float(value):,.2f}"
 
 
 if __name__ == "__main__":

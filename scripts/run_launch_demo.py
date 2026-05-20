@@ -23,8 +23,8 @@ def main() -> int:
     print("This run requires no keys and stays offline: no DeepSeek, Poe, OpenAI, or market-data calls.", flush=True)
     print(flush=True)
 
-    _run([sys.executable, "examples/quickstart_core_benchmark.py"], "1/8 Core benchmark")
-    _run([sys.executable, "examples/audit_trajectory_walkthrough.py"], "2/8 Audit trajectory")
+    _run([sys.executable, "examples/quickstart_core_benchmark.py"], "1/9 Core benchmark")
+    _run([sys.executable, "examples/audit_trajectory_walkthrough.py"], "2/9 Audit trajectory")
     _run(
         [
             sys.executable,
@@ -34,13 +34,24 @@ def main() -> int:
             "--output",
             "outputs/examples/audit_report.html",
         ],
-        "3/8 HTML audit report",
+        "3/9 HTML audit report",
     )
-    _run([sys.executable, "examples/sidecar_data_demo.py"], "4/8 Optional data sidecars")
-    _run([sys.executable, "examples/akshare_csv_reuse_demo.py"], "5/8 AkShare CSV reuse path")
-    _run([sys.executable, "examples/ashare_market_rules_demo.py"], "6/8 A-share market-rule risk gate")
-    _run([sys.executable, "examples/crisis_snapshot_demo.py"], "7/8 Crisis-scene visual gallery")
-    _run([sys.executable, "examples/llm_cache_replay_demo.py"], "8/8 Redacted LLM cache manifest")
+    _run(
+        [
+            sys.executable,
+            "scripts/render_agent_autopsy_dashboard.py",
+            "--trajectory",
+            "outputs/examples/audit_walkthrough_trajectory.json",
+            "--output",
+            "outputs/examples/agent_autopsy_dashboard.html",
+        ],
+        "4/9 Agent autopsy dashboard",
+    )
+    _run([sys.executable, "examples/sidecar_data_demo.py"], "5/9 Optional data sidecars")
+    _run([sys.executable, "examples/akshare_csv_reuse_demo.py"], "6/9 AkShare CSV reuse path")
+    _run([sys.executable, "examples/ashare_market_rules_demo.py"], "7/9 A-share market-rule risk gate")
+    _run([sys.executable, "examples/crisis_snapshot_demo.py"], "8/9 Crisis-scene visual gallery")
+    _run([sys.executable, "examples/llm_cache_replay_demo.py"], "9/9 Redacted LLM cache manifest")
     figure_builder = ROOT / "scripts/build_paper_summary_figures.py"
     if not args.skip_paper_figures and figure_builder.exists() and (ROOT / "outputs/tradearena_paper/tables").exists():
         _run(
@@ -57,6 +68,7 @@ def main() -> int:
         "outputs/examples/quickstart_core_metrics.json",
         "outputs/examples/audit_walkthrough_trajectory.json",
         "outputs/examples/audit_report.html",
+        "outputs/examples/agent_autopsy_dashboard.html",
         "outputs/examples/sidecar_data",
         "outputs/examples/akshare_csv_reuse_summary.json",
         "outputs/examples/akshare_csv_reuse.svg",
@@ -85,6 +97,11 @@ def _write_demo_index(path: Path) -> None:
             "Audit report",
             "Open one replayable observe-plan-risk-act-reflect trajectory with fills, rejections, memory, and reproducibility state.",
             "audit_report.html",
+        ),
+        (
+            "Agent autopsy dashboard",
+            "Inspect intent versus executed weights, slippage attribution, and the risk intervention timeline.",
+            "agent_autopsy_dashboard.html",
         ),
         (
             "Crisis gallery",

@@ -33,6 +33,7 @@
   <a href="docs/getting_started.md">Getting started</a> |
   <a href="https://pypi.org/project/tradearena-benchmark/">PyPI</a> |
   <a href="https://weich97.github.io/TradeArena/">Project site</a> |
+  <a href="https://weich97.github.io/TradeArena/agent_autopsy_dashboard.html">Agent Autopsy</a> |
   <a href="https://weich97.github.io/TradeArena/benchmark-v0.1.html">Benchmark card</a> |
   <a href="https://weich97.github.io/TradeArena/community_registry.html">Leaderboard</a> |
   <a href="docs/benchmark_submissions.md">Redacted manifests</a> |
@@ -236,10 +237,16 @@ Then verify the run identity:
 tradearena hash-run outputs/examples/quickstart_trajectory.json
 ```
 
+Replay one trajectory step in the terminal:
+
+```bash
+tradearena replay outputs/examples/quickstart_trajectory.json --case risk_aware_realistic_agent --step 17
+```
+
 The first artifact to inspect is
 `outputs/examples/quickstart_trajectory.json`: it contains the decisions,
 pre-trade risk reports, simulated fills, portfolio states, and metrics for each
-case. For a browser report, run the local showcase below.
+case. For browser reports, run the local showcase below.
 
 To run the local demo portal:
 
@@ -254,6 +261,7 @@ Then open:
 
 ```text
 outputs/examples/index.html
+outputs/examples/agent_autopsy_dashboard.html
 ```
 
 If you are deciding whether the project is worth using, start with this command

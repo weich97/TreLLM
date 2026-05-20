@@ -51,6 +51,12 @@ SECTIONS = [
         "python scripts/render_audit_report.py",
     ),
     (
+        "Agent Autopsy Dashboard",
+        "Inspect intent versus executed weights, slippage attribution, and the risk intervention timeline from a replayable trajectory.",
+        "agent_autopsy_dashboard.html",
+        "python scripts/render_agent_autopsy_dashboard.py",
+    ),
+    (
         "Crisis gallery",
         "Representation trajectory, correlation/intent heatmap, feedback curves, and exposure waterfall snapshots.",
         "crisis_snapshot_gallery.html",
@@ -142,6 +148,7 @@ def main() -> int:
         _run([sys.executable, "examples/retail_planner_demo.py"], "Retail planning sandbox")
     else:
         _preserve_launch_portal()
+        _maybe_render_agent_autopsy()
         _run([sys.executable, "scripts/build_benchmark_page.py"], "Benchmark v0.1 result page")
         _run([sys.executable, "scripts/build_benchmark_registry.py", "examples/benchmark_submissions"], "Community benchmark registry")
 
@@ -193,6 +200,23 @@ def _copy_registry_page() -> None:
         source = ROOT / "docs/results" / filename
         if source.exists():
             shutil.copy2(source, OUTPUT_DIR / filename)
+
+
+def _maybe_render_agent_autopsy() -> None:
+    trajectory = OUTPUT_DIR / "audit_walkthrough_trajectory.json"
+    if not trajectory.exists():
+        return
+    _run(
+        [
+            sys.executable,
+            "scripts/render_agent_autopsy_dashboard.py",
+            "--trajectory",
+            str(trajectory.relative_to(ROOT)),
+            "--output",
+            "outputs/examples/agent_autopsy_dashboard.html",
+        ],
+        "Agent autopsy dashboard",
+    )
 
 
 def _write_demo_video_page() -> None:
@@ -313,6 +337,7 @@ python scripts/run_showcase.py
     <a class="card" href="benchmark-v0.1.html"><strong>Benchmark result page</strong><span>Crisis scenes, intraday portfolio probes, and representation robustness in one compact snapshot.</span></a>
     <a class="card" href="community_registry.html"><strong>Community registry</strong><span>Validate redacted benchmark submissions and compare runs without raw provider text.</span></a>
     <a class="card" href="audit_report.html"><strong>Replayable audit report</strong><span>Trace one decision through observation, proposal, risk revision, execution, memory, and reproducibility fields.</span></a>
+    <a class="card" href="agent_autopsy_dashboard.html"><strong>Agent Autopsy Dashboard</strong><span>Compare intent, risk-approved exposure, executed weights, slippage attribution, and intervention timing.</span></a>
     <a class="card" href="crisis_snapshot_gallery.html"><strong>Crisis-scene visual probes</strong><span>Inspect representation trajectories, correlation/intent heatmaps, feedback curves, and exposure waterfalls.</span></a>
     <a class="card" href="extension_walkthrough.svg"><strong>Contributor extension path</strong><span>See how custom analysts, risk managers, and evaluators plug into the fixed protocol stack.</span></a>
   </section>

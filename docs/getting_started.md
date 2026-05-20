@@ -12,6 +12,7 @@ If the package is already installed, one command writes a replayable trajectory:
 ```bash
 tradearena --benchmark tradearena-core --periods 30 --output outputs/examples/quickstart_trajectory.json
 tradearena hash-run outputs/examples/quickstart_trajectory.json
+tradearena replay outputs/examples/quickstart_trajectory.json --case risk_aware_realistic_agent --step 17
 ```
 
 For the full local demo portal:
@@ -27,6 +28,7 @@ Open:
 
 ```text
 outputs/examples/index.html
+outputs/examples/agent_autopsy_dashboard.html
 ```
 
 Use this page as the first quality check. Inspect the generated reports, charts,
@@ -103,6 +105,7 @@ python examples/retail_planner_demo.py
 Useful files:
 
 - `outputs/examples/audit_report.html`
+- `outputs/examples/agent_autopsy_dashboard.html`
 - `outputs/examples/benchmark-v0.1.html`
 - `outputs/examples/showcase.html`
 - `outputs/examples/execution_realism_sweep.svg`

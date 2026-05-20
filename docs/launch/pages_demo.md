@@ -25,6 +25,7 @@ Useful entry points:
 - `showcase.html`: demo portal
 - `benchmark-v0.1.html`: compact benchmark result page
 - `audit_report.html`: replayable audit report
+- `agent_autopsy_dashboard.html`: intent/execution autopsy dashboard
 - `crisis_snapshot_gallery.html`: diagnostic visual gallery
 - `retail_planning_report.html`: planning sandbox report
 

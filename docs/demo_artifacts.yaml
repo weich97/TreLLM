@@ -9,10 +9,11 @@ artifacts:
       - outputs/examples/quickstart_core_metrics.json:risk_aware_realistic.execution_fill_rate
       - outputs/examples/quickstart_core_metrics.json:risk_aware_realistic.trajectory_reproducibility_coverage
   - id: audit_report
-    command: python examples/audit_trajectory_walkthrough.py && python scripts/render_audit_report.py
+    command: python examples/audit_trajectory_walkthrough.py && python scripts/render_audit_report.py && python scripts/render_agent_autopsy_dashboard.py
     required_outputs:
       - outputs/examples/audit_walkthrough_trajectory.json
       - outputs/examples/audit_report.html
+      - outputs/examples/agent_autopsy_dashboard.html
     required_json_fields:
       - outputs/examples/audit_walkthrough_trajectory.json:steps
   - id: execution_realism_sweep

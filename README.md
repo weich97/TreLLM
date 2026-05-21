@@ -253,6 +253,7 @@ occupied on PyPI by an unrelated project. The import namespace and CLI remain
 One command writes a replayable trajectory JSON:
 
 ```bash
+mkdir -p outputs/examples
 tradearena --benchmark tradearena-core --periods 30 --output outputs/examples/quickstart_trajectory.json
 ```
 

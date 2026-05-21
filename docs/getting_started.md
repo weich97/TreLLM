@@ -11,6 +11,7 @@ provider key or a local cache.
 If the package is already installed, one command writes a replayable trajectory:
 
 ```bash
+mkdir -p outputs/examples
 tradearena --benchmark tradearena-core --periods 30 --output outputs/examples/quickstart_trajectory.json
 tradearena hash-run outputs/examples/quickstart_trajectory.json
 tradearena replay outputs/examples/quickstart_trajectory.json --case risk_aware_realistic_agent --step 17
@@ -47,6 +48,9 @@ No local install yet? Use:
 - Colab notebook: [`notebooks/tradearena_5min_colab.ipynb`](../notebooks/tradearena_5min_colab.ipynb)
 - [Binder][binder-quickstart]
 - [nbviewer][nbviewer-quickstart]
+
+Binder and Colab sessions should run the setup cell first; it installs the
+editable checkout and creates `outputs/examples` before writing the trajectory.
 
 ## LLM Paths
 

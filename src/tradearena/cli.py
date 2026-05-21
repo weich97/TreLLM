@@ -38,7 +38,13 @@ def build_parser() -> argparse.ArgumentParser:
         default="momentum,macro-news",
         help="Comma-separated analyst plugins for non-paper runs. Use deepseek-llm or poe-llm for live/cache-backed LLM analyst calls.",
     )
-    parser.add_argument("--execution", default="realistic", choices=["realistic", "ideal"])
+    parser.add_argument(
+        "--execution",
+        default="realistic",
+        choices=["realistic", "ideal", "calibrated", "quote-replay", "level2-replay", "fill-replay"],
+    )
+    parser.add_argument("--execution-calibration-profile-id", default="", help="Identifier for externally calibrated execution parameters.")
+    parser.add_argument("--execution-replay-fills", default="", help="Private/licensed fill CSV for --execution fill-replay.")
     parser.add_argument(
         "--spread-bps",
         type=float,
@@ -169,6 +175,11 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(to_jsonable(result["artifacts"]), indent=2))
         return 0
 
+    execution_kwargs = {
+        "execution_calibration_profile_id": args.execution_calibration_profile_id or None,
+        "execution_replay_fills_path": args.execution_replay_fills or None,
+    }
+
     cases = [
         BenchmarkCase(
             name="risk_aware_realistic_agent",
@@ -187,6 +198,7 @@ def main(argv: list[str] | None = None) -> int:
                 llm_use_risk_feedback=not args.no_llm_risk_feedback,
                 llm_risk_feedback_mode=args.llm_risk_feedback_mode,
                 llm_output_mode=args.llm_output_mode,
+                **execution_kwargs,
                 **benchmark_data_kwargs,
             ),
             description="Deterministic or configured analyst stack with configurable risk and execution stress.",
@@ -208,6 +220,7 @@ def main(argv: list[str] | None = None) -> int:
                 llm_use_risk_feedback=not args.no_llm_risk_feedback,
                 llm_risk_feedback_mode=args.llm_risk_feedback_mode,
                 llm_output_mode=args.llm_output_mode,
+                **execution_kwargs,
                 **benchmark_data_kwargs,
             ),
             description="Equal-weight buy-and-hold baseline.",
@@ -229,6 +242,7 @@ def main(argv: list[str] | None = None) -> int:
                 llm_use_risk_feedback=not args.no_llm_risk_feedback,
                 llm_risk_feedback_mode=args.llm_risk_feedback_mode,
                 llm_output_mode=args.llm_output_mode,
+                **execution_kwargs,
                 **benchmark_data_kwargs,
             ),
             description="Same agent under idealized execution for cost/realism ablation.",
@@ -250,6 +264,7 @@ def main(argv: list[str] | None = None) -> int:
                 llm_use_risk_feedback=not args.no_llm_risk_feedback,
                 llm_risk_feedback_mode=args.llm_risk_feedback_mode,
                 llm_output_mode=args.llm_output_mode,
+                **execution_kwargs,
                 **benchmark_data_kwargs,
             ),
             description="Same agent with the risk gate disabled.",
@@ -276,6 +291,7 @@ def main(argv: list[str] | None = None) -> int:
                     llm_use_risk_feedback=not args.no_llm_risk_feedback,
                     llm_risk_feedback_mode=args.llm_risk_feedback_mode,
                     llm_output_mode=args.llm_output_mode,
+                    **execution_kwargs,
                     **benchmark_data_kwargs,
                 ),
                 description="Single live/cache-backed LLM analyst smoke test.",

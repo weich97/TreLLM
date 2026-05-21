@@ -434,11 +434,21 @@ broker execution claims. In particular:
 
 - OHLCV bars cannot calibrate spread, queue depth, or realized shortfall;
 - the market-impact model is linear and intentionally simple;
+- the default stress simulator is not a transaction-cost prediction model;
 - risk warnings are audit records, not a regulatory risk system;
 - LLM provider outputs may depend on model version, routing, prompt wrappers,
   and cache state;
 - paper broker exports do not prove suitability for live trading.
 
-Future work should separate broker-specific calibration files, add quote/fill
-log ingestion, and report confidence intervals for calibrated execution
-parameters.
+TradeArena now exposes separate execution assumption classes:
+`RealisticOrderSimulator` for stress tests, `CalibratedOrderSimulator` for
+externally fitted parameter profiles, `QuoteReplayOrderSimulator` for
+top-of-book or Level-2 quote replay, and `FillReplayOrderSimulator` for
+historical fill replay. This separation is intentional: public OHLCV benchmark
+results should be described as stress diagnostics, while transaction-cost
+claims require calibrated quote/fill data and explicit venue, broker, order
+type, sample-size, and date-range reporting.
+
+Future work should add richer broker-specific calibration files, confidence
+intervals for fitted execution parameters, and larger public examples where
+licensing permits quote or fill replay data to be redistributed.

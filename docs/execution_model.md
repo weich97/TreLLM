@@ -6,6 +6,24 @@ be read as broker-grade transaction-cost analysis unless the parameters are
 calibrated with venue quotes, broker fee schedules, order timestamps, and
 realized fills.
 
+## Mode Boundary
+
+The repository separates stress simulation from calibrated or replayed execution
+so benchmark readers can tell which claims are supported by the data.
+
+| Mode | Class | Required market/execution data | Suitable use |
+| --- | --- | --- | --- |
+| Stress simulator | `RealisticOrderSimulator` | OHLCV bars plus explicit fee, spread, latency, participation, and impact assumptions | Compare agents under shared paper-execution stress |
+| Calibrated simulator | `CalibratedOrderSimulator` | Externally fitted quote/fill calibration profile and documented parameter provenance | Reuse a broker- or venue-specific fit without hiding its source |
+| Quote / Level-2 replay | `QuoteReplayOrderSimulator` | `MarketSnapshot.alt_data["quotes"]` for bid/ask and optionally `alt_data["level2"]` or `alt_data["order_book"]` for depth | Replay decisions under observed quoted spread and depth constraints |
+| Real fill replay | `FillReplayOrderSimulator` | Private or licensed fill CSV, aligned by timestamp, symbol, and side | Audit whether submitted orders match realized fills in a historical execution log |
+
+The default public benchmark uses the stress simulator. It is useful for
+agent-reliability evaluation and execution sensitivity analysis, but it is not a
+transaction-cost prediction engine. A credible transaction-cost result should
+use calibrated or replayed inputs and report venue, broker, order type, symbol
+universe, sample size, and date range.
+
 ## Simulator Equation
 
 `RealisticOrderSimulator` delays orders by `latency_steps`, caps per-symbol
@@ -135,6 +153,32 @@ conservative for those fills. Report residual mean, residual MAE, sample size,
 asset universe, venue, broker, order type, and date range before making any
 claim that the simulator is calibrated.
 
+## Quote And Fill Replay Inputs
+
+`QuoteReplayOrderSimulator` reads quote data from `MarketSnapshot.alt_data`.
+Accepted shapes are intentionally simple:
+
+```python
+snapshot.alt_data["quotes"] = {
+    "AAPL": {"bid": 189.98, "ask": 190.02}
+}
+snapshot.alt_data["level2"] = {
+    "AAPL": {"bids": [[189.98, 500]], "asks": [[190.02, 400]]}
+}
+```
+
+When quotes are present, marketable buys cross the observed ask and sells cross
+the observed bid before residual slippage and impact terms. When Level-2 depth
+is present, fillable quantity is capped by both bar participation and observed
+book depth.
+
+`FillReplayOrderSimulator` is stricter: it only fills an order if the replay log
+contains a matching `timestamp`, `symbol`, and `side`. Missing replay rows are
+counted as rejected orders because a replay pipeline should not fabricate fills.
+The CSV loader accepts `timestamp` or `filled_at`, `symbol`, `side`, `quantity`,
+`fill_price`, and optional `commission`, `reference_price`, `requested_quantity`,
+`latency_steps`, and `fill_ratio`.
+
 ## Reference Anchors
 
 The current implementation is closer to a compact transaction-cost stress proxy
@@ -179,4 +223,6 @@ Use the default execution model to compare agents under the same transparent
 frictions, to stress-test risk gates, and to measure how decisions change after
 partial fills or rejections. Use calibrated quote/fill parameters before making
 claims about live venue execution quality, expected alpha after costs, or
-broker-specific implementation shortfall.
+broker-specific implementation shortfall. Use quote or fill replay before
+claiming that TradeArena explains realized transaction costs for a specific
+market, broker, or order-routing setup.

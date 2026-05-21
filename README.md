@@ -202,6 +202,21 @@ depth, fee tier, latency, or realized shortfall. Treat the included benchmark
 numbers as stress comparisons under shared assumptions. For execution claims,
 replace the defaults with parameters fitted from quotes and fills.
 
+TradeArena is therefore **not** suitable as a transaction-cost prediction
+engine in its default configuration. The execution layer is split into explicit
+modes so results cannot silently mix stress assumptions with calibrated claims:
+
+| Mode | Input required | Appropriate claim |
+| --- | --- | --- |
+| `realistic` | OHLCV bars plus explicit stress parameters | Agent reliability under shared paper-execution stress |
+| `calibrated` | External quote/fill calibration profile | Reuse of documented venue- or broker-specific fitted parameters |
+| `quote-replay` / `level2-replay` | Top-of-book or Level-2 snapshots in `MarketSnapshot.alt_data` | Quote-aware replay with observed spread/depth constraints |
+| `fill-replay` | Private or licensed realized fill log | Audit replay of orders against historical fills |
+
+Only the replay and calibrated modes should be used for transaction-cost
+validation, and even then the calibration data source, venue, broker, order
+types, and date range should be reported with the result.
+
 Run the diagnostic:
 
 ```bash

@@ -1,13 +1,20 @@
 from datetime import datetime, timezone
 
 from tradearena.agents import AlwaysHoldStrategy, MaxPositionRiskManager, MemoryAwareSignalWeightedStrategy, RandomAllocationStrategy
-from tradearena.core.domain import Decision, Order, PortfolioState, Side, Signal
+from tradearena.core.domain import Decision, Fill, MarketSnapshot, Order, PortfolioState, Side, Signal
 from tradearena.core.trajectory import StepRecord, Trajectory
 from tradearena.data import SyntheticMarketDataProvider
 from tradearena.evaluation import BehavioralEvaluator
 from tradearena.memory import InMemoryResearchMemory
 from tradearena.tools.calibration import ExecutionCalibrationConfig, summarize_execution_calibration
-from tradearena.tools import RealisticOrderSimulator, RiskCalculator, SimpleOrderSimulator
+from tradearena.tools import (
+    CalibratedOrderSimulator,
+    FillReplayOrderSimulator,
+    QuoteReplayOrderSimulator,
+    RealisticOrderSimulator,
+    RiskCalculator,
+    SimpleOrderSimulator,
+)
 
 
 def test_order_simulator_never_overspends_cash():
@@ -181,6 +188,77 @@ def test_realistic_simulator_spread_bps_increases_crossing_cost():
     assert wide_spread.last_report is not None
     assert wide_spread.last_report.metadata["spread_bps"] == 100.0
     assert wide_spread.last_report.total_slippage > no_spread.last_report.total_slippage
+
+
+def test_quote_replay_simulator_uses_quotes_and_level2_depth():
+    base_snapshot = SyntheticMarketDataProvider(symbols=("SYN",), periods=2, seed=3).stream()[0]
+    snapshot = MarketSnapshot(
+        timestamp=base_snapshot.timestamp,
+        bars=base_snapshot.bars,
+        alt_data={
+            "quotes": {"SYN": {"bid": 99.9, "ask": 100.1}},
+            "level2": {"SYN": {"ask_size": 3.0, "bid_size": 5.0}},
+        },
+    )
+    portfolio = PortfolioState(cash=1_000_000.0)
+    simulator = QuoteReplayOrderSimulator(
+        participation_rate=1.0,
+        latency_steps=0,
+        base_slippage_bps=0.0,
+        market_impact=0.0,
+    )
+
+    fills = simulator.execute(snapshot, [Order(symbol="SYN", side=Side.BUY, quantity=10.0)], portfolio)
+
+    assert len(fills) == 1
+    assert fills[0].quantity == 3.0
+    assert fills[0].price > 100.1
+    assert simulator.last_report is not None
+    assert simulator.last_report.metadata["assumption_class"] == "quote_replay"
+    assert simulator.last_report.metadata["level2_liquidity"] is True
+
+
+def test_calibrated_simulator_marks_external_profile():
+    snapshot = SyntheticMarketDataProvider(symbols=("SYN",), periods=2, seed=3).stream()[0]
+    portfolio = PortfolioState(cash=1_000_000.0)
+    simulator = CalibratedOrderSimulator(
+        calibration_profile_id="broker-fill-fit-2026q1",
+        participation_rate=1.0,
+        latency_steps=0,
+    )
+
+    simulator.execute(snapshot, [Order(symbol="SYN", side=Side.BUY, quantity=1.0)], portfolio)
+
+    assert simulator.last_report is not None
+    assert simulator.last_report.metadata["assumption_class"] == "calibrated"
+    assert simulator.last_report.metadata["calibration_profile_id"] == "broker-fill-fit-2026q1"
+
+
+def test_fill_replay_simulator_applies_realized_fill_log():
+    snapshot = SyntheticMarketDataProvider(symbols=("SYN",), periods=2, seed=3).stream()[0]
+    replay_fill = Fill(
+        symbol="SYN",
+        side=Side.BUY,
+        quantity=4.0,
+        price=101.25,
+        commission=0.5,
+        timestamp=snapshot.timestamp,
+        requested_quantity=10.0,
+        fill_ratio=0.4,
+        slippage=1.25,
+    )
+    portfolio = PortfolioState(cash=1_000.0)
+    simulator = FillReplayOrderSimulator(replay_fills=[replay_fill])
+
+    fills = simulator.execute(snapshot, [Order(symbol="SYN", side=Side.BUY, quantity=10.0)], portfolio)
+
+    assert len(fills) == 1
+    assert fills[0].quantity == 4.0
+    assert fills[0].price == 101.25
+    assert portfolio.positions["SYN"] == 4.0
+    assert simulator.last_report is not None
+    assert simulator.last_report.partial_fills == 1
+    assert simulator.last_report.metadata["assumption_class"] == "fill_replay"
 
 
 def test_execution_calibration_marks_ohlcv_limits(tmp_path):

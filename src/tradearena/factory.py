@@ -31,7 +31,13 @@ from tradearena.evaluation import (
     RiskAuditEvaluator,
 )
 from tradearena.memory import InMemoryResearchMemory
-from tradearena.tools import RealisticOrderSimulator, SimpleOrderSimulator
+from tradearena.tools import (
+    CalibratedOrderSimulator,
+    FillReplayOrderSimulator,
+    QuoteReplayOrderSimulator,
+    RealisticOrderSimulator,
+    SimpleOrderSimulator,
+)
 
 
 POE_MODEL_API_ALIASES = {
@@ -62,6 +68,9 @@ def default_registry() -> PluginRegistry:
     registry.register("risk", "max-position", MaxPositionRiskManager)
     registry.register("risk", "none", NoRiskManager)
     registry.register("execution", "target-weight", TargetWeightExecutionAgent)
+    registry.register("simulator", "calibrated", CalibratedOrderSimulator)
+    registry.register("simulator", "fill-replay", FillReplayOrderSimulator)
+    registry.register("simulator", "quote-replay", QuoteReplayOrderSimulator)
     registry.register("simulator", "simple", SimpleOrderSimulator)
     registry.register("simulator", "realistic", RealisticOrderSimulator)
     registry.register("memory", "in-memory", InMemoryResearchMemory)
@@ -89,6 +98,8 @@ def build_default_system(
     participation_rate: float = 0.05,
     latency_steps: int = 1,
     market_impact: float = 0.15,
+    execution_calibration_profile_id: str | None = None,
+    execution_replay_fills_path: str | None = None,
     max_position_weight: float = 0.35,
     max_gross_exposure: float = 1.0,
     max_turnover: float = 0.75,
@@ -202,10 +213,32 @@ def build_default_system(
             max_slippage_bps=max(50.0, (slippage_bps + spread_bps / 2.0) * 10.0),
         )
     )
-    simulator = (
-        SimpleOrderSimulator(commission_bps=commission_bps, slippage_bps=slippage_bps)
-        if execution_mode == "ideal"
-        else RealisticOrderSimulator(
+    if execution_mode == "ideal":
+        simulator = SimpleOrderSimulator(commission_bps=commission_bps, slippage_bps=slippage_bps)
+    elif execution_mode in {"calibrated", "calibrated-realistic"}:
+        simulator = CalibratedOrderSimulator(
+            commission_bps=commission_bps,
+            base_slippage_bps=slippage_bps,
+            spread_bps=spread_bps,
+            participation_rate=participation_rate,
+            latency_steps=latency_steps,
+            market_impact=market_impact,
+            calibration_profile_id=execution_calibration_profile_id or "external-calibration",
+        )
+    elif execution_mode in {"quote-replay", "level2-replay"}:
+        simulator = QuoteReplayOrderSimulator(
+            commission_bps=commission_bps,
+            base_slippage_bps=slippage_bps,
+            spread_bps=spread_bps,
+            participation_rate=participation_rate,
+            latency_steps=latency_steps,
+            market_impact=market_impact,
+            calibration_profile_id=execution_calibration_profile_id,
+        )
+    elif execution_mode in {"fill-replay", "real-fill-replay"}:
+        simulator = FillReplayOrderSimulator(csv_path=execution_replay_fills_path)
+    else:
+        simulator = RealisticOrderSimulator(
             commission_bps=commission_bps,
             base_slippage_bps=slippage_bps,
             spread_bps=spread_bps,
@@ -213,7 +246,6 @@ def build_default_system(
             latency_steps=latency_steps,
             market_impact=market_impact,
         )
-    )
     config = ExperimentConfig(name=name, symbols=symbols, seed=seed)
     data_provider = (
         CsvMarketDataProvider(

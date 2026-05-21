@@ -23,7 +23,9 @@ def to_jsonable(value: Any) -> Any:
 
 
 def write_json(path: str | Path, payload: Any) -> None:
-    Path(path).write_text(json.dumps(to_jsonable(payload), indent=2), encoding="utf-8")
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(to_jsonable(payload), indent=2), encoding="utf-8")
 
 
 def read_json(path: str | Path) -> Any:

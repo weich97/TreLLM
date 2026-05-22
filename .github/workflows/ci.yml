@@ -50,3 +50,93 @@ jobs:
         run: python scripts/build_benchmark_registry.py examples/benchmark_submissions
       - name: Release readiness smoke test
         run: python scripts/check_release_readiness.py
+
+  fresh-environment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install public PyPI package in a clean venv
+        run: |
+          python -m venv /tmp/ta-clean
+          /tmp/ta-clean/bin/python -m pip install --upgrade pip
+          /tmp/ta-clean/bin/python -m pip install tradearena-benchmark==0.2.0
+      - name: Run first-contact benchmark path
+        run: |
+          mkdir -p outputs/fresh
+          /tmp/ta-clean/bin/tradearena \
+            --benchmark tradearena-core \
+            --periods 30 \
+            --output outputs/fresh/quickstart_trajectory.json
+      - name: Build external reproduction pack from clean venv
+        run: |
+          /tmp/ta-clean/bin/python scripts/run_external_reproduction_pack.py \
+            --output-dir outputs/fresh/reproduction
+      - name: Hash and replay first-contact artifact
+        run: |
+          /tmp/ta-clean/bin/tradearena \
+            hash-run outputs/fresh/quickstart_trajectory.json \
+            > outputs/fresh/hash.json
+          /tmp/ta-clean/bin/tradearena \
+            replay outputs/fresh/quickstart_trajectory.json \
+            --case risk_aware_realistic_agent \
+            --step 2 \
+            --json \
+            > outputs/fresh/replay.json
+      - name: Validate fresh-environment artifacts
+        run: |
+          cat > /tmp/validate_fresh_environment.py <<'PY'
+          import json
+          from pathlib import Path
+
+          required = [
+              Path("outputs/fresh/quickstart_trajectory.json"),
+              Path("outputs/fresh/reproduction/manifest.json"),
+              Path("outputs/fresh/reproduction/README.md"),
+              Path("outputs/fresh/hash.json"),
+              Path("outputs/fresh/replay.json"),
+              Path("outputs/examples/audit_report.html"),
+              Path("outputs/examples/agent_autopsy_dashboard.html"),
+              Path("outputs/examples/failure_autopsy.json"),
+              Path("outputs/examples/failure_autopsy.md"),
+          ]
+          missing = [str(path) for path in required if not path.exists() or path.stat().st_size == 0]
+          if missing:
+              raise SystemExit(f"missing or empty fresh-environment artifacts: {missing}")
+
+          manifest = json.loads(Path("outputs/fresh/reproduction/manifest.json").read_text())
+          if manifest["schema"] != "tradearena_external_reproduction_pack_v1":
+              raise SystemExit("unexpected reproduction-pack schema")
+          failed = [command for command in manifest["commands"] if command.get("returncode") not in {0, None}]
+          if failed:
+              raise SystemExit(f"reproduction-pack command failures: {failed}")
+
+          trajectory_hash = json.loads(Path("outputs/fresh/hash.json").read_text())
+          if not str(trajectory_hash.get("reproducibility_hash", "")).startswith("sha256:"):
+              raise SystemExit("hash-run did not emit a reproducibility hash")
+
+          replay = json.loads(Path("outputs/fresh/replay.json").read_text())
+          if replay.get("step") != 2 or not replay.get("decisions"):
+              raise SystemExit("replay did not return the requested step with decisions")
+
+          for html_path in [
+              Path("outputs/examples/audit_report.html"),
+              Path("outputs/examples/agent_autopsy_dashboard.html"),
+          ]:
+              text = html_path.read_text(encoding="utf-8", errors="ignore").lower()
+              if "<html" not in text or "</html>" not in text:
+                  raise SystemExit(f"{html_path} is not a complete HTML document")
+          PY
+          /tmp/ta-clean/bin/python /tmp/validate_fresh_environment.py
+      - name: Upload fresh-environment artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: fresh-environment-artifacts
+          path: |
+            outputs/fresh
+            outputs/examples/audit_report.html
+            outputs/examples/agent_autopsy_dashboard.html
+            outputs/examples/failure_autopsy.json
+            outputs/examples/failure_autopsy.md

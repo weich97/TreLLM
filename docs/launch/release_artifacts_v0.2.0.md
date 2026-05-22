@@ -36,14 +36,13 @@ and the current commit/tag.
 
 ## Distribution Files
 
-These hashes are from the local package build used for release validation.
-The GitHub release workflow independently rebuilds and attaches distribution
-files from the release tag.
+These hashes are from the official GitHub Release assets and match the PyPI
+`tradearena-benchmark==0.2.0` file digests uploaded on 2026-05-22.
 
 | Artifact | Bytes | SHA-256 |
 | --- | ---: | --- |
-| `dist/tradearena_benchmark-0.2.0-py3-none-any.whl` | 134592 | `sha256:8727acb9ca27dab55c13fe58f65c473e2f0955485050cc07ed5e3f78f1334ff1` |
-| `dist/tradearena_benchmark-0.2.0.tar.gz` | 147528 | `sha256:9d6c36b06132292de039a796973d12a8bbc4dcb4520a4844bb0b4dfae219bfa2` |
+| `tradearena_benchmark-0.2.0-py3-none-any.whl` | 133274 | `sha256:2d21b11554100a9c52fd3b934e2919976e7e5ce4f2912aa7df0ff9110eda621e` |
+| `tradearena_benchmark-0.2.0.tar.gz` | 144573 | `sha256:25d0fc6a58914558e3197a17d85ed64dd754e67a09d4aa176c48f7a8544a2568` |
 
 ## Verification Commands
 

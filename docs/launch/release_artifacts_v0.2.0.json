@@ -44,14 +44,16 @@
   },
   "distribution_files": [
     {
-      "bytes": 134592,
-      "path": "dist/tradearena_benchmark-0.2.0-py3-none-any.whl",
-      "sha256": "sha256:8727acb9ca27dab55c13fe58f65c473e2f0955485050cc07ed5e3f78f1334ff1"
+      "bytes": 133274,
+      "path": "tradearena_benchmark-0.2.0-py3-none-any.whl",
+      "sha256": "sha256:2d21b11554100a9c52fd3b934e2919976e7e5ce4f2912aa7df0ff9110eda621e",
+      "source": "GitHub Release and PyPI"
     },
     {
-      "bytes": 147528,
-      "path": "dist/tradearena_benchmark-0.2.0.tar.gz",
-      "sha256": "sha256:9d6c36b06132292de039a796973d12a8bbc4dcb4520a4844bb0b4dfae219bfa2"
+      "bytes": 144573,
+      "path": "tradearena_benchmark-0.2.0.tar.gz",
+      "sha256": "sha256:25d0fc6a58914558e3197a17d85ed64dd754e67a09d4aa176c48f7a8544a2568",
+      "source": "GitHub Release and PyPI"
     }
   ],
   "release": "v0.2.0",

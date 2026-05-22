@@ -13,7 +13,8 @@ attaches quote, order-book, or realized fill evidence.
 3. **OHLCV diagnostic:** use bar range and dollar volume only as a weak
    plausibility diagnostic.
 
-The repository now includes a concrete quote/fill calibration entry point:
+The repository now includes two concrete quote/fill calibration entry points.
+The first is a tiny hand-checkable fixture for tests:
 
 ```bash
 python scripts/calibrate_quote_fill_model.py \
@@ -25,9 +26,26 @@ python scripts/calibrate_quote_fill_model.py \
 
 The checked-in microstructure files are a small reproducible fixture. They test
 the calibration pipeline and report format. They are not a venue-wide execution
-claim. A publishable calibration row should replace them with public exchange
-quote/order-book data, licensed data, or broker fills and should report source,
-venue, date range, order type, sample size, and licensing/redaction limits.
+claim.
+
+The second uses a small extracted window from Binance public-data USD-M futures
+`bookTicker`, `trades`, and `klines` files:
+
+```bash
+python scripts/download_binance_microstructure_sample.py
+python scripts/calibrate_quote_fill_model.py \
+  --quotes data/public/binance_btcusdt_perp_2024_03_01_sample/quotes.csv \
+  --fills data/public/binance_btcusdt_perp_2024_03_01_sample/fills.csv \
+  --output docs/results/execution_quote_fill_calibration_binance_sample.json \
+  --markdown-output docs/results/execution_quote_fill_calibration_binance_sample.md \
+  --commission-bps-default 0
+```
+
+This row is stronger than OHLCV-only diagnostics because it uses observed
+top-of-book bid/ask data and realized public trades. It is still a small
+BTCUSDT perpetual sample, not a venue-wide or broker-specific transaction-cost
+model. A publishable calibration row should report source, venue, date range,
+order type, sample size, and licensing/redaction limits.
 
 ## Required Calibration Report Fields
 
@@ -39,8 +57,12 @@ Every calibrated execution report should include:
 - aligned quote/fill sample size;
 - median and tail spread;
 - fitted base slippage and market-impact coefficient;
-- latency summary when timestamps exist;
-- residual mean, residual MAE, and residual max absolute bps;
+- latency or market-data lag summary when timestamps exist;
+- median and tail implementation shortfall;
+- participation-cap residuals;
+- residual mean, residual MAE, residual P90 absolute bps, and residual max
+  absolute bps;
+- calibrated versus stress-only replay error;
 - exact command, commit or tag, and output hashes.
 
 Rows that do not provide these fields should be described as stress-simulator

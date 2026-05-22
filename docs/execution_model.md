@@ -174,6 +174,22 @@ The checked-in fixture under `data/public/microstructure_sample/` is only a
 pipeline test. Replace it with public exchange quote/order-book data, licensed
 data, or broker fills before making a calibrated transaction-cost claim.
 
+Run the public Binance futures sample:
+
+```bash
+python scripts/download_binance_microstructure_sample.py
+python scripts/calibrate_quote_fill_model.py \
+  --quotes data/public/binance_btcusdt_perp_2024_03_01_sample/quotes.csv \
+  --fills data/public/binance_btcusdt_perp_2024_03_01_sample/fills.csv \
+  --output docs/results/execution_quote_fill_calibration_binance_sample.json \
+  --markdown-output docs/results/execution_quote_fill_calibration_binance_sample.md \
+  --commission-bps-default 0
+```
+
+This sample uses public Binance USD-M futures `bookTicker`, `trades`, and
+`klines` files. Public trades are treated as realized market fills for replay
+calibration, not as broker-specific fills or private queue-position evidence.
+
 ## Quote And Fill Replay Inputs
 
 `QuoteReplayOrderSimulator` reads quote data from `MarketSnapshot.alt_data`.

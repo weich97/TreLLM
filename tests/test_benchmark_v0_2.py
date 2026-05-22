@@ -38,9 +38,29 @@ def test_quote_fill_calibration_fixture_fits_execution_parameters():
 
     assert summary["input"]["aligned_rows"] == 8
     assert summary["fitted_parameters"]["spread_bps_median"] > 0
+    assert summary["fitted_parameters"]["spread_bps_p99"] >= summary["fitted_parameters"]["spread_bps_p90"]
     assert summary["fitted_parameters"]["market_impact"] >= 0
     assert summary["fit_quality"]["residual_mae_bps"] < 2.0
+    assert summary["fit_quality"]["residual_p90_abs_bps"] >= summary["fit_quality"]["residual_mae_bps"]
+    assert "stress_only_comparison" in summary
     assert summary["suggested_simulator_config"]["spread_bps"] > 0
+
+
+def test_binance_public_microstructure_sample_reports_quote_fill_replay_error():
+    summary = summarize_quote_fill_calibration(
+        ROOT / "data/public/binance_btcusdt_perp_2024_03_01_sample/quotes.csv",
+        ROOT / "data/public/binance_btcusdt_perp_2024_03_01_sample/fills.csv",
+    )
+    manifest = json.loads(
+        (ROOT / "data/public/binance_btcusdt_perp_2024_03_01_sample/manifest.json").read_text(encoding="utf-8")
+    )
+
+    assert manifest["provenance"]["downloaded_market_data_used"] is True
+    assert summary["input"]["aligned_rows"] == 500
+    assert summary["fitted_parameters"]["quote_event_lag_seconds_median"] is not None
+    assert summary["fitted_parameters"]["quote_staleness_seconds_p90"] is not None
+    assert summary["fit_quality"]["p90_shortfall_bps"] >= summary["fit_quality"]["median_shortfall_bps"]
+    assert summary["stress_only_comparison"]["residual_mae_bps"] > summary["fit_quality"]["residual_mae_bps"]
 
 
 def test_external_reproduction_pack_writes_manifest(tmp_path: Path):

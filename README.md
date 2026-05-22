@@ -262,6 +262,22 @@ This writes `docs/results/execution_quote_fill_calibration_sample.json` and
 fixture as a pipeline test; publishable calibrated claims should replace it with
 public exchange quote/order-book data, licensed data, or broker fills.
 
+For a public exchange quote/fill sample, run:
+
+```bash
+python scripts/download_binance_microstructure_sample.py
+python scripts/calibrate_quote_fill_model.py \
+  --quotes data/public/binance_btcusdt_perp_2024_03_01_sample/quotes.csv \
+  --fills data/public/binance_btcusdt_perp_2024_03_01_sample/fills.csv \
+  --output docs/results/execution_quote_fill_calibration_binance_sample.json \
+  --markdown-output docs/results/execution_quote_fill_calibration_binance_sample.md \
+  --commission-bps-default 0
+```
+
+The checked-in Binance sample covers BTCUSDT USD-M futures public
+top-of-book updates and public trades for a short UTC window. It is a
+calibration example, not a venue-wide transaction-cost claim.
+
 Risk control runs before, during, and after simulated execution.
 [`MaxPositionRiskManager`](src/tradearena/agents/risk.py) runs three checks:
 

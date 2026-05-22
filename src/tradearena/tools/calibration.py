@@ -241,6 +241,19 @@ def summarize_quote_fill_calibration(
         modeled_rows.append(modeled)
 
     latencies = [float(row["latency_seconds"]) for row in rows if row.get("latency_seconds") is not None]
+    quote_event_lags = [
+        float(row["quote_event_lag_seconds"]) for row in rows if row.get("quote_event_lag_seconds") is not None
+    ]
+    quote_staleness = [
+        float(row["quote_staleness_seconds"]) for row in rows if row.get("quote_staleness_seconds") is not None
+    ]
+    shortfalls = [float(row["observed_shortfall_bps"]) for row in rows]
+    participations = [float(row["participation"]) for row in rows]
+    participation_cap = max(0.0001, _percentile(participations, 0.90))
+    participation_residuals = [max(0.0, value - participation_cap) for value in participations]
+    stress_rows, stress_residuals = _stress_only_residuals(rows, config)
+    stress_abs = [abs(value) for value in stress_residuals]
+    calibrated_abs = [abs(value) for value in residuals]
     return {
         "schema": "tradearena_quote_fill_calibration_v1",
         "input": {
@@ -255,22 +268,52 @@ def summarize_quote_fill_calibration(
             "commission_bps_default": config.commission_bps_default,
             "spread_bps_median": round(_percentile(spread_values, 0.50), 6),
             "spread_bps_p90": round(_percentile(spread_values, 0.90), 6),
+            "spread_bps_p99": round(_percentile(spread_values, 0.99), 6),
             "base_slippage_bps": round(base_slippage_bps, 6),
             "market_impact": round(market_impact, 6),
-            "participation_rate_p90": round(_percentile([float(row["participation"]) for row in rows], 0.90), 8),
+            "participation_rate_p90": round(participation_cap, 8),
             "latency_seconds_median": round(_percentile(latencies, 0.50), 6) if latencies else None,
             "latency_seconds_p90": round(_percentile(latencies, 0.90), 6) if latencies else None,
+            "quote_event_lag_seconds_median": round(_percentile(quote_event_lags, 0.50), 6)
+            if quote_event_lags
+            else None,
+            "quote_event_lag_seconds_p90": round(_percentile(quote_event_lags, 0.90), 6)
+            if quote_event_lags
+            else None,
+            "quote_staleness_seconds_median": round(_percentile(quote_staleness, 0.50), 6) if quote_staleness else None,
+            "quote_staleness_seconds_p90": round(_percentile(quote_staleness, 0.90), 6) if quote_staleness else None,
         },
         "fit_quality": {
             "residual_mean_bps": round(mean(residuals), 6),
             "residual_mae_bps": round(mean(abs(value) for value in residuals), 6),
+            "residual_p90_abs_bps": round(_percentile(calibrated_abs, 0.90), 6),
             "residual_max_abs_bps": round(max(abs(value) for value in residuals), 6),
+            "median_shortfall_bps": round(_percentile(shortfalls, 0.50), 6),
+            "p90_shortfall_bps": round(_percentile(shortfalls, 0.90), 6),
+            "p99_shortfall_bps": round(_percentile(shortfalls, 0.99), 6),
+            "participation_cap_residual_mean": round(mean(participation_residuals), 8),
+            "participation_cap_residual_max": round(max(participation_residuals), 8),
+        },
+        "stress_only_comparison": {
+            "default_config": {
+                "commission_bps": config.commission_bps_default,
+                "base_slippage_bps": 2.0,
+                "spread_bps": 0.0,
+                "market_impact": 0.15,
+            },
+            "median_modeled_shortfall_bps": round(
+                _percentile([float(row["stress_only_shortfall_bps"]) for row in stress_rows], 0.50), 6
+            ),
+            "residual_mae_bps": round(mean(stress_abs), 6),
+            "residual_p90_abs_bps": round(_percentile(stress_abs, 0.90), 6),
+            "calibrated_residual_mae_bps": round(mean(calibrated_abs), 6),
+            "mae_reduction_vs_stress": round(mean(stress_abs) - mean(calibrated_abs), 6),
         },
         "suggested_simulator_config": {
             "commission_bps": config.commission_bps_default,
             "base_slippage_bps": round(base_slippage_bps, 6),
             "spread_bps": round(_percentile(spread_values, 0.50), 6),
-            "participation_rate": round(max(0.0001, _percentile([float(row["participation"]) for row in rows], 0.90)), 8),
+            "participation_rate": round(participation_cap, 8),
             "latency_steps": 1,
             "market_impact": round(market_impact, 6),
         },
@@ -288,6 +331,7 @@ def write_quote_fill_calibration_markdown(summary: dict[str, Any], path: str | P
     params = summary["fitted_parameters"]
     quality = summary["fit_quality"]
     suggested = summary["suggested_simulator_config"]
+    stress = summary["stress_only_comparison"]
     lines = [
         "# Quote/Fill Execution Calibration",
         "",
@@ -308,11 +352,16 @@ def write_quote_fill_calibration_markdown(summary: dict[str, Any], path: str | P
         "| --- | ---: |",
         f"| Median spread | {params['spread_bps_median']} bps |",
         f"| P90 spread | {params['spread_bps_p90']} bps |",
+        f"| P99 spread | {params['spread_bps_p99']} bps |",
         f"| Base slippage | {params['base_slippage_bps']} bps |",
         f"| Market impact coefficient | {params['market_impact']} |",
         f"| P90 participation | {params['participation_rate_p90']} |",
         f"| Median latency | {_format_optional(params['latency_seconds_median'], 's')} |",
         f"| P90 latency | {_format_optional(params['latency_seconds_p90'], 's')} |",
+        f"| Median quote event lag | {_format_optional(params['quote_event_lag_seconds_median'], 's')} |",
+        f"| P90 quote event lag | {_format_optional(params['quote_event_lag_seconds_p90'], 's')} |",
+        f"| Median quote staleness at fill | {_format_optional(params['quote_staleness_seconds_median'], 's')} |",
+        f"| P90 quote staleness at fill | {_format_optional(params['quote_staleness_seconds_p90'], 's')} |",
         "",
         "## Fit Quality",
         "",
@@ -320,7 +369,22 @@ def write_quote_fill_calibration_markdown(summary: dict[str, Any], path: str | P
         "| --- | ---: |",
         f"| Residual mean | {quality['residual_mean_bps']} bps |",
         f"| Residual MAE | {quality['residual_mae_bps']} bps |",
+        f"| Residual P90 abs | {quality['residual_p90_abs_bps']} bps |",
         f"| Residual max abs | {quality['residual_max_abs_bps']} bps |",
+        f"| Median shortfall | {quality['median_shortfall_bps']} bps |",
+        f"| P90 shortfall | {quality['p90_shortfall_bps']} bps |",
+        f"| P99 shortfall | {quality['p99_shortfall_bps']} bps |",
+        f"| Mean participation cap residual | {quality['participation_cap_residual_mean']} |",
+        f"| Max participation cap residual | {quality['participation_cap_residual_max']} |",
+        "",
+        "## Calibrated vs Stress-Only Replay Error",
+        "",
+        "| Model | Residual MAE | Residual P90 abs |",
+        "| --- | ---: | ---: |",
+        f"| Default stress-only | {stress['residual_mae_bps']} bps | {stress['residual_p90_abs_bps']} bps |",
+        f"| Quote/fill calibrated | {stress['calibrated_residual_mae_bps']} bps | {quality['residual_p90_abs_bps']} bps |",
+        "",
+        f"MAE reduction versus the default stress-only model: {stress['mae_reduction_vs_stress']} bps.",
         "",
         "## Suggested Simulator Configuration",
         "",
@@ -390,6 +454,12 @@ def _read_quotes(path: Path) -> dict[str, list[dict[str, Any]]]:
                 continue
             symbol = str(row.get("symbol", "")).strip()
             by_symbol.setdefault(symbol, []).append({"timestamp": timestamp, "symbol": symbol, "bid": bid, "ask": ask})
+            quote = by_symbol[symbol][-1]
+            quote["bid_qty"] = _float(row.get("bid_qty") or row.get("best_bid_qty"))
+            quote["ask_qty"] = _float(row.get("ask_qty") or row.get("best_ask_qty"))
+            quote["transaction_time"] = _parse_timestamp(row.get("transaction_time"))
+            quote["event_time"] = _parse_timestamp(row.get("event_time"))
+            quote["update_id"] = str(row.get("update_id", "")).strip()
     for symbol in by_symbol:
         by_symbol[symbol].sort(key=lambda item: item["timestamp"])
     return by_symbol
@@ -477,6 +547,8 @@ def _quote_fill_row(
         "participation_bps": participation * 10_000.0,
         "fit_target_bps": round(fit_target, 6),
         "latency_seconds": _latency_seconds(fill.get("submitted_at"), fill.get("filled_at")),
+        "quote_event_lag_seconds": _time_delta_seconds(quote.get("transaction_time"), quote.get("event_time")),
+        "quote_staleness_seconds": _time_delta_seconds(quote.get("timestamp"), fill["timestamp"]),
     }
 
 
@@ -514,6 +586,27 @@ def _fit_linear_cost(
     return max(min_base, min(max_base, intercept)), max(0.0, min(max_market_impact, slope))
 
 
+def _stress_only_residuals(
+    rows: list[dict[str, Any]], config: QuoteFillCalibrationConfig
+) -> tuple[list[dict[str, Any]], list[float]]:
+    modeled_rows: list[dict[str, Any]] = []
+    residuals: list[float] = []
+    for row in rows:
+        modeled_shortfall = (
+            config.commission_bps_default
+            + 2.0
+            + 0.15 * float(row["participation_bps"])
+            + float(row["volatility_bps"])
+        )
+        residual = float(row["observed_shortfall_bps"]) - modeled_shortfall
+        modeled = dict(row)
+        modeled["stress_only_shortfall_bps"] = round(modeled_shortfall, 6)
+        modeled["stress_only_residual_bps"] = round(residual, 6)
+        modeled_rows.append(modeled)
+        residuals.append(residual)
+    return modeled_rows, residuals
+
+
 def _parse_timestamp(value: object) -> datetime | None:
     text = str(value or "").strip()
     if not text:
@@ -532,6 +625,13 @@ def _latency_seconds(submitted_at: object, filled_at: object) -> float | None:
     if submitted is None or filled is None:
         return None
     seconds = (filled - submitted).total_seconds()
+    return round(seconds, 6) if seconds >= 0 else None
+
+
+def _time_delta_seconds(start: object, end: object) -> float | None:
+    if not isinstance(start, datetime) or not isinstance(end, datetime):
+        return None
+    seconds = (end - start).total_seconds()
     return round(seconds, 6) if seconds >= 0 else None
 
 

@@ -13,6 +13,8 @@ latency, liquidity limits, partial fills, rejected orders, and pre-trade risk ed
 
 ## Result Provenance
 
+> **Execution mode: `realistic-stress`, not calibrated transaction-cost prediction.** The default simulator uses shared stress assumptions for spread, slippage, latency, liquidity caps, partial fills, and rejections. Rows on this card should not be read as calibrated execution-cost estimates unless they attach quote/order-book/fill provenance.
+
 - Software release: v0.2.0.
 - Benchmark snapshot lineage: v0.1.
 - Benchmark card source: tracked snapshots under `docs/results/`.
@@ -55,6 +57,17 @@ reproduction.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | deterministic quickstart | buy_and_hold_realistic | 53.74% | -6.63% | 90.68% | 8.05% | 0 | 100.00% |
 | deterministic quickstart | risk_aware_realistic | 35.08% | -1.26% | 90.91% | 7.39% | 124 | 100.00% |
+
+## Execution Calibration Evidence
+
+These rows are not the default leaderboard mode. They show what must be attached before
+a result can move from stress-only execution assumptions toward calibrated transaction-
+cost evidence.
+
+| Evidence | Aligned fills | Median spread | P90 spread | Median shortfall | P90 shortfall | Stress MAE | Calibrated MAE |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| fixture | 8 | 0.953 bps | 1.364 bps | 1.467 bps | 1.646 bps | 3.533 bps | 0.447 bps |
+| public Binance BTCUSDT perpetual sample | 500 | 0.016 bps | 0.016 bps | 0.008 bps | 1.659 bps | 3.163 bps | 0.908 bps |
 
 ## Non-LLM Classical Baseline Check
 

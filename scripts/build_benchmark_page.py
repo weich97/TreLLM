@@ -19,6 +19,10 @@ CLASSICAL_AGGREGATE_CSV = ROOT / "docs/results/classical_baselines/classical_bas
 QUALITY_AGGREGATE_CSV = ROOT / "docs/results/quality_decomposition/quality_decomposition_aggregate.csv"
 QUALITY_RADAR_SVG = ROOT / "docs/results/quality_decomposition/decision_execution_radar.svg"
 QUICKSTART_JSON = ROOT / "outputs/examples/quickstart_core_metrics.json"
+CALIBRATION_REPORTS = [
+    ("fixture", ROOT / "docs/results/execution_quote_fill_calibration_sample.json"),
+    ("public Binance BTCUSDT perpetual sample", ROOT / "docs/results/execution_quote_fill_calibration_binance_sample.json"),
+]
 RELEASE_TAG = "v0.2.0"
 POLICY_LABELS = {
     "gpt-5.5": "frontier-policy-A (redacted)",
@@ -41,6 +45,7 @@ def main() -> int:
     classical_aggregate_rows = _read_csv(CLASSICAL_AGGREGATE_CSV) if CLASSICAL_AGGREGATE_CSV.exists() else []
     quality_rows = _read_csv(QUALITY_AGGREGATE_CSV) if QUALITY_AGGREGATE_CSV.exists() else []
     quickstart_rows = _read_quickstart_rows(QUICKSTART_JSON) if QUICKSTART_JSON.exists() else []
+    calibration_rows = _read_calibration_rows(CALIBRATION_REPORTS)
 
     crisis_summary = _summarize_crisis(crisis_rows)
     crisis_true_rows = [row for row in crisis_rows if row.get("feedback") == "true"]
@@ -55,6 +60,7 @@ def main() -> int:
         classical_aggregate_rows,
         quality_rows,
         representation_summary,
+        calibration_rows,
     )
     html_text = _html(
         quickstart_rows,
@@ -65,6 +71,7 @@ def main() -> int:
         classical_aggregate_rows,
         quality_rows,
         representation_summary,
+        calibration_rows,
     )
 
     markdown_path = ROOT / args.markdown
@@ -98,6 +105,30 @@ def _read_quickstart_rows(path: Path) -> list[dict[str, Any]]:
                 "rejection_rate": _safe_ratio(float(metrics.get("rejected_order_count", 0.0)), float(metrics.get("order_count", 0.0))),
                 "risk_edits": int(float(metrics.get("risk_clipped_decisions", 0.0))),
                 "audit_completeness": float(metrics.get("trajectory_reproducibility_coverage", 1.0)),
+            }
+        )
+    return rows
+
+
+def _read_calibration_rows(reports: list[tuple[str, Path]]) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for label, path in reports:
+        if not path.exists():
+            continue
+        data = json.loads(path.read_text(encoding="utf-8"))
+        params = data["fitted_parameters"]
+        quality = data["fit_quality"]
+        stress = data.get("stress_only_comparison", {})
+        rows.append(
+            {
+                "label": label,
+                "aligned_rows": data["input"]["aligned_rows"],
+                "spread_p50_bps": params["spread_bps_median"],
+                "spread_p90_bps": params["spread_bps_p90"],
+                "shortfall_p50_bps": quality["median_shortfall_bps"],
+                "shortfall_p90_bps": quality["p90_shortfall_bps"],
+                "stress_mae_bps": stress.get("residual_mae_bps"),
+                "calibrated_mae_bps": quality["residual_mae_bps"],
             }
         )
     return rows
@@ -157,6 +188,7 @@ def _markdown(
     classical_aggregate_rows: list[dict[str, str]],
     quality_rows: list[dict[str, str]],
     representation_summary: list[dict[str, Any]],
+    calibration_rows: list[dict[str, Any]],
 ) -> str:
     provenance = _provenance_rows()
     lines = [
@@ -179,6 +211,11 @@ def _markdown(
         ),
         "",
         "## Result Provenance",
+        "",
+        "> **Execution mode: `realistic-stress`, not calibrated transaction-cost prediction.** "
+        "The default simulator uses shared stress assumptions for spread, slippage, latency, "
+        "liquidity caps, partial fills, and rejections. Rows on this card should not be read "
+        "as calibrated execution-cost estimates unless they attach quote/order-book/fill provenance.",
         "",
         f"- Software release: {RELEASE_TAG}.",
         "- Benchmark snapshot lineage: v0.1.",
@@ -238,6 +275,44 @@ def _markdown(
                         _pct(row["audit_completeness"]),
                     ]
                     for row in quickstart_rows
+                ],
+            ),
+            "",
+        ]
+
+    if calibration_rows:
+        lines += [
+            "## Execution Calibration Evidence",
+            "",
+            _wrap(
+                "These rows are not the default leaderboard mode. They show what "
+                "must be attached before a result can move from stress-only "
+                "execution assumptions toward calibrated transaction-cost evidence."
+            ),
+            "",
+            _md_table(
+                [
+                    "Evidence",
+                    "Aligned fills",
+                    "Median spread",
+                    "P90 spread",
+                    "Median shortfall",
+                    "P90 shortfall",
+                    "Stress MAE",
+                    "Calibrated MAE",
+                ],
+                [
+                    [
+                        row["label"],
+                        str(row["aligned_rows"]),
+                        _bps(row["spread_p50_bps"]),
+                        _bps(row["spread_p90_bps"]),
+                        _bps(row["shortfall_p50_bps"]),
+                        _bps(row["shortfall_p90_bps"]),
+                        _bps(row["stress_mae_bps"]),
+                        _bps(row["calibrated_mae_bps"]),
+                    ]
+                    for row in calibration_rows
                 ],
             ),
             "",
@@ -480,6 +555,7 @@ def _html(
     classical_aggregate_rows: list[dict[str, str]],
     quality_rows: list[dict[str, str]],
     representation_summary: list[dict[str, Any]],
+    calibration_rows: list[dict[str, Any]],
 ) -> str:
     provenance = _provenance_rows()
     quickstart = ""
@@ -553,7 +629,7 @@ def _html(
     quality = ""
     if quality_rows:
         radar = QUALITY_RADAR_SVG.read_text(encoding="utf-8", errors="ignore") if QUALITY_RADAR_SVG.exists() else ""
-        quality = _section(
+    quality = _section(
             "Decision Quality vs Execution Quality",
             "A three-axis decomposition separates pre-risk intent, risk discipline, and execution robustness.",
             radar
@@ -592,6 +668,35 @@ def _html(
                     _pct(row["audit_completeness"]),
                 ]
                 for row in crisis_summary
+            ],
+        ),
+    )
+    calibration = _section(
+        "Execution Calibration Evidence",
+        "Rows here are evidence for calibration plumbing; default benchmark rows remain realistic-stress unless they attach quote/order-book/fill provenance.",
+        _html_table(
+            [
+                "Evidence",
+                "Aligned fills",
+                "Median spread",
+                "P90 spread",
+                "Median shortfall",
+                "P90 shortfall",
+                "Stress MAE",
+                "Calibrated MAE",
+            ],
+            [
+                [
+                    row["label"],
+                    str(row["aligned_rows"]),
+                    _bps(row["spread_p50_bps"]),
+                    _bps(row["spread_p90_bps"]),
+                    _bps(row["shortfall_p50_bps"]),
+                    _bps(row["shortfall_p90_bps"]),
+                    _bps(row["stress_mae_bps"]),
+                    _bps(row["calibrated_mae_bps"]),
+                ]
+                for row in calibration_rows
             ],
         ),
     )
@@ -711,6 +816,7 @@ h1 {{ margin: 0 0 10px; font-size: 38px; letter-spacing: 0; }}
 .lead {{ max-width: 900px; line-height: 1.56; color: #cbd5e1; margin: 0; }}
 .links {{ display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }}
 .links a {{ padding: 8px 11px; border-radius: 8px; border: 1px solid #334155; color: #ccfbf1; background: #111827; text-decoration: none; font-weight: 800; font-size: 13px; }}
+.claim-banner {{ margin-top: 18px; padding: 12px 14px; border: 1px solid #f59e0b; border-radius: 8px; background: #fffbeb; color: #78350f; line-height: 1.5; font-weight: 700; }}
 section {{ margin-top: 26px; padding: 20px; border: 1px solid #d8e2ed; border-radius: 10px; background: #fff; }}
 h2 {{ margin: 0 0 6px; font-size: 24px; letter-spacing: 0; }}
 .section-lead {{ margin: 0 0 14px; color: #64748b; line-height: 1.5; }}
@@ -732,6 +838,7 @@ code {{ background: #e2e8f0; border-radius: 5px; padding: 2px 5px; }}
       <a href="crisis_snapshot_gallery.html">Crisis gallery</a>
       <a href="https://github.com/weich97/TradeArena">GitHub</a>
     </div>
+    <div class="claim-banner">Execution mode: <code>realistic-stress</code>, not calibrated transaction-cost prediction. Default results use shared stress assumptions; calibrated claims require quote/order-book/fill provenance.</div>
   </div>
   {provenance_section}
   {measured_section}
@@ -739,6 +846,7 @@ code {{ background: #e2e8f0; border-radius: 5px; padding: 2px 5px; }}
   {classical}
   {classical_aggregate}
   {quality}
+  {calibration}
   {risk_gate_section}
   {crisis}
   {true_feedback}
@@ -801,6 +909,12 @@ def _safe_ratio(numerator: float, denominator: float) -> float:
 
 def _pct(value: float) -> str:
     return f"{100.0 * value:.2f}%"
+
+
+def _bps(value: object) -> str:
+    if value is None:
+        return "n/a"
+    return f"{float(value):.3f} bps"
 
 
 def _yes_no(value: object) -> str:

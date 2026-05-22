@@ -19,13 +19,13 @@
     <img alt="PyPI version" src="https://img.shields.io/pypi/v/tradearena-benchmark">
   </a>
   <a href="https://pypi.org/project/tradearena-benchmark/">
-    <img alt="Python versions" src="https://img.shields.io/pypi/pyversions/tradearena-benchmark">
+    <img alt="Python versions" src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-3776ab?logo=python&logoColor=white">
   </a>
   <a href="https://github.com/weich97/TradeArena/blob/main/LICENSE">
     <img alt="License" src="https://img.shields.io/github/license/weich97/TradeArena">
   </a>
-  <a href="https://codecov.io/gh/weich97/TradeArena">
-    <img alt="Coverage" src="https://codecov.io/gh/weich97/TradeArena/branch/main/graph/badge.svg">
+  <a href="https://github.com/weich97/TradeArena/actions/workflows/ci.yml">
+    <img alt="Coverage generated in CI" src="https://img.shields.io/badge/coverage-CI%20XML-64748b">
   </a>
   <a href="docs/claim_boundaries.md">
     <img alt="Claim boundary" src="https://img.shields.io/badge/claims-engineering%20%7C%20benchmark%20%7C%20scientific-475569">

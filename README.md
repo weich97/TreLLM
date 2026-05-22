@@ -27,6 +27,9 @@
   <a href="https://codecov.io/gh/weich97/TradeArena">
     <img alt="Coverage" src="https://codecov.io/gh/weich97/TradeArena/branch/main/graph/badge.svg">
   </a>
+  <a href="docs/claim_boundaries.md">
+    <img alt="Claim boundary" src="https://img.shields.io/badge/claims-engineering%20%7C%20benchmark%20%7C%20scientific-475569">
+  </a>
 </p>
 
 <p align="center">

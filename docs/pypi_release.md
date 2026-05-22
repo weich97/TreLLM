@@ -33,7 +33,7 @@ Recommended production path:
    - Workflow: `release.yml`
    - Environment: `pypi`
 3. In the GitHub repository, set repository variable `PYPI_PUBLISH=true`.
-4. Push a release tag such as `v0.1.2`.
+4. Push a release tag such as `v0.2.0`.
 
 The release workflow builds the wheel and source distribution, checks metadata,
 uploads release assets, and only publishes to PyPI when `PYPI_PUBLISH=true`.

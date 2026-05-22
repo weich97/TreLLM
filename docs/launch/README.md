@@ -48,12 +48,14 @@ ai-agents
 
 ## Repository Checklist
 
-- Publish GitHub release `v0.1.0`.
+- Publish GitHub release `v0.2.0`.
 - Add the topics above.
 - Enable GitHub Discussions.
 - Verify the GitHub Pages site at `https://weich97.github.io/TradeArena/`.
 - Create the issue backlog in `docs/launch/issue_backlog.md`.
 - Verify the browser-playable 3-minute demo and link it from the README.
+- Verify the v0.2 external reproduction pack with at least three independent
+  reports: macOS/Python 3.10, Linux/Python 3.11, and Colab or Binder.
 
 ## Core Demo Command
 

@@ -19,7 +19,7 @@ CLASSICAL_AGGREGATE_CSV = ROOT / "docs/results/classical_baselines/classical_bas
 QUALITY_AGGREGATE_CSV = ROOT / "docs/results/quality_decomposition/quality_decomposition_aggregate.csv"
 QUALITY_RADAR_SVG = ROOT / "docs/results/quality_decomposition/decision_execution_radar.svg"
 QUICKSTART_JSON = ROOT / "outputs/examples/quickstart_core_metrics.json"
-RELEASE_TAG = "v0.1.2"
+RELEASE_TAG = "v0.2.0"
 POLICY_LABELS = {
     "gpt-5.5": "frontier-policy-A (redacted)",
     "claude-opus-4.7": "frontier-policy-B (redacted)",

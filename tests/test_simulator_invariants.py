@@ -9,7 +9,16 @@ import tradearena.execution as execution
 import tradearena.tools.simulator as simulator_compat
 from tradearena.agents import MaxPositionRiskManager
 from tradearena.core.domain import Bar, Decision, Fill, MarketSnapshot, Order, PortfolioState, Side
-from tradearena.tools import FillReplayOrderSimulator, RealisticOrderSimulator
+from tradearena.tools import (
+    FillReplayOrderSimulator,
+    MarketRuleState,
+    RealisticOrderSimulator,
+    ashare_rule_package,
+    crypto_rule_package,
+    futures_rule_package,
+    liquidity_halt_rule_package,
+    market_rule_from_package,
+)
 
 
 def _snapshot(volume: float = 1_000.0) -> MarketSnapshot:
@@ -79,6 +88,59 @@ def test_realistic_simulator_accounting_invariants(
         assert fill.quantity <= max(fill.requested_quantity or 0.0, 0.0) + 1e-9
         expected_status = "partial" if fill.fill_ratio < 0.999999 else "filled"
         assert fill.status == expected_status
+
+
+@settings(max_examples=50, deadline=None)
+@given(
+    package_name=st.sampled_from(["ashare", "crypto", "futures", "liquidity_halt"]),
+    side=st.sampled_from([Side.BUY, Side.SELL]),
+    quantity=st.floats(min_value=0.0, max_value=10_000.0, allow_nan=False, allow_infinity=False),
+    price=st.floats(min_value=0.01, max_value=10_000.0, allow_nan=False, allow_infinity=False),
+    volume=st.floats(min_value=0.0, max_value=1_000_000.0, allow_nan=False, allow_infinity=False),
+    settled_position=st.floats(min_value=0.0, max_value=10_000.0, allow_nan=False, allow_infinity=False),
+    same_day_buy_quantity=st.floats(min_value=0.0, max_value=10_000.0, allow_nan=False, allow_infinity=False),
+    available_cash=st.floats(min_value=0.0, max_value=1_000_000.0, allow_nan=False, allow_infinity=False),
+)
+def test_market_rule_plugins_preserve_order_feasibility_invariants(
+    package_name: str,
+    side: Side,
+    quantity: float,
+    price: float,
+    volume: float,
+    settled_position: float,
+    same_day_buy_quantity: float,
+    available_cash: float,
+):
+    packages = {
+        "ashare": ashare_rule_package(),
+        "crypto": crypto_rule_package(),
+        "futures": futures_rule_package(initial_margin_rate=0.10, contract_multiplier=10.0),
+        "liquidity_halt": liquidity_halt_rule_package(participation_rate=0.02, eta=0.25),
+    }
+    rule = market_rule_from_package(packages[package_name])
+    state = MarketRuleState(
+        price=price,
+        previous_close=price,
+        volume=volume,
+        settled_position=settled_position,
+        same_day_buy_quantity=same_day_buy_quantity,
+        available_cash=available_cash,
+    )
+
+    decision = rule.validate_order(symbol="SYN", side=side, quantity=quantity, state=state)
+
+    assert decision.status in {"approved", "clipped", "blocked"}
+    assert 0.0 <= decision.approved_quantity <= max(0.0, quantity) + 1e-9
+    assert decision.estimated_fee >= 0.0
+    assert decision.estimated_funding >= 0.0
+    assert decision.estimated_market_impact >= 0.0
+    assert decision.estimated_margin_required >= 0.0
+    assert decision.metadata["package"] == rule.name
+    if decision.blocked:
+        assert decision.approved_quantity == 0.0
+        assert decision.reasons
+    if decision.clipped:
+        assert decision.approved_quantity <= decision.requested_quantity
 
 
 def test_realistic_limit_rejection_does_not_consume_liquidity_or_partial_count():

@@ -8,6 +8,7 @@ from typing import Any
 from jsonschema import Draft202012Validator
 
 from tradearena.core.trajectory import StepRecord, Trajectory
+from tradearena.evaluation.submissions import validate_submission_file
 from tradearena.tools.calibration import summarize_execution_calibration, summarize_quote_fill_calibration
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -63,6 +64,17 @@ def test_benchmark_submission_schema_has_explicit_version_contract():
 
     assert schema["properties"]["schema_version"]["const"] == "0.1"
     Draft202012Validator.check_schema(schema)
+
+
+def test_all_example_benchmark_submissions_match_schema_and_runtime_validator():
+    validator = _validator("benchmark_submission.schema.json")
+
+    for path in sorted((ROOT / "examples/benchmark_submissions").rglob("*.json")):
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        validator.validate(payload)
+        _, errors = validate_submission_file(path)
+
+        assert errors == [], path
 
 
 def _validator(schema_name: str) -> Draft202012Validator:

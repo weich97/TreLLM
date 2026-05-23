@@ -274,7 +274,7 @@ class ReasoningConsistencyEvaluator:
         for step in trajectory.steps:
             for decision in step.approved_decisions:
                 side = decision.get("side")
-                target = float(decision.get("target_weight", 0.0))
+                target = _finite_float(decision.get("target_weight", 0.0)) or 0.0
                 checked += 1
                 if side == Side.BUY.value and target > 0:
                     consistent += 1
@@ -289,6 +289,8 @@ class ReasoningConsistencyEvaluator:
 
 
 def _finite_float(value: object) -> float | None:
+    if isinstance(value, bool) or not isinstance(value, (int, float, str)):
+        return None
     try:
         parsed = float(value)
     except (TypeError, ValueError):

@@ -251,7 +251,7 @@ python scripts/calibrate_execution_model.py --data-dir data/real/yahoo_intraday_
 
 This writes `docs/results/execution_calibration_intraday_1h.json` and
 `docs/results/execution_calibration_intraday_1h.md`. Full details are in
-[`docs/execution_model.md`](docs/execution_model.md), including the
+[`docs/execution_model_boundaries.md`](docs/execution_model_boundaries.md), including the
 `scripts/compare_execution_to_fills.py` workflow for comparing private or
 licensed historical fills against the simulator equation.
 
@@ -683,7 +683,7 @@ Useful entry points:
 - Observability:
   [`docs/observability.md`](docs/observability.md)
 - Schemas: [`docs/schemas.md`](docs/schemas.md)
-- Execution model: [`docs/execution_model.md`](docs/execution_model.md)
+- Execution model: [`docs/execution_model_boundaries.md`](docs/execution_model_boundaries.md)
 - Benchmark submissions: [`docs/benchmark_submissions.md`](docs/benchmark_submissions.md)
 - Evaluation rigor: [`docs/evaluation_rigor.md`](docs/evaluation_rigor.md)
 - v0.2 benchmark spec: [`docs/benchmark_v0_2_spec.md`](docs/benchmark_v0_2_spec.md)

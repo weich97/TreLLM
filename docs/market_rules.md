@@ -53,6 +53,47 @@ quantity, fee/funding estimates, margin requirement, and market-impact
 estimate. This makes market infeasibility auditable instead of hiding it inside
 portfolio PnL.
 
+## Plugin Boundary
+
+Market rules are exchange-level feasibility plugins. They sit after a strategy
+or risk manager proposes an order and before the simulator decides whether and
+how it fills. A rule plugin may block or resize a proposed order; it must not
+simulate fills, mutate portfolio accounting, call LLM/data providers, place live
+orders, or change runner orchestration.
+
+The structural contract is:
+
+| Method or field | Purpose |
+| --- | --- |
+| `name: str` | Stable identifier recorded in manifests, reports, or benchmark configs. |
+| `validate_order(symbol, side, quantity, state)` | Return one `MarketRuleDecision` for one proposed order. |
+| `explain_block(decision)` | Explain a block or clip without making return/profit claims. |
+
+Existing helpers can be adapted into the plugin protocol:
+
+```python
+from tradearena.core.domain import Side
+from tradearena.tools import MarketRuleState, ashare_rule_package, market_rule_from_package
+
+rule = market_rule_from_package(ashare_rule_package())
+decision = rule.validate_order(
+    symbol="600519.SS",
+    side=Side.SELL,
+    quantity=200,
+    state=MarketRuleState(
+        price=100.0,
+        previous_close=99.0,
+        settled_position=100,
+        same_day_buy_quantity=100,
+    ),
+)
+explanation = rule.explain_block(decision)
+```
+
+Third-party plugins should pass `validate_market_rule_plugin(plugin)` before
+they are used in a scenario preset. That check is intentionally structural so
+plugins can live outside the TradeArena package.
+
 ## Risk Preset Ideas
 
 | Preset | Checks |
@@ -90,5 +131,6 @@ Each scenario should publish:
 
 OHLCV data can support range, volume, and participation diagnostics. It cannot
 identify quoted spread, queue position, broker latency, or realized shortfall by
-itself. Use [`docs/execution_model.md`](execution_model.md) before claiming a
-simulator preset is calibrated to real execution.
+itself. Use
+[`docs/execution_model_boundaries.md`](execution_model_boundaries.md) before
+claiming a simulator preset is calibrated to real execution.

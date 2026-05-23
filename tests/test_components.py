@@ -23,9 +23,12 @@ from tradearena.tools import (
     SimpleOrderSimulator,
     ashare_rule_package,
     crypto_rule_package,
+    explain_market_rule_decision,
     futures_rule_package,
     liquidity_halt_rule_package,
+    market_rule_from_package,
     review_market_rule_order,
+    validate_market_rule_plugin,
 )
 from tradearena.tools.calibration import ExecutionCalibrationConfig, summarize_execution_calibration
 
@@ -231,6 +234,48 @@ def test_market_rule_packages_encode_venue_constraints():
     assert shock.clipped
     assert shock.approved_quantity == 200.0
     assert shock.estimated_market_impact > 0.0
+
+
+def test_market_rule_plugin_boundary_wraps_packages():
+    rule = market_rule_from_package(ashare_rule_package())
+    state = MarketRuleState(price=100.0, previous_close=99.0, settled_position=100, same_day_buy_quantity=100)
+
+    assert validate_market_rule_plugin(rule) == []
+
+    decision = rule.validate_order(symbol="600519.SS", side=Side.SELL, quantity=200, state=state)
+    explanation = rule.explain_block(decision)
+
+    assert decision.blocked
+    assert decision.metadata["package"] == rule.name
+    assert "t_plus_one_sellable_clip" in decision.reasons
+    assert "blocked" in explanation
+    assert "profit" not in explanation.lower()
+
+
+def test_market_rule_plugin_contract_rejects_overbroad_objects():
+    class MissingMethods:
+        name = "bad_plugin"
+
+    errors = validate_market_rule_plugin(MissingMethods())
+
+    assert "market rule plugin must define validate_order(...)" in errors
+    assert "market rule plugin must define explain_block(decision)" in errors
+
+
+def test_market_rule_explanation_is_audit_only():
+    decision = review_market_rule_order(
+        symbol="BTC-USD",
+        side=Side.BUY,
+        quantity=3.0,
+        state=MarketRuleState(price=100_000.0, volume=20.0),
+        package=crypto_rule_package(fee_bps=10.0, funding_bps=2.0),
+    )
+
+    explanation = explain_market_rule_decision(decision)
+
+    assert "clipped 3 to 2" in explanation
+    assert "rule_package=crypto_fee_tier_funding" in explanation
+    assert "return" not in explanation.lower()
 
 
 def test_realistic_simulator_records_partial_fill_and_latency():

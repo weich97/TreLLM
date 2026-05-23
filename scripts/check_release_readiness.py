@@ -18,6 +18,7 @@ REQUIRED_FILES = [
     "docs/academic_report_plan.md",
     "docs/external_validation.md",
     "docs/claim_boundaries.md",
+    "docs/evidence_labels.md",
     "docs/benchmark_v0_2_spec.md",
     "docs/execution_calibration_priority.md",
     "docs/execution_model_boundaries.md",

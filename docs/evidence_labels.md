@@ -29,6 +29,28 @@ can support.
 - `quote-calibrated` and `fill-replay-validated` rows are the path from stress
   benchmark evidence toward calibrated execution evidence.
 
+## Claim And Evidence Layers
+
+The submission validator computes two conservative fields from the tags:
+
+| Field | Values | Meaning |
+| --- | --- | --- |
+| `claim_class` | `engineering`, `benchmark`, `scientific` | The strongest class of statement the row can try to support. Generated rows are normally `benchmark`; scientific claims need extra evidence and should be rare. |
+| `evidence_tier` | `manifest-only`, `artifact-audit`, `stress-benchmark`, `quote-calibrated`, `fill-replay-validated` | The strongest public artifact layer attached to the row. |
+
+These fields can be included in a submission manifest. If present, they must
+match the tags. The validator also rejects common over-claims:
+
+- `stress-only` rows cannot claim calibrated or broker-grade transaction-cost
+  validity;
+- fill-replay or broker-grade execution claims require
+  `fill-replay-validated`;
+- calibrated execution claims require `quote-calibrated` or
+  `fill-replay-validated`;
+- model-skill or profitability claims require external, fully auditable,
+  fill-replay-validated evidence without cached-provider or redacted-prompt
+  weakening.
+
 The generated Markdown, CSV, HTML registry, and JSON submission manifests all
 carry the tags. This keeps the leaderboard from being read as "which LLM can
 trade" when a row only supports a narrower reliability statement.

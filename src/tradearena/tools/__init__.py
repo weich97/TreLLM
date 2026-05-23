@@ -20,15 +20,20 @@ from tradearena.tools.calibration import (
 from tradearena.tools.features import RollingFeatureStore
 from tradearena.tools.futures import FuturesContractMetadata, FuturesRollRiskEngine
 from tradearena.tools.market_rules import (
+    MarketRule,
     MarketRuleDecision,
     MarketRulePackage,
     MarketRuleState,
+    PackageMarketRule,
     ashare_rule_package,
     crypto_rule_package,
+    explain_market_rule_decision,
     futures_rule_package,
     hong_kong_rule_package,
     liquidity_halt_rule_package,
+    market_rule_from_package,
     review_market_rule_order,
+    validate_market_rule_plugin,
 )
 from tradearena.tools.optimizer import EqualRiskBudgetOptimizer
 from tradearena.tools.risk import RiskCalculator
@@ -44,9 +49,11 @@ __all__ = [
     "FillReplayOrderSimulator",
     "FuturesContractMetadata",
     "FuturesRollRiskEngine",
+    "MarketRule",
     "MarketRuleDecision",
     "MarketRulePackage",
     "MarketRuleState",
+    "PackageMarketRule",
     "QuoteReplayOrderSimulator",
     "RiskCalculator",
     "RollingFeatureStore",
@@ -59,8 +66,11 @@ __all__ = [
     "write_calibration_markdown",
     "ashare_rule_package",
     "crypto_rule_package",
+    "explain_market_rule_decision",
     "futures_rule_package",
     "hong_kong_rule_package",
     "liquidity_halt_rule_package",
+    "market_rule_from_package",
     "review_market_rule_order",
+    "validate_market_rule_plugin",
 ]

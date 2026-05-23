@@ -7,7 +7,14 @@ from pathlib import Path
 from typing import Any
 
 from tradearena.core.reproducibility import compute_reproducibility_hash
-from tradearena.evaluation.evidence import format_evidence_tags, validate_evidence_tags
+from tradearena.evaluation.evidence import (
+    claim_class_for_tags,
+    evidence_tier_for_tags,
+    format_evidence_tags,
+    parse_evidence_tags,
+    validate_evidence_boundary,
+    validate_evidence_tags,
+)
 
 REQUIRED_TOP_LEVEL = (
     "schema_version",
@@ -126,6 +133,8 @@ def validate_submission(payload: dict[str, Any], *, verify_hash: bool = True) ->
                 errors.extend(validate_evidence_tags(tags))
             if not isinstance(evidence.get("claim_scope"), str) or not evidence.get("claim_scope"):
                 errors.append("evidence.claim_scope must be a non-empty string when evidence is provided")
+            else:
+                errors.extend(validate_evidence_boundary(evidence))
 
     return errors
 
@@ -155,6 +164,7 @@ def build_registry_rows(input_dir: str | Path) -> tuple[list[dict[str, Any]], li
         evidence = payload.get("evidence", {})
         evidence_tags = evidence.get("tags", []) if isinstance(evidence, dict) else []
         evidence_tag_text = format_evidence_tags(evidence_tags)
+        parsed_evidence_tags = parse_evidence_tags(evidence_tags)
         claim_scope = str(evidence.get("claim_scope", "")) if isinstance(evidence, dict) else ""
         rows.append(
             {
@@ -180,6 +190,8 @@ def build_registry_rows(input_dir: str | Path) -> tuple[list[dict[str, Any]], li
                 "reproducibility_status": "Reproducible",
                 "redaction_status": "Redacted",
                 "evidence_tags": evidence_tag_text,
+                "claim_class": str(evidence.get("claim_class") or claim_class_for_tags(parsed_evidence_tags)),
+                "evidence_tier": str(evidence.get("evidence_tier") or evidence_tier_for_tags(parsed_evidence_tags)),
                 "claim_scope": claim_scope,
                 "source_file": path.as_posix(),
             }
@@ -200,8 +212,8 @@ def write_registry_markdown(rows: list[dict[str, Any]], output_path: str | Path)
         "It is designed to compare audit-ready runs without exposing raw provider",
         "prompts, responses, private portfolios, or credentials.",
         "",
-        "| Entry | Scenario | Agent | Prompt | Feedback | Evidence | Parse | Data | Return | Max DD | Fill | Rejected | Risk edits | Audit | Badges | Hash |",
-        "| --- | --- | --- | --- | --- | --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |",
+        "| Entry | Scenario | Agent | Prompt | Feedback | Evidence | Claim | Tier | Parse | Data | Return | Max DD | Fill | Rejected | Risk edits | Audit | Badges | Hash |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |",
     ]
     for row in rows:
         agent = f"{row['provider']} / {row['model_family']}"
@@ -217,6 +229,8 @@ def write_registry_markdown(rows: list[dict[str, Any]], output_path: str | Path)
                     str(row["prompt_mode"]),
                     str(row["risk_feedback_mode"]),
                     _format_evidence_cell(row["evidence_tags"]),
+                    str(row["claim_class"]),
+                    str(row["evidence_tier"]),
                     parse_coverage,
                     data,
                     _fmt_float(row["total_return"]),
@@ -232,7 +246,7 @@ def write_registry_markdown(rows: list[dict[str, Any]], output_path: str | Path)
             + " |"
         )
     if not rows:
-        lines.append("| _No accepted submissions yet._ |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |")
+        lines.append("| _No accepted submissions yet._ |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |")
     lines.extend(
         [
             "",
@@ -254,7 +268,7 @@ def write_registry_html(rows: list[dict[str, Any]], output_path: str | Path) -> 
     provider_options = "\n".join(f'<option value="{_h(provider)}">{_h(provider)}</option>' for provider in providers)
     table_rows = "\n".join(_registry_html_row(row) for row in rows)
     if not table_rows:
-        table_rows = '<tr><td colspan="16">No accepted submissions yet.</td></tr>'
+        table_rows = '<tr><td colspan="18">No accepted submissions yet.</td></tr>'
     html_text = """<!doctype html>
 <html lang="en">
 <meta charset="utf-8">
@@ -296,7 +310,8 @@ summary { color: #1d4ed8; cursor: pointer; }
       <thead>
         <tr>
           <th data-sort="text">Entry</th><th data-sort="text">Scenario</th><th data-sort="text">Agent</th>
-          <th data-sort="text">Prompt</th><th data-sort="text">Feedback</th><th data-sort="text">Evidence</th><th data-sort="num">Parse</th>
+          <th data-sort="text">Prompt</th><th data-sort="text">Feedback</th><th data-sort="text">Evidence</th>
+          <th data-sort="text">Claim</th><th data-sort="text">Tier</th><th data-sort="num">Parse</th>
           <th data-sort="text">Data</th><th data-sort="num">Return</th><th data-sort="num">Max DD</th>
           <th data-sort="num">Fill</th><th data-sort="num">Rejected</th><th data-sort="num">Risk edits</th>
           <th data-sort="num">Audit</th><th data-sort="text">Badges</th><th data-sort="text">Details</th>
@@ -365,6 +380,8 @@ def _registry_html_row(row: dict[str, Any]) -> str:
             "prompt_mode",
             "risk_feedback_mode",
             "evidence_tags",
+            "claim_class",
+            "evidence_tier",
             "claim_scope",
             "data_source",
             "frequency",
@@ -393,6 +410,8 @@ def _registry_html_row(row: dict[str, Any]) -> str:
         f'<td>{_h(row["prompt_mode"])}</td>'
         f'<td>{_h(row["risk_feedback_mode"])}</td>'
         f"<td>{evidence}</td>"
+        f'<td>{_h(row["claim_class"])}</td>'
+        f'<td>{_h(row["evidence_tier"])}</td>'
         f'<td data-value="{_h(parse)}">{_h(parse)}</td>'
         f'<td>{_h(data)}</td>'
         f'<td data-value="{float(row["total_return"]):.6f}">{float(row["total_return"]):.4f}</td>'

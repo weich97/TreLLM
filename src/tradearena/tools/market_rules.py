@@ -2,9 +2,34 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from math import floor, isfinite
-from typing import Any
+from typing import Any, Protocol, runtime_checkable
 
 from tradearena.core.domain import Side
+
+
+@runtime_checkable
+class MarketRule(Protocol):
+    """Protocol for exchange- or venue-level order feasibility plugins.
+
+    Market rules sit between portfolio/risk intent and execution simulation.
+    They may validate, block, or quantity-adjust a proposed order, but they do
+    not mutate portfolios, simulate fills, call providers, or place live orders.
+    """
+
+    name: str
+
+    def validate_order(
+        self,
+        *,
+        symbol: str,
+        side: Side | str,
+        quantity: float,
+        state: MarketRuleState,
+    ) -> MarketRuleDecision:
+        """Validate one proposed order against market-specific constraints."""
+
+    def explain_block(self, decision: MarketRuleDecision) -> str:
+        """Return a human-readable explanation for a block or clip decision."""
 
 
 @dataclass(frozen=True)
@@ -64,6 +89,36 @@ class MarketRuleDecision:
         return self.status == "clipped"
 
 
+@dataclass(frozen=True)
+class PackageMarketRule:
+    """Adapter that exposes a ``MarketRulePackage`` through the plugin protocol."""
+
+    package: MarketRulePackage
+
+    @property
+    def name(self) -> str:
+        return self.package.name
+
+    def validate_order(
+        self,
+        *,
+        symbol: str,
+        side: Side | str,
+        quantity: float,
+        state: MarketRuleState,
+    ) -> MarketRuleDecision:
+        return review_market_rule_order(
+            symbol=symbol,
+            side=side,
+            quantity=quantity,
+            state=state,
+            package=self.package,
+        )
+
+    def explain_block(self, decision: MarketRuleDecision) -> str:
+        return explain_market_rule_decision(decision)
+
+
 def ashare_rule_package() -> MarketRulePackage:
     return MarketRulePackage(
         name="ashare_t_plus_one_price_limit_board_lot",
@@ -113,6 +168,44 @@ def liquidity_halt_rule_package(*, participation_rate: float = 0.01, eta: float 
         almgren_chriss_eta=eta,
         metadata={"stress": "liquidity_halt"},
     )
+
+
+def market_rule_from_package(package: MarketRulePackage) -> PackageMarketRule:
+    """Wrap a package helper as a first-class market-rule plugin."""
+
+    return PackageMarketRule(package=package)
+
+
+def validate_market_rule_plugin(plugin: object) -> list[str]:
+    """Return contract errors for a market-rule plugin object.
+
+    The check is intentionally structural so third-party plugins do not need to
+    inherit from a TradeArena base class.
+    """
+
+    errors: list[str] = []
+    name = getattr(plugin, "name", "")
+    if not isinstance(name, str) or not name.strip():
+        errors.append("market rule plugin must expose a non-empty string name")
+    if not callable(getattr(plugin, "validate_order", None)):
+        errors.append("market rule plugin must define validate_order(...)")
+    if not callable(getattr(plugin, "explain_block", None)):
+        errors.append("market rule plugin must define explain_block(decision)")
+    return errors
+
+
+def explain_market_rule_decision(decision: MarketRuleDecision) -> str:
+    """Summarize a market-rule result without making performance claims."""
+
+    reasons = ",".join(decision.reasons) if decision.reasons else "none"
+    package = decision.metadata.get("package", "unknown")
+    if decision.blocked:
+        result = "blocked"
+    elif decision.clipped:
+        result = f"clipped {decision.requested_quantity:g} to {decision.approved_quantity:g}"
+    else:
+        result = f"approved {decision.approved_quantity:g}"
+    return f"{decision.symbol} {decision.side.value} {result}; reasons={reasons}; rule_package={package}"
 
 
 def review_market_rule_order(

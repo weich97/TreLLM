@@ -14,6 +14,16 @@ ALLOWED_EVIDENCE_TAGS = (
     "fully-auditable",
 )
 
+ALLOWED_CLAIM_CLASSES = ("engineering", "benchmark", "scientific")
+
+ALLOWED_EVIDENCE_TIERS = (
+    "manifest-only",
+    "artifact-audit",
+    "stress-benchmark",
+    "quote-calibrated",
+    "fill-replay-validated",
+)
+
 EVIDENCE_TAG_DESCRIPTIONS = {
     "stress-only": "Execution uses shared stress assumptions, not venue-calibrated transaction-cost prediction.",
     "cached-provider": "Provider-backed behavior is replayed or published through cache/redacted manifest evidence.",
@@ -24,6 +34,20 @@ EVIDENCE_TAG_DESCRIPTIONS = {
     "fill-replay-validated": "Orders were replayed against realized fill logs.",
     "redacted-prompt": "Raw provider prompt/response text is not public; a redacted manifest is provided.",
     "fully-auditable": "Raw decision, risk, execution, and provenance artifacts are public enough for full replay.",
+}
+
+EVIDENCE_TIER_DESCRIPTIONS = {
+    "manifest-only": "Only row metadata or a redacted manifest is public.",
+    "artifact-audit": "Replayable artifacts are public enough to inspect decisions, risk reports, and fills.",
+    "stress-benchmark": "The row supports frozen-protocol stress benchmarking, not calibrated cost prediction.",
+    "quote-calibrated": "Execution assumptions are linked to public quote/fill calibration evidence.",
+    "fill-replay-validated": "Orders were replayed against realized fills and can support stronger execution claims.",
+}
+
+CLAIM_CLASS_DESCRIPTIONS = {
+    "engineering": "Artifact, schema, replay, or hash behavior is demonstrated.",
+    "benchmark": "A frozen benchmark protocol can compare outcomes under declared assumptions.",
+    "scientific": "A model or agent-class conclusion is backed by repeated, auditable, independently checked evidence.",
 }
 
 
@@ -80,12 +104,53 @@ def claim_scope_for_tags(tags: Iterable[str]) -> str:
     return "auditable benchmark evidence"
 
 
+def evidence_tier_for_tags(tags: Iterable[str]) -> str:
+    tag_set = set(tags)
+    if "fill-replay-validated" in tag_set:
+        return "fill-replay-validated"
+    if "quote-calibrated" in tag_set:
+        return "quote-calibrated"
+    if "stress-only" in tag_set:
+        return "stress-benchmark"
+    if "fully-auditable" in tag_set:
+        return "artifact-audit"
+    return "manifest-only"
+
+
+def claim_class_for_tags(tags: Iterable[str]) -> str:
+    tag_set = set(tags)
+    scientific_tags = {"external-submitted", "fully-auditable", "fill-replay-validated"}
+    if scientific_tags.issubset(tag_set) and not ({"redacted-prompt", "cached-provider"} & tag_set):
+        return "scientific"
+    benchmark_tags = {
+        "stress-only",
+        "cached-provider",
+        "live-provider",
+        "deterministic-baseline",
+        "external-submitted",
+        "quote-calibrated",
+        "fill-replay-validated",
+    }
+    if tag_set & benchmark_tags:
+        return "benchmark"
+    return "engineering"
+
+
 def evidence_payload(tags: Iterable[str]) -> dict[str, object]:
     normalized = _dedupe_allowed(tags)
+    claim_class = claim_class_for_tags(normalized)
+    evidence_tier = evidence_tier_for_tags(normalized)
     return {
         "tags": normalized,
         "claim_scope": claim_scope_for_tags(normalized),
+        "claim_class": claim_class,
+        "evidence_tier": evidence_tier,
         "tag_definitions": {tag: EVIDENCE_TAG_DESCRIPTIONS[tag] for tag in normalized},
+        "boundary_notes": [
+            CLAIM_CLASS_DESCRIPTIONS[claim_class],
+            EVIDENCE_TIER_DESCRIPTIONS[evidence_tier],
+            *_boundary_notes_for_tags(normalized),
+        ],
     }
 
 
@@ -121,6 +186,47 @@ def validate_evidence_tags(tags: Iterable[object]) -> list[str]:
     return errors
 
 
+def validate_evidence_boundary(evidence: dict[str, object]) -> list[str]:
+    """Validate claim/evidence consistency for a benchmark submission row."""
+
+    errors: list[str] = []
+    tags = parse_evidence_tags(evidence.get("tags", []))
+    tag_errors = validate_evidence_tags(tags)
+    if tag_errors:
+        return tag_errors
+
+    claim_scope = str(evidence.get("claim_scope", "")).strip()
+    if not claim_scope:
+        errors.append("evidence.claim_scope must be a non-empty string when evidence is provided")
+        return errors
+
+    claim_class = claim_class_for_tags(tags)
+    evidence_tier = evidence_tier_for_tags(tags)
+    declared_claim_class = evidence.get("claim_class")
+    declared_evidence_tier = evidence.get("evidence_tier")
+
+    if declared_claim_class is not None and declared_claim_class != claim_class:
+        errors.append(f"evidence.claim_class must be '{claim_class}' for tags {format_evidence_tags(tags)}")
+    if declared_evidence_tier is not None and declared_evidence_tier != evidence_tier:
+        errors.append(f"evidence.evidence_tier must be '{evidence_tier}' for tags {format_evidence_tags(tags)}")
+
+    lowered_scope = claim_scope.lower()
+    if "stress-only" in tags and _contains_any(lowered_scope, _CALIBRATED_EXECUTION_CLAIMS):
+        errors.append("stress-only evidence cannot claim calibrated or broker-grade transaction-cost validity")
+    if "calibrated" in lowered_scope and not ({"quote-calibrated", "fill-replay-validated"} & set(tags)):
+        errors.append("calibrated execution claims require quote-calibrated or fill-replay-validated evidence")
+    if _contains_any(lowered_scope, _FILL_REPLAY_CLAIMS) and "fill-replay-validated" not in tags:
+        errors.append("fill replay or broker-grade execution claims require fill-replay-validated evidence")
+    if _contains_any(lowered_scope, _SCIENTIFIC_CLAIMS):
+        required_scientific_tags = {"external-submitted", "fully-auditable", "fill-replay-validated"}
+        if not required_scientific_tags.issubset(set(tags)) or "redacted-prompt" in tags or "cached-provider" in tags:
+            errors.append(
+                "scientific model-skill claims require external-submitted, fully-auditable, "
+                "fill-replay-validated evidence without redacted-prompt or cached-provider tags"
+            )
+    return errors
+
+
 def format_evidence_tags(tags: Iterable[object]) -> str:
     return ";".join(str(tag) for tag in tags if str(tag))
 
@@ -141,3 +247,49 @@ def _dedupe_allowed(tags: Iterable[str]) -> list[str]:
         seen.add(tag)
         result.append(tag)
     return result
+
+
+def _boundary_notes_for_tags(tags: Iterable[str]) -> list[str]:
+    tag_set = set(tags)
+    notes: list[str] = []
+    if "stress-only" in tag_set:
+        notes.append("Do not read this row as calibrated transaction-cost prediction.")
+    if "cached-provider" in tag_set:
+        notes.append("Provider behavior is cache-backed; do not pool with live-provider rows without a drift policy.")
+    if "redacted-prompt" in tag_set:
+        notes.append("Prompt redaction weakens scientific reasoning claims.")
+    if "external-submitted" in tag_set:
+        notes.append("External provenance strengthens reproducibility evidence when artifacts and logs are complete.")
+    return notes
+
+
+def _contains_any(value: str, phrases: tuple[str, ...]) -> bool:
+    return any(phrase in value for phrase in phrases)
+
+
+_CALIBRATED_EXECUTION_CLAIMS = (
+    "broker-grade",
+    "calibrated transaction",
+    "calibrated execution",
+    "transaction-cost prediction",
+    "realistic transaction cost",
+)
+
+_FILL_REPLAY_CLAIMS = (
+    "fill replay",
+    "fill-replay",
+    "realized fill",
+    "broker-grade",
+)
+
+_SCIENTIFIC_CLAIMS = (
+    "scientific",
+    "profitability",
+    "profitable",
+    "outperform",
+    "outperforms",
+    "beats",
+    "beat ",
+    "superior",
+    "model skill",
+)

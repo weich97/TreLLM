@@ -44,6 +44,8 @@ def _write_csv(rows: list[dict[str, object]], path: str | Path) -> None:
         "prompt_mode",
         "risk_feedback_mode",
         "evidence_tags",
+        "claim_class",
+        "evidence_tier",
         "claim_scope",
         "parse_coverage",
         "model_redacted",

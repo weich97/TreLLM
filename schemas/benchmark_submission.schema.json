@@ -211,10 +211,31 @@
           "type": "string",
           "description": "Plain-language interpretation boundary for this result row."
         },
+        "claim_class": {
+          "type": "string",
+          "enum": ["engineering", "benchmark", "scientific"],
+          "description": "Conservative claim class implied by the evidence tags."
+        },
+        "evidence_tier": {
+          "type": "string",
+          "enum": [
+            "manifest-only",
+            "artifact-audit",
+            "stress-benchmark",
+            "quote-calibrated",
+            "fill-replay-validated"
+          ],
+          "description": "Evidence tier implied by the strongest public artifact attached to the row."
+        },
         "tag_definitions": {
           "type": "object",
           "additionalProperties": { "type": "string" },
           "description": "Optional public definitions for each evidence tag attached to the row."
+        },
+        "boundary_notes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Optional notes that explain what the evidence tags do and do not support."
         }
       }
     },

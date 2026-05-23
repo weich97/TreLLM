@@ -9,7 +9,7 @@ from typing import Any
 
 from jsonschema import Draft202012Validator
 
-from scripts.validate_reproduction_report import validate_reproduction_report
+import scripts.validate_reproduction_report as reproduction_validator
 from tradearena.core.trajectory import StepRecord, Trajectory
 from tradearena.evaluation.submissions import validate_submission_file
 from tradearena.tools.calibration import summarize_execution_calibration, summarize_quote_fill_calibration
@@ -86,7 +86,7 @@ def test_reproduction_report_validator_rejects_failed_required_commands(tmp_path
     path = tmp_path / "manifest.json"
     path.write_text(json.dumps(payload), encoding="utf-8")
 
-    errors = validate_reproduction_report(payload)
+    errors = reproduction_validator.validate_reproduction_report(payload)
     result = subprocess.run(
         [sys.executable, "scripts/validate_reproduction_report.py", str(path)],
         cwd=ROOT,
@@ -104,7 +104,7 @@ def test_reproduction_report_validator_accepts_complete_manifest(tmp_path: Path)
     path = tmp_path / "manifest.json"
     path.write_text(json.dumps(payload), encoding="utf-8")
 
-    assert validate_reproduction_report(payload) == []
+    assert reproduction_validator.validate_reproduction_report(payload) == []
 
     result = subprocess.run(
         [sys.executable, "scripts/validate_reproduction_report.py", str(path)],
@@ -114,6 +114,25 @@ def test_reproduction_report_validator_accepts_complete_manifest(tmp_path: Path)
         check=True,
     )
     assert "Valid reproduction report" in result.stdout
+
+
+def test_reproduction_report_validator_has_no_dependency_fallback(monkeypatch):
+    payload = _minimal_reproduction_report()
+    monkeypatch.setattr(reproduction_validator, "Draft202012Validator", None)
+
+    assert reproduction_validator.validate_reproduction_report(payload) == []
+
+    broken = dict(payload)
+    del broken["commands"]
+    errors = reproduction_validator.validate_reproduction_report(broken)
+
+    assert "missing required fields: commands" in errors
+
+    malformed = _minimal_reproduction_report()
+    malformed["commands"][0] = {"id": "trajectory"}
+    errors = reproduction_validator.validate_reproduction_report(malformed)
+
+    assert "commands[0] missing required fields: argv" in errors
 
 
 def _validator(schema_name: str) -> Draft202012Validator:

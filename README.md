@@ -45,6 +45,7 @@
   <a href="docs/benchmark_v0_2_spec.md">v0.2 spec</a> |
   <a href="docs/plugin_development.md">Plugins</a> |
   <a href="docs/agent_skills.md">Agent skills</a> |
+  <a href="docs/financial_audit_agent_benchmark.md">Audit-agent tasks</a> |
   <a href="docs/benchmark_maturity.md">Maturity track</a> |
   <a href="docs/community_tasks.md">First issues</a> |
   <a href="docs/contributor_roadmap.md">Roadmap</a> |
@@ -115,6 +116,11 @@ This makes the benchmark relevant to LLM trading agents, AI portfolio managers,
 multi-agent finance systems, and broader autonomous-agent evaluation. The
 included tasks are paper-only and research-oriented; they are not live trading
 recommendations.
+
+The repository also includes a small skill task suite for evaluating LLMs as
+financial-audit agents rather than stock pickers. Those tasks ask models to
+audit trajectories, interpret risk feedback, attribute execution friction,
+review reproduction evidence, and weaken claims that outrun the evidence.
 
 ## Claim Boundary
 

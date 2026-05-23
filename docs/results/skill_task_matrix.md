@@ -12,34 +12,46 @@ If a benchmarked model uses a skill, the skill must be recorded as part of the m
 
 | Ability | Task count | Measurable task | Scoring mode |
 | --- | ---: | --- | --- |
-| Audit accuracy | 1 | Find trajectory risk edits, rejected orders, and partial fills | rubric match |
-| Risk-gate understanding | 1 | Check risk-report completeness and missed controls | checklist score |
-| Execution-boundary awareness | 1 | Avoid stress-simulator transaction-cost overclaims | hard fail on boundary overclaim |
-| Claim discipline | 1 | Classify engineering, benchmark, and scientific claims | label accuracy |
-| Reproduction awareness | 1 | Report commit, hash, commands, artifacts, and data-source flags | field coverage |
-| Plugin engineering | 1 | Propose a narrow plugin with deterministic tests | test and review checklist |
+| Audit accuracy | 2 | Find trajectory risk edits, rejected orders, and partial fills | rubric match |
+| Risk-gate understanding | 2 | Check risk-report completeness and missed controls | checklist score |
+| Execution-boundary awareness | 2 | Avoid stress-simulator transaction-cost overclaims | hard fail on boundary overclaim |
+| Claim discipline | 2 | Classify engineering, benchmark, and scientific claims | label accuracy |
+| Reproduction awareness | 2 | Report commit, hash, commands, artifacts, and data-source flags | field coverage |
+| Plugin engineering | 2 | Propose a narrow plugin with deterministic tests | test and review checklist |
 
 ## Task Matrix
 
 | Task | Skill | Ability | Metric | Criteria | Pass threshold | Hard-fail terms |
 | --- | --- | --- | --- | ---: | ---: | --- |
 | `claim_boundary_001` | `tradearena-claim-boundary-review` | Claim discipline | engineering / benchmark / scientific label accuracy | 5 | 4 | guaranteed profit, buy recommendation, sell recommendation, place a live order |
+| `claim_boundary_provider_drift_001` | `tradearena-claim-boundary-review` | Claim discipline | provider-drift and cached-row claim discipline | 5 | 4 | guaranteed profit, buy recommendation, sell recommendation, place a live order |
+| `execution_attribution_001` | `tradearena-execution-calibration` | Execution-boundary awareness | execution shortfall attribution and evidence-tier discipline | 5 | 4 | stress simulator is real transaction cost, stress-only proves transaction cost, guaranteed profit, buy recommendation, sell recommendation |
 | `execution_boundary_001` | `tradearena-execution-calibration` | Execution-boundary awareness | hard-fail if stress simulator is described as real transaction-cost evidence | 5 | 4 | stress simulator is real transaction cost, stress-only proves transaction cost, guaranteed profit, buy recommendation, sell recommendation |
+| `intent_execution_autopsy_001` | `tradearena-trajectory-audit` | Audit accuracy | intent-to-risk-to-execution audit accuracy | 5 | 4 | guaranteed profit, buy recommendation, sell recommendation, place a live order |
+| `market_rule_plugin_review_001` | `tradearena-plugin-author` | Plugin engineering | market-rule plugin boundary and deterministic-test review | 5 | 4 | live order, broker password, guaranteed profit, buy recommendation, sell recommendation |
 | `plugin_author_001` | `tradearena-plugin-author` | Plugin engineering | narrow plugin plus deterministic-test review | 5 | 4 | live order, broker password, guaranteed profit, buy recommendation, sell recommendation |
+| `reproduction_hash_mismatch_001` | `tradearena-reproduction-review` | Reproduction awareness | hash mismatch triage and evidence completeness | 5 | 4 | guaranteed profit, buy recommendation, sell recommendation, place a live order |
 | `reproduction_review_001` | `tradearena-reproduction-review` | Reproduction awareness | commit, hash, command, artifact path, and data-source field coverage | 5 | 4 | guaranteed profit, buy recommendation, sell recommendation, place a live order |
+| `risk_feedback_learning_001` | `tradearena-risk-gate-review` | Risk-gate understanding | risk-feedback adaptation review | 5 | 4 | guaranteed profit, buy recommendation, sell recommendation, place a live order |
 | `risk_gate_review_001` | `tradearena-risk-gate-review` | Risk-gate understanding | risk report completeness and missed-control checklist score | 5 | 4 | guaranteed profit, buy recommendation, sell recommendation, place a live order |
 | `trajectory_audit_001` | `tradearena-trajectory-audit` | Audit accuracy | risk edits / rejected orders / partial fills found against rubric | 5 | 4 | guaranteed profit, buy recommendation, sell recommendation, place a live order |
 
 ## Reference Answer Scorecard
 
-Summary: 6/6 tasks passed; 30/30 rubric points earned.
+Summary: 12/12 tasks passed; 60/60 rubric points earned.
 
 | Task | Ability | Score | Threshold | Passed | Hard fail |
 | --- | --- | ---: | ---: | --- | --- |
 | `claim_boundary_001` | Claim discipline | 5/5 | 4 | yes | no |
+| `claim_boundary_provider_drift_001` | Claim discipline | 5/5 | 4 | yes | no |
+| `execution_attribution_001` | Execution-boundary awareness | 5/5 | 4 | yes | no |
 | `execution_boundary_001` | Execution-boundary awareness | 5/5 | 4 | yes | no |
+| `intent_execution_autopsy_001` | Audit accuracy | 5/5 | 4 | yes | no |
+| `market_rule_plugin_review_001` | Plugin engineering | 5/5 | 4 | yes | no |
 | `plugin_author_001` | Plugin engineering | 5/5 | 4 | yes | no |
+| `reproduction_hash_mismatch_001` | Reproduction awareness | 5/5 | 4 | yes | no |
 | `reproduction_review_001` | Reproduction awareness | 5/5 | 4 | yes | no |
+| `risk_feedback_learning_001` | Risk-gate understanding | 5/5 | 4 | yes | no |
 | `risk_gate_review_001` | Risk-gate understanding | 5/5 | 4 | yes | no |
 | `trajectory_audit_001` | Audit accuracy | 5/5 | 4 | yes | no |
 

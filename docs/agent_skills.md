@@ -84,6 +84,11 @@ They test whether a reviewer or coding agent can:
 - propose deterministic plugin tests;
 - avoid trading advice.
 
+The suite is described as a financial-audit agent benchmark in
+[`docs/financial_audit_agent_benchmark.md`](financial_audit_agent_benchmark.md).
+It intentionally asks whether LLMs can audit, reproduce, and bound claims, not
+whether they can pick stocks.
+
 The generated matrix is tracked in
 [`docs/results/skill_task_matrix.md`](results/skill_task_matrix.md).
 

@@ -11,7 +11,9 @@ Each task includes:
 - `rubric.json`: machine-readable grading criteria.
 
 These tasks evaluate audit, reproduction, calibration, claim-boundary, and
-plugin-authoring ability. They do not evaluate trading profitability.
+plugin-authoring ability. They do not evaluate trading profitability. The suite
+is designed to benchmark LLMs as financial-audit agents rather than stock
+pickers.
 
 ## Capability Metrics
 
@@ -23,6 +25,9 @@ plugin-authoring ability. They do not evaluate trading profitability.
 | Claim discipline | Classify engineering, benchmark, and scientific claims | Label accuracy |
 | Reproduction awareness | Report commit, hash, command, artifact path, and data-source flags | Field coverage |
 | Plugin engineering | Propose a narrow plugin with deterministic tests | Test/review checklist |
+
+The tracked suite keeps at least two deterministic tasks for each ability so a
+single easy fixture does not define the score.
 
 Validate the rubric suite:
 

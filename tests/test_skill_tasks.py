@@ -18,9 +18,15 @@ def test_skill_tasks_have_inputs_and_rubrics():
 
     assert {path.name for path in task_dirs} == {
         "claim_boundary_001",
+        "claim_boundary_provider_drift_001",
+        "execution_attribution_001",
         "execution_boundary_001",
+        "intent_execution_autopsy_001",
+        "market_rule_plugin_review_001",
         "plugin_author_001",
+        "reproduction_hash_mismatch_001",
         "reproduction_review_001",
+        "risk_feedback_learning_001",
         "risk_gate_review_001",
         "trajectory_audit_001",
     }

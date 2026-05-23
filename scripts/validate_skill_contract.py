@@ -8,6 +8,7 @@ SKILLS_DIR = ROOT / "skills"
 REQUIRED_HEADINGS = (
     "## Purpose",
     "## When To Use",
+    "## Do Not Use",
     "## Required Inputs",
     "## Safety Boundary",
     "## Workflow",
@@ -28,14 +29,36 @@ FORBIDDEN_SKILL_NAME_PARTS = (
     "stock-trader",
     "trader",
 )
+UNSAFE_DIRECTIVE_TERMS = (
+    "live order",
+    "broker password",
+    "api key",
+    "private holdings",
+    "guaranteed profit",
+    "buy recommendation",
+    "sell recommendation",
+)
+NEGATION_MARKERS = (
+    "do not",
+    "never",
+    "must not",
+    "should not",
+    "not use",
+    "without",
+    "avoid",
+    "not request",
+    "not expose",
+)
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Validate TradeArena agent skill contracts.")
-    parser.add_argument("--skills-dir", default=str(SKILLS_DIR), help="Directory containing skill folders.")
+    parser.add_argument("skills_dir_positional", nargs="?", help="Directory containing skill folders.")
+    parser.add_argument("--skills-dir", dest="skills_dir_option", help="Directory containing skill folders.")
     args = parser.parse_args(argv)
 
-    failures = validate_skills(Path(args.skills_dir))
+    skills_dir = Path(args.skills_dir_option or args.skills_dir_positional or SKILLS_DIR)
+    failures = validate_skills(skills_dir)
     if failures:
         print("Skill contract validation failed:")
         for failure in failures:
@@ -86,6 +109,9 @@ def _validate_skill_dir(skill_dir: Path, readme_text: str) -> list[str]:
         failures.append(f"{skill_dir.name}: validation commands must use a bash code fence")
     if "buy/sell" in text.lower() or "profit-maximization" in text.lower():
         failures.append(f"{skill_dir.name}: contains disallowed trading-assistant phrasing")
+    for term in UNSAFE_DIRECTIVE_TERMS:
+        if _has_unnegated_term(text, term):
+            failures.append(f"{skill_dir.name}: unsafe non-negated directive term {term!r}")
 
     resources_dir = skill_dir / "resources"
     if not resources_dir.exists():
@@ -96,6 +122,18 @@ def _validate_skill_dir(skill_dir: Path, readme_text: str) -> list[str]:
     if skill_dir.name != "skill_template" and skill_dir.name not in readme_text:
         failures.append(f"{skill_dir.name}: missing from skills/README.md")
     return failures
+
+
+def _has_unnegated_term(text: str, term: str) -> bool:
+    lines = text.lower().splitlines()
+    needle = term.lower()
+    for index, line in enumerate(lines):
+        if needle not in line:
+            continue
+        context = " ".join(lines[max(0, index - 5) : index + 1])
+        if not any(marker in context for marker in NEGATION_MARKERS):
+            return True
+    return False
 
 
 if __name__ == "__main__":

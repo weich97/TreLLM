@@ -34,8 +34,9 @@ and author narrow plugins.
 Run the contract checks:
 
 ```bash
-python scripts/validate_skill_contract.py
-python scripts/build_skill_index.py
+python scripts/validate_skill_contract.py skills
+python scripts/build_skill_index.py skills --output docs/agent_skills_index.md
+python scripts/score_skill_task.py --tasks-dir examples/skill_tasks --validate-only
 ```
 
 Small evaluation tasks live in `examples/skill_tasks/`. They check whether a

@@ -21,6 +21,8 @@ Use this skill when the user asks to:
   assumptions;
 - create or review a narrow TradeArena plugin.
 
+## Do Not Use This Skill For
+
 Do not use this skill to recommend buying, selling, shorting, or sizing real
 positions.
 

@@ -63,8 +63,9 @@ live under [`skills/`](../skills/).
 Run:
 
 ```bash
-python scripts/validate_skill_contract.py
-python scripts/build_skill_index.py --check
+python scripts/validate_skill_contract.py skills
+python scripts/build_skill_index.py skills --output docs/agent_skills_index.md --check
+python scripts/score_skill_task.py --tasks-dir examples/skill_tasks --validate-only
 ```
 
 The validator checks that every skill has a purpose, required inputs, safety
@@ -81,3 +82,15 @@ They test whether a reviewer or coding agent can:
 - weaken unsupported claims;
 - propose deterministic plugin tests;
 - avoid trading advice.
+
+The task suite measures TradeArena-specific audit ability rather than trading
+ability:
+
+| Ability | Measurable task | Scoring |
+| --- | --- | --- |
+| Audit accuracy | Find risk edits, rejected orders, and partial fills | Rubric match |
+| Risk-gate understanding | Detect complete and missing risk-report fields | Checklist score |
+| Execution-boundary awareness | Avoid calling stress simulation real transaction-cost evidence | Hard fail |
+| Claim discipline | Label engineering, benchmark, and scientific claims | Label accuracy |
+| Reproduction awareness | Report commit, hash, command, artifact path, and data-source flags | Field coverage |
+| Plugin engineering | Write a narrow plugin plan with deterministic tests | Test/review score |

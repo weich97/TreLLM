@@ -25,8 +25,9 @@ jobs:
           python -m compileall src scripts examples tests -q
           python -m ruff check src scripts examples tests
           python -m mypy
-          python scripts/validate_skill_contract.py
-          python scripts/build_skill_index.py --check
+          python scripts/validate_skill_contract.py skills
+          python scripts/build_skill_index.py skills --output docs/agent_skills_index.md --check
+          python scripts/score_skill_task.py --tasks-dir examples/skill_tasks --validate-only
           python -m pytest tests -q
       - name: Install build dependencies
         run: python -m pip install --upgrade build twine

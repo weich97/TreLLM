@@ -386,6 +386,9 @@ The concrete commands, acceptance criteria, and issue labels are in
 [`docs/plugin_development.md`](docs/plugin_development.md). For reviewer or
 coding-agent workflows, use [`docs/agent_skills.md`](docs/agent_skills.md);
 these skills are audit and reproduction templates, not benchmark-agent prompts.
+The companion task suite scores models as financial-audit agents: audit
+accuracy, risk-gate understanding, execution-boundary awareness, claim
+discipline, reproduction awareness, and narrow plugin engineering.
 
 ## LLM Run Paths
 

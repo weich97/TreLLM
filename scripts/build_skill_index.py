@@ -19,12 +19,13 @@ class SkillSummary:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Build the TradeArena agent skill index.")
+    parser.add_argument("skills_dir", nargs="?", default=str(SKILLS_DIR), help="Directory containing skill folders.")
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT), help="Markdown output path.")
     parser.add_argument("--check", action="store_true", help="Fail if the existing index is stale.")
     args = parser.parse_args(argv)
 
     output = Path(args.output)
-    markdown = render_index(discover_skills())
+    markdown = render_index(discover_skills(Path(args.skills_dir)))
     if args.check:
         if not output.exists():
             print(f"Skill index is missing: {output}")
@@ -41,9 +42,9 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-def discover_skills() -> list[SkillSummary]:
+def discover_skills(skills_dir: Path = SKILLS_DIR) -> list[SkillSummary]:
     rows = []
-    for skill_dir in sorted(path for path in SKILLS_DIR.iterdir() if path.is_dir()):
+    for skill_dir in sorted(path for path in skills_dir.iterdir() if path.is_dir()):
         skill_file = skill_dir / "SKILL.md"
         if not skill_file.exists():
             continue

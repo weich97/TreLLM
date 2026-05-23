@@ -36,7 +36,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--analysts",
         default="momentum,macro-news",
-        help="Comma-separated analyst plugins for non-paper runs. Use deepseek-llm or poe-llm for live/cache-backed LLM analyst calls.",
+        help="Comma-separated analyst plugins for non-paper runs. Use deepseek-llm, poe-llm, or ollama-llm for live/cache-backed LLM analyst calls.",
     )
     parser.add_argument(
         "--execution",
@@ -318,7 +318,7 @@ def _analyst_names_for_args(args: argparse.Namespace) -> tuple[str, ...]:
 
 
 def _is_llm_analyst(name: str) -> bool:
-    return name in {"deepseek-llm", "chat-completions-llm", "poe-llm"}
+    return name in {"deepseek-llm", "chat-completions-llm", "poe-llm", "ollama-llm"}
 
 
 def _run_utility_command(argv: list[str]) -> int:

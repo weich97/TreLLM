@@ -5,6 +5,7 @@ import pytest
 
 from tradearena.agents.llm import DeepSeekLLMAnalyst
 from tradearena.core.domain import Bar, MarketSnapshot, PortfolioState
+from tradearena.factory import build_default_system
 
 
 def test_deepseek_llm_analyst_replays_cache_without_key(tmp_path: Path, monkeypatch):
@@ -230,3 +231,21 @@ def test_poe_provider_requires_key_or_cache_without_cached_response(tmp_path: Pa
 
     with pytest.raises(RuntimeError, match="TRADEARENA_TEST_POE_KEY is not set"):
         analyst.analyze(snapshot, PortfolioState(cash=100000.0), memory=None)
+
+
+def test_ollama_analyst_uses_local_openai_compatible_endpoint_without_key(tmp_path: Path, monkeypatch):
+    monkeypatch.delenv("TRADEARENA_OLLAMA_API_KEY", raising=False)
+    monkeypatch.setenv("TRADEARENA_OLLAMA_BASE_URL", "http://localhost:11434/v1")
+
+    system = build_default_system(
+        analyst_names=("ollama-llm",),
+        llm_model="llama3.2",
+        llm_cache_path=str(tmp_path / "ollama.jsonl"),
+        periods=3,
+    )
+
+    analyst = system.analysts[0]
+    assert isinstance(analyst, DeepSeekLLMAnalyst)
+    assert analyst.provider == "ollama"
+    assert analyst.api_base_url == "http://localhost:11434/v1"
+    assert analyst.require_api_key is False

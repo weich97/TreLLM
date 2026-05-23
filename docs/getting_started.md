@@ -85,9 +85,28 @@ tradearena --benchmark llm-smoke `
   --llm-cache outputs/examples/deepseek_llm_smoke_cache.jsonl
 ```
 
+Or point the OpenAI-compatible adapter at a local Ollama server. This path is
+opt-in, does not require a cloud API key by default, and still writes a cache so
+the same prompt can be replayed later without contacting the local endpoint:
+
+```bash
+export TRADEARENA_OLLAMA_BASE_URL="http://localhost:11434/v1"
+tradearena --benchmark llm-smoke \
+  --analysts ollama-llm \
+  --llm-model llama3.2 \
+  --periods 3 \
+  --symbols SYN,ALT \
+  --llm-cache outputs/examples/ollama_llm_smoke_cache.jsonl
+```
+
+If your Ollama-compatible gateway enforces authentication, set
+`TRADEARENA_OLLAMA_API_KEY`; otherwise the local request is sent without an
+Authorization header. Keep `outputs/examples/ollama_llm_smoke_cache.jsonl` out
+of shared artifacts unless prompts and responses have been reviewed/redacted.
+
 `llm-smoke` intentionally runs a single LLM analyst case. The default
 `tradearena-core` benchmark remains deterministic unless you explicitly set
-`--analysts deepseek-llm` or `--analysts poe-llm`.
+`--analysts deepseek-llm`, `--analysts poe-llm`, or `--analysts ollama-llm`.
 
 Before running live model providers, market-data downloads, or broker-facing
 exports, read the advanced integration checklist:

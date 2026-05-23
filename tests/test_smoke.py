@@ -65,6 +65,12 @@ def test_cli_accepts_explicit_poe_llm_smoke_analyst():
     assert _analyst_names_for_args(args) == ("poe-llm",)
 
 
+def test_cli_accepts_explicit_ollama_llm_smoke_analyst():
+    args = build_parser().parse_args(["--benchmark", "llm-smoke", "--analysts", "ollama-llm", "--llm-model", "llama3.2"])
+
+    assert _analyst_names_for_args(args) == ("ollama-llm",)
+
+
 def test_markowitz_baseline_runs_with_realistic_execution():
     system = build_default_system(symbols=("SYN", "ALT", "DEF"), periods=32, seed=4, strategy_name="mean-variance", max_position_weight=0.2)
     trajectory, metrics = system.run()

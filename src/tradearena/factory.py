@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+
 from tradearena.agents import (
     AlwaysHoldStrategy,
     BuyAndHoldStrategy,
@@ -202,6 +204,26 @@ def build_default_system(
                     output_mode=llm_output_mode,
                     mask_timestamps=llm_mask_timestamps,
                     name="poe-llm-analyst",
+                )
+            )
+        elif analyst_name == "ollama-llm":
+            analysts.append(
+                DeepSeekLLMAnalyst(
+                    model=llm_model,
+                    cache_path=llm_cache_path,
+                    api_key_env="TRADEARENA_OLLAMA_API_KEY",
+                    fallback_api_key_env="",
+                    api_base_url=os.environ.get("TRADEARENA_OLLAMA_BASE_URL", "http://localhost:11434/v1"),
+                    provider="ollama",
+                    api_protocol="openai_chat_completions",
+                    thinking="",
+                    use_response_format=False,
+                    require_api_key=False,
+                    use_risk_feedback=llm_use_risk_feedback,
+                    risk_feedback_mode=llm_risk_feedback_mode,
+                    output_mode=llm_output_mode,
+                    mask_timestamps=llm_mask_timestamps,
+                    name="ollama-llm-analyst",
                 )
             )
         else:

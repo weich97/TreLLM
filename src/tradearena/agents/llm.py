@@ -28,6 +28,7 @@ class DeepSeekLLMAnalyst:
     api_protocol: str = "openai_chat_completions"
     thinking: str = "disabled"
     use_response_format: bool = True
+    require_api_key: bool = True
     timeout_seconds: int = 60
     max_retries: int = 5
     use_risk_feedback: bool = True
@@ -176,7 +177,7 @@ class DeepSeekLLMAnalyst:
                 f"No cached response was found for model={self.model}; live {self.provider} API calls are not enabled by this adapter."
             )
         api_key = _get_secret(self.api_key_env) or _get_secret(self.fallback_api_key_env)
-        if not api_key:
+        if not api_key and self.require_api_key:
             fallback = f" or {self.fallback_api_key_env}" if self.fallback_api_key_env else ""
             raise RuntimeError(
                 f"{self.api_key_env}{fallback} is not set and no cached LLM response is available."
@@ -212,10 +213,13 @@ class DeepSeekLLMAnalyst:
             request_body["response_format"] = {"type": "json_object"}
         if self.thinking:
             request_body["thinking"] = {"type": self.thinking}
+        headers = {"Content-Type": "application/json"}
+        if api_key:
+            headers["Authorization"] = f"Bearer {api_key}"
         request = urllib.request.Request(
             f"{self.api_base_url.rstrip('/')}/chat/completions",
             data=json.dumps(request_body).encode("utf-8"),
-            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            headers=headers,
             method="POST",
         )
         for attempt in range(1, self.max_retries + 1):

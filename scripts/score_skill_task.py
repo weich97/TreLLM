@@ -8,6 +8,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TASKS_DIR = ROOT / "examples" / "skill_tasks"
+ANSWER_SET_SCHEMA = "tradearena_skill_answer_set_v0.1"
 ABILITY_LABELS = {
     "audit_accuracy": "Audit accuracy",
     "risk_understanding": "Risk-gate understanding",
@@ -80,6 +81,36 @@ class TaskScore:
         }
 
 
+@dataclass(frozen=True)
+class AnswerSetManifest:
+    answer_set_id: str
+    evaluator_type: str
+    model_name: str
+    provider: str
+    prompt_version: str
+    skill_commit_or_version: str
+    task_inputs_commit_or_version: str
+    skill_files_used: bool
+    hidden_artifacts_used: bool
+    task_ids: tuple[str, ...]
+    notes: str
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "answer_set_id": self.answer_set_id,
+            "evaluator_type": self.evaluator_type,
+            "model_name": self.model_name,
+            "provider": self.provider,
+            "prompt_version": self.prompt_version,
+            "skill_commit_or_version": self.skill_commit_or_version,
+            "task_inputs_commit_or_version": self.task_inputs_commit_or_version,
+            "skill_files_used": self.skill_files_used,
+            "hidden_artifacts_used": self.hidden_artifacts_used,
+            "task_ids": list(self.task_ids),
+            "notes": self.notes,
+        }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Validate or score TradeArena skill task rubrics.")
     parser.add_argument("task", nargs="?", help="Single skill task directory to score or validate.")
@@ -106,23 +137,25 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     scores = []
+    manifest: AnswerSetManifest | None = None
     if args.answer:
         if len(task_paths) != 1:
             raise SystemExit("--answer requires exactly one task path")
         scores.append(score_task(task_paths[0], Path(args.answer).read_text(encoding="utf-8")))
     else:
-        answers_dir = Path(args.answers_dir)
-        for task_path in task_paths:
-            answer_path = answers_dir / f"{task_path.name}.md"
-            if not answer_path.exists():
-                failures.append(f"missing answer file: {answer_path}")
-                continue
-            scores.append(score_task(task_path, answer_path.read_text(encoding="utf-8")))
+        scores, manifest, answer_failures = score_answer_directory(task_paths, Path(args.answers_dir))
+        failures.extend(answer_failures)
     if failures:
         _emit({"status": "failed", "failures": failures}, as_json=args.json)
         return 1
 
-    payload = {"status": "ok", "scores": [score.to_dict() for score in scores]}
+    payload: dict[str, Any] = {
+        "status": "ok",
+        "scores": [score.to_dict() for score in scores],
+        "ability_summary": summarize_by_ability(scores),
+    }
+    if manifest:
+        payload["answer_set"] = manifest.to_dict()
     _emit(payload, as_json=args.json)
     return 0 if all(score.passed for score in scores) else 1
 
@@ -186,6 +219,128 @@ def score_task(task_path: Path, answer_text: str) -> TaskScore:
         hard_fail_hits=hard_fail_hits,
         criteria=criteria,
     )
+
+
+def score_answer_directory(
+    task_paths: list[Path],
+    answers_dir: Path,
+) -> tuple[list[TaskScore], AnswerSetManifest | None, list[str]]:
+    failures: list[str] = []
+    manifest, manifest_failures = load_answer_set_manifest(answers_dir, [path.name for path in task_paths])
+    failures.extend(manifest_failures)
+
+    scores: list[TaskScore] = []
+    for task_path in task_paths:
+        answer_path = answers_dir / f"{task_path.name}.md"
+        if not answer_path.exists():
+            failures.append(f"missing answer file: {answer_path}")
+            continue
+        scores.append(score_task(task_path, answer_path.read_text(encoding="utf-8")))
+    return scores, manifest, failures
+
+
+def load_answer_set_manifest(
+    answers_dir: Path,
+    expected_task_ids: list[str],
+) -> tuple[AnswerSetManifest | None, list[str]]:
+    path = answers_dir / "manifest.json"
+    if not path.exists():
+        return None, [f"missing answer-set manifest: {path}"]
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        return None, [f"invalid answer-set manifest JSON: {path}: {exc}"]
+    if not isinstance(payload, dict):
+        return None, [f"answer-set manifest must be a JSON object: {path}"]
+    failures = validate_answer_set_manifest(payload, expected_task_ids)
+    if failures:
+        return None, [f"{path}: {failure}" for failure in failures]
+    return (
+        AnswerSetManifest(
+            answer_set_id=str(payload["answer_set_id"]),
+            evaluator_type=str(payload["evaluator_type"]),
+            model_name=str(payload["model_name"]),
+            provider=str(payload["provider"]),
+            prompt_version=str(payload["prompt_version"]),
+            skill_commit_or_version=str(payload["skill_commit_or_version"]),
+            task_inputs_commit_or_version=str(payload["task_inputs_commit_or_version"]),
+            skill_files_used=bool(payload["skill_files_used"]),
+            hidden_artifacts_used=bool(payload["hidden_artifacts_used"]),
+            task_ids=tuple(str(task_id) for task_id in payload["task_ids"]),
+            notes=str(payload.get("notes", "")),
+        ),
+        [],
+    )
+
+
+def validate_answer_set_manifest(payload: dict[str, Any], expected_task_ids: list[str]) -> list[str]:
+    required = {
+        "schema",
+        "answer_set_id",
+        "evaluator_type",
+        "model_name",
+        "provider",
+        "prompt_version",
+        "skill_commit_or_version",
+        "task_inputs_commit_or_version",
+        "skill_files_used",
+        "hidden_artifacts_used",
+        "task_ids",
+    }
+    failures: list[str] = []
+    missing = sorted(required - set(payload))
+    if missing:
+        failures.append(f"missing required fields: {', '.join(missing)}")
+    if payload.get("schema") != ANSWER_SET_SCHEMA:
+        failures.append(f"schema must be {ANSWER_SET_SCHEMA}")
+    if payload.get("evaluator_type") not in {"human", "llm", "coding-agent", "reference"}:
+        failures.append("evaluator_type must be human, llm, coding-agent, or reference")
+    for field in (
+        "answer_set_id",
+        "model_name",
+        "provider",
+        "prompt_version",
+        "skill_commit_or_version",
+        "task_inputs_commit_or_version",
+    ):
+        if field in payload and (not isinstance(payload[field], str) or not payload[field].strip()):
+            failures.append(f"{field} must be a non-empty string")
+    for field in ("skill_files_used", "hidden_artifacts_used"):
+        if field in payload and not isinstance(payload[field], bool):
+            failures.append(f"{field} must be boolean")
+    task_ids = payload.get("task_ids")
+    if not isinstance(task_ids, list) or not all(isinstance(task_id, str) and task_id for task_id in task_ids):
+        failures.append("task_ids must be a non-empty string array")
+    elif set(task_ids) != set(expected_task_ids):
+        missing_tasks = sorted(set(expected_task_ids) - set(task_ids))
+        extra_tasks = sorted(set(task_ids) - set(expected_task_ids))
+        if missing_tasks:
+            failures.append(f"task_ids missing tasks: {', '.join(missing_tasks)}")
+        if extra_tasks:
+            failures.append(f"task_ids include unknown tasks: {', '.join(extra_tasks)}")
+    if payload.get("hidden_artifacts_used") is True:
+        failures.append("hidden_artifacts_used must be false for comparable public scorecards")
+    return failures
+
+
+def summarize_by_ability(scores: list[TaskScore]) -> dict[str, dict[str, Any]]:
+    summary: dict[str, dict[str, Any]] = {}
+    for ability in ABILITY_LABELS:
+        ability_scores = [score for score in scores if score.ability == ability]
+        if not ability_scores:
+            continue
+        earned = sum(score.score for score in ability_scores)
+        possible = sum(score.max_score for score in ability_scores)
+        passed = sum(1 for score in ability_scores if score.passed)
+        summary[ability] = {
+            "label": ABILITY_LABELS[ability],
+            "tasks": len(ability_scores),
+            "passed": passed,
+            "score": earned,
+            "max_score": possible,
+            "score_pct": round(earned / possible, 4) if possible else 0.0,
+        }
+    return summary
 
 
 def _select_task_paths(task: Path | None, tasks_dir: Path) -> list[Path]:
@@ -271,10 +426,22 @@ def _emit(payload: dict[str, Any], *, as_json: bool) -> None:
             print(f"  - {failure}")
         return
     if "scores" in payload:
+        answer_set = payload.get("answer_set")
+        if answer_set:
+            print(
+                f"answer_set={answer_set['answer_set_id']} "
+                f"model={answer_set['model_name']} provider={answer_set['provider']}"
+            )
         for score in payload["scores"]:
             print(
                 f"{score['task_id']}: {score['score']}/{score['max_score']} "
                 f"threshold={score['pass_threshold']} passed={score['passed']}"
+            )
+        print("Ability summary:")
+        for ability, row in payload.get("ability_summary", {}).items():
+            print(
+                f"  - {ABILITY_LABELS[ability]}: {row['passed']}/{row['tasks']} "
+                f"tasks, {row['score']}/{row['max_score']} points"
             )
         return
     print(f"Skill task rubrics validated: {payload['tasks']} tasks")

@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from score_skill_task import ABILITY_LABELS, score_task, validate_tasks
+from score_skill_task import ABILITY_LABELS, AnswerSetManifest, score_answer_directory, validate_tasks
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TASKS_DIR = ROOT / "examples" / "skill_tasks"
@@ -33,8 +33,22 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     answers_dir = Path(args.answers_dir)
-    answer_scores = score_answers(task_paths, answers_dir) if answers_dir.exists() else []
-    markdown = render_report(task_paths, answer_scores, answers_label=args.answers_label)
+    answer_scores: list[dict[str, Any]] = []
+    answer_manifest: AnswerSetManifest | None = None
+    if answers_dir.exists():
+        scores, answer_manifest, answer_failures = score_answer_directory(task_paths, answers_dir)
+        if answer_failures:
+            print("Skill task answer-set validation failed:")
+            for failure in answer_failures:
+                print(f"  - {failure}")
+            return 1
+        answer_scores = [score.to_dict() for score in scores]
+    markdown = render_report(
+        task_paths,
+        answer_scores,
+        answers_label=args.answers_label,
+        answer_manifest=answer_manifest,
+    )
     if args.check:
         if not output.exists():
             print(f"Skill task matrix is missing: {output}")
@@ -51,7 +65,13 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-def render_report(task_paths: list[Path], answer_scores: list[dict[str, Any]] | None = None, *, answers_label: str = "reference") -> str:
+def render_report(
+    task_paths: list[Path],
+    answer_scores: list[dict[str, Any]] | None = None,
+    *,
+    answers_label: str = "reference",
+    answer_manifest: AnswerSetManifest | None = None,
+) -> str:
     rubrics = [_load_rubric(path / "rubric.json") for path in task_paths]
     answer_scores = answer_scores or []
     lines = [
@@ -104,6 +124,39 @@ def render_report(task_paths: list[Path], answer_scores: list[dict[str, Any]] | 
                 "",
                 f"Summary: {passed}/{len(answer_scores)} tasks passed; {score}/{max_score} rubric points earned.",
                 "",
+            ]
+        )
+        if answer_manifest:
+            lines.extend(
+                [
+                    "| Metadata | Value |",
+                    "| --- | --- |",
+                    f"| Answer set | `{_escape(answer_manifest.answer_set_id)}` |",
+                    f"| Evaluator | `{_escape(answer_manifest.evaluator_type)}` |",
+                    f"| Model | `{_escape(answer_manifest.model_name)}` |",
+                    f"| Provider | `{_escape(answer_manifest.provider)}` |",
+                    f"| Prompt version | `{_escape(answer_manifest.prompt_version)}` |",
+                    f"| Skill version | `{_escape(answer_manifest.skill_commit_or_version)}` |",
+                    f"| Task input version | `{_escape(answer_manifest.task_inputs_commit_or_version)}` |",
+                    f"| Skills retrieved | {_bool_icon(answer_manifest.skill_files_used)} |",
+                    f"| Hidden artifacts used | {_bool_icon(answer_manifest.hidden_artifacts_used)} |",
+                    "",
+                ]
+            )
+        lines.extend(
+            [
+                "| Ability | Tasks passed | Points | Score |",
+                "| --- | ---: | ---: | ---: |",
+            ]
+        )
+        for ability, row in _ability_summary(answer_scores).items():
+            lines.append(
+                f"| {ABILITY_LABELS[ability]} | {row['passed']}/{row['tasks']} | "
+                f"{row['score']}/{row['max_score']} | {row['score_pct']:.1%} |"
+            )
+        lines.extend(
+            [
+                "",
                 "| Task | Ability | Score | Threshold | Passed | Hard fail |",
                 "| --- | --- | ---: | ---: | --- | --- |",
             ]
@@ -136,14 +189,22 @@ def _load_rubric(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def score_answers(task_paths: list[Path], answers_dir: Path) -> list[dict[str, Any]]:
-    rows: list[dict[str, Any]] = []
-    for task_path in task_paths:
-        answer_path = answers_dir / f"{task_path.name}.md"
-        if not answer_path.exists():
+def _ability_summary(answer_scores: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    summary: dict[str, dict[str, Any]] = {}
+    for ability in ABILITY_LABELS:
+        rows = [score for score in answer_scores if score["ability"] == ability]
+        if not rows:
             continue
-        rows.append(score_task(task_path, answer_path.read_text(encoding="utf-8")).to_dict())
-    return rows
+        earned = sum(int(row["score"]) for row in rows)
+        possible = sum(int(row["max_score"]) for row in rows)
+        summary[ability] = {
+            "tasks": len(rows),
+            "passed": sum(1 for row in rows if row["passed"]),
+            "score": earned,
+            "max_score": possible,
+            "score_pct": earned / possible if possible else 0.0,
+        }
+    return summary
 
 
 def _ability_task(ability: str) -> str:

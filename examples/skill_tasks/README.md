@@ -37,6 +37,10 @@ python scripts/score_skill_task.py --tasks-dir examples/skill_tasks --answers-di
 python scripts/score_skill_task_report.py --tasks-dir examples/skill_tasks --output docs/results/skill_task_matrix.md --check
 ```
 
+Batch answer sets must include `manifest.json`; otherwise model comparisons do
+not record provider, prompt, skill version, task-input version, or hidden
+artifact use.
+
 Score one answer:
 
 ```bash

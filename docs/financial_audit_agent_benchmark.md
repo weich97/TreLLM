@@ -64,10 +64,17 @@ To evaluate a model, create one Markdown answer per task:
 
 ```text
 examples/skill_task_answers/<answer_set>/
+  manifest.json
   trajectory_audit_001.md
   intent_execution_autopsy_001.md
   ...
 ```
+
+The `manifest.json` must follow
+`schemas/skill_answer_set.schema.json`. It records the model/provider, prompt
+version, skill version, task-input version, whether the skill files were
+retrieved, and whether hidden artifacts were used. Publicly comparable
+scorecards require `hidden_artifacts_used=false`.
 
 Then run:
 

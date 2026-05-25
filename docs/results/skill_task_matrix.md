@@ -40,6 +40,27 @@ If a benchmarked model uses a skill, the skill must be recorded as part of the m
 
 Summary: 12/12 tasks passed; 60/60 rubric points earned.
 
+| Metadata | Value |
+| --- | --- |
+| Answer set | `reference` |
+| Evaluator | `reference` |
+| Model | `maintainer-reference-answer-key` |
+| Provider | `tradearena` |
+| Prompt version | `reference-answer-key-v0.2` |
+| Skill version | `repo-main-skills` |
+| Task input version | `repo-main-skill-tasks` |
+| Skills retrieved | yes |
+| Hidden artifacts used | no |
+
+| Ability | Tasks passed | Points | Score |
+| --- | ---: | ---: | ---: |
+| Audit accuracy | 2/2 | 10/10 | 100.0% |
+| Risk-gate understanding | 2/2 | 10/10 | 100.0% |
+| Execution-boundary awareness | 2/2 | 10/10 | 100.0% |
+| Claim discipline | 2/2 | 10/10 | 100.0% |
+| Reproduction awareness | 2/2 | 10/10 | 100.0% |
+| Plugin engineering | 2/2 | 10/10 | 100.0% |
+
 | Task | Ability | Score | Threshold | Passed | Hard fail |
 | --- | --- | ---: | ---: | --- | --- |
 | `claim_boundary_001` | Claim discipline | 5/5 | 4 | yes | no |

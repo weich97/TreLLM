@@ -62,6 +62,20 @@ BTCUSDT perpetual sample, not a venue-wide or broker-specific transaction-cost
 model. A publishable calibration row should report source, venue, date range,
 order type, sample size, and licensing/redaction limits.
 
+To compare the same small order tape across execution assumptions, run:
+
+```bash
+python scripts/run_execution_replay_calibration_loop.py
+```
+
+This writes `docs/results/execution_replay_calibration_loop.json` and
+`docs/results/execution_replay_calibration_loop.md`. The report runs
+`ohlcv_stress`, `quote_replay`, and `fill_replay` on both the hand-checkable
+BTCUSDT fixture and a short Binance BTCUSDT public sample. The stress row is a
+conservative proxy; only quote/fill rows attach observed microstructure
+evidence, and the Binance fill row still uses public exchange trades rather
+than private broker fills.
+
 ## Required Calibration Report Fields
 
 Every calibrated execution report should include:

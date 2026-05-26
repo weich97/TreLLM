@@ -62,6 +62,37 @@ def test_binance_public_microstructure_sample_reports_quote_fill_replay_error():
     assert summary["stress_only_comparison"]["residual_mae_bps"] > summary["fit_quality"]["residual_mae_bps"]
 
 
+def test_execution_replay_calibration_loop_compares_three_modes(tmp_path: Path):
+    output = tmp_path / "loop.json"
+    markdown = tmp_path / "loop.md"
+    subprocess.run(
+        [
+            sys.executable,
+            "scripts/run_execution_replay_calibration_loop.py",
+            "--samples",
+            "fixture",
+            "--output",
+            str(output),
+            "--markdown-output",
+            str(markdown),
+        ],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    summary = json.loads(output.read_text(encoding="utf-8"))
+    modes = {row["mode"]: row for row in summary["mode_rows"]}
+
+    assert set(modes) == {"ohlcv_stress", "quote_replay", "fill_replay"}
+    assert "conservative proxy" in summary["claim_boundary"]
+    assert modes["ohlcv_stress"]["evidence_labels"] == ["stress-only", "conservative-proxy"]
+    assert "quote-replay" in modes["quote_replay"]["evidence_labels"]
+    assert modes["fill_replay"]["quantity_fill_ratio"] == 1.0
+    assert modes["ohlcv_stress"]["mean_slippage_bps"] > modes["fill_replay"]["mean_slippage_bps"]
+    assert "not for ground-truth transaction-cost prediction" in markdown.read_text(encoding="utf-8")
+
+
 def test_external_reproduction_pack_writes_manifest(tmp_path: Path):
     output_dir = tmp_path / "repro"
     subprocess.run(

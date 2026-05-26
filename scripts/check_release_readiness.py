@@ -45,6 +45,8 @@ REQUIRED_FILES = [
     "docs/results/execution_quote_fill_calibration_sample.json",
     "docs/results/execution_quote_fill_calibration_binance_sample.md",
     "docs/results/execution_quote_fill_calibration_binance_sample.json",
+    "docs/results/execution_replay_calibration_loop.md",
+    "docs/results/execution_replay_calibration_loop.json",
     "docs/results/llm_live_baseline_manifest/manifest.json",
     "docs/results/llm_live_baseline_manifest/poe_gpt55_live_smoke_2026-05-18_summary.json",
     "docs/results/community_registry.md",

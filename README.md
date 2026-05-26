@@ -82,6 +82,20 @@ investment advice. Its object of study is whether financial-agent intent remains
 auditable, reproducible, and explainable after risk controls and execution
 frictions transform it into portfolio outcomes.
 
+TradeArena is an audit microscope for financial agents: it records what a model
+wanted to do, how risk controls revised it, how execution frictions changed the
+fill, and whether the result can be replayed, hashed, redacted, and compared.
+
+```json
+{
+  "step": 2,
+  "intent": {"AAPL": 0.42},
+  "risk_revision": {"AAPL": 0.35, "reason": "max_position_weight"},
+  "execution": {"fill_ratio": 0.68, "slippage_bps": 14.2},
+  "replay_hash": "sha256:9f4c..."
+}
+```
+
 <p align="center">
   <img src="docs/assets/readme_audit_lifecycle.gif"
        alt="Animated TradeArena audit trace showing observation, plan, risk review, execution, and reflection records."
@@ -291,6 +305,18 @@ python scripts/calibrate_quote_fill_model.py \
 The checked-in Binance sample covers BTCUSDT USD-M futures public
 top-of-book updates and public trades for a short UTC window. It is a
 calibration example, not a venue-wide transaction-cost claim.
+
+To close the loop across the three execution modes on the same small order
+tape, run:
+
+```bash
+python scripts/run_execution_replay_calibration_loop.py
+```
+
+This writes `docs/results/execution_replay_calibration_loop.json` and
+`docs/results/execution_replay_calibration_loop.md`, comparing OHLCV stress,
+quote replay, and fill replay on a hand-checkable BTCUSDT fixture plus a
+short Binance BTCUSDT public sample.
 
 Risk control runs before, during, and after simulated execution.
 [`MaxPositionRiskManager`](src/tradearena/agents/risk.py) runs three checks:

@@ -49,6 +49,8 @@ ai-agents
 ## Repository Checklist
 
 - Publish GitHub release `v0.2.0`.
+- Prepare patch release candidate `v0.2.1` from
+  [`release_candidate_v0.2.1.md`](release_candidate_v0.2.1.md) after CI passes.
 - Add the topics above.
 - Enable GitHub Discussions.
 - Verify the GitHub Pages site at `https://weich97.github.io/TradeArena/`.
@@ -56,6 +58,8 @@ ai-agents
 - Verify the browser-playable 3-minute demo and link it from the README.
 - Verify the v0.2 external reproduction pack with at least three independent
   reports: macOS/Python 3.10, Linux/Python 3.11, and Colab or Binder.
+- Attach the execution calibration stability report, market-rule fixture report,
+  and external validation bundle to the patch release notes.
 
 ## Core Demo Command
 

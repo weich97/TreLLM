@@ -8,7 +8,12 @@ from pathlib import Path
 
 from tradearena.core.reproducibility import compute_reproducibility_hash, hash_trajectory_file
 from tradearena.evaluation.evidence import evidence_payload
-from tradearena.evaluation.submissions import validate_submission, validate_submission_file
+from tradearena.evaluation.submissions import (
+    build_registry_rows,
+    validate_submission,
+    validate_submission_file,
+    write_registry_html,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -135,6 +140,27 @@ def test_cli_submission_registry_and_hash_run(tmp_path: Path):
     assert "Community Benchmark Registry" in html_path.read_text(encoding="utf-8")
     assert "stress-only" in html_path.read_text(encoding="utf-8")
     assert "deterministic-baseline" in html_path.read_text(encoding="utf-8")
+    assert "Reproducible" in html_path.read_text(encoding="utf-8")
+    assert "Redacted" in html_path.read_text(encoding="utf-8")
+    assert "<details>" in html_path.read_text(encoding="utf-8")
+
+
+def test_registry_entry_ids_and_empty_html_are_stable(tmp_path: Path):
+    submission_dir = ROOT / "examples/benchmark_submissions"
+    rows, errors = build_registry_rows(submission_dir)
+    assert errors == []
+
+    entry_ids = {row["reproducibility_hash"]: row["entry_id"] for row in rows}
+    rows_again, errors_again = build_registry_rows(submission_dir)
+    assert errors_again == []
+    assert entry_ids == {row["reproducibility_hash"]: row["entry_id"] for row in rows_again}
+
+    html_path = tmp_path / "empty_registry.html"
+    write_registry_html([], html_path)
+    html = html_path.read_text(encoding="utf-8")
+
+    assert "No accepted submissions yet." in html
+    assert "Community Benchmark Registry" in html
 
 
 def test_hash_run_produces_stable_trajectory_fingerprint():

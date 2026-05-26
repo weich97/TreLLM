@@ -46,6 +46,19 @@ Validate the report before submitting it:
 python scripts/validate_reproduction_report.py outputs/reproduction/v0_2/manifest.json
 ```
 
+Build an issue-ready summary bundle:
+
+```bash
+python scripts/build_external_validation_bundle.py \
+  --manifest outputs/reproduction/v0_2/manifest.json \
+  --markdown-output outputs/reproduction/v0_2/external_validation_bundle.md
+```
+
+This produces a compact environment, command, artifact-hash, and trajectory-hash
+summary that can be pasted into issues #43-#45. The bundle is evidence for
+reproducibility of the no-key path; it is not evidence that any model trades
+profitably.
+
 Report:
 
 - commit hash or release tag;

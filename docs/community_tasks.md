@@ -74,3 +74,15 @@ reviewable without asking newcomers to understand the whole codebase.
 
 For issue bodies, copy the task row, add a file path owner, and name the command
 that a reviewer should run.
+
+Maintainer starter fixtures now exist for the first market-rule slice:
+
+```bash
+python examples/market_rules_fixture_demo.py
+```
+
+The command writes `docs/results/market_rules_fixture.json` and
+`docs/results/market_rules_fixture.md`. External follow-up work should extend
+the fixture with real exchange calendar assumptions or independently reviewed
+venue-rule references rather than treating the starter fixture as complete
+market coverage.

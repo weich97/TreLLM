@@ -8,7 +8,7 @@ import math
 import urllib.request
 import zipfile
 from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -255,11 +255,11 @@ def _sha256(path: Path) -> str:
 def _parse_window_start(date: str, time_text: str) -> datetime:
     parsed_date = datetime.fromisoformat(date).date()
     hh, mm, ss = (int(part) for part in time_text.split(":"))
-    return datetime(parsed_date.year, parsed_date.month, parsed_date.day, hh, mm, ss, tzinfo=UTC)
+    return datetime(parsed_date.year, parsed_date.month, parsed_date.day, hh, mm, ss, tzinfo=timezone.utc)
 
 
 def _from_ms(value: str) -> datetime:
-    return datetime.fromtimestamp(int(value) / 1000.0, tz=UTC)
+    return datetime.fromtimestamp(int(value) / 1000.0, tz=timezone.utc)
 
 
 def _minute_ms(timestamp: datetime) -> int:
@@ -268,7 +268,7 @@ def _minute_ms(timestamp: datetime) -> int:
 
 
 def _iso(timestamp: datetime) -> str:
-    return timestamp.astimezone(UTC).isoformat().replace("+00:00", "Z")
+    return timestamp.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 if __name__ == "__main__":

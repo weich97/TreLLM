@@ -19,6 +19,7 @@ from tradearena.evaluation.submissions import (
     write_registry_markdown,
 )
 from tradearena.evaluation.tasks import TRADEARENA_CORE_TASKS, BenchmarkTask, DataLeakagePolicy
+from tradearena.evaluation.trace_export import export_trajectory_to_trace_json, trajectory_to_trace
 
 __all__ = [
     "AuditManifest",
@@ -38,6 +39,8 @@ __all__ = [
     "build_registry_rows",
     "classify_step_failure_modes",
     "export_audit_bundle",
+    "export_trajectory_to_trace_json",
+    "trajectory_to_trace",
     "validate_submission",
     "validate_submission_file",
     "write_registry_html",

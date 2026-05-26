@@ -45,3 +45,17 @@ without changing the runner.
 
 This keeps observability work useful without adding live services to the default
 path.
+
+The first slice is now implemented as a local JSON exporter:
+
+```bash
+tradearena export-trace outputs/examples/audit_walkthrough_trajectory.json \
+  --format opentelemetry-json \
+  --output outputs/examples/audit_walkthrough_trace.json
+```
+
+The exporter reads an existing trajectory and does not rerun experiments. It
+emits `market.observe`, `agent.analyze`, `agent.decide`, `risk.approve`, and
+`execution.simulate` spans with stable parent IDs. Raw prompts, raw responses,
+and raw rationales are excluded; model and memory identifiers are represented
+as hashes or structured counts.

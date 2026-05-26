@@ -11,7 +11,7 @@ import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -96,7 +96,7 @@ def main(argv: list[str] | None = None) -> int:
     model_specs = _parse_model_specs(args.models)
     if args.include_deepseek:
         model_specs = (*model_specs, *_parse_model_specs(",".join(DEFAULT_DEEPSEEK_MODELS)))
-    run_id = datetime.now(tz=UTC).strftime("provider_skill_tasks_%Y%m%d_%H%M%S")
+    run_id = datetime.now(tz=timezone.utc).strftime("provider_skill_tasks_%Y%m%d_%H%M%S")
     run_dir = output_root / run_id
     output_root.mkdir(parents=True, exist_ok=True)
     cache_dir.mkdir(parents=True, exist_ok=True)

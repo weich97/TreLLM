@@ -44,6 +44,7 @@
   <a href="docs/public_artifact_privacy.md">Artifact privacy</a> |
   <a href="docs/evaluation_rigor.md">Rigor</a> |
   <a href="docs/claim_boundaries.md">Claims</a> |
+  <a href="docs/observability.md">Trace export</a> |
   <a href="docs/benchmark_v0_2_spec.md">v0.2 spec</a> |
   <a href="docs/plugin_development.md">Plugins</a> |
   <a href="docs/agent_skills.md">Agent skills</a> |
@@ -318,6 +319,15 @@ This writes `docs/results/execution_replay_calibration_loop.json` and
 quote replay, and fill replay on a hand-checkable BTCUSDT fixture plus a
 short Binance BTCUSDT public sample.
 
+To check calibration stability across short public fill windows, run:
+
+```bash
+python scripts/run_execution_calibration_stability.py
+```
+
+This writes `docs/results/execution_calibration_stability.json` and
+`docs/results/execution_calibration_stability.md`.
+
 Risk control runs before, during, and after simulated execution.
 [`MaxPositionRiskManager`](src/tradearena/agents/risk.py) runs three checks:
 
@@ -334,7 +344,16 @@ Risk control runs before, during, and after simulated execution.
 
 Each intervention is saved as a `RiskReport` with `RiskCheck` and
 `RiskViolation` records. That makes it possible to compare the model's original
-intent with the order that actually reached the simulator.
+intent with the order that actually reached the simulator. For deterministic
+exchange-rule feasibility examples, run:
+
+```bash
+python examples/market_rules_fixture_demo.py
+```
+
+This writes `docs/results/market_rules_fixture.json` and
+`docs/results/market_rules_fixture.md`, covering A-share T+1/price limits,
+Hong Kong board-lot rounding, crypto fee/funding, and liquidity-halt clips.
 
 ## Quick Start: Deterministic Smoke Test
 

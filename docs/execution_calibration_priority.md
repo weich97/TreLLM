@@ -76,6 +76,18 @@ conservative proxy; only quote/fill rows attach observed microstructure
 evidence, and the Binance fill row still uses public exchange trades rather
 than private broker fills.
 
+To check whether the public Binance calibration result is stable across small
+fill windows, run:
+
+```bash
+python scripts/run_execution_calibration_stability.py
+```
+
+This writes `docs/results/execution_calibration_stability.json` and
+`docs/results/execution_calibration_stability.md`. It reports calibrated versus
+default stress residual MAE for rolling windows. The result supports
+calibration-plumbing robustness, not venue-wide or broker-grade cost claims.
+
 ## Required Calibration Report Fields
 
 Every calibrated execution report should include:

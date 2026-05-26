@@ -18,6 +18,7 @@ from tradearena.evaluation.submissions import (
     write_registry_html,
     write_registry_markdown,
 )
+from tradearena.evaluation.trace_export import export_trajectory_to_trace_json
 from tradearena.experiments import PaperExperimentConfig, run_paper_experiment
 from tradearena.factory import build_default_system, default_registry
 
@@ -102,7 +103,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
-    if argv and argv[0] in {"validate-submission", "build-registry", "hash-run", "new-plugin", "replay"}:
+    if argv and argv[0] in {"validate-submission", "build-registry", "hash-run", "new-plugin", "replay", "export-trace"}:
         return _run_utility_command(argv)
 
     parser = build_parser()
@@ -379,6 +380,17 @@ def _run_utility_command(argv: list[str]) -> int:
             print(json.dumps(summary, indent=2))
         else:
             print(_format_replay_summary(summary))
+        return 0
+
+    if command == "export-trace":
+        parser = argparse.ArgumentParser(description="Export a TradeArena trajectory to a local trace JSON.")
+        parser.add_argument("trajectory", help="Trajectory JSON, or a multi-case JSON written by --output.")
+        parser.add_argument("--case", default="", help="Case name when exporting a multi-case --output file.")
+        parser.add_argument("--format", default="opentelemetry-json", choices=["opentelemetry-json"])
+        parser.add_argument("--output", required=True, help="Trace JSON output path.")
+        args = parser.parse_args(argv[1:])
+        export_trajectory_to_trace_json(args.trajectory, args.output, case_name=args.case)
+        print(f"Wrote {args.output}")
         return 0
 
     if command == "new-plugin":

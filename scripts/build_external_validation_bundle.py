@@ -47,8 +47,8 @@ def main(argv: list[str] | None = None) -> int:
     output.write_text(json.dumps(bundle, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     markdown_output.parent.mkdir(parents=True, exist_ok=True)
     markdown_output.write_text(render_bundle_markdown(bundle), encoding="utf-8")
-    print(f"Wrote {output.relative_to(ROOT).as_posix()}")
-    print(f"Wrote {markdown_output.relative_to(ROOT).as_posix()}")
+    print(f"Wrote {_display_path(output)}")
+    print(f"Wrote {_display_path(markdown_output)}")
     return 0
 
 
@@ -191,6 +191,13 @@ def _status_digest(status: Any) -> str:
     if not text:
         return ""
     return "sha256:" + hashlib.sha256(text.encode()).hexdigest()
+
+
+def _display_path(path: Path) -> str:
+    try:
+        return path.relative_to(ROOT).as_posix()
+    except ValueError:
+        return path.as_posix()
 
 
 if __name__ == "__main__":

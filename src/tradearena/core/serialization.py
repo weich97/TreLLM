@@ -7,6 +7,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, cast
 
+from tradearena.core.redaction import RedactionPolicy
+
 
 def to_jsonable(value: Any) -> Any:
     if isinstance(value, datetime):
@@ -22,10 +24,11 @@ def to_jsonable(value: Any) -> Any:
     return value
 
 
-def write_json(path: str | Path, payload: Any) -> None:
+def write_json(path: str | Path, payload: Any, *, redaction_policy: RedactionPolicy | str | None = None) -> None:
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(to_jsonable(payload), indent=2), encoding="utf-8")
+    policy = RedactionPolicy.from_value(redaction_policy)
+    target.write_text(json.dumps(policy.redact(to_jsonable(payload)), indent=2), encoding="utf-8")
 
 
 def read_json(path: str | Path) -> Any:

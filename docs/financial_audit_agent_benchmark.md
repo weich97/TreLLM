@@ -58,6 +58,23 @@ python scripts/score_skill_task_report.py --tasks-dir examples/skill_tasks --out
 The generated report is tracked at
 `docs/results/skill_task_matrix.md`.
 
+## Poe And Direct-DeepSeek Model Matrix
+
+To spend provider tokens on the core audit question rather than another
+profitability table, run the Poe skill-task matrix:
+
+```bash
+python scripts/run_poe_skill_task_matrix.py --repeats 3
+```
+
+This evaluates five Poe-hosted frontier policies across all 12 public skill
+tasks with three repeated answer sets per model. DeepSeek V4 Flash/Pro can be
+added with `--include-deepseek`, but those rows use `DEEPSEEK_API_KEY` and the
+direct DeepSeek endpoint rather than Poe. Raw prompts and raw model answers stay
+under ignored local `outputs/` and `outputs/llm_cache/` paths; the tracked
+report contains aggregate task and ability scores only. See
+[`docs/poe_skill_task_experiments.md`](poe_skill_task_experiments.md).
+
 ## Scoring A Model Or Reviewer
 
 To evaluate a model, create one Markdown answer per task:

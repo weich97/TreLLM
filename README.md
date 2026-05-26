@@ -6,8 +6,9 @@
 
 <p align="center">
   <strong>
-    Research code for agent reliability, risk-aware AI systems,
-    and intent-to-execution audits in financial decision settings.
+    TradeArena is a paper-only audit benchmark for LLM financial agents:
+    it records how model intent is transformed by risk gates and execution
+    frictions into replayable, redacted trajectories.
   </strong>
 </p>
 
@@ -40,12 +41,14 @@
   <a href="https://weich97.github.io/TradeArena/benchmark-v0.2.html">Benchmark card</a> |
   <a href="https://weich97.github.io/TradeArena/community_registry.html">Leaderboard</a> |
   <a href="docs/benchmark_submissions.md">Redacted manifests</a> |
+  <a href="docs/public_artifact_privacy.md">Artifact privacy</a> |
   <a href="docs/evaluation_rigor.md">Rigor</a> |
   <a href="docs/claim_boundaries.md">Claims</a> |
   <a href="docs/benchmark_v0_2_spec.md">v0.2 spec</a> |
   <a href="docs/plugin_development.md">Plugins</a> |
   <a href="docs/agent_skills.md">Agent skills</a> |
   <a href="docs/financial_audit_agent_benchmark.md">Audit-agent tasks</a> |
+  <a href="docs/poe_skill_task_experiments.md">Skill model matrix</a> |
   <a href="docs/benchmark_maturity.md">Maturity track</a> |
   <a href="docs/community_tasks.md">First issues</a> |
   <a href="docs/contributor_roadmap.md">Roadmap</a> |
@@ -74,9 +77,10 @@
 
 # TradeArena
 
-TradeArena runs paper-only financial-agent experiments for LLM and deterministic
-policies. For each step it records the market input, proposed weights, risk
-edits, simulated fills, portfolio state, and metrics.
+TradeArena is not a live-trading system, trading-skill leaderboard, or
+investment advice. Its object of study is whether financial-agent intent remains
+auditable, reproducible, and explainable after risk controls and execution
+frictions transform it into portfolio outcomes.
 
 <p align="center">
   <img src="docs/assets/readme_audit_lifecycle.gif"

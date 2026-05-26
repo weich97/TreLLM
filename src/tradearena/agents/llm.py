@@ -64,6 +64,7 @@ class DeepSeekLLMAnalyst:
             response_text = str(cached["response_text"])
             latency_ms = 0.0
 
+        response_hash = hashlib.sha256(response_text.encode("utf-8")).hexdigest()
         parsed = self._parse_response(response_text)
         signals = []
         for item in self._signal_items(parsed):
@@ -92,7 +93,7 @@ class DeepSeekLLMAnalyst:
                         "api_model": self.api_model or self.model,
                         "llm_output_mode": self.output_mode,
                         "prompt_hash": prompt_hash,
-                        "response_text": response_text,
+                        "response_hash": response_hash,
                         "latency_ms": latency_ms,
                         "risk_feedback_mode": self.risk_feedback_mode if self.use_risk_feedback else "hidden",
                         "timestamp_masked": self.mask_timestamps,

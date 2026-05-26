@@ -61,6 +61,8 @@ def test_deepseek_llm_analyst_replays_cache_without_key(tmp_path: Path, monkeypa
     assert signals[0].symbol == "BTC-USD"
     assert signals[0].score == 0.25
     assert signals[0].metadata["llm_call"] is True
+    assert "response_text" not in signals[0].metadata
+    assert isinstance(signals[0].metadata["response_hash"], str)
 
 
 def test_llm_cache_is_lazy_loaded_until_file_changes(tmp_path: Path):

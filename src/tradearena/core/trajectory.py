@@ -4,6 +4,8 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from typing import Any
 
+from tradearena.core.redaction import RedactionPolicy
+
 
 @dataclass(frozen=True)
 class StepRecord:
@@ -39,5 +41,6 @@ class Trajectory:
     def equity_curve(self) -> list[tuple[datetime, float]]:
         return [(step.timestamp, float(step.portfolio["equity"])) for step in self.steps]
 
-    def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+    def to_dict(self, redaction_policy: RedactionPolicy | str | None = None) -> dict[str, Any]:
+        policy = RedactionPolicy.from_value(redaction_policy)
+        return policy.redact(asdict(self))

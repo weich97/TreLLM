@@ -149,11 +149,11 @@ def main(argv: list[str] | None = None) -> int:
         "estimated_tokens": estimated_tokens,
         "prompt_version": PROMPT_VERSION,
         "public_outputs": {
-            "markdown": str(public_output.relative_to(ROOT)),
-            "csv": str(public_csv.relative_to(ROOT)),
+            "markdown": _display_path(public_output),
+            "csv": _display_path(public_csv),
         },
-        "private_outputs": str(run_dir.relative_to(ROOT)),
-        "private_cache": str(cache_dir.relative_to(ROOT)),
+        "private_outputs": _display_path(run_dir),
+        "private_cache": _display_path(cache_dir),
     }
     write_json(run_dir / "plan.json", plan)
     if args.dry_run:
@@ -633,6 +633,13 @@ def _read_text(path: Path, limit: int | None = None) -> str:
     if limit is not None and len(text) > limit:
         return text[:limit] + "\n[truncated]"
     return text
+
+
+def _display_path(path: Path) -> str:
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
 
 
 def _get_secret(name: str) -> str:

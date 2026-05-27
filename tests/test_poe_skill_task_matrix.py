@@ -76,3 +76,39 @@ def test_challenge_skill_task_rubrics_validate():
     )
 
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_dry_run_records_sample_start_index(tmp_path: Path):
+    output = tmp_path / "report.md"
+    csv_output = tmp_path / "report.csv"
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/run_poe_skill_task_matrix.py",
+            "--tasks-dir",
+            "examples/skill_tasks_challenge",
+            "--models",
+            "poe:gpt-5.5",
+            "--limit-tasks",
+            "leaderboard_misread_001",
+            "--repeats",
+            "1",
+            "--sample-start-index",
+            "3",
+            "--prompt-variants",
+            "adversarial_claim_boundary",
+            "--public-output",
+            str(output),
+            "--public-csv",
+            str(csv_output),
+            "--dry-run",
+        ],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert '"sample_start_index": 3' in result.stdout
+    assert "Sample start index: 3" in output.read_text(encoding="utf-8")

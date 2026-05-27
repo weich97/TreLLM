@@ -36,6 +36,9 @@ python scripts/run_poe_skill_task_matrix.py \
 
 The repeat id is part of the cache key, so repeated samples are independent
 provider calls rather than cache replays.
+For append-only follow-up samples after a two-repeat run, use
+`--sample-start-index 3` so the new answers are recorded as `r3` rather than
+overwriting the interpretation of earlier `r1/r2` cache keys.
 
 ## Challenge Suite
 
@@ -70,10 +73,46 @@ Current tracked snapshots:
   samples, 240 live calls; Gemini 3.1 Pro averaged 80.4%, Claude Opus 4.7
   averaged 78.3%, GPT-5.5 averaged 77.9%, GLM-5 averaged 77.5%, and Kimi K2.5
   averaged 73.8%.
+- challenge follow-up run: 3 Poe models, 3 reviewer variants, one appended
+  `r3` sample, 72 live calls; Gemini 3.1 Pro averaged 82.5%, Kimi K2.5 averaged
+  80.0%, and GPT-5.5 averaged 72.5%.
+- Claude adversarial follow-up: one appended `r3` sample on the adversarial
+  challenge variant, 8 live calls; Claude Opus 4.7 scored 95.0% with no hard
+  failures, showing that the earlier Claude adversarial variance deserves
+  repeat-level reporting rather than a single aggregate claim.
 
 The challenge scores are lower by design. They are useful because they surface
 where models still overread leaderboard rows, underreport reproduction
 defects, or soften public-artifact privacy boundaries under adversarial wording.
+
+When extra Poe budget remains, prefer append-only challenge repeats over new
+profitability rows:
+
+```bash
+python scripts/run_poe_skill_task_matrix.py \
+  --tasks-dir examples/skill_tasks_challenge \
+  --models poe:gpt-5.5,poe:gemini-3.1-pro,poe:kimi-k2.5 \
+  --repeats 1 \
+  --sample-start-index 3 \
+  --prompt-variants standard,skeptical_reviewer,adversarial_claim_boundary \
+  --max-output-tokens 1800 \
+  --public-output docs/results/poe_skill_challenge_followup_matrix.md \
+  --public-csv docs/results/poe_skill_challenge_followup_matrix.csv
+```
+
+The small high-variance follow-up probe is:
+
+```bash
+python scripts/run_poe_skill_task_matrix.py \
+  --tasks-dir examples/skill_tasks_challenge \
+  --models poe:claude-opus-4.7 \
+  --repeats 1 \
+  --sample-start-index 3 \
+  --prompt-variants adversarial_claim_boundary \
+  --max-output-tokens 1800 \
+  --public-output docs/results/poe_skill_challenge_followup_claude_adversarial.md \
+  --public-csv docs/results/poe_skill_challenge_followup_claude_adversarial.csv
+```
 
 DeepSeek is intentionally not routed through Poe. To include direct DeepSeek
 rows, run:

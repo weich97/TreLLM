@@ -85,6 +85,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--cache-dir", default="outputs/llm_cache/poe_skill_tasks")
     parser.add_argument("--repeats", type=int, default=3, help="Repeated answer sets per model. Three repeats across five models is roughly a 350k-450k token run.")
     parser.add_argument(
+        "--sample-start-index",
+        type=int,
+        default=1,
+        help="First sample id to use for repeated provider calls. Use 3 to append r3 samples after an r1/r2 run.",
+    )
+    parser.add_argument(
         "--prompt-variants",
         default="standard",
         help=(
@@ -119,6 +125,8 @@ def main(argv: list[str] | None = None) -> int:
 
     model_specs = _parse_model_specs(args.models)
     prompt_variants = _parse_prompt_variants(args.prompt_variants)
+    if args.sample_start_index < 1:
+        raise SystemExit("--sample-start-index must be at least 1.")
     if args.include_deepseek:
         model_specs = (*model_specs, *_parse_model_specs(",".join(DEFAULT_DEEPSEEK_MODELS)))
     run_id = datetime.now(tz=timezone.utc).strftime("provider_skill_tasks_%Y%m%d_%H%M%S")
@@ -136,6 +144,7 @@ def main(argv: list[str] | None = None) -> int:
         "tasks": [path.name for path in task_paths],
         "prompt_variants": list(prompt_variants),
         "repeats": args.repeats,
+        "sample_start_index": args.sample_start_index,
         "planned_calls": planned_calls,
         "estimated_tokens": estimated_tokens,
         "prompt_version": PROMPT_VERSION,
@@ -160,10 +169,12 @@ def main(argv: list[str] | None = None) -> int:
         if not api_key:
             raise SystemExit(f"{api_key_env} is not set for provider {provider}.")
         for variant in prompt_variants:
-            for repeat in range(1, args.repeats + 1):
-                answer_dir = run_dir / f"{provider}_{_safe_id(model)}_{_safe_id(variant)}_r{repeat}"
+            for repeat_index in range(args.repeats):
+                sample_number = args.sample_start_index + repeat_index
+                sample_id = f"r{sample_number}"
+                answer_dir = run_dir / f"{provider}_{_safe_id(model)}_{_safe_id(variant)}_{sample_id}"
                 answer_dir.mkdir(parents=True, exist_ok=True)
-                _write_manifest(answer_dir, provider, model, variant, repeat, task_paths)
+                _write_manifest(answer_dir, provider, model, variant, sample_number, task_paths)
                 for task_path in task_paths:
                     prompt = _build_prompt(task_path, skills_dir, variant)
                     response = _chat_completion(
@@ -171,7 +182,7 @@ def main(argv: list[str] | None = None) -> int:
                         model=model,
                         prompt=prompt,
                         prompt_variant=variant,
-                        sample_id=f"r{repeat}",
+                        sample_id=sample_id,
                         api_key=api_key,
                         api_base_url=api_base_url,
                         cache_path=cache_dir / f"{provider}_{_safe_id(model)}.jsonl",
@@ -186,14 +197,14 @@ def main(argv: list[str] | None = None) -> int:
                     provider,
                     model,
                     variant,
-                    repeat,
+                    sample_number,
                     scores,
                     manifest.to_dict() if manifest else {},
                 )
                 write_json(answer_dir / "score_summary.json", summary)
                 summaries.append(summary)
                 print(
-                    f"Scored {model} variant {variant} repeat {repeat}: "
+                    f"Scored {model} variant {variant} repeat {sample_number}: "
                     f"{summary['tasks_passed']}/{summary['tasks']} tasks passed"
                 )
 
@@ -444,6 +455,7 @@ def _write_public_report(markdown_path: Path, csv_path: Path, summaries: list[di
         f"- Tasks: {len(plan['tasks'])}.",
         f"- Prompt variants: {', '.join(f'`{variant}`' for variant in plan['prompt_variants'])}.",
         f"- Repeats: {plan['repeats']}.",
+        f"- Sample start index: {plan['sample_start_index']}.",
         f"- Planned calls: {plan['planned_calls']}.",
         f"- Estimated token budget: about {plan['estimated_tokens']:,} tokens.",
         "",
@@ -513,11 +525,13 @@ def _write_public_report(markdown_path: Path, csv_path: Path, summaries: list[di
             (
                 "python scripts/run_poe_skill_task_matrix.py "
                 f"--tasks-dir {plan['tasks_dir']} --repeats {plan['repeats']} "
+                f"--sample-start-index {plan['sample_start_index']} "
                 f"--prompt-variants {','.join(plan['prompt_variants'])}"
             ),
             (
                 "python scripts/run_poe_skill_task_matrix.py "
                 f"--tasks-dir {plan['tasks_dir']} --repeats {plan['repeats']} "
+                f"--sample-start-index {plan['sample_start_index']} "
                 f"--prompt-variants {','.join(plan['prompt_variants'])} --refresh-cache"
             ),
             "python scripts/run_poe_skill_task_matrix.py --repeats 3 --include-deepseek",

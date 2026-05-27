@@ -458,6 +458,8 @@ discipline, privacy redaction, reproduction honesty, execution-boundary
 awareness, and market-rule caution.
 The tracked challenge run covers 5 Poe-hosted models, 8 adversarial audit tasks,
 3 reviewer prompt variants, and 2 independent samples per variant.
+Follow-up `r3` samples are tracked for selected high-value rows to expose
+repeat-level variance rather than treating a single provider answer as stable.
 
 ## LLM Run Paths
 

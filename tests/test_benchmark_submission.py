@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from copy import deepcopy
@@ -16,6 +17,10 @@ from tradearena.evaluation.submissions import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
+SUBPROCESS_ENV = {
+    **os.environ,
+    "PYTHONPATH": str(ROOT / "src") + os.pathsep + os.environ.get("PYTHONPATH", ""),
+}
 
 
 def test_example_redacted_submission_validates_and_hash_matches():
@@ -112,6 +117,7 @@ def test_cli_submission_registry_and_hash_run(tmp_path: Path):
     subprocess.run(
         [sys.executable, "-m", "tradearena.cli", "validate-submission", str(submission)],
         cwd=ROOT,
+        env=SUBPROCESS_ENV,
         check=True,
     )
     subprocess.run(
@@ -129,6 +135,7 @@ def test_cli_submission_registry_and_hash_run(tmp_path: Path):
             str(html_path),
         ],
         cwd=ROOT,
+        env=SUBPROCESS_ENV,
         check=True,
     )
 
@@ -172,6 +179,7 @@ def test_hash_run_produces_stable_trajectory_fingerprint():
     result = subprocess.run(
         [sys.executable, "-m", "tradearena.cli", "hash-run", str(trajectory)],
         cwd=ROOT,
+        env=SUBPROCESS_ENV,
         check=True,
         capture_output=True,
         text=True,

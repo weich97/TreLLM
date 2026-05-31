@@ -12,7 +12,7 @@ clone to a useful validation issue.
 | 1 hour | A fresh macOS, Ubuntu, Colab, or Binder environment | Run the no-key reproduction pack | Issues [#43](https://github.com/weich97/TradeArena/issues/43), [#44](https://github.com/weich97/TradeArena/issues/44), [#45](https://github.com/weich97/TradeArena/issues/45) |
 | 1-2 hours | Basic Python comfort | Submit one deterministic baseline row | Issue [#46](https://github.com/weich97/TradeArena/issues/46) |
 | 2-3 hours | Market microstructure or broker-fill context | Submit one quote/fill calibration mini-report | Issue [#47](https://github.com/weich97/TradeArena/issues/47) |
-| 1 hour | A careful reviewer mindset | Review one public claim boundary | Issue [#48](https://github.com/weich97/TradeArena/issues/48) |
+| 1 hour | A careful reviewer mindset | Review one public claim boundary | [Claim review quickstart](claim_boundary_review_quickstart.md), Issue [#48](https://github.com/weich97/TradeArena/issues/48) |
 
 If you are unsure where to start, run the no-key reproduction pack. It requires
 no model API keys, private market data, or broker credentials.
@@ -73,7 +73,9 @@ Counts as external validation:
 - a quote/fill calibration report with data source, sample size, residuals, and
   replay error;
 - a claim-boundary critique that maps one public claim to evidence and a
-  verification command.
+  verification command; use
+  [`claim_boundary_review_quickstart.md`](claim_boundary_review_quickstart.md)
+  for the review checklist.
 
 Does not count by itself:
 

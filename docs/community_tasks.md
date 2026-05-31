@@ -26,7 +26,9 @@ New contributors can start with the shorter
 [`external_validation_quickstart.md`](external_validation_quickstart.md), then
 come back here when choosing a specific issue-sized task. For execution work,
 use [`execution_calibration_quickstart.md`](execution_calibration_quickstart.md)
-to pick the weakest honest evidence label and report fields.
+to pick the weakest honest evidence label and report fields. For wording and
+claim checks, use
+[`claim_boundary_review_quickstart.md`](claim_boundary_review_quickstart.md).
 
 | Task | Time | Commands | Evidence to attach | Suggested labels |
 | --- | ---: | --- | --- | --- |
@@ -34,7 +36,7 @@ to pick the weakest honest evidence label and report fields.
 | [Run v0.2 reproduction pack on Ubuntu](https://github.com/weich97/TradeArena/issues/44) | 1 hour | `python scripts/run_external_reproduction_pack.py` | same manifest plus distro, Python, and install notes | `validation`, `reproducibility`, `good first issue` |
 | [Submit one deterministic baseline row](https://github.com/weich97/TradeArena/issues/46) | 1-2 hours | `python scripts/run_classical_baseline_matrix.py`; `tradearena validate-submission <row.json>` | one schema-valid deterministic manifest, rebuilt registry diff, and reproducibility hash | `benchmark`, `good first issue` |
 | [Submit one quote/fill calibration mini-report](https://github.com/weich97/TradeArena/issues/47) | 2-3 hours | `python scripts/calibrate_quote_fill_model.py` or the Binance sample command in `docs/execution_calibration_quickstart.md` | calibration JSON/Markdown with source, venue, date range, sample size, replay error, and residuals | `execution`, `validation`, `help wanted` |
-| [Review one benchmark claim boundary](https://github.com/weich97/TradeArena/issues/48) | 1 hour | `python scripts/check_release_readiness.py`; inspect `docs/claim_boundaries.md` | one issue or PR that maps a README/result claim to engineering, benchmark, or scientific evidence | `docs`, `discussion`, `validation` |
+| [Review one benchmark claim boundary](https://github.com/weich97/TradeArena/issues/48) | 1 hour | `python scripts/check_release_readiness.py`; inspect `docs/claim_boundary_review_quickstart.md` | one issue or PR that maps a README/result claim to engineering, benchmark, or scientific evidence | `docs`, `discussion`, `validation` |
 
 Acceptance is deliberately narrow: one environment report, one row, one
 calibration report, or one claim critique. This keeps external validation

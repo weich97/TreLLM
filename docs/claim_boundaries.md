@@ -12,6 +12,8 @@ look stronger than the evidence supports.
 ## Reporting Rule
 
 For public results, every table should say which claim class it supports.
+For a contributor-facing review checklist, see
+[`claim_boundary_review_quickstart.md`](claim_boundary_review_quickstart.md).
 
 - Engineering rows can say that an artifact is replayable or auditable.
 - Benchmark rows can say that the protocol exposes risk, execution, or

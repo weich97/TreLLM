@@ -755,6 +755,69 @@ def test_broker_approval_binding_cli_and_script_reject_hash_mismatch(tmp_path):
     assert "request_artifact_hash does not match broker handoff artifact" in script_result.stdout
 
 
+def test_broker_approval_binding_cli_and_script_reject_expired_approval(tmp_path):
+    adapter = DryRunBrokerAdapter(
+        client_prefix="approval-expired-cli",
+        safety=BrokerSafetyConfig(account_mode="paper", max_quantity=5.0, allowed_symbols=("AAPL",)),
+    )
+    adapter.write(
+        [Order("AAPL", Side.BUY, 1.0, order_type=OrderType.LIMIT, limit_price=100.0, reason="expired binding")],
+        tmp_path,
+    )
+    request_path = tmp_path / "dry_run_orders.json"
+    approval_payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=250.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-expired-cli-001",
+        account_mode="live",
+        max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
+        request_artifact_hash=broker_handoff_artifact_hash(request_path),
+    )
+    approval_path = tmp_path / "broker_approval.json"
+    approval_path.write_text(json.dumps(approval_payload), encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "tradearena.cli",
+            "validate-broker-approval-binding",
+            str(approval_path),
+            str(request_path),
+            "--now",
+            "2026-05-31T14:00:00Z",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    script_result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/validate_broker_approval_binding.py",
+            str(approval_path),
+            str(request_path),
+            "--now",
+            "2026-05-31T14:00:00Z",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert script_result.returncode == 1
+    assert "approval artifact is expired" in result.stdout
+    assert "approval artifact is expired" in script_result.stdout
+
+
 def test_broker_approval_safety_demo_writes_valid_artifact():
     subprocess.run([sys.executable, "examples/broker_approval_safety_demo.py"], cwd=ROOT, check=True)
     artifact = ROOT / "outputs/examples/broker_approval_safety/broker_approval_artifact.json"

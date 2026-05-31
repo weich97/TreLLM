@@ -400,9 +400,10 @@ def _run_utility_command(argv: list[str]) -> int:
         parser = argparse.ArgumentParser(description="Validate that a broker approval artifact binds to a handoff artifact.")
         parser.add_argument("approval_artifact")
         parser.add_argument("request_artifact")
+        parser.add_argument("--now", default=None, help="Optional ISO timestamp used to reject expired approval artifacts.")
         args = parser.parse_args(argv[1:])
-        approval, approval_errors = validate_broker_approval_artifact_file(args.approval_artifact)
-        errors = approval_errors or validate_broker_approval_request_binding(approval, args.request_artifact)
+        approval, approval_errors = validate_broker_approval_artifact_file(args.approval_artifact, now=args.now)
+        errors = approval_errors or validate_broker_approval_request_binding(approval, args.request_artifact, now=args.now)
         if errors:
             print(f"Invalid broker approval binding: {args.approval_artifact} -> {args.request_artifact}")
             for error in errors:

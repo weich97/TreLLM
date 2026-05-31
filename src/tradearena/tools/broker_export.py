@@ -524,11 +524,15 @@ def validate_broker_approval_artifact(
     return errors
 
 
-def validate_broker_approval_artifact_file(path: str | Path) -> tuple[dict[str, object], list[str]]:
+def validate_broker_approval_artifact_file(
+    path: str | Path,
+    *,
+    now: str | datetime | None = None,
+) -> tuple[dict[str, object], list[str]]:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         return {}, ["broker approval artifact must be a JSON object"]
-    return payload, validate_broker_approval_artifact(payload)
+    return payload, validate_broker_approval_artifact(payload, now=now)
 
 
 def broker_handoff_artifact_hash(payload_or_path: dict[str, object] | str | Path) -> str:
@@ -542,10 +546,12 @@ def broker_handoff_artifact_hash(payload_or_path: dict[str, object] | str | Path
 def validate_broker_approval_request_binding(
     approval_payload: dict[str, object],
     request_payload_or_path: dict[str, object] | str | Path,
+    *,
+    now: str | datetime | None = None,
 ) -> list[str]:
     """Validate that an approval artifact names the exact broker handoff artifact."""
 
-    errors = validate_broker_approval_artifact(approval_payload)
+    errors = validate_broker_approval_artifact(approval_payload, now=now)
     request_payload = _load_broker_artifact_payload(request_payload_or_path)
     errors.extend(validate_broker_handoff_artifact(request_payload))
     request_hash = approval_payload.get("request_artifact_hash")

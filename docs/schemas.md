@@ -154,7 +154,7 @@ tradearena validate-broker-approval path/to/broker_approval.json
 Validate that the approval authorizes the exact reviewed handoff request with:
 
 ```bash
-tradearena validate-broker-approval-binding path/to/broker_approval.json path/to/broker_handoff.json
+tradearena validate-broker-approval-binding path/to/broker_approval.json path/to/broker_handoff.json --now 2026-05-31T12:30:00Z
 ```
 
 This binding check also verifies that request orders stay within the approval's

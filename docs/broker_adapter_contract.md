@@ -161,8 +161,8 @@ Reviewers can compute the reviewed request hash with
 `python scripts/hash_broker_handoff_artifact.py <request.json>`; both commands
 validate the handoff artifact before printing the hash.
 Command-line reviewers can check the same invariant with
-`tradearena validate-broker-approval-binding <approval.json> <request.json>` or
-`python scripts/validate_broker_approval_binding.py <approval.json> <request.json>`.
+`tradearena validate-broker-approval-binding <approval.json> <request.json> --now <ISO_TIMESTAMP>` or
+`python scripts/validate_broker_approval_binding.py <approval.json> <request.json> --now <ISO_TIMESTAMP>`.
 The binding validator also checks that every request order stays inside the
 approval's allowed symbols, allowed order types, max quantity, and max notional
 limits. Request orders must include a positive `limit_price` so approval-time

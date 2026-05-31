@@ -152,6 +152,9 @@ compute `broker_handoff_artifact_hash(request_artifact)` and store it in
 `validate_broker_approval_request_binding(approval, request_artifact)` before
 building any live-mode safety config. This prevents an operator approval for one
 handoff file from being reused against a different order request.
+Command-line reviewers can check the same invariant with
+`tradearena validate-broker-approval-binding <approval.json> <request.json>` or
+`python scripts/validate_broker_approval_binding.py <approval.json> <request.json>`.
 Adapter implementations can turn a validated approval artifact into the
 runtime safety gate with `broker_safety_from_approval_artifact(...)`; the
 result is a `BrokerSafetyConfig` in `live_human_approved` mode with the same

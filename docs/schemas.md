@@ -140,6 +140,12 @@ Validate a broker approval artifact with:
 tradearena validate-broker-approval path/to/broker_approval.json
 ```
 
+Validate that the approval authorizes the exact reviewed handoff request with:
+
+```bash
+tradearena validate-broker-approval-binding path/to/broker_approval.json path/to/broker_handoff.json
+```
+
 Broker response artifacts can be validated against
 [`../schemas/broker_response_artifact.schema.json`](../schemas/broker_response_artifact.schema.json).
 The schema fixes the public `tradearena_broker_response_artifact_v0.1`

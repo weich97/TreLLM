@@ -23,6 +23,7 @@ from tradearena.experiments import PaperExperimentConfig, run_paper_experiment
 from tradearena.factory import build_default_system, default_registry
 from tradearena.tools import (
     validate_broker_approval_artifact_file,
+    validate_broker_approval_request_binding,
     validate_broker_handoff_artifact_file,
     validate_broker_response_artifact_file,
 )
@@ -112,6 +113,7 @@ def main(argv: list[str] | None = None) -> int:
         "validate-submission",
         "validate-broker-handoff",
         "validate-broker-approval",
+        "validate-broker-approval-binding",
         "validate-broker-response",
         "build-registry",
         "hash-run",
@@ -390,6 +392,21 @@ def _run_utility_command(argv: list[str]) -> int:
                 print(f"  - {error}")
             return 1
         print(f"Valid broker approval artifact: {args.artifact}")
+        return 0
+
+    if command == "validate-broker-approval-binding":
+        parser = argparse.ArgumentParser(description="Validate that a broker approval artifact binds to a handoff artifact.")
+        parser.add_argument("approval_artifact")
+        parser.add_argument("request_artifact")
+        args = parser.parse_args(argv[1:])
+        approval, approval_errors = validate_broker_approval_artifact_file(args.approval_artifact)
+        errors = approval_errors or validate_broker_approval_request_binding(approval, args.request_artifact)
+        if errors:
+            print(f"Invalid broker approval binding: {args.approval_artifact} -> {args.request_artifact}")
+            for error in errors:
+                print(f"  - {error}")
+            return 1
+        print(f"Valid broker approval binding: {args.approval_artifact} -> {args.request_artifact}")
         return 0
 
     if command == "build-registry":

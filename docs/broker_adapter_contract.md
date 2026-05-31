@@ -96,6 +96,8 @@ adapter mode, account mode, response rows, and a reconciliation summary with
 missing and unmatched response counts.
 Public response artifacts should validate against
 [`../schemas/broker_response_artifact.schema.json`](../schemas/broker_response_artifact.schema.json).
+Use `tradearena validate-broker-response <artifact.json>` before submitting a
+broker-facing PR or paper-sandbox run report.
 
 ## Human Approval Gate
 

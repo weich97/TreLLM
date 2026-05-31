@@ -289,6 +289,66 @@ def write_broker_response_artifact(
     }
 
 
+def validate_broker_response_artifact(payload: dict[str, object]) -> list[str]:
+    errors: list[str] = []
+    required = {
+        "schema",
+        "adapter",
+        "adapter_mode",
+        "account_mode",
+        "live_submission",
+        "reconciliation",
+        "responses",
+    }
+    missing = sorted(required - set(payload))
+    if missing:
+        errors.append(f"missing required fields: {', '.join(missing)}")
+    extra = sorted(set(payload) - required)
+    if extra:
+        errors.append(f"unexpected fields: {', '.join(extra)}")
+    if payload.get("schema") != "tradearena_broker_response_artifact_v0.1":
+        errors.append("schema must be 'tradearena_broker_response_artifact_v0.1'")
+    if not payload.get("adapter"):
+        errors.append("adapter must be non-empty")
+    adapter_mode = payload.get("adapter_mode")
+    if adapter_mode not in {mode.value for mode in BrokerAdapterMode}:
+        errors.append("adapter_mode must be one of offline_export, dry_run, paper_sandbox, live_human_approved")
+    if not payload.get("account_mode"):
+        errors.append("account_mode must be non-empty")
+    if payload.get("live_submission") is not (adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED.value):
+        errors.append("live_submission must match adapter_mode == live_human_approved")
+
+    responses = payload.get("responses")
+    if not isinstance(responses, list):
+        errors.append("responses must be a list")
+        responses = []
+    reconciliation = payload.get("reconciliation")
+    if not isinstance(reconciliation, dict):
+        errors.append("reconciliation must be an object")
+        reconciliation = {}
+
+    status_counts = {status.value: 0 for status in BrokerOrderStatus}
+    for idx, response in enumerate(responses):
+        if not isinstance(response, dict):
+            errors.append(f"responses[{idx}] must be an object")
+            continue
+        response_errors = _validate_broker_response_row(response, idx)
+        errors.extend(response_errors)
+        status = response.get("status")
+        if isinstance(status, str) and status in status_counts:
+            status_counts[status] += 1
+
+    errors.extend(_validate_reconciliation(reconciliation, len(responses), status_counts))
+    return errors
+
+
+def validate_broker_response_artifact_file(path: str | Path) -> tuple[dict[str, object], list[str]]:
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        return {}, ["broker response artifact must be a JSON object"]
+    return payload, validate_broker_response_artifact(payload)
+
+
 def _alpaca_order_type(order_type: OrderType) -> str:
     return "limit" if order_type == OrderType.LIMIT else "market"
 
@@ -307,3 +367,75 @@ def _response_dict(response: BrokerResponse) -> dict[str, object]:
     row = asdict(response)
     row["status"] = response.status.value
     return row
+
+
+def _validate_broker_response_row(response: dict[str, object], idx: int) -> list[str]:
+    errors: list[str] = []
+    required = {
+        "client_order_id",
+        "status",
+        "broker_order_id",
+        "submitted_quantity",
+        "accepted_quantity",
+        "fill_quantity",
+        "fill_price",
+        "fees",
+        "rejection_reason",
+        "submitted_at",
+        "broker_timestamp",
+        "account_mode",
+    }
+    missing = sorted(required - set(response))
+    if missing:
+        errors.append(f"responses[{idx}] missing required fields: {', '.join(missing)}")
+    extra = sorted(set(response) - required)
+    if extra:
+        errors.append(f"responses[{idx}] has unexpected fields: {', '.join(extra)}")
+    if not response.get("client_order_id"):
+        errors.append(f"responses[{idx}].client_order_id must be non-empty")
+    if response.get("status") not in {status.value for status in BrokerOrderStatus}:
+        errors.append(f"responses[{idx}].status is not a supported broker order status")
+    if not response.get("account_mode"):
+        errors.append(f"responses[{idx}].account_mode must be non-empty")
+    for field_name in ("submitted_quantity", "accepted_quantity", "fill_quantity", "fill_price", "fees"):
+        value = response.get(field_name)
+        if value is not None and (not isinstance(value, (int, float)) or value < 0):
+            errors.append(f"responses[{idx}].{field_name} must be a non-negative number or null")
+    return errors
+
+
+def _validate_reconciliation(
+    reconciliation: dict[str, object],
+    response_count: int,
+    status_counts: dict[str, int],
+) -> list[str]:
+    errors: list[str] = []
+    count_fields = {
+        "response_count": response_count,
+        "accepted_count": status_counts[BrokerOrderStatus.ACCEPTED.value],
+        "rejected_count": status_counts[BrokerOrderStatus.REJECTED.value],
+        "partial_fill_count": status_counts[BrokerOrderStatus.PARTIALLY_FILLED.value],
+        "filled_count": status_counts[BrokerOrderStatus.FILLED.value],
+        "canceled_count": status_counts[BrokerOrderStatus.CANCELED.value],
+        "expired_count": status_counts[BrokerOrderStatus.EXPIRED.value],
+        "unknown_count": status_counts[BrokerOrderStatus.UNKNOWN.value],
+    }
+    required = set(count_fields) | {"unmatched_response_count", "missing_response_count", "fill_ratio_mean"}
+    missing = sorted(required - set(reconciliation))
+    if missing:
+        errors.append(f"reconciliation missing required fields: {', '.join(missing)}")
+    extra = sorted(set(reconciliation) - required)
+    if extra:
+        errors.append(f"reconciliation has unexpected fields: {', '.join(extra)}")
+    for field_name, expected in count_fields.items():
+        actual = reconciliation.get(field_name)
+        if actual != expected:
+            errors.append(f"reconciliation.{field_name} must be {expected}; got {actual}")
+    for field_name in ("unmatched_response_count", "missing_response_count"):
+        value = reconciliation.get(field_name)
+        if not isinstance(value, int) or value < 0:
+            errors.append(f"reconciliation.{field_name} must be a non-negative integer")
+    fill_ratio = reconciliation.get("fill_ratio_mean")
+    if fill_ratio is not None and (not isinstance(fill_ratio, (int, float)) or fill_ratio < 0):
+        errors.append("reconciliation.fill_ratio_mean must be a non-negative number or null")
+    return errors

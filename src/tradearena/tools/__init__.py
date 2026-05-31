@@ -20,6 +20,8 @@ from tradearena.tools.broker_export import (
     BrokerResponse,
     BrokerSafetyConfig,
     reconcile_broker_responses,
+    validate_broker_response_artifact,
+    validate_broker_response_artifact_file,
     write_broker_response_artifact,
 )
 from tradearena.tools.calibration import (
@@ -93,5 +95,7 @@ __all__ = [
     "review_market_rule_order",
     "validate_market_rule_plugin",
     "reconcile_broker_responses",
+    "validate_broker_response_artifact",
+    "validate_broker_response_artifact_file",
     "write_broker_response_artifact",
 ]

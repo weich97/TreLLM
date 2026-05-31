@@ -116,6 +116,12 @@ The schema fixes the public `tradearena_broker_response_artifact_v0.1`
 contract for adapter mode, account mode, normalized broker statuses,
 reconciliation counts, and redacted response rows.
 
+Validate a broker response artifact with:
+
+```bash
+tradearena validate-broker-response outputs/examples/broker_response_reconciliation/broker_response_artifact.json
+```
+
 ## Reproduction Report Schema
 
 The external reproduction report schema lives at

@@ -5,6 +5,7 @@ import json
 from dataclasses import asdict, dataclass, field
 from enum import Enum
 from pathlib import Path
+from statistics import fmean
 
 from tradearena.core.domain import Order, OrderType, Side
 
@@ -20,6 +21,18 @@ class BrokerAdapterMode(str, Enum):
 
 class BrokerAdapterContractError(ValueError):
     """Raised when a broker handoff would violate the adapter contract."""
+
+
+class BrokerOrderStatus(str, Enum):
+    """Normalized broker response status."""
+
+    ACCEPTED = "accepted"
+    REJECTED = "rejected"
+    PARTIALLY_FILLED = "partially_filled"
+    FILLED = "filled"
+    CANCELED = "canceled"
+    EXPIRED = "expired"
+    UNKNOWN = "unknown"
 
 
 @dataclass(frozen=True)
@@ -104,6 +117,41 @@ class AlpacaPaperOrder:
     reason: str
 
 
+@dataclass(frozen=True)
+class BrokerResponse:
+    """Redacted broker response row used for reconciliation artifacts."""
+
+    client_order_id: str
+    status: BrokerOrderStatus
+    broker_order_id: str | None = None
+    submitted_quantity: float | None = None
+    accepted_quantity: float | None = None
+    fill_quantity: float | None = None
+    fill_price: float | None = None
+    fees: float | None = None
+    rejection_reason: str | None = None
+    submitted_at: str | None = None
+    broker_timestamp: str | None = None
+    account_mode: str = "unknown"
+
+
+@dataclass(frozen=True)
+class BrokerReconciliationSummary:
+    """Aggregate reconciliation status for broker response artifacts."""
+
+    response_count: int
+    accepted_count: int
+    rejected_count: int
+    partial_fill_count: int
+    filled_count: int
+    canceled_count: int
+    expired_count: int
+    unknown_count: int
+    unmatched_response_count: int
+    missing_response_count: int
+    fill_ratio_mean: float | None
+
+
 class AlpacaPaperExportAdapter:
     """Convert approved TradeArena orders into broker-review files.
 
@@ -183,6 +231,64 @@ class AlpacaPaperExportAdapter:
         }
 
 
+def reconcile_broker_responses(
+    requests: list[AlpacaPaperOrder] | tuple[AlpacaPaperOrder, ...],
+    responses: list[BrokerResponse] | tuple[BrokerResponse, ...],
+) -> BrokerReconciliationSummary:
+    request_ids = {request.client_order_id for request in requests}
+    response_ids = {response.client_order_id for response in responses}
+    status_counts = {status: 0 for status in BrokerOrderStatus}
+    fill_ratios: list[float] = []
+    for response in responses:
+        status_counts[response.status] += 1
+        if response.submitted_quantity and response.fill_quantity is not None and response.submitted_quantity > 0:
+            fill_ratios.append(float(response.fill_quantity) / float(response.submitted_quantity))
+    return BrokerReconciliationSummary(
+        response_count=len(responses),
+        accepted_count=status_counts[BrokerOrderStatus.ACCEPTED],
+        rejected_count=status_counts[BrokerOrderStatus.REJECTED],
+        partial_fill_count=status_counts[BrokerOrderStatus.PARTIALLY_FILLED],
+        filled_count=status_counts[BrokerOrderStatus.FILLED],
+        canceled_count=status_counts[BrokerOrderStatus.CANCELED],
+        expired_count=status_counts[BrokerOrderStatus.EXPIRED],
+        unknown_count=status_counts[BrokerOrderStatus.UNKNOWN],
+        unmatched_response_count=len(response_ids - request_ids),
+        missing_response_count=len(request_ids - response_ids),
+        fill_ratio_mean=round(fmean(fill_ratios), 8) if fill_ratios else None,
+    )
+
+
+def write_broker_response_artifact(
+    *,
+    requests: list[AlpacaPaperOrder] | tuple[AlpacaPaperOrder, ...],
+    responses: list[BrokerResponse] | tuple[BrokerResponse, ...],
+    output: str | Path,
+    adapter: str,
+    adapter_mode: BrokerAdapterMode,
+    account_mode: str,
+) -> dict[str, str | int | bool]:
+    path = Path(output)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    summary = reconcile_broker_responses(requests, responses)
+    payload = {
+        "schema": "tradearena_broker_response_artifact_v0.1",
+        "adapter": adapter,
+        "adapter_mode": adapter_mode.value,
+        "account_mode": account_mode,
+        "live_submission": adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+        "reconciliation": asdict(summary),
+        "responses": [_response_dict(response) for response in responses],
+    }
+    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return {
+        "path": str(path),
+        "response_count": summary.response_count,
+        "unmatched_response_count": summary.unmatched_response_count,
+        "missing_response_count": summary.missing_response_count,
+        "live_submission": payload["live_submission"],
+    }
+
+
 def _alpaca_order_type(order_type: OrderType) -> str:
     return "limit" if order_type == OrderType.LIMIT else "market"
 
@@ -195,3 +301,9 @@ def _approval_status(safety: BrokerSafetyConfig) -> str:
     if safety.mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED:
         return "approved"
     return "requires_human_approval"
+
+
+def _response_dict(response: BrokerResponse) -> dict[str, object]:
+    row = asdict(response)
+    row["status"] = response.status.value
+    return row

@@ -13,10 +13,14 @@ from tradearena.tools import (
     AlpacaPaperExportAdapter,
     BrokerAdapterContractError,
     BrokerAdapterMode,
+    BrokerOrderStatus,
     BrokerApproval,
+    BrokerResponse,
     BrokerSafetyConfig,
     FuturesContractMetadata,
     FuturesRollRiskEngine,
+    reconcile_broker_responses,
+    write_broker_response_artifact,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -101,6 +105,61 @@ def test_live_human_approved_mode_requires_approval_and_marks_live(tmp_path):
     assert payload["live_submission"] is True
     assert payload["manual_approval_required"] is False
     assert payload["orders"][0]["approval_status"] == "approved"
+
+
+def test_broker_response_artifact_summarizes_reconciliation(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="recon")
+    requests = adapter.convert(
+        [
+            Order("AAPL", Side.BUY, 2.0, reason="unit test"),
+            Order("MSFT", Side.SELL, 1.0, reason="unit test"),
+        ]
+    )
+    responses = [
+        BrokerResponse(
+            client_order_id=requests[0].client_order_id,
+            status=BrokerOrderStatus.PARTIALLY_FILLED,
+            broker_order_id="paper-1",
+            submitted_quantity=2.0,
+            accepted_quantity=2.0,
+            fill_quantity=1.0,
+            fill_price=190.0,
+            fees=0.02,
+            account_mode="paper",
+        ),
+        BrokerResponse(
+            client_order_id="unknown-order",
+            status=BrokerOrderStatus.REJECTED,
+            submitted_quantity=1.0,
+            rejection_reason="symbol not enabled",
+            account_mode="paper",
+        ),
+    ]
+
+    summary = reconcile_broker_responses(requests, responses)
+    assert summary.response_count == 2
+    assert summary.partial_fill_count == 1
+    assert summary.rejected_count == 1
+    assert summary.unmatched_response_count == 1
+    assert summary.missing_response_count == 1
+    assert summary.fill_ratio_mean == 0.5
+
+    artifact = tmp_path / "broker_response.json"
+    result = write_broker_response_artifact(
+        requests=requests,
+        responses=responses,
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    assert result["response_count"] == 2
+    assert payload["schema"] == "tradearena_broker_response_artifact_v0.1"
+    assert payload["live_submission"] is False
+    assert payload["reconciliation"]["missing_response_count"] == 1
+    assert payload["responses"][0]["status"] == "partially_filled"
 
 
 def test_holdings_csv_import_fixture_loads_retail_holdings():

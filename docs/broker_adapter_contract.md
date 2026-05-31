@@ -28,6 +28,11 @@ The current code-level primitives live in `tradearena.tools.broker_export`:
 - `BrokerSafetyConfig`;
 - `BrokerApproval`;
 - `BrokerAdapterContractError`;
+- `BrokerOrderStatus`;
+- `BrokerResponse`;
+- `BrokerReconciliationSummary`;
+- `reconcile_broker_responses`;
+- `write_broker_response_artifact`;
 - `AlpacaPaperExportAdapter`, the export-only reference implementation.
 
 ## Required Order Fields
@@ -85,6 +90,10 @@ Any adapter that calls a broker API should write a response artifact with:
 - reconciliation status against the original TradeArena order.
 
 This artifact is part of the audit trail, not a throwaway log.
+`write_broker_response_artifact(...)` writes the repository's first version of
+this artifact. It records `tradearena_broker_response_artifact_v0.1`, the
+adapter mode, account mode, response rows, and a reconciliation summary with
+missing and unmatched response counts.
 
 ## Human Approval Gate
 

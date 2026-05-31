@@ -16,8 +16,10 @@ from tradearena.evaluation.submissions import validate_submission_file
 from tradearena.tools import (
     AlpacaPaperExportAdapter,
     BrokerAdapterMode,
+    BrokerApproval,
     BrokerOrderStatus,
     BrokerResponse,
+    build_broker_approval_artifact,
     write_broker_response_artifact,
 )
 from tradearena.tools.calibration import summarize_execution_calibration, summarize_quote_fill_calibration
@@ -112,6 +114,24 @@ def test_broker_handoff_artifact_schema_validates_writer_output(tmp_path: Path):
     payload = json.loads((tmp_path / "alpaca_paper_orders.json").read_text(encoding="utf-8"))
 
     _validator("broker_handoff_artifact.schema.json").validate(payload)
+
+
+def test_broker_approval_artifact_schema_validates_writer_output():
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=2500.0,
+            allowed_symbols=("AAPL", "MSFT"),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-schema-001",
+        account_mode="live",
+        max_quantity=5.0,
+    )
+
+    _validator("broker_approval_artifact.schema.json").validate(payload)
 
 
 def test_all_example_benchmark_submissions_match_schema_and_runtime_validator():

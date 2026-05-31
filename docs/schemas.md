@@ -108,7 +108,7 @@ Validate it after building the showcase:
 python scripts/validate_demo_artifacts.py
 ```
 
-## Broker Handoff And Response Artifact Schemas
+## Broker Handoff, Approval, And Response Artifact Schemas
 
 Broker handoff request artifacts can be validated against
 [`../schemas/broker_handoff_artifact.schema.json`](../schemas/broker_handoff_artifact.schema.json).
@@ -120,6 +120,19 @@ Validate a broker handoff artifact with:
 
 ```bash
 tradearena validate-broker-handoff outputs/examples/alpaca_paper_export/alpaca_paper_orders.json
+```
+
+Broker approval artifacts can be validated against
+[`../schemas/broker_approval_artifact.schema.json`](../schemas/broker_approval_artifact.schema.json).
+The schema fixes the public `tradearena_broker_approval_artifact_v0.1`
+contract for redacted operator approval, account mode, max notional, max
+quantity, allowed symbols, allowed order types, and optional request-artifact
+hashes.
+
+Validate a broker approval artifact with:
+
+```bash
+tradearena validate-broker-approval path/to/broker_approval.json
 ```
 
 Broker response artifacts can be validated against

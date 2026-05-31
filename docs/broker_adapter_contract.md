@@ -32,7 +32,10 @@ The current code-level primitives live in `tradearena.tools.broker_export`:
 - `BrokerOrderStatus`;
 - `BrokerResponse`;
 - `BrokerReconciliationSummary`;
+- `build_broker_approval_artifact`;
 - `reconcile_broker_responses`;
+- `validate_broker_approval_artifact`;
+- `validate_broker_approval_artifact_file`;
 - `validate_broker_handoff_artifact`;
 - `validate_broker_handoff_artifact_file`;
 - `validate_broker_response_artifact`;
@@ -120,18 +123,25 @@ broker-facing PR or paper-sandbox run report.
 
 ```json
 {
+  "schema": "tradearena_broker_approval_artifact_v0.1",
+  "approval_id": "approval-20260531-001",
   "approval_status": "approved",
   "approved_by": "operator-id",
   "approved_at": "2026-05-31T12:00:00Z",
+  "expires_at": "2026-05-31T13:00:00Z",
+  "account_mode": "live",
   "max_notional": 1000.0,
+  "max_quantity": 10.0,
   "allowed_symbols": ["AAPL", "MSFT"],
-  "approval_reason": "paper/live shadow checks passed for this rebalance"
+  "allowed_order_types": ["market", "limit"],
+  "approval_reason": "paper/live shadow checks passed for this rebalance",
+  "request_artifact_hash": "sha256:..."
 }
 ```
 
 The adapter should reject stale, missing, or over-broad approvals. Approval
-records should be kept out of public artifacts when they expose account or
-operator identity.
+records should use redacted operator IDs in public artifacts and can be checked
+with `tradearena validate-broker-approval <artifact.json>`.
 
 ## Testing Requirements
 

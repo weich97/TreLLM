@@ -393,6 +393,110 @@ def write_broker_response_artifact(
     }
 
 
+def build_broker_approval_artifact(
+    approval: BrokerApproval,
+    *,
+    approval_id: str,
+    account_mode: str,
+    max_quantity: float,
+    allowed_order_types: tuple[OrderType, ...] = (OrderType.MARKET, OrderType.LIMIT),
+    expires_at: str | None = None,
+    request_artifact_hash: str | None = None,
+) -> dict[str, object]:
+    """Build a redacted human approval artifact for future live handoff review."""
+
+    return {
+        "schema": "tradearena_broker_approval_artifact_v0.1",
+        "approval_id": approval_id,
+        "approval_status": approval.approval_status,
+        "approved_by": approval.approved_by,
+        "approved_at": approval.approved_at,
+        "expires_at": expires_at,
+        "account_mode": account_mode,
+        "max_notional": approval.max_notional,
+        "max_quantity": max_quantity,
+        "allowed_symbols": list(approval.allowed_symbols),
+        "allowed_order_types": [order_type.value for order_type in allowed_order_types],
+        "approval_reason": approval.approval_reason,
+        "request_artifact_hash": request_artifact_hash,
+    }
+
+
+def validate_broker_approval_artifact(payload: dict[str, object]) -> list[str]:
+    errors: list[str] = []
+    required = {
+        "schema",
+        "approval_id",
+        "approval_status",
+        "approved_by",
+        "approved_at",
+        "expires_at",
+        "account_mode",
+        "max_notional",
+        "max_quantity",
+        "allowed_symbols",
+        "allowed_order_types",
+        "approval_reason",
+        "request_artifact_hash",
+    }
+    missing = sorted(required - set(payload))
+    if missing:
+        errors.append(f"missing required fields: {', '.join(missing)}")
+    extra = sorted(set(payload) - required)
+    if extra:
+        errors.append(f"unexpected fields: {', '.join(extra)}")
+    if payload.get("schema") != "tradearena_broker_approval_artifact_v0.1":
+        errors.append("schema must be 'tradearena_broker_approval_artifact_v0.1'")
+    if not payload.get("approval_id"):
+        errors.append("approval_id must be non-empty")
+    if payload.get("approval_status") != "approved":
+        errors.append("approval_status must be approved")
+    approved_by = payload.get("approved_by")
+    if not isinstance(approved_by, str) or not approved_by:
+        errors.append("approved_by must be non-empty")
+    elif "@" in approved_by:
+        errors.append("approved_by must be a redacted operator id, not an email address")
+    if not payload.get("approved_at"):
+        errors.append("approved_at must be non-empty")
+    if not payload.get("account_mode"):
+        errors.append("account_mode must be non-empty")
+    for field_name in ("max_notional", "max_quantity"):
+        value = payload.get(field_name)
+        if not isinstance(value, (int, float)) or value <= 0:
+            errors.append(f"{field_name} must be a positive number")
+    allowed_symbols = payload.get("allowed_symbols")
+    if (
+        not isinstance(allowed_symbols, list)
+        or not allowed_symbols
+        or not all(isinstance(item, str) and item for item in allowed_symbols)
+    ):
+        errors.append("allowed_symbols must be a non-empty list of symbols")
+    allowed_order_types = payload.get("allowed_order_types")
+    supported_types = {OrderType.MARKET.value, OrderType.LIMIT.value}
+    if (
+        not isinstance(allowed_order_types, list)
+        or not allowed_order_types
+        or any(item not in supported_types for item in allowed_order_types)
+    ):
+        errors.append("allowed_order_types must contain market or limit")
+    if not payload.get("approval_reason"):
+        errors.append("approval_reason must be non-empty")
+    request_hash = payload.get("request_artifact_hash")
+    if request_hash is not None and not isinstance(request_hash, str):
+        errors.append("request_artifact_hash must be a string or null")
+    expires_at = payload.get("expires_at")
+    if expires_at is not None and not isinstance(expires_at, str):
+        errors.append("expires_at must be a string or null")
+    return errors
+
+
+def validate_broker_approval_artifact_file(path: str | Path) -> tuple[dict[str, object], list[str]]:
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        return {}, ["broker approval artifact must be a JSON object"]
+    return payload, validate_broker_approval_artifact(payload)
+
+
 def validate_broker_response_artifact(payload: dict[str, object]) -> list[str]:
     errors: list[str] = []
     required = {

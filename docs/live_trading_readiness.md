@@ -53,6 +53,8 @@ Before a broker-facing contribution is accepted, it should prove:
   responses are committed;
 - every order carries a risk report reference, approval status, and client
   order ID;
+- live approvals are recorded as schema-valid, redacted broker approval
+  artifacts before any live handoff;
 - max notional, max quantity, allowed symbols, and allowed order types are
   enforced before broker handoff;
 - cancellation, partial-fill, rejection, and reconciliation states are

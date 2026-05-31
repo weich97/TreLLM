@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/weich97/TradeArena/schemas/broker_approval_artifact.schema.json",
+  "title": "TradeArena Broker Approval Artifact",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "approval_id",
+    "approval_status",
+    "approved_by",
+    "approved_at",
+    "expires_at",
+    "account_mode",
+    "max_notional",
+    "max_quantity",
+    "allowed_symbols",
+    "allowed_order_types",
+    "approval_reason",
+    "request_artifact_hash"
+  ],
+  "properties": {
+    "schema": { "const": "tradearena_broker_approval_artifact_v0.1" },
+    "approval_id": { "type": "string", "minLength": 1 },
+    "approval_status": { "const": "approved" },
+    "approved_by": {
+      "type": "string",
+      "minLength": 1,
+      "not": { "pattern": "@" }
+    },
+    "approved_at": { "type": "string", "minLength": 1 },
+    "expires_at": { "type": ["string", "null"] },
+    "account_mode": { "type": "string", "minLength": 1 },
+    "max_notional": { "type": "number", "exclusiveMinimum": 0 },
+    "max_quantity": { "type": "number", "exclusiveMinimum": 0 },
+    "allowed_symbols": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "allowed_order_types": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "enum": ["market", "limit"] }
+    },
+    "approval_reason": { "type": "string", "minLength": 1 },
+    "request_artifact_hash": { "type": ["string", "null"] }
+  }
+}

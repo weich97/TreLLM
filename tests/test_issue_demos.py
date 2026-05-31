@@ -21,7 +21,9 @@ from tradearena.tools import (
     DryRunBrokerAdapter,
     FuturesContractMetadata,
     FuturesRollRiskEngine,
+    build_broker_approval_artifact,
     reconcile_broker_responses,
+    validate_broker_approval_artifact,
     validate_broker_handoff_artifact,
     validate_broker_response_artifact,
     write_broker_response_artifact,
@@ -298,6 +300,54 @@ def test_broker_response_artifact_validator_and_cli_reject_count_mismatch(tmp_pa
     assert "reconciliation.filled_count must be 1; got 0" in errors
     assert result.returncode == 1
     assert "reconciliation.filled_count must be 1; got 0" in result.stdout
+
+
+def test_broker_approval_artifact_validator_and_cli_reject_unredacted_operator(tmp_path):
+    approval = BrokerApproval(
+        approval_status="approved",
+        approved_by="operator-7",
+        approved_at="2026-05-31T12:00:00Z",
+        max_notional=2500.0,
+        allowed_symbols=("AAPL", "MSFT"),
+        approval_reason="paper shadow checks passed",
+    )
+    payload = build_broker_approval_artifact(
+        approval,
+        approval_id="approval-unit-001",
+        account_mode="live",
+        max_quantity=5.0,
+        allowed_order_types=(OrderType.MARKET, OrderType.LIMIT),
+        expires_at="2026-05-31T13:00:00Z",
+    )
+    artifact = tmp_path / "broker_approval.json"
+    artifact.write_text(json.dumps(payload), encoding="utf-8")
+
+    assert validate_broker_approval_artifact(payload) == []
+    subprocess.run(
+        [sys.executable, "-m", "tradearena.cli", "validate-broker-approval", str(artifact)],
+        cwd=ROOT,
+        check=True,
+    )
+    subprocess.run(
+        [sys.executable, "scripts/validate_broker_approval_artifact.py", str(artifact)],
+        cwd=ROOT,
+        check=True,
+    )
+
+    payload["approved_by"] = "operator@example.com"
+    broken = tmp_path / "broken_broker_approval.json"
+    broken.write_text(json.dumps(payload), encoding="utf-8")
+    errors = validate_broker_approval_artifact(payload)
+    result = subprocess.run(
+        [sys.executable, "-m", "tradearena.cli", "validate-broker-approval", str(broken)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert "approved_by must be a redacted operator id, not an email address" in errors
+    assert result.returncode == 1
+    assert "approved_by must be a redacted operator id, not an email address" in result.stdout
 
 
 def test_dry_run_broker_adapter_demo_writes_valid_handoff():

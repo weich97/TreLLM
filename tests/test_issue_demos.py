@@ -9,7 +9,15 @@ from pathlib import Path
 from tradearena.core.domain import Order, Side
 from tradearena.factory import build_default_system, default_registry
 from tradearena.planning import load_holdings_csv
-from tradearena.tools import AlpacaPaperExportAdapter, FuturesContractMetadata, FuturesRollRiskEngine
+from tradearena.tools import (
+    AlpacaPaperExportAdapter,
+    BrokerAdapterContractError,
+    BrokerAdapterMode,
+    BrokerApproval,
+    BrokerSafetyConfig,
+    FuturesContractMetadata,
+    FuturesRollRiskEngine,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -26,6 +34,73 @@ def test_alpaca_paper_export_adapter_requires_human_approval(tmp_path):
     assert payload["manual_approval_required"] is True
     assert payload["orders"][0]["adapter_mode"] == "offline_export"
     assert payload["orders"][0]["approval_status"] == "requires_human_approval"
+
+
+def test_broker_safety_config_blocks_disallowed_orders(tmp_path):
+    adapter = AlpacaPaperExportAdapter(
+        safety=BrokerSafetyConfig(
+            allowed_symbols=("MSFT",),
+            max_quantity=2.0,
+        )
+    )
+
+    try:
+        adapter.write([Order("AAPL", Side.BUY, 3.5, reason="unit test")], tmp_path)
+    except BrokerAdapterContractError as exc:
+        assert "allow-list" in str(exc)
+    else:
+        raise AssertionError("expected broker adapter allow-list failure")
+
+
+def test_live_human_approved_mode_requires_approval_and_marks_live(tmp_path):
+    missing_limits = AlpacaPaperExportAdapter(
+        safety=BrokerSafetyConfig(mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED)
+    )
+    try:
+        missing_limits.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path / "limits")
+    except BrokerAdapterContractError as exc:
+        assert "max_notional and max_quantity" in str(exc)
+    else:
+        raise AssertionError("expected missing live limit failure")
+
+    missing_approval = AlpacaPaperExportAdapter(
+        safety=BrokerSafetyConfig(
+            mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+            max_notional=1000.0,
+            max_quantity=10.0,
+        )
+    )
+    try:
+        missing_approval.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path / "missing")
+    except BrokerAdapterContractError as exc:
+        assert "approved human approval record" in str(exc)
+    else:
+        raise AssertionError("expected missing approval failure")
+
+    approved = AlpacaPaperExportAdapter(
+        safety=BrokerSafetyConfig(
+            mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+            account_mode="live",
+            max_notional=1000.0,
+            max_quantity=10.0,
+            approval=BrokerApproval(
+                approval_status="approved",
+                approved_by="unit-operator",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=1000.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="unit test approval",
+            ),
+        )
+    )
+    approved.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path / "approved")
+    payload = json.loads((tmp_path / "approved" / "alpaca_paper_orders.json").read_text(encoding="utf-8"))
+
+    assert payload["adapter_mode"] == "live_human_approved"
+    assert payload["account_mode"] == "live"
+    assert payload["live_submission"] is True
+    assert payload["manual_approval_required"] is False
+    assert payload["orders"][0]["approval_status"] == "approved"
 
 
 def test_holdings_csv_import_fixture_loads_retail_holdings():
@@ -88,7 +163,9 @@ def test_new_issue_examples_write_expected_artifacts():
         subprocess.run([sys.executable, script], cwd=ROOT, check=True)
         assert (ROOT / artifact).exists()
 
-    crypto = json.loads((ROOT / "outputs/examples/crypto_microstructure_stress/summary.json").read_text(encoding="utf-8"))
+    crypto = json.loads(
+        (ROOT / "outputs/examples/crypto_microstructure_stress/summary.json").read_text(encoding="utf-8")
+    )
     assert crypto["rejected_order_count"] >= 0
     assert "total_slippage_cost" in crypto
 

@@ -9,7 +9,14 @@ from tradearena.execution import (
     load_replay_fills_csv,
 )
 from tradearena.tools.backtester import Backtester, BacktestResult
-from tradearena.tools.broker_export import AlpacaPaperExportAdapter, AlpacaPaperOrder
+from tradearena.tools.broker_export import (
+    AlpacaPaperExportAdapter,
+    AlpacaPaperOrder,
+    BrokerAdapterContractError,
+    BrokerAdapterMode,
+    BrokerApproval,
+    BrokerSafetyConfig,
+)
 from tradearena.tools.calibration import (
     ExecutionCalibrationConfig,
     discover_ohlcv_files,
@@ -43,6 +50,10 @@ __all__ = [
     "AlpacaPaperOrder",
     "BacktestResult",
     "Backtester",
+    "BrokerAdapterContractError",
+    "BrokerAdapterMode",
+    "BrokerApproval",
+    "BrokerSafetyConfig",
     "CalibratedOrderSimulator",
     "ExecutionCalibrationConfig",
     "EqualRiskBudgetOptimizer",

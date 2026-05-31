@@ -22,6 +22,14 @@ Every broker adapter must declare exactly one mode at runtime:
 The default mode must be `offline_export` or `dry_run`. `live_human_approved`
 must never be the default.
 
+The current code-level primitives live in `tradearena.tools.broker_export`:
+
+- `BrokerAdapterMode`;
+- `BrokerSafetyConfig`;
+- `BrokerApproval`;
+- `BrokerAdapterContractError`;
+- `AlpacaPaperExportAdapter`, the export-only reference implementation.
+
 ## Required Order Fields
 
 Each broker handoff row should include:
@@ -109,4 +117,5 @@ At minimum, a broker adapter PR should include tests that prove:
 - a kill-switch setting blocks all broker submission paths.
 
 The current Alpaca example is intentionally below live-adapter scope: it writes
-paper-review JSON/CSV files only and sets `submit_live=false`.
+broker-review JSON/CSV files by default, declares `adapter_mode=offline_export`,
+and sets `submit_live=false`.

@@ -152,7 +152,9 @@ tradearena validate-broker-approval-binding path/to/broker_approval.json path/to
 ```
 
 This binding check also verifies that request orders stay within the approval's
-symbol, order-type, quantity, and calculable notional limits.
+symbol, order-type, quantity, and notional limits. Each bound request order
+must include a positive `limit_price` so notional can be checked before live
+safety creation.
 
 Broker response artifacts can be validated against
 [`../schemas/broker_response_artifact.schema.json`](../schemas/broker_response_artifact.schema.json).

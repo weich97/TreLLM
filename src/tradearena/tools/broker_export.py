@@ -750,10 +750,12 @@ def _validate_approval_request_scope(
         if quantity > max_quantity:
             errors.append(f"orders[{idx}].quantity {quantity} exceeds approval max_quantity {max_quantity}")
         limit_price = order.get("limit_price")
-        if isinstance(limit_price, (int, float)):
-            notional = abs(quantity * float(limit_price))
-            if notional > max_notional:
-                errors.append(f"orders[{idx}].notional {notional:.2f} exceeds approval max_notional {max_notional:.2f}")
+        if not isinstance(limit_price, (int, float)) or limit_price <= 0:
+            errors.append(f"orders[{idx}].notional cannot be checked without a positive limit_price")
+            continue
+        notional = abs(quantity * float(limit_price))
+        if notional > max_notional:
+            errors.append(f"orders[{idx}].notional {notional:.2f} exceeds approval max_notional {max_notional:.2f}")
     return errors
 
 

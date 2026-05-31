@@ -349,7 +349,7 @@ def reconcile_broker_responses(
 ) -> BrokerReconciliationSummary:
     request_ids = {request.client_order_id for request in requests}
     response_ids = {response.client_order_id for response in responses}
-    status_counts = {status: 0 for status in BrokerOrderStatus}
+    status_counts = dict.fromkeys(BrokerOrderStatus, 0)
     fill_ratios: list[float] = []
     for response in responses:
         status_counts[response.status] += 1

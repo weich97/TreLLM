@@ -24,6 +24,19 @@ from tradearena.tools import (
 )
 
 OUTPUT_DIR = Path("outputs/examples/broker_approval_safety")
+SUMMARY_PATH = OUTPUT_DIR / "summary.json"
+HANDOFF_PATH = OUTPUT_DIR / "dry_run_orders.json"
+APPROVAL_PATH = OUTPUT_DIR / "broker_approval_artifact.json"
+DEMO_NOW = "2026-05-31T12:30:00Z"
+VERIFICATION_COMMANDS = [
+    f"python scripts/validate_broker_handoff_artifact.py {HANDOFF_PATH.as_posix()}",
+    f"python scripts/hash_broker_handoff_artifact.py {HANDOFF_PATH.as_posix()}",
+    f"python scripts/validate_broker_approval_artifact.py {APPROVAL_PATH.as_posix()} --now {DEMO_NOW}",
+    (
+        f"python scripts/validate_broker_approval_binding.py {APPROVAL_PATH.as_posix()} "
+        f"{HANDOFF_PATH.as_posix()} --now {DEMO_NOW}"
+    ),
+]
 
 
 def main() -> int:
@@ -45,8 +58,7 @@ def main() -> int:
         ),
     )
     dry_run.write([order], OUTPUT_DIR)
-    request_path = OUTPUT_DIR / "dry_run_orders.json"
-    request_hash = broker_handoff_artifact_hash(request_path)
+    request_hash = broker_handoff_artifact_hash(HANDOFF_PATH)
 
     approval = BrokerApproval(
         approval_status="approved",
@@ -65,10 +77,9 @@ def main() -> int:
         expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash=request_hash,
     )
-    demo_now = "2026-05-31T12:30:00Z"
-    validation_errors = validate_broker_approval_artifact(artifact, now=demo_now)
-    binding_errors = validate_broker_approval_request_binding(artifact, request_path)
-    safety = broker_safety_from_approval_artifact(artifact, now=demo_now, request_artifact=request_path)
+    validation_errors = validate_broker_approval_artifact(artifact, now=DEMO_NOW)
+    binding_errors = validate_broker_approval_request_binding(artifact, HANDOFF_PATH, now=DEMO_NOW)
+    safety = broker_safety_from_approval_artifact(artifact, now=DEMO_NOW, request_artifact=HANDOFF_PATH)
 
     approved_order_passed = False
     oversized_order_blocked = False
@@ -85,16 +96,16 @@ def main() -> int:
         blocked_reason = str(exc)
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    artifact_path = OUTPUT_DIR / "broker_approval_artifact.json"
-    artifact_path.write_text(json.dumps(artifact, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    APPROVAL_PATH.write_text(json.dumps(artifact, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     summary = {
         "approval_id": artifact["approval_id"],
         "approval_validated": not validation_errors,
         "request_hash_bound": not binding_errors,
-        "approval_checked_at": demo_now,
+        "approval_checked_at": DEMO_NOW,
         "request_artifact_hash": request_hash,
         "validation_errors": validation_errors,
         "binding_errors": binding_errors,
+        "verification_commands": VERIFICATION_COMMANDS,
         "adapter_mode": safety.mode.value,
         "account_mode": safety.account_mode,
         "allowed_symbols": list(safety.allowed_symbols),
@@ -106,13 +117,13 @@ def main() -> int:
         "blocked_reason": blocked_reason,
         "safety_note": "Approval artifact is redacted and local-only; no broker credentials are read and no orders are submitted.",
     }
-    write_json(OUTPUT_DIR / "summary.json", summary)
+    write_json(SUMMARY_PATH, summary)
     print("Broker approval safety demo")
     print(f"  approval_validated={summary['approval_validated']}")
     print(f"  request_hash_bound={summary['request_hash_bound']}")
     print(f"  approved_order_passed={approved_order_passed}")
     print(f"  oversized_order_blocked={oversized_order_blocked}")
-    print(f"  wrote={artifact_path}")
+    print(f"  wrote={APPROVAL_PATH}")
     return 0 if not validation_errors and not binding_errors and approved_order_passed and oversized_order_blocked else 1
 
 

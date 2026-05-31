@@ -918,6 +918,21 @@ def test_broker_approval_safety_demo_writes_valid_artifact():
     assert summary["oversized_order_blocked"] is True
     assert payload["request_artifact_hash"] == summary["request_artifact_hash"]
     assert validate_broker_approval_artifact(payload) == []
+    assert summary["verification_commands"] == [
+        "python scripts/validate_broker_handoff_artifact.py outputs/examples/broker_approval_safety/dry_run_orders.json",
+        "python scripts/hash_broker_handoff_artifact.py outputs/examples/broker_approval_safety/dry_run_orders.json",
+        (
+            "python scripts/validate_broker_approval_artifact.py "
+            "outputs/examples/broker_approval_safety/broker_approval_artifact.json "
+            "--now 2026-05-31T12:30:00Z"
+        ),
+        (
+            "python scripts/validate_broker_approval_binding.py "
+            "outputs/examples/broker_approval_safety/broker_approval_artifact.json "
+            "outputs/examples/broker_approval_safety/dry_run_orders.json "
+            "--now 2026-05-31T12:30:00Z"
+        ),
+    ]
 
 
 def test_broker_approval_safety_demo_contract_validates_with_fixed_now():

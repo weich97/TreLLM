@@ -64,6 +64,7 @@ artifacts:
       - outputs/examples/broker_approval_safety/summary.json:approved_order_passed
       - outputs/examples/broker_approval_safety/summary.json:oversized_order_blocked
       - outputs/examples/broker_approval_safety/summary.json:request_artifact_hash
+      - outputs/examples/broker_approval_safety/summary.json:verification_commands
       - outputs/examples/broker_approval_safety/broker_approval_artifact.json:approval_id
       - outputs/examples/broker_approval_safety/broker_approval_artifact.json:request_artifact_hash
     required_validators:

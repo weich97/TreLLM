@@ -436,6 +436,9 @@ def validate_broker_approval_artifact(
     now: str | datetime | None = None,
 ) -> list[str]:
     errors: list[str] = []
+    now_dt = _parse_timestamp(now) if now is not None else None
+    if now is not None and now_dt is None:
+        errors.append("now must be an ISO timestamp")
     required = {
         "schema",
         "approval_id",
@@ -513,12 +516,9 @@ def validate_broker_approval_artifact(
         expires_dt = _parse_timestamp(expires_at)
         if approved_dt is not None and expires_dt is not None and expires_dt <= approved_dt:
             errors.append("expires_at must be after approved_at")
-        if now is not None:
-            now_dt = _parse_timestamp(now)
+        if now is not None and now_dt is not None:
             if expires_dt is None:
                 errors.append("expires_at must be an ISO timestamp or null")
-            elif now_dt is None:
-                errors.append("now must be an ISO timestamp")
             elif expires_dt <= now_dt:
                 errors.append("approval artifact is expired")
     return errors

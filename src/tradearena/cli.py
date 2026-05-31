@@ -452,7 +452,11 @@ def _run_utility_command(argv: list[str]) -> int:
         parser = argparse.ArgumentParser(description="Compute a reproducibility hash for a trajectory JSON.")
         parser.add_argument("trajectory")
         args = parser.parse_args(argv[1:])
-        print(json.dumps(hash_trajectory_file(args.trajectory), indent=2))
+        try:
+            print(json.dumps(hash_trajectory_file(args.trajectory), indent=2))
+        except ValueError as exc:
+            print(str(exc))
+            return 1
         return 0
 
     if command == "replay":
@@ -462,8 +466,14 @@ def _run_utility_command(argv: list[str]) -> int:
         parser.add_argument("--case", default="", help="Case name when replaying a multi-case --output file.")
         parser.add_argument("--json", action="store_true", help="Emit a compact machine-readable step summary.")
         args = parser.parse_args(argv[1:])
-        payload = _load_replay_payload(Path(args.trajectory), args.case)
-        summary = _replay_step_summary(payload, args.step)
+        try:
+            payload = _load_replay_payload(Path(args.trajectory), args.case)
+            summary = _replay_step_summary(payload, args.step)
+        except SystemExit as exc:
+            if exc.code:
+                print(exc.code)
+                return 1
+            return 0
         if args.json:
             print(json.dumps(summary, indent=2))
         else:
@@ -653,7 +663,10 @@ private holdings out of Git.
 def _load_replay_payload(path: Path, case_name: str = "") -> dict[str, Any]:
     if not path.exists():
         raise SystemExit(f"Trajectory not found: {path}")
-    payload = json.loads(path.read_text(encoding="utf-8"))
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise SystemExit("Trajectory file must contain valid JSON") from exc
     if isinstance(payload, dict) and isinstance(payload.get("steps"), list):
         return payload
     if not isinstance(payload, dict):

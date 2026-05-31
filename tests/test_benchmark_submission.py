@@ -226,6 +226,23 @@ def test_hash_run_produces_stable_trajectory_fingerprint():
     assert via_cli["reproducibility_hash"] == direct["reproducibility_hash"]
 
 
+def test_hash_run_reports_malformed_trajectory_json(tmp_path: Path):
+    trajectory = tmp_path / "broken_trajectory.json"
+    trajectory.write_text('{"steps": ', encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, "-m", "tradearena.cli", "hash-run", str(trajectory)],
+        cwd=ROOT,
+        env=SUBPROCESS_ENV,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Trajectory file must contain valid JSON" in result.stdout
+    assert "Traceback" not in result.stderr
+
+
 def test_tradearena_public_namespace_imports_core_modules():
     import tradearena
     import tradearena.core.domain

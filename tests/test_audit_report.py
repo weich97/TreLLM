@@ -3,6 +3,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parents[1]
+
 
 def test_render_audit_report_from_minimal_trajectory(tmp_path: Path):
     trajectory = {
@@ -155,6 +157,30 @@ def test_render_audit_report_from_minimal_trajectory(tmp_path: Path):
     replay_payload = json.loads(json_result.stdout)
     assert replay_payload["experiment"] == "unit_audit"
     assert replay_payload["decisions"][0]["approved_weight"] == 0.25
+
+
+def test_replay_reports_malformed_trajectory_json(tmp_path: Path):
+    trajectory_path = tmp_path / "broken_trajectory.json"
+    trajectory_path.write_text('{"steps": ', encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "tradearena.cli",
+            "replay",
+            str(trajectory_path),
+            "--step",
+            "1",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Trajectory file must contain valid JSON" in result.stdout
+    assert "Traceback" not in result.stderr
 
 
 def _risk_report(phase: str, clipped: int) -> dict:

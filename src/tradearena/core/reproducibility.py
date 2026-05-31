@@ -55,7 +55,7 @@ def attach_reproducibility_hash(payload: dict[str, Any]) -> dict[str, Any]:
 
 def hash_trajectory_file(path: str | Path) -> dict[str, Any]:
     trajectory_path = Path(path)
-    payload = json.loads(trajectory_path.read_text(encoding="utf-8"))
+    payload = _load_trajectory_json(trajectory_path)
     scenario_id = str(payload.get("experiment_name") or trajectory_path.stem)
     file_hash = sha256_file(trajectory_path)
     manifest = {
@@ -94,6 +94,16 @@ def hash_trajectory_file(path: str | Path) -> dict[str, Any]:
         "scenario_id": scenario_id,
         "reproducibility_hash": compute_reproducibility_hash(manifest),
     }
+
+
+def _load_trajectory_json(path: Path) -> dict[str, Any]:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ValueError("Trajectory file must contain valid JSON") from exc
+    if not isinstance(payload, dict):
+        raise ValueError("Trajectory file must be a JSON object")
+    return payload
 
 
 def _symbols_from_trajectory(payload: dict[str, Any]) -> list[str]:

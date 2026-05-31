@@ -108,6 +108,10 @@ Validate it after building the showcase:
 python scripts/validate_demo_artifacts.py
 ```
 
+When a demo summary exposes `verification_commands`, the validator also checks
+that the summary commands exactly match the manifest's `required_validators` so
+artifact-local replay instructions cannot drift from the release contract.
+
 ## Broker Handoff, Approval, And Response Artifact Schemas
 
 Broker handoff request artifacts can be validated against

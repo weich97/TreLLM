@@ -34,6 +34,8 @@ def main(argv: list[str] | None = None) -> int:
             payload = json.loads(path.read_text(encoding="utf-8"))
             if _get_path(payload, dotted_path) is None:
                 failures.append(f"{artifact['id']}: missing JSON field {spec}")
+            if dotted_path == "verification_commands":
+                failures.extend(_check_verification_commands(artifact, rel, payload))
         for command in artifact.get("required_validators", []):
             result = _run_validator(command)
             if result.returncode != 0:
@@ -86,6 +88,18 @@ def _run_validator(command: str) -> subprocess.CompletedProcess[str]:
     if argv and argv[0] == "python":
         argv[0] = sys.executable
     return subprocess.run(argv, cwd=ROOT, capture_output=True, text=True)
+
+
+def _check_verification_commands(artifact: dict[str, Any], rel: str, payload: Any) -> list[str]:
+    if not isinstance(payload, dict):
+        return [f"{artifact['id']}: cannot check verification_commands in non-object JSON {rel}"]
+    commands = payload.get("verification_commands")
+    if not isinstance(commands, list) or not all(isinstance(command, str) for command in commands):
+        return [f"{artifact['id']}: verification_commands must be a list of strings in {rel}"]
+    expected = artifact.get("required_validators", [])
+    if commands != expected:
+        return [f"{artifact['id']}: verification_commands do not match required_validators in {rel}"]
+    return []
 
 
 def _get_path(payload: Any, dotted_path: str) -> Any:

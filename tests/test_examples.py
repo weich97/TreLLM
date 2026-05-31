@@ -204,6 +204,64 @@ def test_demo_artifact_contract_runs_required_validators(tmp_path: Path):
     assert "validator failed" in result.stdout
 
 
+def test_demo_artifact_contract_checks_summary_verification_commands(tmp_path: Path):
+    _run_example("examples/broker_approval_safety_demo.py")
+    manifest = tmp_path / "demo_artifacts.yaml"
+    manifest.write_text(
+        "\n".join(
+            [
+                'version: "test"',
+                "artifacts:",
+                "  - id: broker_approval_contract",
+                "    command: python examples/broker_approval_safety_demo.py",
+                "    required_outputs:",
+                "      - outputs/examples/broker_approval_safety/summary.json",
+                "    required_json_fields:",
+                "      - outputs/examples/broker_approval_safety/summary.json:verification_commands",
+                "    required_validators:",
+                "      - python scripts/validate_broker_handoff_artifact.py outputs/examples/broker_approval_safety/dry_run_orders.json",
+                "      - python scripts/hash_broker_handoff_artifact.py outputs/examples/broker_approval_safety/dry_run_orders.json",
+                (
+                    "      - python scripts/validate_broker_approval_artifact.py "
+                    "outputs/examples/broker_approval_safety/broker_approval_artifact.json "
+                    "--now 2026-05-31T12:30:00Z"
+                ),
+                (
+                    "      - python scripts/validate_broker_approval_binding.py "
+                    "outputs/examples/broker_approval_safety/broker_approval_artifact.json "
+                    "outputs/examples/broker_approval_safety/dry_run_orders.json "
+                    "--now 2026-05-31T12:30:00Z"
+                ),
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    subprocess.run(
+        [sys.executable, "scripts/validate_demo_artifacts.py", "--manifest", str(manifest)],
+        cwd=ROOT,
+        check=True,
+    )
+
+    broken_manifest = tmp_path / "broken_demo_artifacts.yaml"
+    broken_manifest.write_text(
+        manifest.read_text(encoding="utf-8").replace(
+            "python scripts/hash_broker_handoff_artifact.py",
+            "python scripts/validate_broker_handoff_artifact.py",
+        ),
+        encoding="utf-8",
+    )
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_demo_artifacts.py", "--manifest", str(broken_manifest)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "verification_commands do not match required_validators" in result.stdout
+
+
 def _run_example(path: str) -> None:
     subprocess.run([sys.executable, path], cwd=ROOT, check=True)
 

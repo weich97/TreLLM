@@ -55,6 +55,9 @@ Before a broker-facing contribution is accepted, it should prove:
   order ID;
 - live approvals are recorded as schema-valid, redacted broker approval
   artifacts before any live handoff;
+- every live approval binds to the reviewed broker handoff artifact via
+  `request_artifact_hash`, and the binding is checked before live-mode safety is
+  created;
 - max notional, max quantity, allowed symbols, and allowed order types are
   enforced before broker handoff;
 - cancellation, partial-fill, rejection, and reconciliation states are

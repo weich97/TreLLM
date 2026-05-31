@@ -56,12 +56,18 @@ artifacts:
     required_outputs:
       - outputs/examples/broker_approval_safety/summary.json
       - outputs/examples/broker_approval_safety/broker_approval_artifact.json
+      - outputs/examples/broker_approval_safety/dry_run_orders.json
+      - outputs/examples/broker_approval_safety/dry_run_orders.csv
     required_json_fields:
       - outputs/examples/broker_approval_safety/summary.json:approval_validated
+      - outputs/examples/broker_approval_safety/summary.json:request_hash_bound
       - outputs/examples/broker_approval_safety/summary.json:approved_order_passed
       - outputs/examples/broker_approval_safety/summary.json:oversized_order_blocked
+      - outputs/examples/broker_approval_safety/summary.json:request_artifact_hash
       - outputs/examples/broker_approval_safety/broker_approval_artifact.json:approval_id
+      - outputs/examples/broker_approval_safety/broker_approval_artifact.json:request_artifact_hash
     required_validators:
+      - python scripts/validate_broker_handoff_artifact.py outputs/examples/broker_approval_safety/dry_run_orders.json
       - python scripts/validate_broker_approval_artifact.py outputs/examples/broker_approval_safety/broker_approval_artifact.json
   - id: broker_response_reconciliation
     command: python examples/broker_response_reconciliation_demo.py

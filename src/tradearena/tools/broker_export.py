@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 from dataclasses import asdict, dataclass, field, replace
 from datetime import datetime, timezone
@@ -511,6 +512,31 @@ def validate_broker_approval_artifact_file(path: str | Path) -> tuple[dict[str, 
     return payload, validate_broker_approval_artifact(payload)
 
 
+def broker_handoff_artifact_hash(payload_or_path: dict[str, object] | str | Path) -> str:
+    """Return a stable SHA-256 hash for a broker handoff artifact."""
+
+    payload = _load_broker_artifact_payload(payload_or_path)
+    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+    return "sha256:" + hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def validate_broker_approval_request_binding(
+    approval_payload: dict[str, object],
+    request_payload_or_path: dict[str, object] | str | Path,
+) -> list[str]:
+    """Validate that an approval artifact names the exact broker handoff artifact."""
+
+    errors = validate_broker_approval_artifact(approval_payload)
+    request_payload = _load_broker_artifact_payload(request_payload_or_path)
+    errors.extend(validate_broker_handoff_artifact(request_payload))
+    request_hash = approval_payload.get("request_artifact_hash")
+    if not isinstance(request_hash, str) or not request_hash:
+        errors.append("request_artifact_hash is required to bind approval to a broker handoff artifact")
+    elif request_hash != broker_handoff_artifact_hash(request_payload):
+        errors.append("request_artifact_hash does not match broker handoff artifact")
+    return errors
+
+
 def broker_approval_from_artifact(
     payload: dict[str, object],
     *,
@@ -666,6 +692,15 @@ def validate_broker_handoff_artifact_file(path: str | Path) -> tuple[dict[str, o
     if not isinstance(payload, dict):
         return {}, ["broker handoff artifact must be a JSON object"]
     return payload, validate_broker_handoff_artifact(payload)
+
+
+def _load_broker_artifact_payload(payload_or_path: dict[str, object] | str | Path) -> dict[str, object]:
+    if isinstance(payload_or_path, dict):
+        return payload_or_path
+    payload = json.loads(Path(payload_or_path).read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise BrokerAdapterContractError("broker artifact must be a JSON object")
+    return payload
 
 
 def _alpaca_order_type(order_type: OrderType) -> str:

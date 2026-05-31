@@ -23,9 +23,11 @@ from tradearena.tools import (
     FuturesRollRiskEngine,
     build_broker_approval_artifact,
     broker_approval_from_artifact,
+    broker_handoff_artifact_hash,
     broker_safety_from_approval_artifact,
     reconcile_broker_responses,
     validate_broker_approval_artifact,
+    validate_broker_approval_request_binding,
     validate_broker_handoff_artifact,
     validate_broker_response_artifact,
     write_broker_response_artifact,
@@ -419,6 +421,47 @@ def test_broker_approval_artifact_rejects_expired_approval():
         raise AssertionError("expected expired approval artifact failure")
 
 
+def test_broker_approval_artifact_binds_to_handoff_request_hash(tmp_path):
+    adapter = DryRunBrokerAdapter(
+        client_prefix="approval-bind",
+        safety=BrokerSafetyConfig(
+            account_mode="paper",
+            max_quantity=5.0,
+            allowed_symbols=("AAPL",),
+        ),
+    )
+    adapter.write(
+        [Order("AAPL", Side.BUY, 2.0, order_type=OrderType.LIMIT, limit_price=100.0, reason="binding unit")],
+        tmp_path,
+    )
+    request_path = tmp_path / "dry_run_orders.json"
+    request_payload = json.loads(request_path.read_text(encoding="utf-8"))
+    request_hash = broker_handoff_artifact_hash(request_payload)
+    approval_payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=250.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-bound-001",
+        account_mode="live",
+        max_quantity=5.0,
+        request_artifact_hash=request_hash,
+    )
+
+    assert request_hash.startswith("sha256:")
+    assert validate_broker_approval_request_binding(approval_payload, request_payload) == []
+    assert validate_broker_approval_request_binding(approval_payload, request_path) == []
+
+    approval_payload["request_artifact_hash"] = "sha256:" + "0" * 64
+    assert validate_broker_approval_request_binding(approval_payload, request_payload) == [
+        "request_artifact_hash does not match broker handoff artifact"
+    ]
+
+
 def test_broker_approval_safety_demo_writes_valid_artifact():
     subprocess.run([sys.executable, "examples/broker_approval_safety_demo.py"], cwd=ROOT, check=True)
     artifact = ROOT / "outputs/examples/broker_approval_safety/broker_approval_artifact.json"
@@ -426,9 +469,11 @@ def test_broker_approval_safety_demo_writes_valid_artifact():
     payload = json.loads(artifact.read_text(encoding="utf-8"))
 
     assert summary["approval_validated"] is True
+    assert summary["request_hash_bound"] is True
     assert summary["adapter_mode"] == "live_human_approved"
     assert summary["approved_order_passed"] is True
     assert summary["oversized_order_blocked"] is True
+    assert payload["request_artifact_hash"] == summary["request_artifact_hash"]
     assert validate_broker_approval_artifact(payload) == []
 
 

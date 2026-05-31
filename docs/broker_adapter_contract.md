@@ -34,10 +34,12 @@ The current code-level primitives live in `tradearena.tools.broker_export`:
 - `BrokerReconciliationSummary`;
 - `build_broker_approval_artifact`;
 - `broker_approval_from_artifact`;
+- `broker_handoff_artifact_hash`;
 - `broker_safety_from_approval_artifact`;
 - `reconcile_broker_responses`;
 - `validate_broker_approval_artifact`;
 - `validate_broker_approval_artifact_file`;
+- `validate_broker_approval_request_binding`;
 - `validate_broker_handoff_artifact`;
 - `validate_broker_handoff_artifact_file`;
 - `validate_broker_response_artifact`;
@@ -144,6 +146,12 @@ broker-facing PR or paper-sandbox run report.
 The adapter should reject stale, missing, or over-broad approvals. Approval
 records should use redacted operator IDs in public artifacts and can be checked
 with `tradearena validate-broker-approval <artifact.json>`.
+The approval should also bind to the exact request artifact that was reviewed:
+compute `broker_handoff_artifact_hash(request_artifact)` and store it in
+`request_artifact_hash`, then run
+`validate_broker_approval_request_binding(approval, request_artifact)` before
+building any live-mode safety config. This prevents an operator approval for one
+handoff file from being reused against a different order request.
 Adapter implementations can turn a validated approval artifact into the
 runtime safety gate with `broker_safety_from_approval_artifact(...)`; the
 result is a `BrokerSafetyConfig` in `live_human_approved` mode with the same

@@ -14,15 +14,40 @@ from tradearena.core.serialization import write_json
 from tradearena.tools import (
     BrokerAdapterContractError,
     BrokerApproval,
+    BrokerSafetyConfig,
+    DryRunBrokerAdapter,
+    broker_handoff_artifact_hash,
     broker_safety_from_approval_artifact,
     build_broker_approval_artifact,
     validate_broker_approval_artifact,
+    validate_broker_approval_request_binding,
 )
 
 OUTPUT_DIR = Path("outputs/examples/broker_approval_safety")
 
 
 def main() -> int:
+    order = Order(
+        "AAPL",
+        Side.BUY,
+        2.0,
+        order_type=OrderType.LIMIT,
+        limit_price=100.0,
+        reason="approved demo order",
+    )
+    dry_run = DryRunBrokerAdapter(
+        client_prefix="approval-demo",
+        safety=BrokerSafetyConfig(
+            account_mode="paper",
+            max_quantity=5.0,
+            allowed_symbols=("AAPL", "MSFT"),
+            allowed_order_types=(OrderType.LIMIT,),
+        ),
+    )
+    dry_run.write([order], OUTPUT_DIR)
+    request_path = OUTPUT_DIR / "dry_run_orders.json"
+    request_hash = broker_handoff_artifact_hash(request_path)
+
     approval = BrokerApproval(
         approval_status="approved",
         approved_by="operator-demo-7",
@@ -38,19 +63,17 @@ def main() -> int:
         max_quantity=5.0,
         allowed_order_types=(OrderType.LIMIT,),
         expires_at="2026-05-31T13:00:00Z",
-        request_artifact_hash="sha256:demo-redacted-request-hash",
+        request_artifact_hash=request_hash,
     )
     demo_now = "2026-05-31T12:30:00Z"
     validation_errors = validate_broker_approval_artifact(artifact, now=demo_now)
+    binding_errors = validate_broker_approval_request_binding(artifact, request_path)
     safety = broker_safety_from_approval_artifact(artifact, now=demo_now)
 
     approved_order_passed = False
     oversized_order_blocked = False
     blocked_reason = ""
-    safety.validate_order(
-        Order("AAPL", Side.BUY, 2.0, order_type=OrderType.LIMIT, limit_price=100.0, reason="approved demo order"),
-        reference_price=100.0,
-    )
+    safety.validate_order(order, reference_price=100.0)
     approved_order_passed = True
     try:
         safety.validate_order(
@@ -67,8 +90,11 @@ def main() -> int:
     summary = {
         "approval_id": artifact["approval_id"],
         "approval_validated": not validation_errors,
+        "request_hash_bound": not binding_errors,
         "approval_checked_at": demo_now,
+        "request_artifact_hash": request_hash,
         "validation_errors": validation_errors,
+        "binding_errors": binding_errors,
         "adapter_mode": safety.mode.value,
         "account_mode": safety.account_mode,
         "allowed_symbols": list(safety.allowed_symbols),
@@ -83,10 +109,11 @@ def main() -> int:
     write_json(OUTPUT_DIR / "summary.json", summary)
     print("Broker approval safety demo")
     print(f"  approval_validated={summary['approval_validated']}")
+    print(f"  request_hash_bound={summary['request_hash_bound']}")
     print(f"  approved_order_passed={approved_order_passed}")
     print(f"  oversized_order_blocked={oversized_order_blocked}")
     print(f"  wrote={artifact_path}")
-    return 0 if not validation_errors and approved_order_passed and oversized_order_blocked else 1
+    return 0 if not validation_errors and not binding_errors and approved_order_passed and oversized_order_blocked else 1
 
 
 if __name__ == "__main__":

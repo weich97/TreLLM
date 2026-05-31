@@ -69,8 +69,8 @@ artifacts:
     required_validators:
       - python scripts/validate_broker_handoff_artifact.py outputs/examples/broker_approval_safety/dry_run_orders.json
       - python scripts/hash_broker_handoff_artifact.py outputs/examples/broker_approval_safety/dry_run_orders.json
-      - python scripts/validate_broker_approval_artifact.py outputs/examples/broker_approval_safety/broker_approval_artifact.json
-      - python scripts/validate_broker_approval_binding.py outputs/examples/broker_approval_safety/broker_approval_artifact.json outputs/examples/broker_approval_safety/dry_run_orders.json
+      - python scripts/validate_broker_approval_artifact.py outputs/examples/broker_approval_safety/broker_approval_artifact.json --now 2026-05-31T12:30:00Z
+      - python scripts/validate_broker_approval_binding.py outputs/examples/broker_approval_safety/broker_approval_artifact.json outputs/examples/broker_approval_safety/dry_run_orders.json --now 2026-05-31T12:30:00Z
   - id: broker_response_reconciliation
     command: python examples/broker_response_reconciliation_demo.py
     required_outputs:

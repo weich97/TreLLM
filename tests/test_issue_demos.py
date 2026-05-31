@@ -884,6 +884,22 @@ def test_broker_approval_safety_demo_writes_valid_artifact():
     assert validate_broker_approval_artifact(payload) == []
 
 
+def test_broker_approval_safety_demo_contract_validates_with_fixed_now():
+    manifest = (ROOT / "docs/demo_artifacts.yaml").read_text(encoding="utf-8")
+
+    assert (
+        "python scripts/validate_broker_approval_artifact.py "
+        "outputs/examples/broker_approval_safety/broker_approval_artifact.json "
+        "--now 2026-05-31T12:30:00Z"
+    ) in manifest
+    assert (
+        "python scripts/validate_broker_approval_binding.py "
+        "outputs/examples/broker_approval_safety/broker_approval_artifact.json "
+        "outputs/examples/broker_approval_safety/dry_run_orders.json "
+        "--now 2026-05-31T12:30:00Z"
+    ) in manifest
+
+
 def test_dry_run_broker_adapter_demo_writes_valid_handoff():
     subprocess.run([sys.executable, "examples/dry_run_broker_adapter_demo.py"], cwd=ROOT, check=True)
     artifact = ROOT / "outputs/examples/dry_run_broker_adapter/dry_run_orders.json"

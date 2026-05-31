@@ -39,3 +39,14 @@ artifacts:
       - docs/results/community_registry.md
       - docs/results/community_registry.csv
       - docs/results/community_registry.html
+  - id: broker_response_reconciliation
+    command: python examples/broker_response_reconciliation_demo.py
+    required_outputs:
+      - outputs/examples/broker_response_reconciliation/summary.json
+      - outputs/examples/broker_response_reconciliation/broker_response_artifact.json
+      - outputs/examples/broker_response_reconciliation/alpaca_paper_orders.json
+      - outputs/examples/broker_response_reconciliation/alpaca_paper_orders.csv
+    required_json_fields:
+      - outputs/examples/broker_response_reconciliation/summary.json:reconciliation.response_count
+      - outputs/examples/broker_response_reconciliation/summary.json:reconciliation.missing_response_count
+      - outputs/examples/broker_response_reconciliation/broker_response_artifact.json:reconciliation.response_count

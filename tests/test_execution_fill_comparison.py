@@ -109,3 +109,27 @@ def test_compare_execution_to_fills_cli_writes_reports(tmp_path: Path):
     assert output.exists()
     assert markdown.exists()
     assert "Execution Fill Calibration Comparison" in markdown.read_text(encoding="utf-8")
+
+
+def test_quote_fill_calibration_cli_writes_reports_without_installed_package(tmp_path: Path):
+    output = tmp_path / "quote_fill.json"
+    markdown = tmp_path / "quote_fill.md"
+
+    subprocess.run(
+        [
+            sys.executable,
+            "scripts/calibrate_quote_fill_model.py",
+            "--output",
+            str(output),
+            "--markdown-output",
+            str(markdown),
+        ],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert output.exists()
+    assert markdown.exists()
+    assert "Quote/Fill Execution Calibration" in markdown.read_text(encoding="utf-8")

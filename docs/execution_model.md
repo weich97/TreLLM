@@ -24,6 +24,9 @@ transaction-cost prediction engine. A credible transaction-cost result should
 use calibrated or replayed inputs and report venue, broker, order type, symbol
 universe, sample size, and date range.
 
+For a shorter contributor workflow, see
+[`execution_calibration_quickstart.md`](execution_calibration_quickstart.md).
+
 ## Simulator Equation
 
 `RealisticOrderSimulator` delays orders by `latency_steps`, caps per-symbol

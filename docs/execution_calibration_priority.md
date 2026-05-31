@@ -29,7 +29,9 @@ separate in code review and benchmark evidence tags.
    plausibility diagnostic.
 
 The repository now includes two concrete quote/fill calibration entry points.
-The first is a tiny hand-checkable fixture for tests:
+For a contributor-facing checklist, start with
+[`execution_calibration_quickstart.md`](execution_calibration_quickstart.md).
+The first entry point is a tiny hand-checkable fixture for tests:
 
 ```bash
 python scripts/calibrate_quote_fill_model.py \

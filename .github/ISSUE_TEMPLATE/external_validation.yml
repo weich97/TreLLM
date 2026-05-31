@@ -52,7 +52,7 @@ body:
     id: artifacts
     attributes:
       label: Artifacts and metrics
-      description: Output paths, metric summary, hashes, or redacted manifest links. Do not paste secrets or raw provider responses.
+      description: Output paths, metric summary, hashes, or redacted manifest links. For execution calibration, include quote/fill source, venue, date range, sample size, residuals, and evidence label. Do not paste secrets or raw provider responses.
     validations:
       required: true
   - type: textarea

@@ -49,6 +49,7 @@
   <a href="docs/evaluation_rigor.md">Rigor</a> |
   <a href="docs/claim_boundaries.md">Claims</a> |
   <a href="docs/external_validation_quickstart.md">Validate</a> |
+  <a href="docs/execution_calibration_quickstart.md">Execution calibration</a> |
   <a href="docs/observability.md">Trace export</a> |
   <a href="docs/benchmark_v0_2_spec.md">v0.2 spec</a> |
   <a href="docs/plugin_development.md">Plugins</a> |
@@ -134,7 +135,7 @@ Good first validation paths:
 | ---: | --- | --- |
 | 1 hour | Run the no-key reproduction pack on macOS, Ubuntu, Colab, or Binder | Issues [#43](https://github.com/weich97/TradeArena/issues/43), [#44](https://github.com/weich97/TradeArena/issues/44), [#45](https://github.com/weich97/TradeArena/issues/45) |
 | 1-2 hours | Submit one deterministic baseline manifest row | Issue [#46](https://github.com/weich97/TradeArena/issues/46) |
-| 2-3 hours | Submit one quote/fill calibration mini-report | Issue [#47](https://github.com/weich97/TradeArena/issues/47) |
+| 2-3 hours | Submit one quote/fill calibration mini-report | [Execution calibration quickstart](docs/execution_calibration_quickstart.md), Issue [#47](https://github.com/weich97/TradeArena/issues/47) |
 | 1 hour | Review one benchmark or README claim boundary | Issue [#48](https://github.com/weich97/TradeArena/issues/48) |
 
 Accepted validation reports should name the commit, environment, commands,
@@ -785,6 +786,8 @@ Useful entry points:
   [`docs/observability.md`](docs/observability.md)
 - Schemas: [`docs/schemas.md`](docs/schemas.md)
 - Execution model: [`docs/execution_model_boundaries.md`](docs/execution_model_boundaries.md)
+- Execution calibration quickstart:
+  [`docs/execution_calibration_quickstart.md`](docs/execution_calibration_quickstart.md)
 - Benchmark submissions: [`docs/benchmark_submissions.md`](docs/benchmark_submissions.md)
 - Evaluation rigor: [`docs/evaluation_rigor.md`](docs/evaluation_rigor.md)
 - v0.2 benchmark spec: [`docs/benchmark_v0_2_spec.md`](docs/benchmark_v0_2_spec.md)

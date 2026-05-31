@@ -300,6 +300,19 @@ def test_broker_response_artifact_validator_and_cli_reject_count_mismatch(tmp_pa
     assert "reconciliation.filled_count must be 1; got 0" in result.stdout
 
 
+def test_dry_run_broker_adapter_demo_writes_valid_handoff():
+    subprocess.run([sys.executable, "examples/dry_run_broker_adapter_demo.py"], cwd=ROOT, check=True)
+    artifact = ROOT / "outputs/examples/dry_run_broker_adapter/dry_run_orders.json"
+    summary = json.loads((ROOT / "outputs/examples/dry_run_broker_adapter/summary.json").read_text(encoding="utf-8"))
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    assert summary["adapter_mode"] == "dry_run"
+    assert summary["live_submission"] is False
+    assert summary["validated"] is True
+    assert payload["adapter"] == "dry-run-broker-adapter"
+    assert validate_broker_handoff_artifact(payload) == []
+
+
 def test_holdings_csv_import_fixture_loads_retail_holdings():
     holdings = load_holdings_csv(ROOT / "examples/fixtures/retail_holdings.csv")
 

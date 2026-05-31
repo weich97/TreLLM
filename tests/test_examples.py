@@ -143,6 +143,7 @@ def test_showcase_index_can_be_built_from_existing_or_missing_artifacts():
     assert "Custom plugin extension" in html
     assert "Contributor extension walkthrough" in html
     assert "Retail planning sandbox" in html
+    assert "Dry-run broker adapter" in html
 
 
 def test_demo_artifact_contract_runs_required_validators(tmp_path: Path):

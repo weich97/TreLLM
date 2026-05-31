@@ -39,6 +39,18 @@ artifacts:
       - docs/results/community_registry.md
       - docs/results/community_registry.csv
       - docs/results/community_registry.html
+  - id: dry_run_broker_adapter
+    command: python examples/dry_run_broker_adapter_demo.py
+    required_outputs:
+      - outputs/examples/dry_run_broker_adapter/summary.json
+      - outputs/examples/dry_run_broker_adapter/dry_run_orders.json
+      - outputs/examples/dry_run_broker_adapter/dry_run_orders.csv
+    required_json_fields:
+      - outputs/examples/dry_run_broker_adapter/summary.json:adapter_mode
+      - outputs/examples/dry_run_broker_adapter/summary.json:validated
+      - outputs/examples/dry_run_broker_adapter/dry_run_orders.json:orders.client_order_id
+    required_validators:
+      - python scripts/validate_broker_handoff_artifact.py outputs/examples/dry_run_broker_adapter/dry_run_orders.json
   - id: broker_response_reconciliation
     command: python examples/broker_response_reconciliation_demo.py
     required_outputs:

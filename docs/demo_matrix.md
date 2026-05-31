@@ -184,6 +184,13 @@ without reading the full source tree.
 - Shows: approved orders converted into Alpaca-compatible paper-review rows
   without live submission.
 
+### Dry-Run Broker Adapter
+
+- Run: `python examples/dry_run_broker_adapter_demo.py`
+- Artifact: `outputs/examples/dry_run_broker_adapter/dry_run_orders.json`
+- Shows: request-shape validation through the generic broker adapter contract
+  without broker credentials, network calls, or live submission.
+
 ### Broker Response Reconciliation
 
 - Run: `python examples/broker_response_reconciliation_demo.py`

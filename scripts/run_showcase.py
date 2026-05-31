@@ -92,6 +92,12 @@ SECTIONS = [
         "python examples/alpaca_paper_export_demo.py",
     ),
     (
+        "Dry-run broker adapter",
+        "Broker request shape is validated locally without credentials, network calls, or live submission.",
+        "dry_run_broker_adapter/dry_run_orders.json",
+        "python examples/dry_run_broker_adapter_demo.py",
+    ),
+    (
         "Broker response reconciliation",
         "Paper broker responses are matched back to submitted client order IDs for audit review.",
         "broker_response_reconciliation/broker_response_artifact.json",
@@ -149,6 +155,7 @@ def main() -> int:
         _run([sys.executable, "examples/futures_roll_risk_demo.py"], "Futures roll risk")
         _run([sys.executable, "examples/rl_policy_baseline_demo.py"], "Mock deep-RL policy baseline")
         _run([sys.executable, "examples/alpaca_paper_export_demo.py"], "Alpaca paper export")
+        _run([sys.executable, "examples/dry_run_broker_adapter_demo.py"], "Dry-run broker adapter")
         _run([sys.executable, "examples/broker_response_reconciliation_demo.py"], "Broker response reconciliation")
         _run([sys.executable, "examples/holdings_csv_import_demo.py"], "Holdings CSV import")
         _run([sys.executable, "examples/extension_walkthrough_demo.py"], "Contributor extension walkthrough")

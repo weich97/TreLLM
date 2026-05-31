@@ -553,6 +553,8 @@ def validate_broker_approval_request_binding(
         errors.append("request_artifact_hash is required to bind approval to a broker handoff artifact")
     elif request_hash != broker_handoff_artifact_hash(request_payload):
         errors.append("request_artifact_hash does not match broker handoff artifact")
+    if not errors:
+        errors.extend(_validate_approval_request_scope(approval_payload, request_payload))
     return errors
 
 
@@ -724,6 +726,35 @@ def _load_broker_artifact_payload(payload_or_path: dict[str, object] | str | Pat
     if not isinstance(payload, dict):
         raise BrokerAdapterContractError("broker artifact must be a JSON object")
     return payload
+
+
+def _validate_approval_request_scope(
+    approval_payload: dict[str, object],
+    request_payload: dict[str, object],
+) -> list[str]:
+    errors: list[str] = []
+    allowed_symbols = {str(symbol) for symbol in approval_payload["allowed_symbols"]}
+    allowed_order_types = {str(order_type) for order_type in approval_payload["allowed_order_types"]}
+    max_quantity = float(approval_payload["max_quantity"])
+    max_notional = float(approval_payload["max_notional"])
+    for idx, order in enumerate(request_payload["orders"]):
+        if not isinstance(order, dict):
+            continue
+        symbol = str(order.get("symbol"))
+        order_type = str(order.get("order_type"))
+        quantity = float(order.get("quantity", 0.0))
+        if symbol not in allowed_symbols:
+            errors.append(f"orders[{idx}].symbol {symbol} is outside approval allowed_symbols")
+        if order_type not in allowed_order_types:
+            errors.append(f"orders[{idx}].order_type {order_type} is outside approval allowed_order_types")
+        if quantity > max_quantity:
+            errors.append(f"orders[{idx}].quantity {quantity} exceeds approval max_quantity {max_quantity}")
+        limit_price = order.get("limit_price")
+        if isinstance(limit_price, (int, float)):
+            notional = abs(quantity * float(limit_price))
+            if notional > max_notional:
+                errors.append(f"orders[{idx}].notional {notional:.2f} exceeds approval max_notional {max_notional:.2f}")
+    return errors
 
 
 def _alpaca_order_type(order_type: OrderType) -> str:

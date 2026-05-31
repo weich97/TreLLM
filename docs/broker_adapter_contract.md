@@ -159,6 +159,9 @@ handoff file from being reused against a different order request.
 Command-line reviewers can check the same invariant with
 `tradearena validate-broker-approval-binding <approval.json> <request.json>` or
 `python scripts/validate_broker_approval_binding.py <approval.json> <request.json>`.
+The binding validator also checks that every request order stays inside the
+approval's allowed symbols, allowed order types, max quantity, and max notional
+when a limit price makes notional calculable.
 Adapter implementations can turn a validated approval artifact into the
 runtime safety gate with `broker_safety_from_approval_artifact(...)`; the
 result is a `BrokerSafetyConfig` in `live_human_approved` mode with the same

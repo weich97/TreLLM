@@ -523,6 +523,45 @@ def test_broker_approval_artifact_binds_to_handoff_request_hash(tmp_path):
     ]
 
 
+def test_broker_approval_request_binding_rejects_orders_outside_approval_scope(tmp_path):
+    adapter = DryRunBrokerAdapter(
+        client_prefix="approval-scope",
+        safety=BrokerSafetyConfig(account_mode="paper", max_quantity=5.0, allowed_symbols=("AAPL",)),
+    )
+    adapter.write(
+        [Order("AAPL", Side.BUY, 2.0, order_type=OrderType.LIMIT, limit_price=100.0, reason="scope unit")],
+        tmp_path,
+    )
+    request_path = tmp_path / "dry_run_orders.json"
+    approval_payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=150.0,
+            allowed_symbols=("MSFT",),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-scope-001",
+        account_mode="live",
+        max_quantity=1.0,
+        allowed_order_types=(OrderType.MARKET,),
+        request_artifact_hash=broker_handoff_artifact_hash(request_path),
+    )
+
+    errors = validate_broker_approval_request_binding(approval_payload, request_path)
+    assert "orders[0].symbol AAPL is outside approval allowed_symbols" in errors
+    assert "orders[0].order_type limit is outside approval allowed_order_types" in errors
+    assert "orders[0].quantity 2.0 exceeds approval max_quantity 1.0" in errors
+    assert "orders[0].notional 200.00 exceeds approval max_notional 150.00" in errors
+    try:
+        broker_safety_from_approval_artifact(approval_payload, request_artifact=request_path)
+    except BrokerAdapterContractError as exc:
+        assert "outside approval allowed_symbols" in str(exc)
+    else:
+        raise AssertionError("expected approval request scope failure before live safety creation")
+
+
 def test_broker_safety_from_approval_artifact_can_require_request_binding(tmp_path):
     adapter = DryRunBrokerAdapter(
         client_prefix="approval-safety-bind",

@@ -46,6 +46,45 @@ def test_example_llm_redacted_submission_includes_model_audit_fields():
     assert payload["evidence"]["tags"] == ["stress-only", "cached-provider", "redacted-prompt"]
 
 
+def test_validate_submission_file_reports_malformed_json(tmp_path: Path):
+    submission = tmp_path / "broken_submission.json"
+    submission.write_text('{"schema_version": ', encoding="utf-8")
+
+    payload, errors = validate_submission_file(submission)
+
+    assert payload == {}
+    assert errors == ["benchmark submission file must contain valid JSON"]
+
+
+def test_validate_submission_cli_reports_malformed_json(tmp_path: Path):
+    submission = tmp_path / "broken_submission.json"
+    submission.write_text('{"schema_version": ', encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, "-m", "tradearena.cli", "validate-submission", str(submission)],
+        cwd=ROOT,
+        env=SUBPROCESS_ENV,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "benchmark submission file must contain valid JSON" in result.stdout
+    assert "Traceback" not in result.stderr
+
+
+def test_registry_build_reports_malformed_submission_json(tmp_path: Path):
+    submission_dir = tmp_path / "submissions"
+    submission_dir.mkdir()
+    (submission_dir / "broken_submission.json").write_text('{"schema_version": ', encoding="utf-8")
+
+    rows, errors = build_registry_rows(submission_dir)
+
+    assert rows == []
+    assert len(errors) == 1
+    assert "benchmark submission file must contain valid JSON" in errors[0]
+
+
 def test_evidence_payload_adds_claim_and_tier_layers():
     evidence = evidence_payload(["stress-only", "cached-provider", "redacted-prompt"])
 

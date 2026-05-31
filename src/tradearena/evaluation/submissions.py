@@ -31,7 +31,13 @@ REQUIRED_TOP_LEVEL = (
 
 
 def load_submission(path: str | Path) -> dict[str, Any]:
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+    try:
+        payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ValueError("benchmark submission file must contain valid JSON") from exc
+    if not isinstance(payload, dict):
+        raise ValueError("benchmark submission file must be a JSON object")
+    return payload
 
 
 def validate_submission(payload: dict[str, Any], *, verify_hash: bool = True) -> list[str]:
@@ -140,7 +146,10 @@ def validate_submission(payload: dict[str, Any], *, verify_hash: bool = True) ->
 
 
 def validate_submission_file(path: str | Path, *, verify_hash: bool = True) -> tuple[dict[str, Any], list[str]]:
-    payload = load_submission(path)
+    try:
+        payload = load_submission(path)
+    except ValueError as exc:
+        return {}, [str(exc)]
     return payload, validate_submission(payload, verify_hash=verify_hash)
 
 

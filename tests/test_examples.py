@@ -136,6 +136,63 @@ def test_showcase_index_can_be_built_from_existing_or_missing_artifacts():
     assert "Retail planning sandbox" in html
 
 
+def test_demo_artifact_contract_runs_required_validators(tmp_path: Path):
+    _run_example("examples/broker_response_reconciliation_demo.py")
+    manifest = tmp_path / "demo_artifacts.yaml"
+    manifest.write_text(
+        "\n".join(
+            [
+                'version: "test"',
+                "artifacts:",
+                "  - id: broker_recon_contract",
+                "    command: python examples/broker_response_reconciliation_demo.py",
+                "    required_outputs:",
+                "      - outputs/examples/broker_response_reconciliation/alpaca_paper_orders.json",
+                "    required_validators:",
+                (
+                    "      - python scripts/validate_broker_handoff_artifact.py "
+                    "outputs/examples/broker_response_reconciliation/alpaca_paper_orders.json"
+                ),
+            ]
+        ),
+        encoding="utf-8",
+    )
+    subprocess.run(
+        [sys.executable, "scripts/validate_demo_artifacts.py", "--manifest", str(manifest)],
+        cwd=ROOT,
+        check=True,
+    )
+
+    broken_manifest = tmp_path / "broken_demo_artifacts.yaml"
+    broken_manifest.write_text(
+        "\n".join(
+            [
+                'version: "test"',
+                "artifacts:",
+                "  - id: broker_recon_contract",
+                "    command: python examples/broker_response_reconciliation_demo.py",
+                "    required_outputs:",
+                "      - outputs/examples/broker_response_reconciliation/alpaca_paper_orders.json",
+                "    required_validators:",
+                (
+                    "      - python scripts/validate_broker_response_artifact.py "
+                    "outputs/examples/broker_response_reconciliation/alpaca_paper_orders.json"
+                ),
+            ]
+        ),
+        encoding="utf-8",
+    )
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_demo_artifacts.py", "--manifest", str(broken_manifest)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "validator failed" in result.stdout
+
+
 def _run_example(path: str) -> None:
     subprocess.run([sys.executable, path], cwd=ROOT, check=True)
 

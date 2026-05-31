@@ -52,3 +52,6 @@ artifacts:
       - outputs/examples/broker_response_reconciliation/summary.json:reconciliation.response_count
       - outputs/examples/broker_response_reconciliation/summary.json:reconciliation.missing_response_count
       - outputs/examples/broker_response_reconciliation/broker_response_artifact.json:reconciliation.response_count
+    required_validators:
+      - python scripts/validate_broker_handoff_artifact.py outputs/examples/broker_response_reconciliation/alpaca_paper_orders.json
+      - python scripts/validate_broker_response_artifact.py outputs/examples/broker_response_reconciliation/broker_response_artifact.json

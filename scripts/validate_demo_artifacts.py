@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import shlex
+import subprocess
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -31,6 +34,14 @@ def main(argv: list[str] | None = None) -> int:
             payload = json.loads(path.read_text(encoding="utf-8"))
             if _get_path(payload, dotted_path) is None:
                 failures.append(f"{artifact['id']}: missing JSON field {spec}")
+        for command in artifact.get("required_validators", []):
+            result = _run_validator(command)
+            if result.returncode != 0:
+                failures.append(f"{artifact['id']}: validator failed: {command}")
+                if result.stdout.strip():
+                    failures.append(f"{artifact['id']}: validator stdout: {result.stdout.strip()}")
+                if result.stderr.strip():
+                    failures.append(f"{artifact['id']}: validator stderr: {result.stderr.strip()}")
 
     if failures:
         print("Demo artifact contract failed:")
@@ -60,7 +71,7 @@ def _parse_manifest(path: Path) -> list[dict[str, Any]]:
         if stripped.startswith("command:"):
             current["command"] = stripped.split(":", 1)[1].strip()
             section = None
-        elif stripped in {"required_outputs:", "required_json_fields:"}:
+        elif stripped in {"required_outputs:", "required_json_fields:", "required_validators:"}:
             section = stripped[:-1]
             current[section] = []
         elif stripped.startswith("- ") and section:
@@ -68,6 +79,13 @@ def _parse_manifest(path: Path) -> list[dict[str, Any]]:
     if current:
         artifacts.append(current)
     return artifacts
+
+
+def _run_validator(command: str) -> subprocess.CompletedProcess[str]:
+    argv = shlex.split(command)
+    if argv and argv[0] == "python":
+        argv[0] = sys.executable
+    return subprocess.run(argv, cwd=ROOT, capture_output=True, text=True)
 
 
 def _get_path(payload: Any, dotted_path: str) -> Any:

@@ -148,7 +148,7 @@ authorize one specific broker handoff artifact.
 Validate a broker approval artifact with:
 
 ```bash
-tradearena validate-broker-approval path/to/broker_approval.json
+tradearena validate-broker-approval path/to/broker_approval.json --now 2026-05-31T12:30:00Z
 ```
 
 Validate that the approval authorizes the exact reviewed handoff request with:

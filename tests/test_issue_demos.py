@@ -421,6 +421,57 @@ def test_broker_approval_artifact_rejects_expired_approval():
         raise AssertionError("expected expired approval artifact failure")
 
 
+def test_broker_approval_validator_cli_and_script_reject_expired_approval_with_now(tmp_path):
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=250.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-expired-command-001",
+        account_mode="live",
+        max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
+    )
+    artifact = tmp_path / "broker_approval.json"
+    artifact.write_text(json.dumps(payload), encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "tradearena.cli",
+            "validate-broker-approval",
+            str(artifact),
+            "--now",
+            "2026-05-31T14:00:00Z",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    script_result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/validate_broker_approval_artifact.py",
+            str(artifact),
+            "--now",
+            "2026-05-31T14:00:00Z",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert script_result.returncode == 1
+    assert "approval artifact is expired" in result.stdout
+    assert "approval artifact is expired" in script_result.stdout
+
+
 def test_broker_approval_artifact_rejects_malformed_timestamps():
     payload = build_broker_approval_artifact(
         BrokerApproval(

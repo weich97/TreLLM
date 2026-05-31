@@ -386,8 +386,9 @@ def _run_utility_command(argv: list[str]) -> int:
     if command == "validate-broker-approval":
         parser = argparse.ArgumentParser(description="Validate a TradeArena broker approval artifact.")
         parser.add_argument("artifact")
+        parser.add_argument("--now", default=None, help="Optional ISO timestamp used to reject expired approval artifacts.")
         args = parser.parse_args(argv[1:])
-        _, errors = validate_broker_approval_artifact_file(args.artifact)
+        _, errors = validate_broker_approval_artifact_file(args.artifact, now=args.now)
         if errors:
             print(f"Invalid broker approval artifact: {args.artifact}")
             for error in errors:

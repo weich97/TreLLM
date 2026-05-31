@@ -1,13 +1,14 @@
 # TradeArena Technical White Paper
 
-TradeArena is an early-stage research prototype for agent reliability,
-risk-aware AI systems, and intent-to-execution audits in financial decision
-settings. It studies whether LLM-assisted trading agents, AI portfolio-manager
-prototypes, and multi-agent finance systems can be evaluated through replayable
-trajectories, explicit execution assumptions, and auditable risk gates. This
-white paper documents the current engineering model. It is not financial
-advice, not a live trading system, and not a claim that the default parameters
-are calibrated to a specific broker or venue.
+TradeArena is an early-stage research prototype and live-readiness audit
+framework for agent reliability, risk-aware AI systems, and
+intent-to-execution audits in financial decision settings. It studies whether
+LLM-assisted trading agents, AI portfolio-manager prototypes, and multi-agent
+finance systems can be evaluated through replayable trajectories, explicit
+execution assumptions, auditable risk gates, and future broker-review
+handoffs. This white paper documents the current engineering model. It is not
+financial advice, not an unattended live trading system, and not a claim that
+the default parameters are calibrated to a specific broker or venue.
 
 ## 1. System Scope
 

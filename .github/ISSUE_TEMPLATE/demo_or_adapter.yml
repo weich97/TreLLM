@@ -12,6 +12,7 @@ body:
         - Analyst or strategy plugin
         - Risk manager or market rule
         - Execution simulator
+        - Broker review export or paper sandbox adapter
         - Evaluation metric
         - Visualization or demo
     validations:
@@ -56,5 +57,5 @@ body:
     id: safety
     attributes:
       label: Safe boundary
-      description: Confirm that this remains offline, paper-only, or human-approved.
-      placeholder: "No live orders; no credentials; no raw provider cache committed."
+      description: Confirm that this remains offline export, dry run, paper sandbox, or human-approved.
+      placeholder: "No default live orders; no credentials committed; human approval and broker contract required for live-capable work."

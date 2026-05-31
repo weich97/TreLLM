@@ -183,3 +183,13 @@ without reading the full source tree.
 - Artifact: `outputs/examples/alpaca_paper_export/alpaca_paper_orders.json`
 - Shows: approved orders converted into Alpaca-compatible paper-review rows
   without live submission.
+
+### Live-Readiness Contract
+
+- Read:
+  - `docs/live_trading_readiness.md`
+  - `docs/broker_adapter_contract.md`
+- Artifact: staged checklist and broker adapter safety contract.
+- Shows: how TradeArena should progress from paper research to broker-review
+  exports, paper sandboxes, and future human-approved live adapters without
+  making live submission a default path.

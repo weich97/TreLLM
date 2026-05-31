@@ -52,8 +52,9 @@ row.
 Prompt:
 
 ```text
-The retail planning sandbox is paper-only and requires human approval. What is
-the safest extension path for planning, paper trading, and broker adapters?
+The retail planning sandbox is offline by default and requires human approval.
+What is the safest extension path for planning, paper trading, broker-review
+exports, and future supervised live adapters?
 
 Call to action:
 

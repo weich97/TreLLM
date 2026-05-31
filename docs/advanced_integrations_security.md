@@ -1,8 +1,9 @@
 # Advanced Integration Safety
 
-TradeArena supports optional model, market-data, and paper-broker integration
-paths. These paths are research utilities, not permission to run unattended live
-trading. The default repository path remains offline and deterministic.
+TradeArena supports optional model, market-data, paper-broker, and future
+broker-facing integration paths. These paths are research and control-plane
+utilities, not permission to run unattended live trading. The default repository
+path remains offline and deterministic.
 
 ## Integration Modes
 
@@ -12,8 +13,9 @@ trading. The default repository path remains offline and deterministic.
 | Cache replay | No | No | No | Reuse prior model outputs through local caches or redacted manifests |
 | Live LLM analyst | Yes | Provider API key | No | Measure model behavior, risk feedback, and parsing coverage |
 | Market-data download | Yes | Usually no key for Yahoo/AkShare scripts | No | Build normalized OHLCV CSV inputs with source metadata |
-| Paper broker export | No broker submission | No broker key required | No | Create review files that a human can inspect outside TradeArena |
-| Live broker adapter | Out of scope for public benchmark | Broker credentials | Not shipped | Requires separate regulatory, account, and supervision controls |
+| Broker review export | No broker submission | No broker key required | No | Create review files that a human can inspect outside TradeArena |
+| Paper trading sandbox | Broker paper API only | Paper-account credentials | No | Test broker request/response and reconciliation without live capital |
+| Human-approved live adapter | Broker live API | Broker credentials | Only after explicit approval | Future supervised execution track, outside benchmark claims |
 
 ## Secret Handling
 
@@ -82,19 +84,22 @@ calibration.
 
 ## Broker Adapter Rules
 
-The public repository ships paper-only broker surfaces. A broker adapter must
-default to one of these modes:
+The public repository currently ships export-only broker surfaces. A broker
+adapter must default to one of these modes:
 
 - offline export;
+- dry run;
 - paper trading sandbox;
 - human-approved review;
 - redacted manifest generation.
 
-Any adapter that can submit live orders is outside the public benchmark path and
-must be separate from default examples. At minimum it needs explicit sandbox
-configuration, human approval before submission, account isolation, order-size
-limits, credential redaction, and tests that prove the default path cannot place
-orders.
+Any adapter that can submit live orders is outside the public benchmark path,
+must be separate from default examples, and must satisfy
+[`broker_adapter_contract.md`](broker_adapter_contract.md). At minimum it needs
+explicit mode selection, sandbox configuration, human approval before live
+submission, account isolation, order-size limits, credential redaction, a kill
+switch, reconciliation artifacts, and tests that prove the default path cannot
+place orders.
 
 The included Alpaca example writes paper-review JSON/CSV files and sets
 `submit_live=false`; it does not call Alpaca or any other broker API.
@@ -108,7 +113,8 @@ Before publishing benchmark results or examples, verify:
 - raw prompt/response caches are local only or replaced by redacted manifests;
 - data provenance and execution assumptions are stated;
 - live provider calls are opt-in and clearly labeled;
-- broker-facing outputs are paper-only or human-review files;
+- broker-facing outputs are offline export, dry run, paper sandbox, or
+  human-review files;
 - generated artifacts can be reproduced without private credentials whenever
   the command is advertised as a first-run path.
 
@@ -118,3 +124,6 @@ Run the release checks before pushing:
 python scripts/check_release_readiness.py
 python -m pytest -q
 ```
+
+For the staged path from benchmark research to supervised live execution, see
+[`live_trading_readiness.md`](live_trading_readiness.md).

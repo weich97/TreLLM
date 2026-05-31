@@ -109,6 +109,6 @@ Recommended weaker wording:
 | "Model X is the best trading agent." | "Model X has the highest score in this cached, redacted benchmark row under the stated stress assumptions." |
 | "The execution model is calibrated." | "The default row is stress-only; calibrated claims require quote/fill provenance." |
 | "The benchmark is community validated." | "The repository has external validation pathways; community validation requires accepted non-maintainer reports." |
-| "The result proves profitability." | "The result is a paper-only reliability and auditability measurement, not a live-trading or investment claim." |
+| "The result proves profitability." | "The result is a reliability and auditability measurement under the stated execution mode, not an investment claim." |
 
 For the full policy, see [`claim_boundaries.md`](claim_boundaries.md).

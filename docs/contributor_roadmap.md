@@ -33,6 +33,22 @@ auditable.
 Expected shape: a data or risk plugin, a reproducible example, and a compact
 result artifact under `outputs/examples/`.
 
+## Route B2: Broker / Trading Operations
+
+These contributions move TradeArena from benchmark research toward
+human-gated, live-ready trading infrastructure.
+
+- Harden broker-review exports with approval fields and reconciliation IDs.
+- Add dry-run broker adapters that validate request shape without network
+  calls.
+- Add paper-sandbox broker adapters behind optional dependencies.
+- Add broker response artifacts for rejects, partial fills, cancels, and fees.
+- Add kill-switch, notional-limit, and allowed-symbol tests for broker paths.
+
+Expected shape: an adapter or contract test, no default live submission, a
+reviewable demo artifact, and compliance with
+[`broker_adapter_contract.md`](broker_adapter_contract.md).
+
 ## Route C: ML / LLM Evaluation
 
 These contributions strengthen TradeArena as an agent benchmark.
@@ -65,5 +81,7 @@ dependency in the first-run path.
 - It preserves the audit lifecycle: observation, decision, risk, execution,
   portfolio state, memory, and evaluation.
 - It is clear whether live APIs are optional or required.
+- Broker-facing work states its mode: offline export, dry run, paper sandbox,
+  or human-approved live.
 - It states whether the contribution supports the academic report, external
   validation, or community participation maturity track.

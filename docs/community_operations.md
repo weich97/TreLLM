@@ -11,7 +11,7 @@ Recommended pinned categories:
 | --- | --- | --- |
 | Roadmap | what is planned and what is intentionally out of scope | current milestone and project-board link |
 | Show and Tell | demos, benchmark rows, plugins, notebooks | template for artifact links and validation commands |
-| Q&A | installation, provider keys, data sources, paper-only safety | short support expectations |
+| Q&A | installation, provider keys, data sources, and live-readiness safety | short support expectations |
 | RFC | design proposals before larger PRs | template with motivation, interface impact, and validation plan |
 
 ## Project Board
@@ -40,8 +40,8 @@ reasonable time. Suggested channels:
 - `research`: methodology, papers, and external validation;
 - `showcase`: demos and benchmark artifacts.
 
-Keep support boundaries explicit: no financial advice, no live trading support,
-and no credential sharing.
+Keep support boundaries explicit: no financial advice, no unattended live
+trading support, and no credential sharing.
 
 ## Changelog And Newsletter
 
@@ -61,8 +61,9 @@ Discussions.
 For LLM agents or financial AI labs, use a reproducibility-first pitch:
 
 ```text
-We maintain TradeArena, an early-stage paper-only reliability harness for
-auditing financial-agent intent under risk gates and execution stress.
+We maintain TradeArena, an early-stage live-ready audit framework for auditing
+financial-agent intent under risk gates, execution evidence, broker-review
+handoffs, and reproducibility checks.
 If your group has an agent or prompt policy, we can help package a redacted
 benchmark manifest and reproducibility report without exposing raw prompts,
 responses, credentials, or private holdings.

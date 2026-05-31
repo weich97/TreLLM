@@ -33,7 +33,7 @@ body:
     attributes:
       label: Boundaries
       options:
-        - label: This task does not require live trading.
+        - label: This task does not require unattended live trading.
           required: true
         - label: This task does not require committing credentials, raw provider text, private holdings, or broker files.
           required: true

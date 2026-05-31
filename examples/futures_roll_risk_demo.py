@@ -1,9 +1,15 @@
 from __future__ import annotations
 
 import html
+import sys
 from dataclasses import asdict
 from datetime import date, datetime
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
 
 from tradearena.core.serialization import write_json
 from tradearena.tools import FuturesContractMetadata, FuturesRollRiskEngine

@@ -1,15 +1,16 @@
 # Security Policy
 
-TradeArena is an audit and benchmark framework. It does not execute live trades
-by default, and public examples are paper-only or offline-friendly.
+TradeArena is an audit, benchmark, and live-readiness framework. It does not
+execute live trades by default, and public examples are offline, paper/sandbox,
+dry-run, or human-review oriented.
 
 ## Please Do Not Submit
 
 - API keys, broker credentials, or account tokens.
 - Raw provider prompt/response caches.
 - Private portfolios, account statements, or personally identifiable data.
-- Live-order adapters that submit trades without explicit sandboxing and human
-  approval.
+- Live-order adapters that submit trades without explicit sandboxing, human
+  approval, order limits, reconciliation, and a kill switch.
 - `.env` files, cookies, private notebook outputs, or local broker/account
   exports.
 
@@ -36,7 +37,8 @@ these modes:
 - or human-approved review.
 
 Live execution is out of scope for the public benchmark unless it is explicitly
-sandboxed and documented as unsafe for unattended use.
+human-approved, sandbox-tested, documented as unsafe for unattended use, and
+implemented behind the broker adapter contract.
 
 ## Advanced Integrations
 
@@ -50,13 +52,15 @@ following:
 - public artifacts use redacted benchmark submissions or cache manifests;
 - Yahoo Finance, AkShare, and other market-data downloads record source,
   frequency, symbol universe, timestamp policy, and adjustment assumptions;
-- broker-facing examples remain paper-only, export-only, or human-approved by
-  default;
+- broker-facing examples remain offline export, dry-run, paper sandbox, or
+  human-approved by default;
 - errors from provider APIs omit response bodies when those bodies may contain
   sensitive details.
 
-See [`docs/advanced_integrations_security.md`](docs/advanced_integrations_security.md)
-for the operational checklist.
+See [`docs/advanced_integrations_security.md`](docs/advanced_integrations_security.md),
+[`docs/live_trading_readiness.md`](docs/live_trading_readiness.md), and
+[`docs/broker_adapter_contract.md`](docs/broker_adapter_contract.md) for the
+operational checklist.
 
 ## If A Secret Is Exposed
 

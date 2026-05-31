@@ -10,9 +10,11 @@ from tradearena.core.domain import Order, OrderType, Side
 
 @dataclass(frozen=True)
 class AlpacaPaperOrder:
-    """Neutral, paper-only order export row for Alpaca review workflows."""
+    """Neutral export-only order row for Alpaca review workflows."""
 
     client_order_id: str
+    adapter_mode: str
+    account_mode: str
     symbol: str
     side: str
     order_type: str
@@ -25,7 +27,7 @@ class AlpacaPaperOrder:
 
 
 class AlpacaPaperExportAdapter:
-    """Convert approved TradeArena orders into paper-review files.
+    """Convert approved TradeArena orders into broker-review files.
 
     The adapter deliberately does not call Alpaca or any broker API. It creates
     a neutral JSON/CSV handoff for human review before any external system sees
@@ -46,6 +48,8 @@ class AlpacaPaperExportAdapter:
             rows.append(
                 AlpacaPaperOrder(
                     client_order_id=f"{self.client_prefix}-{idx:04d}-{_safe_symbol(order.symbol)}",
+                    adapter_mode="offline_export",
+                    account_mode="none",
                     symbol=order.symbol,
                     side=order.side.value,
                     order_type=_alpaca_order_type(order.order_type),
@@ -67,6 +71,8 @@ class AlpacaPaperExportAdapter:
         csv_path = path / "alpaca_paper_orders.csv"
         payload = {
             "adapter": self.name,
+            "adapter_mode": "offline_export",
+            "account_mode": "none",
             "paper_only": True,
             "live_submission": False,
             "manual_approval_required": True,
@@ -82,6 +88,8 @@ class AlpacaPaperExportAdapter:
             "json": str(json_path),
             "csv": str(csv_path),
             "order_count": len(rows),
+            "adapter_mode": "offline_export",
+            "account_mode": "none",
             "paper_only": True,
             "manual_approval_required": True,
         }

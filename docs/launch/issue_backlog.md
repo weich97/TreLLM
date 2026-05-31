@@ -13,9 +13,9 @@ Labels: `good first issue`, `adapter`, `paper-trading`
 Status: implemented in `examples/alpaca_paper_export_demo.py` and
 `src/tradearena/tools/broker_export.py`.
 
-Build a paper-only broker adapter that converts approved TradeArena orders into
-a neutral export format compatible with Alpaca paper-trading review. The first
-version should not submit live orders.
+Build an offline broker-review adapter that converts approved TradeArena orders
+into a neutral export format compatible with Alpaca paper-trading review. The
+first version should not submit live orders.
 
 Acceptance criteria:
 

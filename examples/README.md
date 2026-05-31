@@ -248,14 +248,15 @@ observe-plan-risk-act-reflect loop. If a matching cache row exists, the analyst
 replays it; otherwise it calls the configured provider and appends a local cache
 entry ignored by Git.
 
-## 15. Paper-Only Alpaca Export
+## 15. Broker-Review Alpaca Export
 
 ```bash
 python examples/alpaca_paper_export_demo.py
 ```
 
-Converts approved TradeArena orders into neutral JSON/CSV rows for Alpaca
-paper-trading review. It does not submit orders.
+Converts approved TradeArena orders into neutral JSON/CSV rows for Alpaca-style
+broker review. It marks the adapter mode as `offline_export` and does not
+submit orders.
 
 Output:
 

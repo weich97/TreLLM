@@ -1,9 +1,10 @@
 # Narrative Positioning
 
-TradeArena should be described as an early-stage research prototype for agent
-reliability in financial decision systems, not only as a trading benchmark.
-Trading remains the main experimental domain because it exposes a compact chain
-from observation to intent, risk control, execution, and realized state.
+TradeArena should be described as an early-stage live-ready audit framework for
+agent reliability in financial decision systems, not only as a trading
+benchmark. Trading remains the main experimental domain because it exposes a
+compact chain from observation to intent, risk control, execution, broker
+handoff, reconciliation, and realized state.
 
 ## Core Narrative
 
@@ -14,24 +15,32 @@ Use three phrases consistently:
 - Risk-aware AI Systems: whether structured risk reports can act as external
   constraints and feedback for model behavior.
 - Intent-to-Execution Audit: how proposed actions change as they pass through
-  risk gates, order conversion, execution frictions, fills, and portfolio state.
+  risk gates, order conversion, execution frictions, broker review, fills, and
+  portfolio state.
+- Live-Ready Control Plane: how the same audit trail can support offline
+  research, paper sandboxes, human approval, and future supervised live
+  adapters without making live submission the default path.
 
 ## Scope
 
-TradeArena currently implements paper-only financial-agent experiments. It can
-support:
+TradeArena currently implements offline and paper/sandbox financial-agent
+experiments, plus an export-only broker review surface. It can support:
 
 - LLM-assisted financial-agent evaluation;
 - AI portfolio-manager prototypes;
 - multi-agent finance systems that aggregate analyst, planner, memory, and
   execution modules;
+- broker-review and paper-sandbox workflows that preserve risk and approval
+  evidence;
 - deterministic and classical baselines used as controls.
 
-It should not be described as a live trading bot, a profitability engine, or a
-broker-grade simulator. Claims should stay tied to reproducible paper
-trajectories, redacted manifests, and explicit execution assumptions.
+It should not be described as an unattended live trading bot, a profitability
+engine, or a broker-grade simulator. Claims should stay tied to reproducible
+trajectories, redacted manifests, explicit execution assumptions, and the
+current integration stage from [`live_trading_readiness.md`](live_trading_readiness.md).
 
 ## Preferred One-Liner
 
-TradeArena is an early-stage research prototype for auditing how autonomous
-financial agents move from intent to risk-aware executable actions.
+TradeArena is an early-stage live-ready audit framework for moving autonomous
+financial-agent intent through risk controls, execution evidence, broker
+review, and reproducible accountability.

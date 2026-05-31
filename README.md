@@ -6,9 +6,9 @@
 
 <p align="center">
   <strong>
-    TradeArena is a paper-only audit benchmark for LLM financial agents:
-    it records how model intent is transformed by risk gates and execution
-    frictions into replayable, redacted trajectories.
+    TradeArena is a live-ready audit and risk-control framework for financial
+    agents: it records how model intent is transformed by risk gates, execution
+    models, broker-review handoffs, and reproducible audit trails.
   </strong>
 </p>
 
@@ -51,6 +51,8 @@
   <a href="docs/claim_boundary_review_quickstart.md">Claim review</a> |
   <a href="docs/external_validation_quickstart.md">Validate</a> |
   <a href="docs/execution_calibration_quickstart.md">Execution calibration</a> |
+  <a href="docs/live_trading_readiness.md">Live readiness</a> |
+  <a href="docs/broker_adapter_contract.md">Broker contract</a> |
   <a href="docs/deterministic_baseline_submission_quickstart.md">Baseline rows</a> |
   <a href="docs/observability.md">Trace export</a> |
   <a href="docs/benchmark_v0_2_spec.md">v0.2 spec</a> |
@@ -86,10 +88,11 @@
 
 # TradeArena
 
-TradeArena is not a live-trading system, trading-skill leaderboard, or
-investment advice. Its object of study is whether financial-agent intent remains
-auditable, reproducible, and explainable after risk controls and execution
-frictions transform it into portfolio outcomes.
+TradeArena is not investment advice or a promise of profitable trading. Its
+default commands do not submit live orders. Its long-term direction is a
+live-ready, human-gated control plane where financial-agent intent remains
+auditable, reproducible, risk-checked, and explainable before any broker-facing
+workflow can act.
 
 TradeArena is an audit microscope for financial agents: it records what a model
 wanted to do, how risk controls revised it, how execution frictions changed the
@@ -117,10 +120,11 @@ fill, and whether the result can be replayed, hashed, redacted, and compared.
        width="980">
 </p>
 
-TradeArena only runs paper experiments. The default examples never submit live
-orders. The project is still an early-stage research prototype; the repo is
-most useful for checking how autonomous financial-agent intent changes after
-risk checks and paper-execution costs.
+The current public benchmark path runs offline and paper/sandbox experiments.
+The project is still an early-stage research prototype, but it is intentionally
+organized so future broker-facing adapters can inherit the same risk gates,
+execution calibration, human approval records, reconciliation artifacts, and
+audit logs. See [`docs/live_trading_readiness.md`](docs/live_trading_readiness.md).
 
 ## External Validators Wanted
 
@@ -162,10 +166,10 @@ The current narrative has three pillars:
 - Intent-to-Execution Audit: where does performance change between proposed
   weights, risk-approved weights, orders, fills, and final portfolio state?
 
-This makes the benchmark relevant to LLM trading agents, AI portfolio managers,
+This makes the framework relevant to LLM trading agents, AI portfolio managers,
 multi-agent finance systems, and broader autonomous-agent evaluation. The
-included tasks are paper-only and research-oriented; they are not live trading
-recommendations.
+included tasks are research-oriented and default to offline, paper, sandbox, or
+human-review workflows; they are not live trading recommendations.
 
 The repository also includes a small skill task suite for evaluating LLMs as
 financial-audit agents rather than stock pickers. Those tasks ask models to
@@ -206,7 +210,7 @@ stress.
 | Backtrader | Event-driven strategy backtests and broker-style order workflows | Use when the main object is a classical strategy backtest; TradeArena focuses on agent traces, risk edits, and redacted LLM manifests. |
 | vectorbt | Fast vectorized research over many parameter settings | Use when large array sweeps matter most; TradeArena trades speed for step-level audit records and execution/risk reports. |
 | FinRL | Reinforcement-learning market environments and policy training | Use for RL policy development; TradeArena can wrap learned or deterministic policies as agents and compare their risk/execution behavior. |
-| TradeArena | Paper-only financial-agent reliability evaluation with reproducible trajectories | Use when prompts, decisions, risk gates, fills, memory, and benchmark manifests need to be inspected together. |
+| TradeArena | Live-ready financial-agent audit, risk control, execution calibration, and broker-review handoff | Use when prompts, decisions, risk gates, fills, memory, approvals, and benchmark manifests need to be inspected together. |
 
 ## How A Run Works
 
@@ -547,7 +551,9 @@ constraints.
 
 DeepSeek, Poe-hosted models, OpenAI-compatible chat endpoints, AkShare, Yahoo
 Finance, and broker-facing workflows are opt-in advanced paths. They are not
-part of the first-run command.
+part of the first-run command. Broker-facing work should follow a staged path:
+offline export, dry run, paper sandbox, and only then human-approved live
+submission.
 
 - Keep provider keys in environment variables or an OS secret manager.
 - Track metrics and redacted manifests, not raw prompt/response caches.
@@ -555,8 +561,10 @@ part of the first-run command.
   timestamp policy, and adjustment mode.
 - Treat the execution model as a stress model unless quote/fill logs are used
   for calibration.
-- Broker-facing examples must stay paper-only or human-reviewed. The default
-  examples do not submit live orders.
+- Broker-facing examples must stay offline export, paper sandbox, dry run, or
+  human-reviewed. The default examples do not submit live orders.
+- Any adapter that can touch a broker must follow
+  [`docs/broker_adapter_contract.md`](docs/broker_adapter_contract.md).
 
 Do not commit `.env` files, provider JSONL caches, broker tokens, account
 statements, or private holdings. If a run needs to be shared, publish a redacted
@@ -564,6 +572,8 @@ submission or cache manifest instead of raw provider text.
 
 The full checklist is in
 [`docs/advanced_integrations_security.md`](docs/advanced_integrations_security.md).
+The long-term staged path is in
+[`docs/live_trading_readiness.md`](docs/live_trading_readiness.md).
 
 ## Install And Run
 
@@ -735,6 +745,8 @@ The browser-playable demo video is here:
   post-trade attribution.
 - Extension points for data providers, analysts, strategies, risk managers,
   simulators, memory stores, planners, and evaluators.
+- A broker-review export surface that can turn approved orders into
+  human-review files without submitting them.
 - A schema for redacted benchmark manifests and a small registry builder.
 
 ## Extension Path
@@ -763,6 +775,10 @@ Useful entry points:
 - Quickstart: [`docs/getting_started.md`](docs/getting_started.md)
 - Advanced integration safety:
   [`docs/advanced_integrations_security.md`](docs/advanced_integrations_security.md)
+- Live trading readiness:
+  [`docs/live_trading_readiness.md`](docs/live_trading_readiness.md)
+- Broker adapter contract:
+  [`docs/broker_adapter_contract.md`](docs/broker_adapter_contract.md)
 - Technical white paper: [`docs/technical_report.md`](docs/technical_report.md)
 - Benchmark maturity:
   [`docs/benchmark_maturity.md`](docs/benchmark_maturity.md)
@@ -824,8 +840,11 @@ validation, and JSON validation.
 
 TradeArena does not promise profitable trading, does not provide financial
 advice, and does not execute live trades by default. Public examples are
-offline, paper-only, or human-review oriented. Broker and provider integrations
-must follow [`docs/advanced_integrations_security.md`](docs/advanced_integrations_security.md),
+offline, paper/sandbox, dry-run, or human-review oriented. Broker and provider
+integrations must follow
+[`docs/live_trading_readiness.md`](docs/live_trading_readiness.md),
+[`docs/broker_adapter_contract.md`](docs/broker_adapter_contract.md),
+[`docs/advanced_integrations_security.md`](docs/advanced_integrations_security.md),
 [`SECURITY.md`](SECURITY.md), and [`GOVERNANCE.md`](GOVERNANCE.md).
 
 ## Cite

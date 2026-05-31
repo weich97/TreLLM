@@ -1,6 +1,12 @@
 from __future__ import annotations
 
+import sys
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
 
 from tradearena.core.domain import Order, OrderType, Side
 from tradearena.core.serialization import write_json
@@ -20,11 +26,11 @@ def main() -> int:
     summary = {
         **result,
         "live_submission": False,
-        "safety_note": "Generated files are paper-review exports only; they are not submitted to Alpaca or any broker.",
+        "safety_note": "Generated files are broker-review exports only; they are not submitted to Alpaca or any broker.",
     }
     write_json(OUTPUT_DIR / "summary.json", summary)
     print("Alpaca paper export demo")
-    print(f"  orders={summary['order_count']} paper_only={summary['paper_only']}")
+    print(f"  orders={summary['order_count']} mode={summary['adapter_mode']}")
     print(f"  wrote={summary['json']}")
     print(f"  wrote={summary['csv']}")
     return 0

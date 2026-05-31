@@ -20,8 +20,11 @@ def test_alpaca_paper_export_adapter_requires_human_approval(tmp_path):
     payload = json.loads((tmp_path / "alpaca_paper_orders.json").read_text(encoding="utf-8"))
 
     assert result["order_count"] == 1
+    assert payload["adapter_mode"] == "offline_export"
+    assert payload["account_mode"] == "none"
     assert payload["live_submission"] is False
     assert payload["manual_approval_required"] is True
+    assert payload["orders"][0]["adapter_mode"] == "offline_export"
     assert payload["orders"][0]["approval_status"] == "requires_human_approval"
 
 

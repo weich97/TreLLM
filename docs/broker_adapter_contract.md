@@ -33,6 +33,8 @@ The current code-level primitives live in `tradearena.tools.broker_export`:
 - `BrokerResponse`;
 - `BrokerReconciliationSummary`;
 - `build_broker_approval_artifact`;
+- `broker_approval_from_artifact`;
+- `broker_safety_from_approval_artifact`;
 - `reconcile_broker_responses`;
 - `validate_broker_approval_artifact`;
 - `validate_broker_approval_artifact_file`;
@@ -142,6 +144,10 @@ broker-facing PR or paper-sandbox run report.
 The adapter should reject stale, missing, or over-broad approvals. Approval
 records should use redacted operator IDs in public artifacts and can be checked
 with `tradearena validate-broker-approval <artifact.json>`.
+Adapter implementations can turn a validated approval artifact into the
+runtime safety gate with `broker_safety_from_approval_artifact(...)`; the
+result is a `BrokerSafetyConfig` in `live_human_approved` mode with the same
+symbol, order-type, quantity, and notional limits as the approval.
 
 ## Testing Requirements
 

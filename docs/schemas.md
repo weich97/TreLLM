@@ -127,7 +127,9 @@ Broker approval artifacts can be validated against
 The schema fixes the public `tradearena_broker_approval_artifact_v0.1`
 contract for redacted operator approval, account mode, max notional, max
 quantity, allowed symbols, allowed order types, and optional request-artifact
-hashes.
+hashes. Runtime code can consume this contract with
+`broker_safety_from_approval_artifact(...)` to build a live human-approved
+`BrokerSafetyConfig`.
 
 Validate a broker approval artifact with:
 

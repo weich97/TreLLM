@@ -22,6 +22,8 @@ from tradearena.tools import (
     FuturesContractMetadata,
     FuturesRollRiskEngine,
     build_broker_approval_artifact,
+    broker_approval_from_artifact,
+    broker_safety_from_approval_artifact,
     reconcile_broker_responses,
     validate_broker_approval_artifact,
     validate_broker_handoff_artifact,
@@ -348,6 +350,47 @@ def test_broker_approval_artifact_validator_and_cli_reject_unredacted_operator(t
     assert "approved_by must be a redacted operator id, not an email address" in errors
     assert result.returncode == 1
     assert "approved_by must be a redacted operator id, not an email address" in result.stdout
+
+
+def test_broker_approval_artifact_builds_live_safety_config():
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=250.0,
+            allowed_symbols=("AAPL", "MSFT"),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-safety-001",
+        account_mode="live",
+        max_quantity=5.0,
+        allowed_order_types=(OrderType.LIMIT,),
+    )
+
+    approval = broker_approval_from_artifact(payload)
+    safety = broker_safety_from_approval_artifact(payload)
+
+    assert approval.allowed_symbols == ("AAPL", "MSFT")
+    assert safety.mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED
+    assert safety.account_mode == "live"
+    assert safety.max_notional == 250.0
+    assert safety.max_quantity == 5.0
+    assert safety.allowed_order_types == (OrderType.LIMIT,)
+    safety.validate_order(
+        Order("AAPL", Side.BUY, 2.0, order_type=OrderType.LIMIT, limit_price=100.0, reason="approved"),
+        reference_price=100.0,
+    )
+
+    try:
+        safety.validate_order(
+            Order("AAPL", Side.BUY, 3.0, order_type=OrderType.LIMIT, limit_price=100.0, reason="too large"),
+            reference_price=100.0,
+        )
+    except BrokerAdapterContractError as exc:
+        assert "max_notional" in str(exc)
+    else:
+        raise AssertionError("expected max_notional failure from approval artifact safety")
 
 
 def test_dry_run_broker_adapter_demo_writes_valid_handoff():

@@ -497,6 +497,38 @@ def validate_broker_approval_artifact_file(path: str | Path) -> tuple[dict[str, 
     return payload, validate_broker_approval_artifact(payload)
 
 
+def broker_approval_from_artifact(payload: dict[str, object]) -> BrokerApproval:
+    """Convert a schema-valid broker approval artifact into a BrokerApproval."""
+
+    errors = validate_broker_approval_artifact(payload)
+    if errors:
+        raise BrokerAdapterContractError("; ".join(errors))
+    return BrokerApproval(
+        approval_status=str(payload["approval_status"]),
+        approved_by=str(payload["approved_by"]),
+        approved_at=str(payload["approved_at"]),
+        max_notional=float(payload["max_notional"]),
+        allowed_symbols=tuple(str(symbol) for symbol in payload["allowed_symbols"]),
+        approval_reason=str(payload["approval_reason"]),
+    )
+
+
+def broker_safety_from_approval_artifact(payload: dict[str, object]) -> BrokerSafetyConfig:
+    """Build live human-approved safety limits from a broker approval artifact."""
+
+    approval = broker_approval_from_artifact(payload)
+    order_types = tuple(OrderType(str(order_type)) for order_type in payload["allowed_order_types"])
+    return BrokerSafetyConfig(
+        mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+        account_mode=str(payload["account_mode"]),
+        max_notional=float(payload["max_notional"]),
+        max_quantity=float(payload["max_quantity"]),
+        allowed_symbols=tuple(approval.allowed_symbols),
+        allowed_order_types=order_types,
+        approval=approval,
+    )
+
+
 def validate_broker_response_artifact(payload: dict[str, object]) -> list[str]:
     errors: list[str] = []
     required = {

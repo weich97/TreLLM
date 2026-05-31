@@ -34,7 +34,7 @@ The system should keep these boundaries separate:
 | Decision | Agents, strategies, and planners propose intent. | `tradearena.agents`, `tradearena.planning` |
 | Risk gate | Risk managers clip, block, or annotate intent. | `MaxPositionRiskManager`, market-rule helpers |
 | Execution model | Simulators, quote replay, fill replay, and calibration estimate feasibility. | `tradearena.execution` |
-| Broker handoff | Broker adapters export or submit only approved orders. | `AlpacaPaperExportAdapter` |
+| Broker handoff | Broker adapters export or submit only approved orders. | `BrokerAdapter`, `DryRunBrokerAdapter`, `AlpacaPaperExportAdapter` |
 | Reconciliation | Fills, rejects, partial fills, and broker state are compared against intent. | future broker adapter reports |
 | Audit trail | Trajectory, risk report, order review, broker response, and hashes stay linked. | trajectory records, manifests, registry |
 
@@ -64,14 +64,13 @@ Before a broker-facing contribution is accepted, it should prove:
 ## Recommended Contribution Sequence
 
 1. Harden export-only broker handoff files and review manifests.
-2. Add a generic `BrokerAdapter` interface with `dry_run` and `paper_sandbox`
-   modes.
-3. Add one broker-specific sandbox adapter behind an optional dependency.
-4. Add reconciliation reports that compare submitted orders, broker acks, fills,
+2. Add one broker-specific sandbox adapter behind an optional dependency.
+3. Add reconciliation reports that compare submitted orders, broker acks, fills,
    cancels, rejects, and portfolio state.
-5. Add human approval records and operator runbooks.
-6. Only then discuss constrained live submission, and keep it out of first-run
+4. Add human approval records and operator runbooks.
+5. Only then discuss constrained live submission, and keep it out of first-run
    examples.
 
-The next engineering step is the generic broker adapter contract in
-[`broker_adapter_contract.md`](broker_adapter_contract.md).
+The current engineering step is to keep hardening the generic broker adapter
+contract in [`broker_adapter_contract.md`](broker_adapter_contract.md) before
+adding any broker-specific sandbox dependency.

@@ -24,6 +24,7 @@ must never be the default.
 
 The current code-level primitives live in `tradearena.tools.broker_export`:
 
+- `BrokerAdapter`, the minimal interface future broker adapters should satisfy;
 - `BrokerAdapterMode`;
 - `BrokerSafetyConfig`;
 - `BrokerApproval`;
@@ -37,6 +38,8 @@ The current code-level primitives live in `tradearena.tools.broker_export`:
 - `validate_broker_response_artifact`;
 - `validate_broker_response_artifact_file`;
 - `write_broker_response_artifact`;
+- `DryRunBrokerAdapter`, the no-network reference adapter for request-shape
+  validation;
 - `AlpacaPaperExportAdapter`, the export-only reference implementation.
 
 ## Required Order Fields
@@ -135,6 +138,8 @@ operator identity.
 At minimum, a broker adapter PR should include tests that prove:
 
 - default mode writes an offline artifact and makes no network call;
+- dry-run mode validates request shape and writes a broker handoff artifact
+  without broker credentials or API calls;
 - live submission is rejected without approval;
 - order-size and symbol allow-list checks run before broker handoff;
 - credentials are not printed in errors;

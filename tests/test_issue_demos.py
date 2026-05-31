@@ -11,12 +11,14 @@ from tradearena.factory import build_default_system, default_registry
 from tradearena.planning import load_holdings_csv
 from tradearena.tools import (
     AlpacaPaperExportAdapter,
+    BrokerAdapter,
     BrokerAdapterContractError,
     BrokerAdapterMode,
     BrokerOrderStatus,
     BrokerApproval,
     BrokerResponse,
     BrokerSafetyConfig,
+    DryRunBrokerAdapter,
     FuturesContractMetadata,
     FuturesRollRiskEngine,
     reconcile_broker_responses,
@@ -91,6 +93,30 @@ def test_broker_safety_config_blocks_disallowed_orders(tmp_path):
         assert "allow-list" in str(exc)
     else:
         raise AssertionError("expected broker adapter allow-list failure")
+
+
+def test_dry_run_broker_adapter_writes_validated_handoff_without_live_submission(tmp_path):
+    adapter = DryRunBrokerAdapter(
+        client_prefix="dry-unit",
+        safety=BrokerSafetyConfig(
+            account_mode="paper",
+            max_quantity=2.0,
+            allowed_symbols=("AAPL",),
+        ),
+    )
+    assert isinstance(adapter, BrokerAdapter)
+
+    result = adapter.write([Order("AAPL", Side.BUY, 1.25, reason="dry run unit")], tmp_path)
+    payload = json.loads((tmp_path / "dry_run_orders.json").read_text(encoding="utf-8"))
+
+    assert result["order_count"] == 1
+    assert result["adapter_mode"] == "dry_run"
+    assert result["paper_only"] is True
+    assert payload["adapter"] == "dry-run-broker-adapter"
+    assert payload["adapter_mode"] == "dry_run"
+    assert payload["live_submission"] is False
+    assert payload["orders"][0]["submit_live"] is False
+    assert validate_broker_handoff_artifact(payload) == []
 
 
 def test_live_human_approved_mode_requires_approval_and_marks_live(tmp_path):

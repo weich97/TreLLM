@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import csv
 import json
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from enum import Enum
 from pathlib import Path
 from statistics import fmean
+from typing import Protocol, runtime_checkable
 
 from tradearena.core.domain import Order, OrderType, Side
 
@@ -21,6 +22,20 @@ class BrokerAdapterMode(str, Enum):
 
 class BrokerAdapterContractError(ValueError):
     """Raised when a broker handoff would violate the adapter contract."""
+
+
+@runtime_checkable
+class BrokerAdapter(Protocol):
+    """Minimal broker adapter surface for export, dry-run, sandbox, or live modes."""
+
+    name: str
+    safety: BrokerSafetyConfig
+
+    def convert(self, orders: list[Order] | tuple[Order, ...]) -> list[AlpacaPaperOrder]:
+        """Convert TradeArena orders into broker handoff rows."""
+
+    def write(self, orders: list[Order] | tuple[Order, ...], output_dir: str | Path) -> dict[str, str | int | bool]:
+        """Write a broker handoff artifact and return a small summary."""
 
 
 class BrokerOrderStatus(str, Enum):
@@ -245,6 +260,81 @@ class AlpacaPaperExportAdapter:
         }
 
 
+class DryRunBrokerAdapter:
+    """Validate broker handoff rows locally without submitting to any broker API."""
+
+    name = "dry-run-broker-adapter"
+
+    def __init__(
+        self,
+        *,
+        time_in_force: str = "day",
+        client_prefix: str = "ta-dry-run",
+        safety: BrokerSafetyConfig | None = None,
+    ) -> None:
+        self.time_in_force = time_in_force
+        self.client_prefix = client_prefix
+        self.safety = _dry_run_safety(safety)
+
+    def convert(self, orders: list[Order] | tuple[Order, ...]) -> list[AlpacaPaperOrder]:
+        rows: list[AlpacaPaperOrder] = []
+        for idx, order in enumerate(orders, start=1):
+            if order.side == Side.HOLD or order.quantity <= 0:
+                continue
+            self.safety.validate_order(order, reference_price=order.limit_price)
+            rows.append(
+                AlpacaPaperOrder(
+                    client_order_id=f"{self.client_prefix}-{idx:04d}-{_safe_symbol(order.symbol)}",
+                    adapter_mode=self.safety.mode.value,
+                    account_mode=self.safety.account_mode,
+                    symbol=order.symbol,
+                    side=order.side.value,
+                    order_type=_alpaca_order_type(order.order_type),
+                    quantity=round(float(order.quantity), 8),
+                    time_in_force=self.time_in_force,
+                    limit_price=order.limit_price,
+                    submit_live=False,
+                    approval_status="requires_human_approval",
+                    max_notional=self.safety.max_notional,
+                    reason=order.reason,
+                )
+            )
+        return rows
+
+    def write(self, orders: list[Order] | tuple[Order, ...], output_dir: str | Path) -> dict[str, str | int | bool]:
+        path = Path(output_dir)
+        path.mkdir(parents=True, exist_ok=True)
+        rows = self.convert(orders)
+        json_path = path / "dry_run_orders.json"
+        csv_path = path / "dry_run_orders.csv"
+        payload = {
+            "schema": "tradearena_broker_handoff_artifact_v0.1",
+            "adapter": self.name,
+            "adapter_mode": self.safety.mode.value,
+            "account_mode": self.safety.account_mode,
+            "paper_only": True,
+            "live_submission": False,
+            "manual_approval_required": True,
+            "kill_switch": self.safety.kill_switch,
+            "orders": [asdict(row) for row in rows],
+        }
+        json_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        with csv_path.open("w", newline="", encoding="utf-8") as handle:
+            fieldnames = list(asdict(rows[0]).keys()) if rows else list(AlpacaPaperOrder.__dataclass_fields__)
+            writer = csv.DictWriter(handle, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(asdict(row) for row in rows)
+        return {
+            "json": str(json_path),
+            "csv": str(csv_path),
+            "order_count": len(rows),
+            "adapter_mode": self.safety.mode.value,
+            "account_mode": self.safety.account_mode,
+            "paper_only": True,
+            "manual_approval_required": True,
+        }
+
+
 def reconcile_broker_responses(
     requests: list[AlpacaPaperOrder] | tuple[AlpacaPaperOrder, ...],
     responses: list[BrokerResponse] | tuple[BrokerResponse, ...],
@@ -422,6 +512,12 @@ def validate_broker_handoff_artifact_file(path: str | Path) -> tuple[dict[str, o
 
 def _alpaca_order_type(order_type: OrderType) -> str:
     return "limit" if order_type == OrderType.LIMIT else "market"
+
+
+def _dry_run_safety(safety: BrokerSafetyConfig | None) -> BrokerSafetyConfig:
+    if safety is None:
+        return BrokerSafetyConfig(mode=BrokerAdapterMode.DRY_RUN)
+    return replace(safety, mode=BrokerAdapterMode.DRY_RUN, approval=None)
 
 
 def _safe_symbol(symbol: str) -> str:

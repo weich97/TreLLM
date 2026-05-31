@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 from statistics import fmean
-from typing import Protocol, runtime_checkable
+from typing import Protocol, cast, runtime_checkable
 
 from tradearena.core.domain import Order, OrderType, Side
 
@@ -382,12 +382,13 @@ def write_broker_response_artifact(
     path = Path(output)
     path.parent.mkdir(parents=True, exist_ok=True)
     summary = reconcile_broker_responses(requests, responses)
-    payload = {
+    live_submission = adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED
+    payload: dict[str, object] = {
         "schema": "tradearena_broker_response_artifact_v0.1",
         "adapter": adapter,
         "adapter_mode": adapter_mode.value,
         "account_mode": account_mode,
-        "live_submission": adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+        "live_submission": live_submission,
         "reconciliation": asdict(summary),
         "responses": [_response_dict(response) for response in responses],
     }
@@ -397,7 +398,7 @@ def write_broker_response_artifact(
         "response_count": summary.response_count,
         "unmatched_response_count": summary.unmatched_response_count,
         "missing_response_count": summary.missing_response_count,
-        "live_submission": payload["live_submission"],
+        "live_submission": live_submission,
     }
 
 
@@ -581,8 +582,10 @@ def broker_approval_from_artifact(
         approval_status=str(payload["approval_status"]),
         approved_by=str(payload["approved_by"]),
         approved_at=str(payload["approved_at"]),
-        max_notional=float(payload["max_notional"]),
-        allowed_symbols=tuple(str(symbol) for symbol in payload["allowed_symbols"]),
+        max_notional=float(cast(str | int | float, payload["max_notional"])),
+        allowed_symbols=tuple(
+            str(symbol) for symbol in cast(list[object] | tuple[object, ...], payload["allowed_symbols"])
+        ),
         approval_reason=str(payload["approval_reason"]),
     )
 
@@ -596,12 +599,15 @@ def broker_safety_from_approval_artifact(
     """Build live human-approved safety limits from a broker approval artifact."""
 
     approval = broker_approval_from_artifact(payload, now=now, request_artifact=request_artifact)
-    order_types = tuple(OrderType(str(order_type)) for order_type in payload["allowed_order_types"])
+    order_types = tuple(
+        OrderType(str(order_type))
+        for order_type in cast(list[object] | tuple[object, ...], payload["allowed_order_types"])
+    )
     return BrokerSafetyConfig(
         mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
         account_mode=str(payload["account_mode"]),
-        max_notional=float(payload["max_notional"]),
-        max_quantity=float(payload["max_quantity"]),
+        max_notional=float(cast(str | int | float, payload["max_notional"])),
+        max_quantity=float(cast(str | int | float, payload["max_quantity"])),
         allowed_symbols=tuple(approval.allowed_symbols),
         allowed_order_types=order_types,
         approval=approval,
@@ -739,11 +745,16 @@ def _validate_approval_request_scope(
     request_payload: dict[str, object],
 ) -> list[str]:
     errors: list[str] = []
-    allowed_symbols = {str(symbol) for symbol in approval_payload["allowed_symbols"]}
-    allowed_order_types = {str(order_type) for order_type in approval_payload["allowed_order_types"]}
-    max_quantity = float(approval_payload["max_quantity"])
-    max_notional = float(approval_payload["max_notional"])
-    for idx, order in enumerate(request_payload["orders"]):
+    allowed_symbols = {
+        str(symbol) for symbol in cast(list[object] | tuple[object, ...], approval_payload["allowed_symbols"])
+    }
+    allowed_order_types = {
+        str(order_type) for order_type in cast(list[object] | tuple[object, ...], approval_payload["allowed_order_types"])
+    }
+    max_quantity = float(cast(str | int | float, approval_payload["max_quantity"]))
+    max_notional = float(cast(str | int | float, approval_payload["max_notional"]))
+    orders = cast(list[object] | tuple[object, ...], request_payload["orders"])
+    for idx, order in enumerate(orders):
         if not isinstance(order, dict):
             continue
         symbol = str(order.get("symbol"))

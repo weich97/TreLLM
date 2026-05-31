@@ -68,7 +68,7 @@ def main() -> int:
     demo_now = "2026-05-31T12:30:00Z"
     validation_errors = validate_broker_approval_artifact(artifact, now=demo_now)
     binding_errors = validate_broker_approval_request_binding(artifact, request_path)
-    safety = broker_safety_from_approval_artifact(artifact, now=demo_now)
+    safety = broker_safety_from_approval_artifact(artifact, now=demo_now, request_artifact=request_path)
 
     approved_order_passed = False
     oversized_order_blocked = False

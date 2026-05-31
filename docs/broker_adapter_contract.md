@@ -158,7 +158,9 @@ Command-line reviewers can check the same invariant with
 Adapter implementations can turn a validated approval artifact into the
 runtime safety gate with `broker_safety_from_approval_artifact(...)`; the
 result is a `BrokerSafetyConfig` in `live_human_approved` mode with the same
-symbol, order-type, quantity, and notional limits as the approval.
+symbol, order-type, quantity, and notional limits as the approval. Pass
+`request_artifact=` to `broker_safety_from_approval_artifact(...)` so the
+approval/request binding is enforced inside the live-safety creation path.
 Pass `now=` when validating or consuming approval artifacts so stale approvals
 are rejected before any live-mode safety config is created.
 

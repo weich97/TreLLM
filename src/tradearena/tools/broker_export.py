@@ -541,10 +541,13 @@ def broker_approval_from_artifact(
     payload: dict[str, object],
     *,
     now: str | datetime | None = None,
+    request_artifact: dict[str, object] | str | Path | None = None,
 ) -> BrokerApproval:
     """Convert a schema-valid broker approval artifact into a BrokerApproval."""
 
     errors = validate_broker_approval_artifact(payload, now=now)
+    if request_artifact is not None:
+        errors.extend(validate_broker_approval_request_binding(payload, request_artifact))
     if errors:
         raise BrokerAdapterContractError("; ".join(errors))
     return BrokerApproval(
@@ -561,10 +564,11 @@ def broker_safety_from_approval_artifact(
     payload: dict[str, object],
     *,
     now: str | datetime | None = None,
+    request_artifact: dict[str, object] | str | Path | None = None,
 ) -> BrokerSafetyConfig:
     """Build live human-approved safety limits from a broker approval artifact."""
 
-    approval = broker_approval_from_artifact(payload, now=now)
+    approval = broker_approval_from_artifact(payload, now=now, request_artifact=request_artifact)
     order_types = tuple(OrderType(str(order_type)) for order_type in payload["allowed_order_types"])
     return BrokerSafetyConfig(
         mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,

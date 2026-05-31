@@ -462,6 +462,43 @@ def test_broker_approval_artifact_binds_to_handoff_request_hash(tmp_path):
     ]
 
 
+def test_broker_safety_from_approval_artifact_can_require_request_binding(tmp_path):
+    adapter = DryRunBrokerAdapter(
+        client_prefix="approval-safety-bind",
+        safety=BrokerSafetyConfig(account_mode="paper", max_quantity=5.0, allowed_symbols=("AAPL",)),
+    )
+    adapter.write(
+        [Order("AAPL", Side.BUY, 1.0, order_type=OrderType.LIMIT, limit_price=100.0, reason="safety bind")],
+        tmp_path,
+    )
+    request_path = tmp_path / "dry_run_orders.json"
+    approval_payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=250.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-safety-bound-001",
+        account_mode="live",
+        max_quantity=5.0,
+        request_artifact_hash=broker_handoff_artifact_hash(request_path),
+    )
+
+    safety = broker_safety_from_approval_artifact(approval_payload, request_artifact=request_path)
+    assert safety.mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED
+
+    approval_payload["request_artifact_hash"] = "sha256:" + "0" * 64
+    try:
+        broker_safety_from_approval_artifact(approval_payload, request_artifact=request_path)
+    except BrokerAdapterContractError as exc:
+        assert "request_artifact_hash does not match broker handoff artifact" in str(exc)
+    else:
+        raise AssertionError("expected request binding failure before live safety creation")
+
+
 def test_broker_approval_binding_cli_and_script_reject_hash_mismatch(tmp_path):
     adapter = DryRunBrokerAdapter(
         client_prefix="approval-bind-cli",

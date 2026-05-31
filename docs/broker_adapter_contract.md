@@ -75,6 +75,10 @@ Adapter implementations must satisfy these invariants:
 - `submit_live=true` is rejected unless mode is `live_human_approved`;
 - live mode requires an explicit approval record;
 - live mode requires max notional and max quantity limits;
+- live mode must have a reference price whenever max-notional checks are
+  enforced;
+- live orders must satisfy both the adapter max-notional limit and the human
+  approval max-notional limit;
 - allowed symbols and allowed order types are enforced before broker handoff;
 - broker credentials are read from environment variables or an OS secret
   manager, never from committed files or command-line arguments;

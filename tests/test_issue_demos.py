@@ -6,7 +6,7 @@ import sys
 from datetime import date, datetime
 from pathlib import Path
 
-from tradearena.core.domain import Order, Side
+from tradearena.core.domain import Order, OrderType, Side
 from tradearena.factory import build_default_system, default_registry
 from tradearena.planning import load_holdings_csv
 from tradearena.tools import (
@@ -128,13 +128,38 @@ def test_live_human_approved_mode_requires_approval_and_marks_live(tmp_path):
                 approval_status="approved",
                 approved_by="unit-operator",
                 approved_at="2026-05-31T12:00:00Z",
-                max_notional=1000.0,
+                max_notional=100.0,
                 allowed_symbols=("AAPL",),
                 approval_reason="unit test approval",
             ),
         )
     )
-    approved.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path / "approved")
+    try:
+        approved.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path / "no-reference-price")
+    except BrokerAdapterContractError as exc:
+        assert "reference_price" in str(exc)
+    else:
+        raise AssertionError("expected live order reference price failure")
+
+    too_large_for_approval = Order(
+        "AAPL",
+        Side.BUY,
+        1.0,
+        order_type=OrderType.LIMIT,
+        limit_price=200.0,
+        reason="unit test",
+    )
+    try:
+        approved.write([too_large_for_approval], tmp_path / "approval-notional")
+    except BrokerAdapterContractError as exc:
+        assert "approval max_notional" in str(exc)
+    else:
+        raise AssertionError("expected approval max_notional failure")
+
+    approved.write(
+        [Order("AAPL", Side.BUY, 1.0, order_type=OrderType.LIMIT, limit_price=50.0, reason="unit test")],
+        tmp_path / "approved",
+    )
     payload = json.loads((tmp_path / "approved" / "alpaca_paper_orders.json").read_text(encoding="utf-8"))
 
     assert payload["adapter_mode"] == "live_human_approved"

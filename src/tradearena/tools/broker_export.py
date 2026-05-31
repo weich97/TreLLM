@@ -75,14 +75,27 @@ class BrokerSafetyConfig:
             raise BrokerAdapterContractError(f"order type {order.order_type.value} is not allowed")
         if self.max_quantity is not None and float(order.quantity) > self.max_quantity:
             raise BrokerAdapterContractError(f"quantity {order.quantity} exceeds max_quantity {self.max_quantity}")
-        if self.max_notional is not None and reference_price is not None:
-            notional = abs(float(order.quantity) * float(reference_price))
+        if self.mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED:
+            self._validate_live_approval(order)
+
+        notional = None
+        if self.max_notional is not None:
+            if reference_price is None and self.mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED:
+                raise BrokerAdapterContractError(
+                    "live_human_approved mode requires a reference_price for max_notional checks"
+                )
+            if reference_price is not None:
+                notional = abs(float(order.quantity) * float(reference_price))
+        if self.max_notional is not None and notional is not None:
             if notional > self.max_notional:
                 raise BrokerAdapterContractError(
                     f"order notional {notional:.2f} exceeds max_notional {self.max_notional:.2f}"
                 )
         if self.mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED:
-            self._validate_live_approval(order)
+            if notional is not None and self.approval is not None and notional > self.approval.max_notional:
+                raise BrokerAdapterContractError(
+                    f"order notional {notional:.2f} exceeds approval max_notional {self.approval.max_notional:.2f}"
+                )
 
     def submit_live_flag(self) -> bool:
         return self.mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED

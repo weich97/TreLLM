@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/weich97/TradeArena/schemas/broker_handoff_artifact.schema.json",
+  "title": "TradeArena Broker Handoff Artifact",
+  "type": "object",
+  "required": [
+    "schema",
+    "adapter",
+    "adapter_mode",
+    "account_mode",
+    "paper_only",
+    "live_submission",
+    "manual_approval_required",
+    "kill_switch",
+    "orders"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "tradearena_broker_handoff_artifact_v0.1" },
+    "adapter": { "type": "string", "minLength": 1 },
+    "adapter_mode": {
+      "type": "string",
+      "enum": ["offline_export", "dry_run", "paper_sandbox", "live_human_approved"]
+    },
+    "account_mode": { "type": "string", "minLength": 1 },
+    "paper_only": { "type": "boolean" },
+    "live_submission": { "type": "boolean" },
+    "manual_approval_required": { "type": "boolean" },
+    "kill_switch": { "type": "boolean" },
+    "orders": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/handoff_order" }
+    }
+  },
+  "$defs": {
+    "handoff_order": {
+      "type": "object",
+      "required": [
+        "client_order_id",
+        "adapter_mode",
+        "account_mode",
+        "symbol",
+        "side",
+        "order_type",
+        "quantity",
+        "time_in_force",
+        "limit_price",
+        "submit_live",
+        "approval_status",
+        "max_notional",
+        "reason"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "client_order_id": { "type": "string", "minLength": 1 },
+        "adapter_mode": {
+          "type": "string",
+          "enum": ["offline_export", "dry_run", "paper_sandbox", "live_human_approved"]
+        },
+        "account_mode": { "type": "string", "minLength": 1 },
+        "symbol": { "type": "string", "minLength": 1 },
+        "side": { "type": "string", "enum": ["buy", "sell"] },
+        "order_type": { "type": "string", "enum": ["market", "limit"] },
+        "quantity": { "type": "number", "exclusiveMinimum": 0 },
+        "time_in_force": { "type": "string", "minLength": 1 },
+        "limit_price": { "type": ["number", "null"], "exclusiveMinimum": 0 },
+        "submit_live": { "type": "boolean" },
+        "approval_status": { "type": "string", "enum": ["approved", "requires_human_approval"] },
+        "max_notional": { "type": ["number", "null"], "exclusiveMinimum": 0 },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

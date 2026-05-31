@@ -10,9 +10,9 @@ from typing import Any
 from jsonschema import Draft202012Validator
 
 import scripts.validate_reproduction_report as reproduction_validator
+from tradearena.core.domain import Order, Side
 from tradearena.core.trajectory import StepRecord, Trajectory
 from tradearena.evaluation.submissions import validate_submission_file
-from tradearena.core.domain import Order, Side
 from tradearena.tools import (
     AlpacaPaperExportAdapter,
     BrokerAdapterMode,
@@ -104,6 +104,14 @@ def test_broker_response_artifact_schema_validates_writer_output(tmp_path: Path)
 
     payload = json.loads(output.read_text(encoding="utf-8"))
     _validator("broker_response_artifact.schema.json").validate(payload)
+
+
+def test_broker_handoff_artifact_schema_validates_writer_output(tmp_path: Path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-handoff")
+    adapter.write([Order("AAPL", Side.BUY, 1.0, reason="schema test")], tmp_path)
+    payload = json.loads((tmp_path / "alpaca_paper_orders.json").read_text(encoding="utf-8"))
+
+    _validator("broker_handoff_artifact.schema.json").validate(payload)
 
 
 def test_all_example_benchmark_submissions_match_schema_and_runtime_validator():

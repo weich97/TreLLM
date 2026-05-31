@@ -32,6 +32,10 @@ The current code-level primitives live in `tradearena.tools.broker_export`:
 - `BrokerResponse`;
 - `BrokerReconciliationSummary`;
 - `reconcile_broker_responses`;
+- `validate_broker_handoff_artifact`;
+- `validate_broker_handoff_artifact_file`;
+- `validate_broker_response_artifact`;
+- `validate_broker_response_artifact_file`;
 - `write_broker_response_artifact`;
 - `AlpacaPaperExportAdapter`, the export-only reference implementation.
 
@@ -58,6 +62,10 @@ Each broker handoff row should include:
 
 Current export-only examples may use a subset, but new broker-facing adapters
 should move toward this complete shape.
+Public handoff artifacts should validate against
+[`../schemas/broker_handoff_artifact.schema.json`](../schemas/broker_handoff_artifact.schema.json).
+Use `tradearena validate-broker-handoff <artifact.json>` before sharing a
+broker-review or paper-sandbox request artifact.
 
 ## Safety Invariants
 

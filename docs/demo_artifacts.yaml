@@ -47,6 +47,8 @@ artifacts:
       - outputs/examples/broker_response_reconciliation/alpaca_paper_orders.json
       - outputs/examples/broker_response_reconciliation/alpaca_paper_orders.csv
     required_json_fields:
+      - outputs/examples/broker_response_reconciliation/alpaca_paper_orders.json:schema
+      - outputs/examples/broker_response_reconciliation/alpaca_paper_orders.json:orders.client_order_id
       - outputs/examples/broker_response_reconciliation/summary.json:reconciliation.response_count
       - outputs/examples/broker_response_reconciliation/summary.json:reconciliation.missing_response_count
       - outputs/examples/broker_response_reconciliation/broker_response_artifact.json:reconciliation.response_count

@@ -205,6 +205,7 @@ class AlpacaPaperExportAdapter:
         json_path = path / "alpaca_paper_orders.json"
         csv_path = path / "alpaca_paper_orders.csv"
         payload = {
+            "schema": "tradearena_broker_handoff_artifact_v0.1",
             "adapter": self.name,
             "adapter_mode": self.safety.mode.value,
             "account_mode": self.safety.account_mode,
@@ -349,6 +350,63 @@ def validate_broker_response_artifact_file(path: str | Path) -> tuple[dict[str, 
     return payload, validate_broker_response_artifact(payload)
 
 
+def validate_broker_handoff_artifact(payload: dict[str, object]) -> list[str]:
+    errors: list[str] = []
+    required = {
+        "schema",
+        "adapter",
+        "adapter_mode",
+        "account_mode",
+        "paper_only",
+        "live_submission",
+        "manual_approval_required",
+        "kill_switch",
+        "orders",
+    }
+    missing = sorted(required - set(payload))
+    if missing:
+        errors.append(f"missing required fields: {', '.join(missing)}")
+    extra = sorted(set(payload) - required)
+    if extra:
+        errors.append(f"unexpected fields: {', '.join(extra)}")
+    if payload.get("schema") != "tradearena_broker_handoff_artifact_v0.1":
+        errors.append("schema must be 'tradearena_broker_handoff_artifact_v0.1'")
+    if not payload.get("adapter"):
+        errors.append("adapter must be non-empty")
+    adapter_mode = payload.get("adapter_mode")
+    if adapter_mode not in {mode.value for mode in BrokerAdapterMode}:
+        errors.append("adapter_mode must be one of offline_export, dry_run, paper_sandbox, live_human_approved")
+    if not payload.get("account_mode"):
+        errors.append("account_mode must be non-empty")
+    paper_only_modes = {BrokerAdapterMode.OFFLINE_EXPORT.value, BrokerAdapterMode.DRY_RUN.value}
+    if payload.get("paper_only") is not (adapter_mode in paper_only_modes):
+        errors.append("paper_only must match adapter_mode in offline_export or dry_run")
+    if payload.get("live_submission") is not (adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED.value):
+        errors.append("live_submission must match adapter_mode == live_human_approved")
+    if payload.get("manual_approval_required") is not (adapter_mode != BrokerAdapterMode.LIVE_HUMAN_APPROVED.value):
+        errors.append("manual_approval_required must be false only for live_human_approved mode")
+    if not isinstance(payload.get("kill_switch"), bool):
+        errors.append("kill_switch must be boolean")
+
+    orders = payload.get("orders")
+    if not isinstance(orders, list):
+        errors.append("orders must be a list")
+        orders = []
+    for idx, order in enumerate(orders):
+        if not isinstance(order, dict):
+            errors.append(f"orders[{idx}] must be an object")
+            continue
+        errors.extend(_validate_broker_handoff_order(order, idx, adapter_mode))
+    return errors
+
+
+def validate_broker_handoff_artifact_file(path: str | Path) -> tuple[dict[str, object], list[str]]:
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        return {}, ["broker handoff artifact must be a JSON object"]
+    return payload, validate_broker_handoff_artifact(payload)
+
+
 def _alpaca_order_type(order_type: OrderType) -> str:
     return "limit" if order_type == OrderType.LIMIT else "market"
 
@@ -401,6 +459,53 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
         value = response.get(field_name)
         if value is not None and (not isinstance(value, (int, float)) or value < 0):
             errors.append(f"responses[{idx}].{field_name} must be a non-negative number or null")
+    return errors
+
+
+def _validate_broker_handoff_order(order: dict[str, object], idx: int, adapter_mode: object) -> list[str]:
+    errors: list[str] = []
+    required = set(AlpacaPaperOrder.__dataclass_fields__)
+    missing = sorted(required - set(order))
+    if missing:
+        errors.append(f"orders[{idx}] missing required fields: {', '.join(missing)}")
+    extra = sorted(set(order) - required)
+    if extra:
+        errors.append(f"orders[{idx}] has unexpected fields: {', '.join(extra)}")
+    required_text_fields = (
+        "client_order_id",
+        "adapter_mode",
+        "account_mode",
+        "symbol",
+        "side",
+        "order_type",
+        "time_in_force",
+        "reason",
+    )
+    for field_name in required_text_fields:
+        if not order.get(field_name):
+            errors.append(f"orders[{idx}].{field_name} must be non-empty")
+    if order.get("adapter_mode") != adapter_mode:
+        errors.append(f"orders[{idx}].adapter_mode must match artifact adapter_mode")
+    if order.get("side") not in {"buy", "sell"}:
+        errors.append(f"orders[{idx}].side must be buy or sell")
+    if order.get("order_type") not in {"market", "limit"}:
+        errors.append(f"orders[{idx}].order_type must be market or limit")
+    quantity = order.get("quantity")
+    if not isinstance(quantity, (int, float)) or quantity <= 0:
+        errors.append(f"orders[{idx}].quantity must be a positive number")
+    limit_price = order.get("limit_price")
+    if limit_price is not None and (not isinstance(limit_price, (int, float)) or limit_price <= 0):
+        errors.append(f"orders[{idx}].limit_price must be a positive number or null")
+    max_notional = order.get("max_notional")
+    if max_notional is not None and (not isinstance(max_notional, (int, float)) or max_notional <= 0):
+        errors.append(f"orders[{idx}].max_notional must be a positive number or null")
+    if order.get("submit_live") is not (adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED.value):
+        errors.append(f"orders[{idx}].submit_live must match live_human_approved mode")
+    expected_approval = (
+        "approved" if adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED.value else "requires_human_approval"
+    )
+    if order.get("approval_status") != expected_approval:
+        errors.append(f"orders[{idx}].approval_status must be {expected_approval}")
     return errors
 
 

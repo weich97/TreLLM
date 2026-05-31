@@ -20,6 +20,7 @@ from tradearena.tools import (
     FuturesContractMetadata,
     FuturesRollRiskEngine,
     reconcile_broker_responses,
+    validate_broker_handoff_artifact,
     validate_broker_response_artifact,
     write_broker_response_artifact,
 )
@@ -33,12 +34,47 @@ def test_alpaca_paper_export_adapter_requires_human_approval(tmp_path):
     payload = json.loads((tmp_path / "alpaca_paper_orders.json").read_text(encoding="utf-8"))
 
     assert result["order_count"] == 1
+    assert payload["schema"] == "tradearena_broker_handoff_artifact_v0.1"
     assert payload["adapter_mode"] == "offline_export"
     assert payload["account_mode"] == "none"
     assert payload["live_submission"] is False
     assert payload["manual_approval_required"] is True
     assert payload["orders"][0]["adapter_mode"] == "offline_export"
     assert payload["orders"][0]["approval_status"] == "requires_human_approval"
+    assert validate_broker_handoff_artifact(payload) == []
+
+
+def test_broker_handoff_artifact_validator_and_cli_reject_mode_mismatch(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="handoff-validate")
+    adapter.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path)
+    artifact = tmp_path / "alpaca_paper_orders.json"
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    subprocess.run(
+        [sys.executable, "-m", "tradearena.cli", "validate-broker-handoff", str(artifact)],
+        cwd=ROOT,
+        check=True,
+    )
+    subprocess.run(
+        [sys.executable, "scripts/validate_broker_handoff_artifact.py", str(artifact)],
+        cwd=ROOT,
+        check=True,
+    )
+
+    payload["orders"][0]["submit_live"] = True
+    broken = tmp_path / "broken_alpaca_paper_orders.json"
+    broken.write_text(json.dumps(payload), encoding="utf-8")
+    errors = validate_broker_handoff_artifact(payload)
+    result = subprocess.run(
+        [sys.executable, "-m", "tradearena.cli", "validate-broker-handoff", str(broken)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert "orders[0].submit_live must match live_human_approved mode" in errors
+    assert result.returncode == 1
+    assert "orders[0].submit_live must match live_human_approved mode" in result.stdout
 
 
 def test_broker_safety_config_blocks_disallowed_orders(tmp_path):

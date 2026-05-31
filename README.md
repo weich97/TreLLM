@@ -779,6 +779,8 @@ Useful entry points:
   [`docs/live_trading_readiness.md`](docs/live_trading_readiness.md)
 - Broker adapter contract:
   [`docs/broker_adapter_contract.md`](docs/broker_adapter_contract.md)
+- Broker handoff validation:
+  `tradearena validate-broker-handoff outputs/examples/alpaca_paper_export/alpaca_paper_orders.json`
 - Broker response validation:
   `tradearena validate-broker-response outputs/examples/broker_response_reconciliation/broker_response_artifact.json`
 - Technical white paper: [`docs/technical_report.md`](docs/technical_report.md)

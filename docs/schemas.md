@@ -122,6 +122,12 @@ Validate a broker handoff artifact with:
 tradearena validate-broker-handoff outputs/examples/alpaca_paper_export/alpaca_paper_orders.json
 ```
 
+Compute the canonical hash to place in a reviewed approval artifact with:
+
+```bash
+tradearena hash-broker-handoff path/to/broker_handoff.json
+```
+
 Broker approval artifacts can be validated against
 [`../schemas/broker_approval_artifact.schema.json`](../schemas/broker_approval_artifact.schema.json).
 The schema fixes the public `tradearena_broker_approval_artifact_v0.1`

@@ -156,6 +156,10 @@ then run
 `validate_broker_approval_request_binding(approval, request_artifact)` before
 building any live-mode safety config. This prevents an operator approval for one
 handoff file from being reused against a different order request.
+Reviewers can compute the reviewed request hash with
+`tradearena hash-broker-handoff <request.json>` or
+`python scripts/hash_broker_handoff_artifact.py <request.json>`; both commands
+validate the handoff artifact before printing the hash.
 Command-line reviewers can check the same invariant with
 `tradearena validate-broker-approval-binding <approval.json> <request.json>` or
 `python scripts/validate_broker_approval_binding.py <approval.json> <request.json>`.

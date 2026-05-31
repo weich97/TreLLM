@@ -523,6 +523,51 @@ def test_broker_approval_artifact_binds_to_handoff_request_hash(tmp_path):
     ]
 
 
+def test_broker_handoff_hash_cli_and_script_validate_before_printing_hash(tmp_path):
+    adapter = DryRunBrokerAdapter(
+        client_prefix="hash-cli",
+        safety=BrokerSafetyConfig(account_mode="paper", max_quantity=5.0, allowed_symbols=("AAPL",)),
+    )
+    adapter.write(
+        [Order("AAPL", Side.BUY, 1.0, order_type=OrderType.LIMIT, limit_price=100.0, reason="hash cli")],
+        tmp_path,
+    )
+    request_path = tmp_path / "dry_run_orders.json"
+    expected_hash = broker_handoff_artifact_hash(request_path)
+
+    cli_result = subprocess.run(
+        [sys.executable, "-m", "tradearena.cli", "hash-broker-handoff", str(request_path)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    script_result = subprocess.run(
+        [sys.executable, "scripts/hash_broker_handoff_artifact.py", str(request_path)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    assert cli_result.stdout.strip() == expected_hash
+    assert script_result.stdout.strip() == expected_hash
+
+    payload = json.loads(request_path.read_text(encoding="utf-8"))
+    payload["orders"][0]["submit_live"] = True
+    broken_path = tmp_path / "broken_dry_run_orders.json"
+    broken_path.write_text(json.dumps(payload), encoding="utf-8")
+    broken_result = subprocess.run(
+        [sys.executable, "-m", "tradearena.cli", "hash-broker-handoff", str(broken_path)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert broken_result.returncode == 1
+    assert "Invalid broker handoff artifact" in broken_result.stdout
+
+
 def test_broker_approval_request_binding_rejects_orders_outside_approval_scope(tmp_path):
     adapter = DryRunBrokerAdapter(
         client_prefix="approval-scope",

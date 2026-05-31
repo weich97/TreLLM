@@ -22,6 +22,7 @@ from tradearena.evaluation.trace_export import export_trajectory_to_trace_json
 from tradearena.experiments import PaperExperimentConfig, run_paper_experiment
 from tradearena.factory import build_default_system, default_registry
 from tradearena.tools import (
+    broker_handoff_artifact_hash,
     validate_broker_approval_artifact_file,
     validate_broker_approval_request_binding,
     validate_broker_handoff_artifact_file,
@@ -116,6 +117,7 @@ def main(argv: list[str] | None = None) -> int:
         "validate-broker-approval-binding",
         "validate-broker-response",
         "build-registry",
+        "hash-broker-handoff",
         "hash-run",
         "new-plugin",
         "replay",
@@ -407,6 +409,19 @@ def _run_utility_command(argv: list[str]) -> int:
                 print(f"  - {error}")
             return 1
         print(f"Valid broker approval binding: {args.approval_artifact} -> {args.request_artifact}")
+        return 0
+
+    if command == "hash-broker-handoff":
+        parser = argparse.ArgumentParser(description="Validate and hash a TradeArena broker handoff artifact.")
+        parser.add_argument("artifact")
+        args = parser.parse_args(argv[1:])
+        _, errors = validate_broker_handoff_artifact_file(args.artifact)
+        if errors:
+            print(f"Invalid broker handoff artifact: {args.artifact}")
+            for error in errors:
+                print(f"  - {error}")
+            return 1
+        print(broker_handoff_artifact_hash(args.artifact))
         return 0
 
     if command == "build-registry":

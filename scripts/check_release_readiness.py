@@ -222,6 +222,17 @@ PLACEHOLDER_PHRASES = [
 BANNED_PUBLIC_TERMS = [
     "_".join(("trading", "agent", "os")),
 ]
+CI_REQUIRED_GATE_COMMANDS = [
+    "python -m compileall src scripts examples tests -q",
+    "python -m ruff check src scripts examples tests",
+    "python -m mypy",
+    "python -m pytest tests -q --cov=tradearena --cov-report=xml --cov-report=term-missing",
+    "python scripts/validate_demo_artifacts.py",
+    "python scripts/scan_public_artifacts.py outputs docs/results examples/benchmark_submissions",
+    "python scripts/validate_benchmark_submission.py examples/benchmark_submissions/example_redacted_submission.json",
+    "python scripts/build_benchmark_registry.py examples/benchmark_submissions",
+    "python scripts/check_release_readiness.py",
+]
 
 
 def main() -> int:
@@ -256,6 +267,8 @@ def main() -> int:
                 if term in text:
                     failures.append(f"banned legacy namespace '{term}' found in {rel}")
 
+    failures.extend(_check_ci_gate_parity(ROOT / ".github/workflows/ci.yml"))
+
     if failures:
         print("Release readiness check failed:")
         for failure in failures:
@@ -276,6 +289,17 @@ def _git_ls_files(pattern: str | None = None) -> list[str]:
         command.append(pattern)
     result = subprocess.run(command, cwd=ROOT, check=True, capture_output=True, text=True)
     return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+
+
+def _check_ci_gate_parity(ci_path: Path) -> list[str]:
+    if not ci_path.exists():
+        return [f"missing CI workflow: {ci_path.relative_to(ROOT) if ci_path.is_relative_to(ROOT) else ci_path}"]
+    text = ci_path.read_text(encoding="utf-8", errors="ignore")
+    return [
+        f"CI workflow is missing required gate command: {command}"
+        for command in CI_REQUIRED_GATE_COMMANDS
+        if command not in text
+    ]
 
 
 def _is_public_text_file(path: Path) -> bool:

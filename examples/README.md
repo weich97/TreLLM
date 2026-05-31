@@ -264,7 +264,23 @@ Output:
 - `outputs/examples/alpaca_paper_export/alpaca_paper_orders.json`
 - `outputs/examples/alpaca_paper_export/alpaca_paper_orders.csv`
 
-## 16. Holdings CSV Import
+## 16. Broker Response Reconciliation
+
+```bash
+python examples/broker_response_reconciliation_demo.py
+```
+
+Matches synthetic paper broker responses back to submitted client order IDs and
+writes a reconciliation artifact. It uses paper-mode sample responses only:
+no credentials are read and no live orders are submitted.
+
+Output:
+
+- `outputs/examples/broker_response_reconciliation/summary.json`
+- `outputs/examples/broker_response_reconciliation/broker_response_artifact.json`
+- `outputs/examples/broker_response_reconciliation/alpaca_paper_orders.json`
+
+## 17. Holdings CSV Import
 
 ```bash
 python examples/holdings_csv_import_demo.py
@@ -277,7 +293,7 @@ Output:
 
 - `outputs/examples/holdings_csv_import/summary.json`
 
-## 17. Futures Roll Risk
+## 18. Futures Roll Risk
 
 ```bash
 python examples/futures_roll_risk_demo.py
@@ -291,7 +307,7 @@ Output:
 - `outputs/examples/futures_roll_risk/summary.json`
 - `outputs/examples/futures_roll_risk/futures_roll_risk.svg`
 
-## 18. Crypto Microstructure Stress
+## 19. Crypto Microstructure Stress
 
 ```bash
 python examples/crypto_microstructure_stress_demo.py
@@ -305,7 +321,7 @@ Output:
 - `outputs/examples/crypto_microstructure_stress/summary.json`
 - `outputs/examples/crypto_microstructure_stress/crypto_microstructure_stress.svg`
 
-## 19. Mock Deep-RL Policy Baseline
+## 20. Mock Deep-RL Policy Baseline
 
 ```bash
 python examples/rl_policy_baseline_demo.py

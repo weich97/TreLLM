@@ -213,6 +213,10 @@ def test_mock_rl_policy_baseline_reuses_standard_stack():
 def test_new_issue_examples_write_expected_artifacts():
     examples = (
         ("examples/alpaca_paper_export_demo.py", "outputs/examples/alpaca_paper_export/summary.json"),
+        (
+            "examples/broker_response_reconciliation_demo.py",
+            "outputs/examples/broker_response_reconciliation/summary.json",
+        ),
         ("examples/holdings_csv_import_demo.py", "outputs/examples/holdings_csv_import/summary.json"),
         ("examples/futures_roll_risk_demo.py", "outputs/examples/futures_roll_risk/summary.json"),
         ("examples/crypto_microstructure_stress_demo.py", "outputs/examples/crypto_microstructure_stress/summary.json"),
@@ -230,3 +234,10 @@ def test_new_issue_examples_write_expected_artifacts():
 
     futures = json.loads((ROOT / "outputs/examples/futures_roll_risk/summary.json").read_text(encoding="utf-8"))
     assert futures["roll_flagged"] is True
+
+    reconciliation = json.loads(
+        (ROOT / "outputs/examples/broker_response_reconciliation/summary.json").read_text(encoding="utf-8")
+    )
+    assert reconciliation["live_submission"] is False
+    assert reconciliation["reconciliation"]["partial_fill_count"] == 1
+    assert reconciliation["reconciliation"]["missing_response_count"] == 1

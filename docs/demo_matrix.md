@@ -184,6 +184,13 @@ without reading the full source tree.
 - Shows: approved orders converted into Alpaca-compatible paper-review rows
   without live submission.
 
+### Broker Response Reconciliation
+
+- Run: `python examples/broker_response_reconciliation_demo.py`
+- Artifact: `outputs/examples/broker_response_reconciliation/broker_response_artifact.json`
+- Shows: paper broker responses matched back to submitted client order IDs,
+  including filled, partially filled, rejected, missing, and unmatched rows.
+
 ### Live-Readiness Contract
 
 - Read:

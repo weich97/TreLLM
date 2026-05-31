@@ -92,6 +92,12 @@ SECTIONS = [
         "python examples/alpaca_paper_export_demo.py",
     ),
     (
+        "Broker response reconciliation",
+        "Paper broker responses are matched back to submitted client order IDs for audit review.",
+        "broker_response_reconciliation/broker_response_artifact.json",
+        "python examples/broker_response_reconciliation_demo.py",
+    ),
+    (
         "Holdings CSV import",
         "A tiny holdings CSV fixture feeds the retail planning sandbox and paper rebalance diagnostics.",
         "holdings_csv_import/summary.json",
@@ -143,6 +149,7 @@ def main() -> int:
         _run([sys.executable, "examples/futures_roll_risk_demo.py"], "Futures roll risk")
         _run([sys.executable, "examples/rl_policy_baseline_demo.py"], "Mock deep-RL policy baseline")
         _run([sys.executable, "examples/alpaca_paper_export_demo.py"], "Alpaca paper export")
+        _run([sys.executable, "examples/broker_response_reconciliation_demo.py"], "Broker response reconciliation")
         _run([sys.executable, "examples/holdings_csv_import_demo.py"], "Holdings CSV import")
         _run([sys.executable, "examples/extension_walkthrough_demo.py"], "Contributor extension walkthrough")
         _run([sys.executable, "examples/retail_planner_demo.py"], "Retail planning sandbox")

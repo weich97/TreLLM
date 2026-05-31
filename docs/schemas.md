@@ -108,6 +108,14 @@ Validate it after building the showcase:
 python scripts/validate_demo_artifacts.py
 ```
 
+## Broker Response Artifact Schema
+
+Broker response artifacts can be validated against
+[`../schemas/broker_response_artifact.schema.json`](../schemas/broker_response_artifact.schema.json).
+The schema fixes the public `tradearena_broker_response_artifact_v0.1`
+contract for adapter mode, account mode, normalized broker statuses,
+reconciliation counts, and redacted response rows.
+
 ## Reproduction Report Schema
 
 The external reproduction report schema lives at

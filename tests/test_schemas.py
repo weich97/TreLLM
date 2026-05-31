@@ -12,6 +12,14 @@ from jsonschema import Draft202012Validator
 import scripts.validate_reproduction_report as reproduction_validator
 from tradearena.core.trajectory import StepRecord, Trajectory
 from tradearena.evaluation.submissions import validate_submission_file
+from tradearena.core.domain import Order, Side
+from tradearena.tools import (
+    AlpacaPaperExportAdapter,
+    BrokerAdapterMode,
+    BrokerOrderStatus,
+    BrokerResponse,
+    write_broker_response_artifact,
+)
 from tradearena.tools.calibration import summarize_execution_calibration, summarize_quote_fill_calibration
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -67,6 +75,35 @@ def test_benchmark_submission_schema_has_explicit_version_contract():
 
     assert schema["properties"]["schema_version"]["const"] == "0.1"
     Draft202012Validator.check_schema(schema)
+
+
+def test_broker_response_artifact_schema_validates_writer_output(tmp_path: Path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-recon")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])
+    output = tmp_path / "broker_response_artifact.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.FILLED,
+                broker_order_id="paper-schema-1",
+                submitted_quantity=1.0,
+                accepted_quantity=1.0,
+                fill_quantity=1.0,
+                fill_price=100.0,
+                fees=0.01,
+                account_mode="paper",
+            )
+        ],
+        output=output,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    _validator("broker_response_artifact.schema.json").validate(payload)
 
 
 def test_all_example_benchmark_submissions_match_schema_and_runtime_validator():

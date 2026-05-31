@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/weich97/TradeArena/schemas/broker_response_artifact.schema.json",
+  "title": "TradeArena Broker Response Artifact",
+  "type": "object",
+  "required": [
+    "schema",
+    "adapter",
+    "adapter_mode",
+    "account_mode",
+    "live_submission",
+    "reconciliation",
+    "responses"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "tradearena_broker_response_artifact_v0.1" },
+    "adapter": { "type": "string", "minLength": 1 },
+    "adapter_mode": {
+      "type": "string",
+      "enum": ["offline_export", "dry_run", "paper_sandbox", "live_human_approved"]
+    },
+    "account_mode": { "type": "string", "minLength": 1 },
+    "live_submission": { "type": "boolean" },
+    "reconciliation": {
+      "type": "object",
+      "required": [
+        "response_count",
+        "accepted_count",
+        "rejected_count",
+        "partial_fill_count",
+        "filled_count",
+        "canceled_count",
+        "expired_count",
+        "unknown_count",
+        "unmatched_response_count",
+        "missing_response_count",
+        "fill_ratio_mean"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "response_count": { "type": "integer", "minimum": 0 },
+        "accepted_count": { "type": "integer", "minimum": 0 },
+        "rejected_count": { "type": "integer", "minimum": 0 },
+        "partial_fill_count": { "type": "integer", "minimum": 0 },
+        "filled_count": { "type": "integer", "minimum": 0 },
+        "canceled_count": { "type": "integer", "minimum": 0 },
+        "expired_count": { "type": "integer", "minimum": 0 },
+        "unknown_count": { "type": "integer", "minimum": 0 },
+        "unmatched_response_count": { "type": "integer", "minimum": 0 },
+        "missing_response_count": { "type": "integer", "minimum": 0 },
+        "fill_ratio_mean": { "type": ["number", "null"], "minimum": 0 }
+      }
+    },
+    "responses": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/broker_response" }
+    }
+  },
+  "$defs": {
+    "broker_response": {
+      "type": "object",
+      "required": [
+        "client_order_id",
+        "status",
+        "broker_order_id",
+        "submitted_quantity",
+        "accepted_quantity",
+        "fill_quantity",
+        "fill_price",
+        "fees",
+        "rejection_reason",
+        "submitted_at",
+        "broker_timestamp",
+        "account_mode"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "client_order_id": { "type": "string", "minLength": 1 },
+        "status": {
+          "type": "string",
+          "enum": ["accepted", "rejected", "partially_filled", "filled", "canceled", "expired", "unknown"]
+        },
+        "broker_order_id": { "type": ["string", "null"] },
+        "submitted_quantity": { "type": ["number", "null"], "minimum": 0 },
+        "accepted_quantity": { "type": ["number", "null"], "minimum": 0 },
+        "fill_quantity": { "type": ["number", "null"], "minimum": 0 },
+        "fill_price": { "type": ["number", "null"], "minimum": 0 },
+        "fees": { "type": ["number", "null"], "minimum": 0 },
+        "rejection_reason": { "type": ["string", "null"] },
+        "submitted_at": { "type": ["string", "null"] },
+        "broker_timestamp": { "type": ["string", "null"] },
+        "account_mode": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

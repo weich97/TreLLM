@@ -94,6 +94,8 @@ This artifact is part of the audit trail, not a throwaway log.
 this artifact. It records `tradearena_broker_response_artifact_v0.1`, the
 adapter mode, account mode, response rows, and a reconciliation summary with
 missing and unmatched response counts.
+Public response artifacts should validate against
+[`../schemas/broker_response_artifact.schema.json`](../schemas/broker_response_artifact.schema.json).
 
 ## Human Approval Gate
 

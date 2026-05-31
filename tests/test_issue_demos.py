@@ -676,6 +676,39 @@ def test_broker_handoff_hash_helper_rejects_invalid_artifacts(tmp_path):
         raise AssertionError("invalid broker handoff artifact was hashed")
 
 
+def test_broker_approval_binding_reports_invalid_handoff_without_raising(tmp_path):
+    adapter = DryRunBrokerAdapter(
+        client_prefix="approval-invalid-request",
+        safety=BrokerSafetyConfig(account_mode="paper", max_quantity=5.0, allowed_symbols=("AAPL",)),
+    )
+    adapter.write(
+        [Order("AAPL", Side.BUY, 1.0, order_type=OrderType.LIMIT, limit_price=100.0, reason="invalid request")],
+        tmp_path,
+    )
+    request_path = tmp_path / "dry_run_orders.json"
+    request_payload = json.loads(request_path.read_text(encoding="utf-8"))
+    request_hash = broker_handoff_artifact_hash(request_payload)
+    request_payload["orders"][0]["submit_live"] = True
+    approval_payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=500.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="unit test",
+        ),
+        approval_id="approval-invalid-request",
+        account_mode="live",
+        max_quantity=5.0,
+        request_artifact_hash=request_hash,
+    )
+
+    errors = validate_broker_approval_request_binding(approval_payload, request_payload)
+
+    assert "orders[0].submit_live must match live_human_approved mode" in errors
+
+
 def test_broker_approval_request_binding_rejects_orders_outside_approval_scope(tmp_path):
     adapter = DryRunBrokerAdapter(
         client_prefix="approval-scope",

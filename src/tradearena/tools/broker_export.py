@@ -557,11 +557,12 @@ def validate_broker_approval_request_binding(
 
     errors = validate_broker_approval_artifact(approval_payload, now=now)
     request_payload = _load_broker_artifact_payload(request_payload_or_path)
-    errors.extend(validate_broker_handoff_artifact(request_payload))
+    request_errors = validate_broker_handoff_artifact(request_payload)
+    errors.extend(request_errors)
     request_hash = approval_payload.get("request_artifact_hash")
     if not isinstance(request_hash, str) or not request_hash:
         errors.append("request_artifact_hash is required to bind approval to a broker handoff artifact")
-    elif request_hash != broker_handoff_artifact_hash(request_payload):
+    elif not request_errors and request_hash != broker_handoff_artifact_hash(request_payload):
         errors.append("request_artifact_hash does not match broker handoff artifact")
     if not errors:
         errors.extend(_validate_approval_request_scope(approval_payload, request_payload))

@@ -655,6 +655,27 @@ def test_broker_handoff_hash_cli_and_script_validate_before_printing_hash(tmp_pa
     assert "Invalid broker handoff artifact" in broken_result.stdout
 
 
+def test_broker_handoff_hash_helper_rejects_invalid_artifacts(tmp_path):
+    adapter = DryRunBrokerAdapter(
+        client_prefix="hash-helper",
+        safety=BrokerSafetyConfig(account_mode="paper", max_quantity=5.0, allowed_symbols=("AAPL",)),
+    )
+    adapter.write(
+        [Order("AAPL", Side.BUY, 1.0, order_type=OrderType.LIMIT, limit_price=100.0, reason="hash helper")],
+        tmp_path,
+    )
+    request_path = tmp_path / "dry_run_orders.json"
+    payload = json.loads(request_path.read_text(encoding="utf-8"))
+    payload["orders"][0]["submit_live"] = True
+
+    try:
+        broker_handoff_artifact_hash(payload)
+    except BrokerAdapterContractError as exc:
+        assert "orders[0].submit_live must match live_human_approved mode" in str(exc)
+    else:
+        raise AssertionError("invalid broker handoff artifact was hashed")
+
+
 def test_broker_approval_request_binding_rejects_orders_outside_approval_scope(tmp_path):
     adapter = DryRunBrokerAdapter(
         client_prefix="approval-scope",

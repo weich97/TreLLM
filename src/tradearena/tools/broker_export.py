@@ -537,9 +537,12 @@ def validate_broker_approval_artifact_file(
 
 
 def broker_handoff_artifact_hash(payload_or_path: dict[str, object] | str | Path) -> str:
-    """Return a stable SHA-256 hash for a broker handoff artifact."""
+    """Return a stable SHA-256 hash for a valid broker handoff artifact."""
 
     payload = _load_broker_artifact_payload(payload_or_path)
+    errors = validate_broker_handoff_artifact(payload)
+    if errors:
+        raise BrokerAdapterContractError("; ".join(errors))
     canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
     return "sha256:" + hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 

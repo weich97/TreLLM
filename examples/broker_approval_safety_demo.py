@@ -40,8 +40,9 @@ def main() -> int:
         expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash="sha256:demo-redacted-request-hash",
     )
-    validation_errors = validate_broker_approval_artifact(artifact)
-    safety = broker_safety_from_approval_artifact(artifact)
+    demo_now = "2026-05-31T12:30:00Z"
+    validation_errors = validate_broker_approval_artifact(artifact, now=demo_now)
+    safety = broker_safety_from_approval_artifact(artifact, now=demo_now)
 
     approved_order_passed = False
     oversized_order_blocked = False
@@ -66,6 +67,7 @@ def main() -> int:
     summary = {
         "approval_id": artifact["approval_id"],
         "approval_validated": not validation_errors,
+        "approval_checked_at": demo_now,
         "validation_errors": validation_errors,
         "adapter_mode": safety.mode.value,
         "account_mode": safety.account_mode,

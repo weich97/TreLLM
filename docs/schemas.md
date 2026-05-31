@@ -129,7 +129,8 @@ contract for redacted operator approval, account mode, max notional, max
 quantity, allowed symbols, allowed order types, and optional request-artifact
 hashes. Runtime code can consume this contract with
 `broker_safety_from_approval_artifact(...)` to build a live human-approved
-`BrokerSafetyConfig`.
+`BrokerSafetyConfig`; pass `now=` to reject expired approval artifacts during
+validation or conversion.
 
 Validate a broker approval artifact with:
 

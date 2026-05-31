@@ -148,6 +148,8 @@ Adapter implementations can turn a validated approval artifact into the
 runtime safety gate with `broker_safety_from_approval_artifact(...)`; the
 result is a `BrokerSafetyConfig` in `live_human_approved` mode with the same
 symbol, order-type, quantity, and notional limits as the approval.
+Pass `now=` when validating or consuming approval artifacts so stale approvals
+are rejected before any live-mode safety config is created.
 
 ## Testing Requirements
 

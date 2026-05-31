@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import json
 from dataclasses import asdict, dataclass, field, replace
+from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 from statistics import fmean
@@ -422,7 +423,11 @@ def build_broker_approval_artifact(
     }
 
 
-def validate_broker_approval_artifact(payload: dict[str, object]) -> list[str]:
+def validate_broker_approval_artifact(
+    payload: dict[str, object],
+    *,
+    now: str | datetime | None = None,
+) -> list[str]:
     errors: list[str] = []
     required = {
         "schema",
@@ -487,6 +492,15 @@ def validate_broker_approval_artifact(payload: dict[str, object]) -> list[str]:
     expires_at = payload.get("expires_at")
     if expires_at is not None and not isinstance(expires_at, str):
         errors.append("expires_at must be a string or null")
+    elif expires_at and now is not None:
+        expires_dt = _parse_timestamp(expires_at)
+        now_dt = _parse_timestamp(now)
+        if expires_dt is None:
+            errors.append("expires_at must be an ISO timestamp or null")
+        elif now_dt is None:
+            errors.append("now must be an ISO timestamp")
+        elif expires_dt <= now_dt:
+            errors.append("approval artifact is expired")
     return errors
 
 
@@ -497,10 +511,14 @@ def validate_broker_approval_artifact_file(path: str | Path) -> tuple[dict[str, 
     return payload, validate_broker_approval_artifact(payload)
 
 
-def broker_approval_from_artifact(payload: dict[str, object]) -> BrokerApproval:
+def broker_approval_from_artifact(
+    payload: dict[str, object],
+    *,
+    now: str | datetime | None = None,
+) -> BrokerApproval:
     """Convert a schema-valid broker approval artifact into a BrokerApproval."""
 
-    errors = validate_broker_approval_artifact(payload)
+    errors = validate_broker_approval_artifact(payload, now=now)
     if errors:
         raise BrokerAdapterContractError("; ".join(errors))
     return BrokerApproval(
@@ -513,10 +531,14 @@ def broker_approval_from_artifact(payload: dict[str, object]) -> BrokerApproval:
     )
 
 
-def broker_safety_from_approval_artifact(payload: dict[str, object]) -> BrokerSafetyConfig:
+def broker_safety_from_approval_artifact(
+    payload: dict[str, object],
+    *,
+    now: str | datetime | None = None,
+) -> BrokerSafetyConfig:
     """Build live human-approved safety limits from a broker approval artifact."""
 
-    approval = broker_approval_from_artifact(payload)
+    approval = broker_approval_from_artifact(payload, now=now)
     order_types = tuple(OrderType(str(order_type)) for order_type in payload["allowed_order_types"])
     return BrokerSafetyConfig(
         mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
@@ -648,6 +670,19 @@ def validate_broker_handoff_artifact_file(path: str | Path) -> tuple[dict[str, o
 
 def _alpaca_order_type(order_type: OrderType) -> str:
     return "limit" if order_type == OrderType.LIMIT else "market"
+
+
+def _parse_timestamp(value: str | datetime) -> datetime | None:
+    if isinstance(value, datetime):
+        parsed = value
+    else:
+        try:
+            parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        except ValueError:
+            return None
+    if parsed.tzinfo is None:
+        return parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
 
 
 def _dry_run_safety(safety: BrokerSafetyConfig | None) -> BrokerSafetyConfig:

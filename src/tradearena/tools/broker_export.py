@@ -530,7 +530,9 @@ def validate_broker_approval_artifact_file(
     *,
     now: str | datetime | None = None,
 ) -> tuple[dict[str, object], list[str]]:
-    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    payload, errors = _read_broker_artifact_json_file(path)
+    if errors:
+        return {}, errors
     if not isinstance(payload, dict):
         return {}, ["broker approval artifact must be a JSON object"]
     return payload, validate_broker_approval_artifact(payload, now=now)
@@ -672,7 +674,9 @@ def validate_broker_response_artifact(payload: dict[str, object]) -> list[str]:
 
 
 def validate_broker_response_artifact_file(path: str | Path) -> tuple[dict[str, object], list[str]]:
-    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    payload, errors = _read_broker_artifact_json_file(path)
+    if errors:
+        return {}, errors
     if not isinstance(payload, dict):
         return {}, ["broker response artifact must be a JSON object"]
     return payload, validate_broker_response_artifact(payload)
@@ -729,10 +733,19 @@ def validate_broker_handoff_artifact(payload: dict[str, object]) -> list[str]:
 
 
 def validate_broker_handoff_artifact_file(path: str | Path) -> tuple[dict[str, object], list[str]]:
-    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    payload, errors = _read_broker_artifact_json_file(path)
+    if errors:
+        return {}, errors
     if not isinstance(payload, dict):
         return {}, ["broker handoff artifact must be a JSON object"]
     return payload, validate_broker_handoff_artifact(payload)
+
+
+def _read_broker_artifact_json_file(path: str | Path) -> tuple[object, list[str]]:
+    try:
+        return json.loads(Path(path).read_text(encoding="utf-8")), []
+    except json.JSONDecodeError:
+        return {}, ["broker artifact file must contain valid JSON"]
 
 
 def _load_broker_artifact_payload(payload_or_path: dict[str, object] | str | Path) -> dict[str, object]:

@@ -27,9 +27,12 @@ from tradearena.tools import (
     build_broker_approval_artifact,
     reconcile_broker_responses,
     validate_broker_approval_artifact,
+    validate_broker_approval_artifact_file,
     validate_broker_approval_request_binding,
     validate_broker_handoff_artifact,
+    validate_broker_handoff_artifact_file,
     validate_broker_response_artifact,
+    validate_broker_response_artifact_file,
     write_broker_response_artifact,
 )
 
@@ -567,6 +570,42 @@ def test_broker_approval_artifact_rejects_malformed_request_hash():
     assert validate_broker_approval_artifact(payload) == [
         "request_artifact_hash must be sha256:<64 lowercase hex chars> or null"
     ]
+
+
+def test_broker_artifact_file_validators_report_malformed_json(tmp_path):
+    broken = tmp_path / "broken.json"
+    broken.write_text('{"schema": ', encoding="utf-8")
+
+    for validator in (
+        validate_broker_handoff_artifact_file,
+        validate_broker_approval_artifact_file,
+        validate_broker_response_artifact_file,
+    ):
+        payload, errors = validator(broken)
+
+        assert payload == {}
+        assert errors == ["broker artifact file must contain valid JSON"]
+
+
+def test_broker_artifact_validator_scripts_report_malformed_json(tmp_path):
+    broken = tmp_path / "broken.json"
+    broken.write_text('{"schema": ', encoding="utf-8")
+
+    for script in (
+        "scripts/validate_broker_handoff_artifact.py",
+        "scripts/validate_broker_approval_artifact.py",
+        "scripts/validate_broker_response_artifact.py",
+    ):
+        result = subprocess.run(
+            [sys.executable, script, str(broken)],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+
+        assert result.returncode == 1
+        assert "broker artifact file must contain valid JSON" in result.stdout
+        assert "Traceback" not in result.stderr
 
 
 def test_broker_approval_artifact_binds_to_handoff_request_hash(tmp_path):

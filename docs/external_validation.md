@@ -4,6 +4,10 @@ External validation is the evidence that makes a benchmark more than a
 maintainer-run demo. A validation report should let another reader reproduce the
 same result or understand why the result diverged.
 
+If you want the shortest path, start with
+[`external_validation_quickstart.md`](external_validation_quickstart.md). This
+protocol page explains the evidence rules in more detail.
+
 ## What Counts As External Validation?
 
 External validation must come from a person or organization outside the
@@ -126,6 +130,11 @@ A useful calibration report should name:
 
 Open an issue using the external validation template or submit a pull request
 with a redacted manifest under `examples/benchmark_submissions/`.
+
+For reproduction reports, paste the output of
+`outputs/reproduction/v0_2/external_validation_bundle.md` into the matching
+issue. For benchmark rows or calibration reports, include the validating command
+and attach only redacted artifacts.
 
 Maintainers should review whether:
 

@@ -48,6 +48,7 @@
   <a href="docs/research_report.md">Technical report</a> |
   <a href="docs/evaluation_rigor.md">Rigor</a> |
   <a href="docs/claim_boundaries.md">Claims</a> |
+  <a href="docs/external_validation_quickstart.md">Validate</a> |
   <a href="docs/observability.md">Trace export</a> |
   <a href="docs/benchmark_v0_2_spec.md">v0.2 spec</a> |
   <a href="docs/plugin_development.md">Plugins</a> |
@@ -117,6 +118,29 @@ TradeArena only runs paper experiments. The default examples never submit live
 orders. The project is still an early-stage research prototype; the repo is
 most useful for checking how autonomous financial-agent intent changes after
 risk checks and paper-execution costs.
+
+## External Validators Wanted
+
+TradeArena is looking for independent validation reports, calibration
+mini-reports, and claim-boundary critiques. The most useful first contribution
+is not a new model row; it is a small public artifact that another reader can
+audit.
+
+Start here: [`docs/external_validation_quickstart.md`](docs/external_validation_quickstart.md).
+
+Good first validation paths:
+
+| Time | Contribution | Where to submit |
+| ---: | --- | --- |
+| 1 hour | Run the no-key reproduction pack on macOS, Ubuntu, Colab, or Binder | Issues [#43](https://github.com/weich97/TradeArena/issues/43), [#44](https://github.com/weich97/TradeArena/issues/44), [#45](https://github.com/weich97/TradeArena/issues/45) |
+| 1-2 hours | Submit one deterministic baseline manifest row | Issue [#46](https://github.com/weich97/TradeArena/issues/46) |
+| 2-3 hours | Submit one quote/fill calibration mini-report | Issue [#47](https://github.com/weich97/TradeArena/issues/47) |
+| 1 hour | Review one benchmark or README claim boundary | Issue [#48](https://github.com/weich97/TradeArena/issues/48) |
+
+Accepted validation reports should name the commit, environment, commands,
+artifact paths, hashes, deviations, and whether any live APIs or private data
+were used. Screenshots and informal impressions are welcome context, but they
+do not count as validation unless the command and artifact trail is public.
 
 ## Research Framing
 

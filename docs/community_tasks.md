@@ -22,6 +22,10 @@ the benchmark evidence chain: a non-maintainer can run it, question it, or
 submit a comparable result. Each task should take about 1-3 hours and can be
 filed through the external validation issue template or a small pull request.
 
+New contributors can start with the shorter
+[`external_validation_quickstart.md`](external_validation_quickstart.md), then
+come back here when choosing a specific issue-sized task.
+
 | Task | Time | Commands | Evidence to attach | Suggested labels |
 | --- | ---: | --- | --- | --- |
 | [Run v0.2 reproduction pack on macOS](https://github.com/weich97/TradeArena/issues/43) | 1 hour | `python scripts/run_external_reproduction_pack.py` | `outputs/reproduction/v0_2/manifest.json`, Python version, shell log, deviations | `validation`, `reproducibility`, `good first issue` |

@@ -44,6 +44,11 @@
       "items": { "type": "string", "enum": ["market", "limit"] }
     },
     "approval_reason": { "type": "string", "minLength": 1 },
-    "request_artifact_hash": { "type": ["string", "null"] }
+    "request_artifact_hash": {
+      "anyOf": [
+        { "type": "null" },
+        { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+      ]
+    }
   }
 }

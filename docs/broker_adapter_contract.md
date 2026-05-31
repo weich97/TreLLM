@@ -148,7 +148,8 @@ records should use redacted operator IDs in public artifacts and can be checked
 with `tradearena validate-broker-approval <artifact.json>`.
 The approval should also bind to the exact request artifact that was reviewed:
 compute `broker_handoff_artifact_hash(request_artifact)` and store it in
-`request_artifact_hash`, then run
+`request_artifact_hash` as `sha256:` followed by 64 lowercase hex characters,
+then run
 `validate_broker_approval_request_binding(approval, request_artifact)` before
 building any live-mode safety config. This prevents an operator approval for one
 handoff file from being reused against a different order request.

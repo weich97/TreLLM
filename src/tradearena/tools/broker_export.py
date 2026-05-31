@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+import re
 from dataclasses import asdict, dataclass, field, replace
 from datetime import datetime, timezone
 from enum import Enum
@@ -11,6 +12,8 @@ from statistics import fmean
 from typing import Protocol, runtime_checkable
 
 from tradearena.core.domain import Order, OrderType, Side
+
+_SHA256_ARTIFACT_HASH_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 
 
 class BrokerAdapterMode(str, Enum):
@@ -490,6 +493,8 @@ def validate_broker_approval_artifact(
     request_hash = payload.get("request_artifact_hash")
     if request_hash is not None and not isinstance(request_hash, str):
         errors.append("request_artifact_hash must be a string or null")
+    elif isinstance(request_hash, str) and not _SHA256_ARTIFACT_HASH_RE.fullmatch(request_hash):
+        errors.append("request_artifact_hash must be sha256:<64 lowercase hex chars> or null")
     expires_at = payload.get("expires_at")
     if expires_at is not None and not isinstance(expires_at, str):
         errors.append("expires_at must be a string or null")

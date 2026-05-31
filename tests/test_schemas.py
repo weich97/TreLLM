@@ -134,6 +134,28 @@ def test_broker_approval_artifact_schema_validates_writer_output():
     _validator("broker_approval_artifact.schema.json").validate(payload)
 
 
+def test_broker_approval_artifact_schema_rejects_malformed_request_hash():
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=2500.0,
+            allowed_symbols=("AAPL", "MSFT"),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-schema-bad-hash-001",
+        account_mode="live",
+        max_quantity=5.0,
+        request_artifact_hash="sha256:demo-redacted-request-hash",
+    )
+
+    errors = sorted(_validator("broker_approval_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+
+    assert errors
+    assert list(errors[0].path) == ["request_artifact_hash"]
+
+
 def test_all_example_benchmark_submissions_match_schema_and_runtime_validator():
     validator = _validator("benchmark_submission.schema.json")
 

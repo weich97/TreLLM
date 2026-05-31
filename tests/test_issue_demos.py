@@ -421,6 +421,27 @@ def test_broker_approval_artifact_rejects_expired_approval():
         raise AssertionError("expected expired approval artifact failure")
 
 
+def test_broker_approval_artifact_rejects_malformed_request_hash():
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=250.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-bad-hash-001",
+        account_mode="live",
+        max_quantity=5.0,
+        request_artifact_hash="sha256:demo-redacted-request-hash",
+    )
+
+    assert validate_broker_approval_artifact(payload) == [
+        "request_artifact_hash must be sha256:<64 lowercase hex chars> or null"
+    ]
+
+
 def test_broker_approval_artifact_binds_to_handoff_request_hash(tmp_path):
     adapter = DryRunBrokerAdapter(
         client_prefix="approval-bind",

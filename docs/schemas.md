@@ -131,7 +131,8 @@ hashes. Runtime code can consume this contract with
 `broker_safety_from_approval_artifact(...)` to build a live human-approved
 `BrokerSafetyConfig`; pass `now=` to reject expired approval artifacts during
 validation or conversion. Use `broker_handoff_artifact_hash(...)` to populate
-`request_artifact_hash`, and pass `request_artifact=` to
+`request_artifact_hash` with a `sha256:` plus 64 lowercase hex value, and pass
+`request_artifact=` to
 `broker_safety_from_approval_artifact(...)` when an approval is meant to
 authorize one specific broker handoff artifact.
 

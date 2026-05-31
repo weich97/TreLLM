@@ -156,6 +156,29 @@ def test_broker_approval_artifact_schema_rejects_malformed_request_hash():
     assert list(errors[0].path) == ["request_artifact_hash"]
 
 
+def test_broker_approval_artifact_schema_rejects_malformed_timestamps():
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="May 31, noon",
+            max_notional=2500.0,
+            allowed_symbols=("AAPL", "MSFT"),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-schema-bad-time-001",
+        account_mode="live",
+        max_quantity=5.0,
+        expires_at="tomorrow",
+    )
+
+    errors = sorted(_validator("broker_approval_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("approved_at",) in paths
+    assert ("expires_at",) in paths
+
+
 def test_all_example_benchmark_submissions_match_schema_and_runtime_validator():
     validator = _validator("benchmark_submission.schema.json")
 

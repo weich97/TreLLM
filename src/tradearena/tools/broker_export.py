@@ -14,6 +14,9 @@ from typing import Protocol, runtime_checkable
 from tradearena.core.domain import Order, OrderType, Side
 
 _SHA256_ARTIFACT_HASH_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
+_ISO_TIMESTAMP_WITH_TZ_RE = re.compile(
+    r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$"
+)
 
 
 class BrokerAdapterMode(str, Enum):
@@ -465,8 +468,11 @@ def validate_broker_approval_artifact(
         errors.append("approved_by must be non-empty")
     elif "@" in approved_by:
         errors.append("approved_by must be a redacted operator id, not an email address")
-    if not payload.get("approved_at"):
+    approved_at = payload.get("approved_at")
+    if not approved_at:
         errors.append("approved_at must be non-empty")
+    elif not isinstance(approved_at, str) or not _is_iso_timestamp_with_timezone(approved_at):
+        errors.append("approved_at must be an ISO timestamp with timezone")
     if not payload.get("account_mode"):
         errors.append("account_mode must be non-empty")
     for field_name in ("max_notional", "max_quantity"):
@@ -498,6 +504,8 @@ def validate_broker_approval_artifact(
     expires_at = payload.get("expires_at")
     if expires_at is not None and not isinstance(expires_at, str):
         errors.append("expires_at must be a string or null")
+    elif expires_at and not _is_iso_timestamp_with_timezone(expires_at):
+        errors.append("expires_at must be an ISO timestamp with timezone or null")
     elif expires_at and now is not None:
         expires_dt = _parse_timestamp(expires_at)
         now_dt = _parse_timestamp(now)
@@ -727,6 +735,10 @@ def _parse_timestamp(value: str | datetime) -> datetime | None:
     if parsed.tzinfo is None:
         return parsed.replace(tzinfo=timezone.utc)
     return parsed.astimezone(timezone.utc)
+
+
+def _is_iso_timestamp_with_timezone(value: str) -> bool:
+    return bool(_ISO_TIMESTAMP_WITH_TZ_RE.fullmatch(value)) and _parse_timestamp(value) is not None
 
 
 def _dry_run_safety(safety: BrokerSafetyConfig | None) -> BrokerSafetyConfig:

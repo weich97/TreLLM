@@ -421,6 +421,27 @@ def test_broker_approval_artifact_rejects_expired_approval():
         raise AssertionError("expected expired approval artifact failure")
 
 
+def test_broker_approval_artifact_rejects_malformed_timestamps():
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="May 31, noon",
+            max_notional=250.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-bad-time-001",
+        account_mode="live",
+        max_quantity=5.0,
+        expires_at="tomorrow",
+    )
+
+    errors = validate_broker_approval_artifact(payload)
+    assert "approved_at must be an ISO timestamp with timezone" in errors
+    assert "expires_at must be an ISO timestamp with timezone or null" in errors
+
+
 def test_broker_approval_artifact_rejects_malformed_request_hash():
     payload = build_broker_approval_artifact(
         BrokerApproval(

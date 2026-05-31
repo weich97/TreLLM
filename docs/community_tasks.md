@@ -24,7 +24,10 @@ filed through the external validation issue template or a small pull request.
 
 New contributors can start with the shorter
 [`external_validation_quickstart.md`](external_validation_quickstart.md), then
-come back here when choosing a specific issue-sized task. For execution work,
+come back here when choosing a specific issue-sized task. For baseline rows,
+use
+[`deterministic_baseline_submission_quickstart.md`](deterministic_baseline_submission_quickstart.md).
+For execution work,
 use [`execution_calibration_quickstart.md`](execution_calibration_quickstart.md)
 to pick the weakest honest evidence label and report fields. For wording and
 claim checks, use
@@ -34,7 +37,7 @@ claim checks, use
 | --- | ---: | --- | --- | --- |
 | [Run v0.2 reproduction pack on macOS](https://github.com/weich97/TradeArena/issues/43) | 1 hour | `python scripts/run_external_reproduction_pack.py` | `outputs/reproduction/v0_2/manifest.json`, Python version, shell log, deviations | `validation`, `reproducibility`, `good first issue` |
 | [Run v0.2 reproduction pack on Ubuntu](https://github.com/weich97/TradeArena/issues/44) | 1 hour | `python scripts/run_external_reproduction_pack.py` | same manifest plus distro, Python, and install notes | `validation`, `reproducibility`, `good first issue` |
-| [Submit one deterministic baseline row](https://github.com/weich97/TradeArena/issues/46) | 1-2 hours | `python scripts/run_classical_baseline_matrix.py`; `tradearena validate-submission <row.json>` | one schema-valid deterministic manifest, rebuilt registry diff, and reproducibility hash | `benchmark`, `good first issue` |
+| [Submit one deterministic baseline row](https://github.com/weich97/TradeArena/issues/46) | 1-2 hours | `python scripts/validate_benchmark_submission.py <row.json>`; `python scripts/build_benchmark_registry.py examples/benchmark_submissions` | one schema-valid deterministic manifest, rebuilt registry diff, and reproducibility hash | `benchmark`, `good first issue` |
 | [Submit one quote/fill calibration mini-report](https://github.com/weich97/TradeArena/issues/47) | 2-3 hours | `python scripts/calibrate_quote_fill_model.py` or the Binance sample command in `docs/execution_calibration_quickstart.md` | calibration JSON/Markdown with source, venue, date range, sample size, replay error, and residuals | `execution`, `validation`, `help wanted` |
 | [Review one benchmark claim boundary](https://github.com/weich97/TradeArena/issues/48) | 1 hour | `python scripts/check_release_readiness.py`; inspect `docs/claim_boundary_review_quickstart.md` | one issue or PR that maps a README/result claim to engineering, benchmark, or scientific evidence | `docs`, `discussion`, `validation` |
 

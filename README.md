@@ -51,6 +51,7 @@
   <a href="docs/claim_boundary_review_quickstart.md">Claim review</a> |
   <a href="docs/external_validation_quickstart.md">Validate</a> |
   <a href="docs/execution_calibration_quickstart.md">Execution calibration</a> |
+  <a href="docs/deterministic_baseline_submission_quickstart.md">Baseline rows</a> |
   <a href="docs/observability.md">Trace export</a> |
   <a href="docs/benchmark_v0_2_spec.md">v0.2 spec</a> |
   <a href="docs/plugin_development.md">Plugins</a> |
@@ -135,7 +136,7 @@ Good first validation paths:
 | Time | Contribution | Where to submit |
 | ---: | --- | --- |
 | 1 hour | Run the no-key reproduction pack on macOS, Ubuntu, Colab, or Binder | Issues [#43](https://github.com/weich97/TradeArena/issues/43), [#44](https://github.com/weich97/TradeArena/issues/44), [#45](https://github.com/weich97/TradeArena/issues/45) |
-| 1-2 hours | Submit one deterministic baseline manifest row | Issue [#46](https://github.com/weich97/TradeArena/issues/46) |
+| 1-2 hours | Submit one deterministic baseline manifest row | [Baseline row quickstart](docs/deterministic_baseline_submission_quickstart.md), Issue [#46](https://github.com/weich97/TradeArena/issues/46) |
 | 2-3 hours | Submit one quote/fill calibration mini-report | [Execution calibration quickstart](docs/execution_calibration_quickstart.md), Issue [#47](https://github.com/weich97/TradeArena/issues/47) |
 | 1 hour | Review one benchmark or README claim boundary | [Claim review quickstart](docs/claim_boundary_review_quickstart.md), Issue [#48](https://github.com/weich97/TradeArena/issues/48) |
 
@@ -790,6 +791,8 @@ Useful entry points:
 - Execution calibration quickstart:
   [`docs/execution_calibration_quickstart.md`](docs/execution_calibration_quickstart.md)
 - Benchmark submissions: [`docs/benchmark_submissions.md`](docs/benchmark_submissions.md)
+- Deterministic baseline row quickstart:
+  [`docs/deterministic_baseline_submission_quickstart.md`](docs/deterministic_baseline_submission_quickstart.md)
 - Evaluation rigor: [`docs/evaluation_rigor.md`](docs/evaluation_rigor.md)
 - Claim review quickstart:
   [`docs/claim_boundary_review_quickstart.md`](docs/claim_boundary_review_quickstart.md)

@@ -6,6 +6,9 @@ portfolio data.
 
 ## Validate One Submission
 
+For a contributor-facing deterministic baseline walkthrough, see
+[`deterministic_baseline_submission_quickstart.md`](deterministic_baseline_submission_quickstart.md).
+
 ```bash
 tradearena validate-submission examples/benchmark_submissions/example_redacted_submission.json
 ```

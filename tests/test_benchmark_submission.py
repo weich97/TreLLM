@@ -152,6 +152,42 @@ def test_cli_submission_registry_and_hash_run(tmp_path: Path):
     assert "<details>" in html_path.read_text(encoding="utf-8")
 
 
+def test_script_submission_registry_entries_work_without_installed_package(tmp_path: Path):
+    submission = ROOT / "examples/benchmark_submissions/example_redacted_submission.json"
+    registry = tmp_path / "script_registry.md"
+    csv_path = tmp_path / "script_registry.csv"
+    html_path = tmp_path / "script_registry.html"
+
+    subprocess.run(
+        [sys.executable, "scripts/validate_benchmark_submission.py", str(submission)],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    subprocess.run(
+        [
+            sys.executable,
+            "scripts/build_benchmark_registry.py",
+            str(submission),
+            "--output",
+            str(registry),
+            "--csv-output",
+            str(csv_path),
+            "--html-output",
+            str(html_path),
+        ],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert "`stress-only`" in registry.read_text(encoding="utf-8")
+    assert "evidence_tags" in csv_path.read_text(encoding="utf-8")
+    assert "Community Benchmark Registry" in html_path.read_text(encoding="utf-8")
+
+
 def test_registry_entry_ids_and_empty_html_are_stable(tmp_path: Path):
     submission_dir = ROOT / "examples/benchmark_submissions"
     rows, errors = build_registry_rows(submission_dir)

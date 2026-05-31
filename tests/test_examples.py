@@ -124,7 +124,16 @@ def test_retail_planner_demo_builds_paper_planning_report():
 
 
 def test_showcase_index_can_be_built_from_existing_or_missing_artifacts():
+    tracked_result_paths = (
+        ROOT / "docs/results/benchmark_v0_2.md",
+        ROOT / "docs/results/quality_decomposition/quality_decomposition_aggregate.csv",
+    )
+    tracked_results_before = {path: path.read_text(encoding="utf-8") for path in tracked_result_paths}
+
     subprocess.run([sys.executable, "scripts/run_showcase.py", "--reuse-existing"], cwd=ROOT, check=True)
+
+    tracked_results_after = {path: path.read_text(encoding="utf-8") for path in tracked_result_paths}
+    assert tracked_results_after == tracked_results_before
 
     html = (ROOT / "outputs/examples/showcase.html").read_text(encoding="utf-8")
     assert "TradeArena Showcase" in html

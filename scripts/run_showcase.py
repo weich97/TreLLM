@@ -156,8 +156,17 @@ def main() -> int:
     else:
         _preserve_launch_portal()
         _maybe_render_agent_autopsy()
-        _run([sys.executable, "scripts/build_quality_decomposition.py"], "Decision/execution quality radar")
-        _run([sys.executable, "scripts/build_benchmark_page.py"], "Benchmark v0.2 result page")
+        _run(
+            [
+                sys.executable,
+                "scripts/build_benchmark_page.py",
+                "--markdown",
+                "outputs/examples/benchmark-v0.2.md",
+                "--html",
+                "outputs/examples/benchmark-v0.2.html",
+            ],
+            "Benchmark v0.2 result page",
+        )
         _run([sys.executable, "scripts/build_benchmark_registry.py", "examples/benchmark_submissions"], "Community benchmark registry")
 
     _copy_pages_assets()

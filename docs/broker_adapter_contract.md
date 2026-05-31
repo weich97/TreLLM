@@ -146,8 +146,9 @@ broker-facing PR or paper-sandbox run report.
 The adapter should reject stale, missing, or over-broad approvals. Approval
 records should use redacted operator IDs in public artifacts, and `approved_at`
 and `expires_at` must be ISO timestamps with timezone information, such as
-`2026-05-31T12:00:00Z`. Approval artifacts can be checked with
-`tradearena validate-broker-approval <artifact.json>`.
+`2026-05-31T12:00:00Z`. When `expires_at` is present, it must be later than
+`approved_at`. Approval artifacts can be checked with `tradearena
+validate-broker-approval <artifact.json>`.
 The approval should also bind to the exact request artifact that was reviewed:
 compute `broker_handoff_artifact_hash(request_artifact)` and store it in
 `request_artifact_hash` as `sha256:` followed by 64 lowercase hex characters,

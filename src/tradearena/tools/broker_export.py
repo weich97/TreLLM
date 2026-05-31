@@ -469,10 +469,13 @@ def validate_broker_approval_artifact(
     elif "@" in approved_by:
         errors.append("approved_by must be a redacted operator id, not an email address")
     approved_at = payload.get("approved_at")
+    approved_dt: datetime | None = None
     if not approved_at:
         errors.append("approved_at must be non-empty")
     elif not isinstance(approved_at, str) or not _is_iso_timestamp_with_timezone(approved_at):
         errors.append("approved_at must be an ISO timestamp with timezone")
+    else:
+        approved_dt = _parse_timestamp(approved_at)
     if not payload.get("account_mode"):
         errors.append("account_mode must be non-empty")
     for field_name in ("max_notional", "max_quantity"):
@@ -506,15 +509,18 @@ def validate_broker_approval_artifact(
         errors.append("expires_at must be a string or null")
     elif expires_at and not _is_iso_timestamp_with_timezone(expires_at):
         errors.append("expires_at must be an ISO timestamp with timezone or null")
-    elif expires_at and now is not None:
+    elif expires_at:
         expires_dt = _parse_timestamp(expires_at)
-        now_dt = _parse_timestamp(now)
-        if expires_dt is None:
-            errors.append("expires_at must be an ISO timestamp or null")
-        elif now_dt is None:
-            errors.append("now must be an ISO timestamp")
-        elif expires_dt <= now_dt:
-            errors.append("approval artifact is expired")
+        if approved_dt is not None and expires_dt is not None and expires_dt <= approved_dt:
+            errors.append("expires_at must be after approved_at")
+        if now is not None:
+            now_dt = _parse_timestamp(now)
+            if expires_dt is None:
+                errors.append("expires_at must be an ISO timestamp or null")
+            elif now_dt is None:
+                errors.append("now must be an ISO timestamp")
+            elif expires_dt <= now_dt:
+                errors.append("approval artifact is expired")
     return errors
 
 

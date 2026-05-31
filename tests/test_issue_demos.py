@@ -442,6 +442,25 @@ def test_broker_approval_artifact_rejects_malformed_timestamps():
     assert "expires_at must be an ISO timestamp with timezone or null" in errors
 
 
+def test_broker_approval_artifact_rejects_expiry_before_approval_time():
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=250.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-reversed-window-001",
+        account_mode="live",
+        max_quantity=5.0,
+        expires_at="2026-05-31T11:59:59Z",
+    )
+
+    assert "expires_at must be after approved_at" in validate_broker_approval_artifact(payload)
+
+
 def test_broker_approval_artifact_rejects_malformed_request_hash():
     payload = build_broker_approval_artifact(
         BrokerApproval(

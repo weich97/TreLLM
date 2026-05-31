@@ -191,6 +191,13 @@ without reading the full source tree.
 - Shows: request-shape validation through the generic broker adapter contract
   without broker credentials, network calls, or live submission.
 
+### Broker Approval Safety
+
+- Run: `python examples/broker_approval_safety_demo.py`
+- Artifact: `outputs/examples/broker_approval_safety/broker_approval_artifact.json`
+- Shows: a redacted approval artifact converted into a live-mode safety gate
+  that allows bounded orders and blocks oversized ones without broker calls.
+
 ### Broker Response Reconciliation
 
 - Run: `python examples/broker_response_reconciliation_demo.py`

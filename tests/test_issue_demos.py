@@ -393,6 +393,19 @@ def test_broker_approval_artifact_builds_live_safety_config():
         raise AssertionError("expected max_notional failure from approval artifact safety")
 
 
+def test_broker_approval_safety_demo_writes_valid_artifact():
+    subprocess.run([sys.executable, "examples/broker_approval_safety_demo.py"], cwd=ROOT, check=True)
+    artifact = ROOT / "outputs/examples/broker_approval_safety/broker_approval_artifact.json"
+    summary = json.loads((ROOT / "outputs/examples/broker_approval_safety/summary.json").read_text(encoding="utf-8"))
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    assert summary["approval_validated"] is True
+    assert summary["adapter_mode"] == "live_human_approved"
+    assert summary["approved_order_passed"] is True
+    assert summary["oversized_order_blocked"] is True
+    assert validate_broker_approval_artifact(payload) == []
+
+
 def test_dry_run_broker_adapter_demo_writes_valid_handoff():
     subprocess.run([sys.executable, "examples/dry_run_broker_adapter_demo.py"], cwd=ROOT, check=True)
     artifact = ROOT / "outputs/examples/dry_run_broker_adapter/dry_run_orders.json"

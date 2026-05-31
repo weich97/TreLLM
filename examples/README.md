@@ -280,7 +280,23 @@ Output:
 - `outputs/examples/dry_run_broker_adapter/dry_run_orders.json`
 - `outputs/examples/dry_run_broker_adapter/dry_run_orders.csv`
 
-## 17. Broker Response Reconciliation
+## 17. Broker Approval Safety
+
+```bash
+python examples/broker_approval_safety_demo.py
+```
+
+Builds a redacted broker approval artifact, validates it, converts it into a
+`live_human_approved` safety config, and proves that a bounded order passes
+while an oversized order is blocked. It does not read broker credentials or
+submit orders.
+
+Output:
+
+- `outputs/examples/broker_approval_safety/summary.json`
+- `outputs/examples/broker_approval_safety/broker_approval_artifact.json`
+
+## 18. Broker Response Reconciliation
 
 ```bash
 python examples/broker_response_reconciliation_demo.py
@@ -296,7 +312,7 @@ Output:
 - `outputs/examples/broker_response_reconciliation/broker_response_artifact.json`
 - `outputs/examples/broker_response_reconciliation/alpaca_paper_orders.json`
 
-## 18. Holdings CSV Import
+## 19. Holdings CSV Import
 
 ```bash
 python examples/holdings_csv_import_demo.py
@@ -309,7 +325,7 @@ Output:
 
 - `outputs/examples/holdings_csv_import/summary.json`
 
-## 19. Futures Roll Risk
+## 20. Futures Roll Risk
 
 ```bash
 python examples/futures_roll_risk_demo.py
@@ -323,7 +339,7 @@ Output:
 - `outputs/examples/futures_roll_risk/summary.json`
 - `outputs/examples/futures_roll_risk/futures_roll_risk.svg`
 
-## 20. Crypto Microstructure Stress
+## 21. Crypto Microstructure Stress
 
 ```bash
 python examples/crypto_microstructure_stress_demo.py
@@ -337,7 +353,7 @@ Output:
 - `outputs/examples/crypto_microstructure_stress/summary.json`
 - `outputs/examples/crypto_microstructure_stress/crypto_microstructure_stress.svg`
 
-## 21. Mock Deep-RL Policy Baseline
+## 22. Mock Deep-RL Policy Baseline
 
 ```bash
 python examples/rl_policy_baseline_demo.py

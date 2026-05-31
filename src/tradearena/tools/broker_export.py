@@ -558,7 +558,10 @@ def validate_broker_approval_request_binding(
     """Validate that an approval artifact names the exact broker handoff artifact."""
 
     errors = validate_broker_approval_artifact(approval_payload, now=now)
-    request_payload = _load_broker_artifact_payload(request_payload_or_path)
+    try:
+        request_payload = _load_broker_artifact_payload(request_payload_or_path)
+    except BrokerAdapterContractError as exc:
+        return [*errors, str(exc)]
     request_errors = validate_broker_handoff_artifact(request_payload)
     errors.extend(request_errors)
     request_hash = approval_payload.get("request_artifact_hash")
@@ -751,7 +754,9 @@ def _read_broker_artifact_json_file(path: str | Path) -> tuple[object, list[str]
 def _load_broker_artifact_payload(payload_or_path: dict[str, object] | str | Path) -> dict[str, object]:
     if isinstance(payload_or_path, dict):
         return payload_or_path
-    payload = json.loads(Path(payload_or_path).read_text(encoding="utf-8"))
+    payload, errors = _read_broker_artifact_json_file(payload_or_path)
+    if errors:
+        raise BrokerAdapterContractError("; ".join(errors))
     if not isinstance(payload, dict):
         raise BrokerAdapterContractError("broker artifact must be a JSON object")
     return payload

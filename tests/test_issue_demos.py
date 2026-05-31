@@ -608,6 +608,18 @@ def test_broker_artifact_validator_scripts_report_malformed_json(tmp_path):
         assert "Traceback" not in result.stderr
 
 
+def test_broker_handoff_hash_helper_reports_malformed_json_path(tmp_path):
+    broken = tmp_path / "broken_handoff.json"
+    broken.write_text('{"schema": ', encoding="utf-8")
+
+    try:
+        broker_handoff_artifact_hash(broken)
+    except BrokerAdapterContractError as exc:
+        assert str(exc) == "broker artifact file must contain valid JSON"
+    else:
+        raise AssertionError("malformed broker handoff JSON was hashed")
+
+
 def test_broker_approval_artifact_binds_to_handoff_request_hash(tmp_path):
     adapter = DryRunBrokerAdapter(
         client_prefix="approval-bind",
@@ -933,6 +945,43 @@ def test_broker_approval_binding_cli_and_script_reject_hash_mismatch(tmp_path):
     assert script_result.returncode == 1
     assert "request_artifact_hash does not match broker handoff artifact" in result.stdout
     assert "request_artifact_hash does not match broker handoff artifact" in script_result.stdout
+
+
+def test_broker_approval_binding_script_reports_malformed_request_json(tmp_path):
+    approval_payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=500.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="unit test",
+        ),
+        approval_id="approval-malformed-request",
+        account_mode="live",
+        max_quantity=5.0,
+        request_artifact_hash="sha256:" + "0" * 64,
+    )
+    approval_path = tmp_path / "broker_approval.json"
+    approval_path.write_text(json.dumps(approval_payload), encoding="utf-8")
+    request_path = tmp_path / "broken_request.json"
+    request_path.write_text('{"schema": ', encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/validate_broker_approval_binding.py",
+            str(approval_path),
+            str(request_path),
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "broker artifact file must contain valid JSON" in result.stdout
+    assert "Traceback" not in result.stderr
 
 
 def test_broker_approval_binding_cli_and_script_reject_expired_approval(tmp_path):

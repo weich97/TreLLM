@@ -32,6 +32,53 @@
       "items": { "$ref": "#/$defs/handoff_order" }
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "adapter_mode": { "enum": ["offline_export", "dry_run"] }
+        },
+        "required": ["adapter_mode"]
+      },
+      "then": {
+        "properties": {
+          "paper_only": { "const": true },
+          "live_submission": { "const": false },
+          "manual_approval_required": { "const": true }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "adapter_mode": { "const": "paper_sandbox" }
+        },
+        "required": ["adapter_mode"]
+      },
+      "then": {
+        "properties": {
+          "paper_only": { "const": false },
+          "live_submission": { "const": false },
+          "manual_approval_required": { "const": true }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "adapter_mode": { "const": "live_human_approved" }
+        },
+        "required": ["adapter_mode"]
+      },
+      "then": {
+        "properties": {
+          "paper_only": { "const": false },
+          "live_submission": { "const": true },
+          "manual_approval_required": { "const": false }
+        }
+      }
+    }
+  ],
   "$defs": {
     "handoff_order": {
       "type": "object",
@@ -68,7 +115,37 @@
         "approval_status": { "type": "string", "enum": ["approved", "requires_human_approval"] },
         "max_notional": { "type": ["number", "null"], "exclusiveMinimum": 0 },
         "reason": { "type": "string", "minLength": 1 }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "adapter_mode": { "const": "live_human_approved" }
+            },
+            "required": ["adapter_mode"]
+          },
+          "then": {
+            "properties": {
+              "submit_live": { "const": true },
+              "approval_status": { "const": "approved" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "adapter_mode": { "enum": ["offline_export", "dry_run", "paper_sandbox"] }
+            },
+            "required": ["adapter_mode"]
+          },
+          "then": {
+            "properties": {
+              "submit_live": { "const": false },
+              "approval_status": { "const": "requires_human_approval" }
+            }
+          }
+        }
+      ]
     }
   }
 }

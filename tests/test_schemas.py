@@ -108,6 +108,27 @@ def test_broker_response_artifact_schema_validates_writer_output(tmp_path: Path)
     _validator("broker_response_artifact.schema.json").validate(payload)
 
 
+def test_broker_response_artifact_schema_rejects_live_flag_mismatch(tmp_path: Path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-recon-mismatch")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])
+    output = tmp_path / "broker_response_artifact.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[],
+        output=output,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    payload["live_submission"] = True
+
+    errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("live_submission",) in paths
+
+
 def test_broker_handoff_artifact_schema_validates_writer_output(tmp_path: Path):
     adapter = AlpacaPaperExportAdapter(client_prefix="schema-handoff")
     adapter.write([Order("AAPL", Side.BUY, 1.0, reason="schema test")], tmp_path)

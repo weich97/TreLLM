@@ -57,6 +57,34 @@
       "items": { "$ref": "#/$defs/broker_response" }
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "adapter_mode": { "const": "live_human_approved" }
+        },
+        "required": ["adapter_mode"]
+      },
+      "then": {
+        "properties": {
+          "live_submission": { "const": true }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "adapter_mode": { "enum": ["offline_export", "dry_run", "paper_sandbox"] }
+        },
+        "required": ["adapter_mode"]
+      },
+      "then": {
+        "properties": {
+          "live_submission": { "const": false }
+        }
+      }
+    }
+  ],
   "$defs": {
     "broker_response": {
       "type": "object",

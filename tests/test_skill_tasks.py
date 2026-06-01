@@ -168,3 +168,27 @@ def test_batch_answer_scoring_requires_manifest(tmp_path: Path):
 
     assert result.returncode == 1
     assert "missing answer-set manifest" in result.stdout
+
+
+def test_skill_task_scorer_reports_malformed_rubric_json(tmp_path: Path):
+    task_dir = tmp_path / "broken_task"
+    task_dir.mkdir()
+    (task_dir / "input.md").write_text("Task input", encoding="utf-8")
+    (task_dir / "rubric.json").write_text('{"task_id": ', encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/score_skill_task.py",
+            str(task_dir),
+            "--validate-only",
+        ],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "rubric.json must contain valid JSON" in result.stdout
+    assert "Traceback" not in result.stderr

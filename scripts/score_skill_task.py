@@ -171,7 +171,11 @@ def validate_tasks(task_paths: list[Path]) -> list[str]:
         if not rubric_path.exists():
             failures.append(f"{task_path.name}: missing rubric.json")
             continue
-        rubric = _load_rubric(rubric_path)
+        try:
+            rubric = _load_rubric(rubric_path)
+        except ValueError as exc:
+            failures.append(f"{task_path.name}: {exc}")
+            continue
         task_id = str(rubric.get("task_id", ""))
         if task_id != task_path.name:
             failures.append(f"{task_path.name}: task_id must match directory name")
@@ -350,7 +354,13 @@ def _select_task_paths(task: Path | None, tasks_dir: Path) -> list[Path]:
 
 
 def _load_rubric(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ValueError("rubric.json must contain valid JSON") from exc
+    if not isinstance(payload, dict):
+        raise ValueError("rubric.json must be a JSON object")
+    return payload
 
 
 def _validate_criterion(task_id: str, index: int, criterion: Any, failures: list[str]) -> int:

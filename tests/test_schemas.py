@@ -226,6 +226,23 @@ def test_reproduction_report_validator_accepts_complete_manifest(tmp_path: Path)
     assert "Valid reproduction report" in result.stdout
 
 
+def test_reproduction_report_validator_reports_malformed_json(tmp_path: Path):
+    path = tmp_path / "manifest.json"
+    path.write_text('{"schema": ', encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_reproduction_report.py", str(path)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid reproduction report" in result.stdout
+    assert "reproduction report must contain valid JSON" in result.stdout
+    assert "Traceback" not in result.stderr
+
+
 def test_reproduction_report_validator_has_no_dependency_fallback(monkeypatch):
     payload = _minimal_reproduction_report()
     monkeypatch.setattr(reproduction_validator, "Draft202012Validator", None)

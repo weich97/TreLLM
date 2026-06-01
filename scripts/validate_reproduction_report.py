@@ -25,7 +25,12 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     report_path = Path(args.report)
-    payload = json.loads(report_path.read_text(encoding="utf-8"))
+    try:
+        payload = _load_reproduction_report(report_path)
+    except ValueError as exc:
+        print(f"Invalid reproduction report: {report_path}")
+        print(f"  - {exc}")
+        return 1
     errors = validate_reproduction_report(payload, allow_command_failures=args.allow_command_failures)
     if errors:
         print(f"Invalid reproduction report: {report_path}")
@@ -34,6 +39,16 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     print(f"Valid reproduction report: {report_path}")
     return 0
+
+
+def _load_reproduction_report(path: Path) -> dict[str, Any]:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ValueError("reproduction report must contain valid JSON") from exc
+    if not isinstance(payload, dict):
+        raise ValueError("reproduction report must be a JSON object")
+    return payload
 
 
 def validate_reproduction_report(

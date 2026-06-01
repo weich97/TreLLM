@@ -179,6 +179,27 @@ def test_broker_approval_artifact_schema_rejects_malformed_timestamps():
     assert ("expires_at",) in paths
 
 
+def test_broker_approval_artifact_schema_requires_live_account_mode():
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=2500.0,
+            allowed_symbols=("AAPL", "MSFT"),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-schema-paper-account-001",
+        account_mode="paper",
+        max_quantity=5.0,
+    )
+
+    errors = sorted(_validator("broker_approval_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+
+    assert errors
+    assert list(errors[0].path) == ["account_mode"]
+
+
 def test_all_example_benchmark_submissions_match_schema_and_runtime_validator():
     validator = _validator("benchmark_submission.schema.json")
 

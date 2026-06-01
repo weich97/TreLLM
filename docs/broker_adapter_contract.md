@@ -144,7 +144,9 @@ broker-facing PR or paper-sandbox run report.
 ```
 
 The adapter should reject stale, missing, or over-broad approvals. Approval
-records should use redacted operator IDs in public artifacts, and `approved_at`
+artifacts are only valid for `account_mode: "live"`; paper and sandbox reviews
+should use handoff or response artifacts instead. Approval records should use
+redacted operator IDs in public artifacts, and `approved_at`
 and `expires_at` must be ISO timestamps with timezone information, such as
 `2026-05-31T12:00:00Z`. When `expires_at` is present, it must be later than
 `approved_at`. Approval artifacts can be checked with

@@ -41,7 +41,7 @@
         }
       ]
     },
-    "account_mode": { "type": "string", "minLength": 1 },
+    "account_mode": { "const": "live" },
     "max_notional": { "type": "number", "exclusiveMinimum": 0 },
     "max_quantity": { "type": "number", "exclusiveMinimum": 0 },
     "allowed_symbols": {

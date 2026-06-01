@@ -357,6 +357,24 @@ def test_broker_approval_artifact_validator_and_cli_reject_unredacted_operator(t
     assert "approved_by must be a redacted operator id, not an email address" in result.stdout
 
 
+def test_broker_approval_artifact_requires_live_account_mode():
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=250.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-paper-account-001",
+        account_mode="paper",
+        max_quantity=5.0,
+    )
+
+    assert "account_mode must be live for broker approval artifacts" in validate_broker_approval_artifact(payload)
+
+
 def test_broker_approval_artifact_builds_live_safety_config():
     payload = build_broker_approval_artifact(
         BrokerApproval(

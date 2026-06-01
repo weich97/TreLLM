@@ -480,8 +480,8 @@ def validate_broker_approval_artifact(
         errors.append("approved_at must be an ISO timestamp with timezone")
     else:
         approved_dt = _parse_timestamp(approved_at)
-    if not payload.get("account_mode"):
-        errors.append("account_mode must be non-empty")
+    if payload.get("account_mode") != "live":
+        errors.append("account_mode must be live for broker approval artifacts")
     for field_name in ("max_notional", "max_quantity"):
         value = payload.get(field_name)
         if not isinstance(value, (int, float)) or value <= 0:

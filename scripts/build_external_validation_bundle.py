@@ -39,7 +39,12 @@ def main(argv: list[str] | None = None) -> int:
         args.manifest = str(Path(args.pack_output_dir) / "manifest.json")
 
     manifest_path = ROOT / args.manifest
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    try:
+        manifest = _load_manifest(manifest_path)
+    except ValueError as exc:
+        print(f"Invalid reproduction manifest: {manifest_path}")
+        print(f"  - {exc}")
+        return 1
     bundle = build_bundle(manifest, manifest_path=manifest_path, environment_label=args.environment_label)
     output = ROOT / args.output
     markdown_output = ROOT / args.markdown_output
@@ -50,6 +55,16 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Wrote {_display_path(output)}")
     print(f"Wrote {_display_path(markdown_output)}")
     return 0
+
+
+def _load_manifest(path: Path) -> dict[str, Any]:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ValueError("reproduction manifest must contain valid JSON") from exc
+    if not isinstance(payload, dict):
+        raise ValueError("reproduction manifest must be a JSON object")
+    return payload
 
 
 def build_bundle(

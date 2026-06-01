@@ -147,6 +147,7 @@ def scan_public_artifact_paths(paths: list[str | Path]) -> list[str]:
     for root in paths:
         path = Path(root)
         if not path.exists():
+            findings.append(f"{path}: path does not exist")
             continue
         candidates = [path] if path.is_file() else [item for item in path.rglob("*") if item.is_file()]
         for candidate in candidates:

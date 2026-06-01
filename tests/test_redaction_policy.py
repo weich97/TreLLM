@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 from datetime import datetime, timezone
+from pathlib import Path
 
 from tradearena.core.redaction import (
     PRIVATE_DEBUG_POLICY,
@@ -11,6 +14,8 @@ from tradearena.core.redaction import (
 )
 from tradearena.core.serialization import read_json, write_json
 from tradearena.core.trajectory import StepRecord, Trajectory
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_public_redaction_policy_hashes_raw_llm_fields_and_redacts_text():
@@ -121,3 +126,27 @@ def test_public_artifact_scan_skips_private_llm_cache_dirs(tmp_path):
     answer.write_text("Raw model answer may mention API key boundaries.", encoding="utf-8")
 
     assert scan_public_artifact_paths([tmp_path / "outputs"]) == []
+
+
+def test_public_artifact_scan_reports_missing_paths(tmp_path):
+    missing = tmp_path / "missing-public-artifacts"
+
+    findings = scan_public_artifact_paths([missing])
+
+    assert findings == [f"{missing}: path does not exist"]
+
+
+def test_public_artifact_scan_cli_fails_on_missing_paths(tmp_path):
+    missing = tmp_path / "missing-public-artifacts"
+
+    result = subprocess.run(
+        [sys.executable, "scripts/scan_public_artifacts.py", str(missing)],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Public artifact privacy scan failed" in result.stdout
+    assert "path does not exist" in result.stdout

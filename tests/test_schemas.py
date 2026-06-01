@@ -129,6 +129,26 @@ def test_broker_response_artifact_schema_rejects_live_flag_mismatch(tmp_path: Pa
     assert ("live_submission",) in paths
 
 
+def test_broker_response_artifact_schema_requires_live_account_for_live_mode(tmp_path: Path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-recon-live-account")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])
+    output = tmp_path / "broker_response_artifact.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[],
+        output=output,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+        account_mode="paper",
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+
+    errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("account_mode",) in paths
+
+
 def test_broker_handoff_artifact_schema_validates_writer_output(tmp_path: Path):
     adapter = AlpacaPaperExportAdapter(client_prefix="schema-handoff")
     adapter.write([Order("AAPL", Side.BUY, 1.0, reason="schema test")], tmp_path)

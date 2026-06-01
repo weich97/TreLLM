@@ -309,6 +309,34 @@ def test_broker_response_artifact_validator_and_cli_reject_count_mismatch(tmp_pa
     assert "reconciliation.filled_count must be 1; got 0" in result.stdout
 
 
+def test_broker_response_artifact_rejects_live_mode_with_paper_account():
+    payload = {
+        "schema": "tradearena_broker_response_artifact_v0.1",
+        "adapter": "live-unit-adapter",
+        "adapter_mode": "live_human_approved",
+        "account_mode": "paper",
+        "live_submission": True,
+        "reconciliation": {
+            "response_count": 0,
+            "accepted_count": 0,
+            "rejected_count": 0,
+            "partial_fill_count": 0,
+            "filled_count": 0,
+            "canceled_count": 0,
+            "expired_count": 0,
+            "unknown_count": 0,
+            "unmatched_response_count": 0,
+            "missing_response_count": 0,
+            "fill_ratio_mean": None,
+        },
+        "responses": [],
+    }
+
+    assert "account_mode must be live for live_human_approved broker response artifacts" in validate_broker_response_artifact(
+        payload
+    )
+
+
 def test_broker_approval_artifact_validator_and_cli_reject_unredacted_operator(tmp_path):
     approval = BrokerApproval(
         approval_status="approved",

@@ -651,6 +651,8 @@ def validate_broker_response_artifact(payload: dict[str, object]) -> list[str]:
         errors.append("account_mode must be non-empty")
     if payload.get("live_submission") is not (adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED.value):
         errors.append("live_submission must match adapter_mode == live_human_approved")
+    if adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED.value and payload.get("account_mode") != "live":
+        errors.append("account_mode must be live for live_human_approved broker response artifacts")
 
     responses = payload.get("responses")
     if not isinstance(responses, list):

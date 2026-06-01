@@ -204,6 +204,51 @@ def test_live_human_approved_mode_requires_approval_and_marks_live(tmp_path):
     assert payload["orders"][0]["approval_status"] == "approved"
 
 
+def test_live_human_approved_handoff_requires_live_account_mode(tmp_path):
+    adapter = AlpacaPaperExportAdapter(
+        safety=BrokerSafetyConfig(
+            mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+            account_mode="paper",
+            max_notional=1000.0,
+            max_quantity=10.0,
+            approval=BrokerApproval(
+                approval_status="approved",
+                approved_by="unit-operator",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=1000.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="unit test approval",
+            ),
+        )
+    )
+
+    try:
+        adapter.write(
+            [Order("AAPL", Side.BUY, 1.0, order_type=OrderType.LIMIT, limit_price=50.0, reason="unit test")],
+            tmp_path,
+        )
+    except BrokerAdapterContractError as exc:
+        assert "live_human_approved mode requires account_mode live" in str(exc)
+    else:
+        raise AssertionError("expected live account_mode failure")
+
+    payload = {
+        "schema": "tradearena_broker_handoff_artifact_v0.1",
+        "adapter": "live-unit-adapter",
+        "adapter_mode": "live_human_approved",
+        "account_mode": "paper",
+        "paper_only": False,
+        "live_submission": True,
+        "manual_approval_required": False,
+        "kill_switch": False,
+        "orders": [],
+    }
+
+    assert "account_mode must be live for live_human_approved broker handoff artifacts" in validate_broker_handoff_artifact(
+        payload
+    )
+
+
 def test_broker_response_artifact_summarizes_reconciliation(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="recon")
     requests = adapter.convert(

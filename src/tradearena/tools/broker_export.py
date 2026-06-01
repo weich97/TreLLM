@@ -128,6 +128,8 @@ class BrokerSafetyConfig:
             raise BrokerAdapterContractError("live_human_approved mode requires max_notional and max_quantity limits")
         if self.approval is None or not self.approval.is_approved:
             raise BrokerAdapterContractError("live_human_approved mode requires an approved human approval record")
+        if self.account_mode != "live":
+            raise BrokerAdapterContractError("live_human_approved mode requires account_mode live")
         if self.approval.allowed_symbols and order.symbol not in self.approval.allowed_symbols:
             raise BrokerAdapterContractError(f"symbol {order.symbol} is outside the human approval scope")
         if self.approval.max_notional <= 0:
@@ -715,6 +717,8 @@ def validate_broker_handoff_artifact(payload: dict[str, object]) -> list[str]:
         errors.append("adapter_mode must be one of offline_export, dry_run, paper_sandbox, live_human_approved")
     if not payload.get("account_mode"):
         errors.append("account_mode must be non-empty")
+    if adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED.value and payload.get("account_mode") != "live":
+        errors.append("account_mode must be live for live_human_approved broker handoff artifacts")
     paper_only_modes = {BrokerAdapterMode.OFFLINE_EXPORT.value, BrokerAdapterMode.DRY_RUN.value}
     if payload.get("paper_only") is not (adapter_mode in paper_only_modes):
         errors.append("paper_only must match adapter_mode in offline_export or dry_run")

@@ -83,6 +83,7 @@ Adapter implementations must satisfy these invariants:
 
 - default construction cannot submit a live order;
 - `submit_live=true` is rejected unless mode is `live_human_approved`;
+- `live_human_approved` handoff artifacts must use `account_mode: "live"`;
 - live mode requires an explicit approval record;
 - live mode requires max notional and max quantity limits;
 - live mode must have a reference price whenever max-notional checks are

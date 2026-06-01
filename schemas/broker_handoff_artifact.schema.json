@@ -72,6 +72,7 @@
       },
       "then": {
         "properties": {
+          "account_mode": { "const": "live" },
           "paper_only": { "const": false },
           "live_submission": { "const": true },
           "manual_approval_required": { "const": false }
@@ -126,6 +127,7 @@
           },
           "then": {
             "properties": {
+              "account_mode": { "const": "live" },
               "submit_live": { "const": true },
               "approval_status": { "const": "approved" }
             }

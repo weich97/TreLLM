@@ -1,11 +1,16 @@
 from __future__ import annotations
 
 import argparse
-import json
 from pathlib import Path
 from typing import Any
 
-from score_skill_task import ABILITY_LABELS, AnswerSetManifest, score_answer_directory, validate_tasks
+from score_skill_task import (
+    ABILITY_LABELS,
+    AnswerSetManifest,
+    _load_rubric,
+    score_answer_directory,
+    validate_tasks,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TASKS_DIR = ROOT / "examples" / "skill_tasks"
@@ -183,10 +188,6 @@ def render_report(
         ]
     )
     return "\n".join(lines)
-
-
-def _load_rubric(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def _ability_summary(answer_scores: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:

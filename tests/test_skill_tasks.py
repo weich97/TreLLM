@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import importlib.util
 import json
 import subprocess
 import sys
 from pathlib import Path
 
+import pytest
 from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -192,3 +194,56 @@ def test_skill_task_scorer_reports_malformed_rubric_json(tmp_path: Path):
     assert result.returncode == 1
     assert "rubric.json must contain valid JSON" in result.stdout
     assert "Traceback" not in result.stderr
+
+
+def test_skill_task_report_reports_malformed_rubric_json(tmp_path: Path):
+    task_dir = tmp_path / "broken_task"
+    task_dir.mkdir()
+    (task_dir / "input.md").write_text("Task input", encoding="utf-8")
+    (task_dir / "rubric.json").write_text('{"task_id": ', encoding="utf-8")
+    output = tmp_path / "matrix.md"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/score_skill_task_report.py",
+            "--tasks-dir",
+            str(tmp_path),
+            "--output",
+            str(output),
+        ],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Skill task matrix validation failed" in result.stdout
+    assert "rubric.json must contain valid JSON" in result.stdout
+    assert "Traceback" not in result.stderr
+    assert not output.exists()
+
+
+def test_skill_task_report_renderer_reports_malformed_rubric_json(tmp_path: Path):
+    task_dir = tmp_path / "broken_task"
+    task_dir.mkdir()
+    (task_dir / "rubric.json").write_text('{"task_id": ', encoding="utf-8")
+    module = _load_skill_task_report_module()
+
+    with pytest.raises(ValueError, match=r"rubric\.json must contain valid JSON"):
+        module.render_report([task_dir])
+
+
+def _load_skill_task_report_module():
+    scripts_dir = ROOT / "scripts"
+    sys.path.insert(0, str(scripts_dir))
+    try:
+        spec = importlib.util.spec_from_file_location("score_skill_task_report", scripts_dir / "score_skill_task_report.py")
+        assert spec is not None
+        assert spec.loader is not None
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+    finally:
+        sys.path.remove(str(scripts_dir))

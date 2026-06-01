@@ -31,7 +31,11 @@ def main(argv: list[str] | None = None) -> int:
             if not path.exists():
                 failures.append(f"{artifact['id']}: cannot check missing JSON {rel}")
                 continue
-            payload = json.loads(path.read_text(encoding="utf-8"))
+            try:
+                payload = json.loads(path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError as exc:
+                failures.append(f"{artifact['id']}: invalid JSON {rel}: {exc}")
+                continue
             if _get_path(payload, dotted_path) is None:
                 failures.append(f"{artifact['id']}: missing JSON field {spec}")
             if dotted_path == "verification_commands":

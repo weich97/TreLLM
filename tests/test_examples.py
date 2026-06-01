@@ -262,6 +262,42 @@ def test_demo_artifact_contract_checks_summary_verification_commands(tmp_path: P
     assert "verification_commands do not match required_validators" in result.stdout
 
 
+def test_demo_artifact_contract_reports_malformed_required_json(tmp_path: Path):
+    broken_json = ROOT / "outputs/examples/demo_artifact_contract_malformed_test.json"
+    manifest = tmp_path / "demo_artifacts.yaml"
+    manifest.write_text(
+        "\n".join(
+            [
+                'version: "test"',
+                "artifacts:",
+                "  - id: malformed_json_contract",
+                "    command: python examples/quickstart.py",
+                "    required_outputs:",
+                "      - outputs/examples/demo_artifact_contract_malformed_test.json",
+                "    required_json_fields:",
+                "      - outputs/examples/demo_artifact_contract_malformed_test.json:summary.status",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    broken_json.parent.mkdir(parents=True, exist_ok=True)
+    broken_json.write_text('{"summary": ', encoding="utf-8")
+    try:
+        result = subprocess.run(
+            [sys.executable, "scripts/validate_demo_artifacts.py", "--manifest", str(manifest)],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+    finally:
+        broken_json.unlink(missing_ok=True)
+
+    assert result.returncode == 1
+    assert "Demo artifact contract failed" in result.stdout
+    assert "invalid JSON" in result.stdout
+    assert "Traceback" not in result.stderr
+
+
 def _run_example(path: str) -> None:
     subprocess.run([sys.executable, path], cwd=ROOT, check=True)
 

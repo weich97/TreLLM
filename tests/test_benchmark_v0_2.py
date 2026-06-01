@@ -29,6 +29,25 @@ def test_v02_spec_validates_and_names_required_surfaces():
     assert "always-hold" in spec["baselines"]
 
 
+def test_benchmark_spec_validator_reports_malformed_json(tmp_path: Path):
+    spec = tmp_path / "broken_spec.json"
+    spec.write_text('{"schema_version": ', encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_benchmark_spec.py", str(spec)],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    payload = json.loads(result.stdout)
+    assert payload["valid"] is False
+    assert payload["errors"] == ["benchmark spec file must contain valid JSON"]
+    assert "Traceback" not in result.stderr
+
+
 def test_quote_fill_calibration_fixture_fits_execution_parameters():
     summary = summarize_quote_fill_calibration(
         ROOT / "data/public/microstructure_sample/quotes.csv",

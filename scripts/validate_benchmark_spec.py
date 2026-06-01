@@ -30,7 +30,19 @@ def main() -> int:
     parser.add_argument("spec", nargs="?", default="benchmarks/v0.2/spec.json")
     args = parser.parse_args()
 
-    payload = json.loads(Path(args.spec).read_text(encoding="utf-8"))
+    try:
+        payload = _load_spec(Path(args.spec))
+    except ValueError as exc:
+        result = {
+            "spec": args.spec,
+            "valid": False,
+            "spec_id": None,
+            "schema_version": None,
+            "canonical_sha256": None,
+            "errors": [str(exc)],
+        }
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 1
     errors = validate_spec(payload)
     result = {
         "spec": args.spec,
@@ -42,6 +54,16 @@ def main() -> int:
     }
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if not errors else 1
+
+
+def _load_spec(path: Path) -> dict[str, Any]:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ValueError("benchmark spec file must contain valid JSON") from exc
+    if not isinstance(payload, dict):
+        raise ValueError("benchmark spec file must be a JSON object")
+    return payload
 
 
 def validate_spec(payload: dict[str, Any]) -> list[str]:

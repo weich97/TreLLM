@@ -84,6 +84,7 @@ class BrokerSafetyConfig:
     max_quantity: float | None = None
     allowed_symbols: tuple[str, ...] = field(default_factory=tuple)
     allowed_order_types: tuple[OrderType, ...] = field(default_factory=lambda: (OrderType.MARKET, OrderType.LIMIT))
+    approved_order_fingerprints: tuple[str, ...] = field(default_factory=tuple)
     kill_switch: bool = False
     approval: BrokerApproval | None = None
 
@@ -130,6 +131,10 @@ class BrokerSafetyConfig:
             raise BrokerAdapterContractError("live_human_approved mode requires an approved human approval record")
         if self.account_mode != "live":
             raise BrokerAdapterContractError("live_human_approved mode requires account_mode live")
+        if self.approved_order_fingerprints and _order_fingerprint_from_order(order) not in set(
+            self.approved_order_fingerprints
+        ):
+            raise BrokerAdapterContractError("order does not match an approved broker handoff order")
         if self.approval.allowed_symbols and order.symbol not in self.approval.allowed_symbols:
             raise BrokerAdapterContractError(f"symbol {order.symbol} is outside the human approval scope")
         if self.approval.max_notional <= 0:
@@ -614,6 +619,9 @@ def broker_safety_from_approval_artifact(
         OrderType(str(order_type))
         for order_type in cast(list[object] | tuple[object, ...], payload["allowed_order_types"])
     )
+    approved_order_fingerprints = (
+        _approved_order_fingerprints_from_request(request_artifact) if request_artifact is not None else ()
+    )
     return BrokerSafetyConfig(
         mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
         account_mode=str(payload["account_mode"]),
@@ -621,6 +629,7 @@ def broker_safety_from_approval_artifact(
         max_quantity=float(cast(str | int | float, payload["max_quantity"])),
         allowed_symbols=tuple(approval.allowed_symbols),
         allowed_order_types=order_types,
+        approved_order_fingerprints=approved_order_fingerprints,
         approval=approval,
     )
 
@@ -802,6 +811,58 @@ def _validate_approval_request_scope(
         if notional > max_notional:
             errors.append(f"orders[{idx}].notional {notional:.2f} exceeds approval max_notional {max_notional:.2f}")
     return errors
+
+
+def _approved_order_fingerprints_from_request(payload_or_path: dict[str, object] | str | Path) -> tuple[str, ...]:
+    request_payload = _load_broker_artifact_payload(payload_or_path)
+    errors = validate_broker_handoff_artifact(request_payload)
+    if errors:
+        raise BrokerAdapterContractError("; ".join(errors))
+    orders = cast(list[object] | tuple[object, ...], request_payload["orders"])
+    fingerprints = []
+    for order in orders:
+        if isinstance(order, dict):
+            fingerprints.append(_order_fingerprint_from_handoff(order))
+    return tuple(fingerprints)
+
+
+def _order_fingerprint_from_order(order: Order) -> str:
+    return _order_fingerprint(
+        symbol=order.symbol,
+        side=order.side.value,
+        order_type=_alpaca_order_type(order.order_type),
+        quantity=order.quantity,
+        limit_price=order.limit_price,
+    )
+
+
+def _order_fingerprint_from_handoff(order: dict[object, object]) -> str:
+    return _order_fingerprint(
+        symbol=str(order.get("symbol")),
+        side=str(order.get("side")),
+        order_type=str(order.get("order_type")),
+        quantity=float(cast(str | int | float, order.get("quantity", 0.0))),
+        limit_price=cast(float | None, order.get("limit_price")),
+    )
+
+
+def _order_fingerprint(
+    *,
+    symbol: str,
+    side: str,
+    order_type: str,
+    quantity: float,
+    limit_price: float | None,
+) -> str:
+    payload = {
+        "symbol": symbol,
+        "side": side,
+        "order_type": order_type,
+        "quantity": round(float(quantity), 8),
+        "limit_price": None if limit_price is None else round(float(limit_price), 8),
+    }
+    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
 def _alpaca_order_type(order_type: OrderType) -> str:

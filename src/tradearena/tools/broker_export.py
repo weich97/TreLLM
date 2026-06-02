@@ -917,6 +917,18 @@ def _validate_response_request_bindings(
             BrokerOrderStatus.FILLED,
         } and not _is_positive_finite_number(response.accepted_quantity):
             errors.append(f"responses[{idx}].{response.status.value} responses require a positive accepted_quantity")
+        if _is_finite_number(response.submitted_quantity):
+            if _is_finite_number(response.accepted_quantity) and float(response.accepted_quantity) > float(
+                response.submitted_quantity
+            ):
+                errors.append(f"responses[{idx}].accepted_quantity cannot exceed submitted_quantity")
+            if _is_finite_number(response.fill_quantity) and float(response.fill_quantity) > float(
+                response.submitted_quantity
+            ):
+                errors.append(f"responses[{idx}].fill_quantity cannot exceed submitted_quantity")
+        if _is_finite_number(response.accepted_quantity) and _is_finite_number(response.fill_quantity):
+            if float(response.fill_quantity) > float(response.accepted_quantity):
+                errors.append(f"responses[{idx}].fill_quantity cannot exceed accepted_quantity")
         if response.status == BrokerOrderStatus.ACCEPTED:
             if _is_positive_finite_number(response.fill_quantity):
                 errors.append(f"responses[{idx}].accepted responses must not report fill_quantity")
@@ -925,9 +937,17 @@ def _validate_response_request_bindings(
         if response.status == BrokerOrderStatus.PARTIALLY_FILLED:
             if not _is_positive_finite_number(response.fill_quantity):
                 errors.append(f"responses[{idx}].partial fill_quantity must be positive")
+            elif _is_finite_number(response.submitted_quantity) and float(response.fill_quantity) >= float(
+                response.submitted_quantity
+            ):
+                errors.append(f"responses[{idx}].partial fill_quantity must be less than submitted_quantity")
         if response.status == BrokerOrderStatus.FILLED:
             if not _is_positive_finite_number(response.fill_quantity):
                 errors.append(f"responses[{idx}].filled responses require a positive fill_quantity")
+            elif _is_finite_number(response.submitted_quantity) and float(response.fill_quantity) != float(
+                response.submitted_quantity
+            ):
+                errors.append(f"responses[{idx}].filled fill_quantity must equal submitted_quantity")
         if response.status in {BrokerOrderStatus.PARTIALLY_FILLED, BrokerOrderStatus.FILLED}:
             if not _is_positive_finite_number(response.fill_price):
                 errors.append(f"responses[{idx}].filled or partially_filled responses require a positive fill_price")

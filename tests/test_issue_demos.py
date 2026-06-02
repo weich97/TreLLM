@@ -669,7 +669,7 @@ def test_broker_response_artifact_rejects_impossible_fill_quantities(tmp_path):
                 broker_order_id="paper-impossible-fill-1",
                 submitted_quantity=1.0,
                 accepted_quantity=1.0,
-                fill_quantity=2.0,
+                fill_quantity=0.5,
                 fill_price=190.0,
                 account_mode="paper",
             )
@@ -680,6 +680,7 @@ def test_broker_response_artifact_rejects_impossible_fill_quantities(tmp_path):
         account_mode="paper",
     )
     payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0]["fill_quantity"] = 2.0
 
     assert "responses[0].fill_quantity cannot exceed submitted_quantity" in validate_broker_response_artifact(payload)
 
@@ -696,7 +697,7 @@ def test_broker_response_artifact_rejects_impossible_accepted_quantities(tmp_pat
                 status=BrokerOrderStatus.ACCEPTED,
                 broker_order_id="paper-impossible-accepted-1",
                 submitted_quantity=1.0,
-                accepted_quantity=2.0,
+                accepted_quantity=1.0,
                 account_mode="paper",
             )
         ],
@@ -706,6 +707,7 @@ def test_broker_response_artifact_rejects_impossible_accepted_quantities(tmp_pat
         account_mode="paper",
     )
     payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0]["accepted_quantity"] = 2.0
 
     assert "responses[0].accepted_quantity cannot exceed submitted_quantity" in validate_broker_response_artifact(
         payload
@@ -724,8 +726,8 @@ def test_broker_response_artifact_rejects_fill_exceeding_accepted_quantity(tmp_p
                 status=BrokerOrderStatus.PARTIALLY_FILLED,
                 broker_order_id="paper-fill-vs-accepted-1",
                 submitted_quantity=1.0,
-                accepted_quantity=0.5,
-                fill_quantity=1.0,
+                accepted_quantity=1.0,
+                fill_quantity=0.5,
                 fill_price=190.0,
                 account_mode="paper",
             )
@@ -736,6 +738,8 @@ def test_broker_response_artifact_rejects_fill_exceeding_accepted_quantity(tmp_p
         account_mode="paper",
     )
     payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0]["accepted_quantity"] = 0.5
+    payload["responses"][0]["fill_quantity"] = 1.0
 
     assert "responses[0].fill_quantity cannot exceed accepted_quantity" in validate_broker_response_artifact(payload)
 
@@ -781,7 +785,7 @@ def test_broker_response_artifact_rejects_partial_fill_with_full_quantity(tmp_pa
                 broker_order_id="paper-partial-full-1",
                 submitted_quantity=1.0,
                 accepted_quantity=1.0,
-                fill_quantity=1.0,
+                fill_quantity=0.5,
                 fill_price=190.0,
                 account_mode="paper",
             )
@@ -792,6 +796,7 @@ def test_broker_response_artifact_rejects_partial_fill_with_full_quantity(tmp_pa
         account_mode="paper",
     )
     payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0]["fill_quantity"] = 1.0
 
     assert "responses[0].partial fill_quantity must be less than submitted_quantity" in validate_broker_response_artifact(
         payload
@@ -842,7 +847,7 @@ def test_broker_response_artifact_rejects_filled_with_partial_quantity(tmp_path)
                 broker_order_id="paper-filled-partial-1",
                 submitted_quantity=1.0,
                 accepted_quantity=1.0,
-                fill_quantity=0.5,
+                fill_quantity=1.0,
                 fill_price=190.0,
                 account_mode="paper",
             )
@@ -853,6 +858,7 @@ def test_broker_response_artifact_rejects_filled_with_partial_quantity(tmp_path)
         account_mode="paper",
     )
     payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0]["fill_quantity"] = 0.5
 
     assert "responses[0].filled fill_quantity must equal submitted_quantity" in validate_broker_response_artifact(
         payload
@@ -892,6 +898,79 @@ def test_broker_response_artifact_rejects_fills_without_fill_price(tmp_path, sta
     assert "responses[0].filled or partially_filled responses require a positive fill_price" in (
         validate_broker_response_artifact(payload)
     )
+
+
+@pytest.mark.parametrize(
+    ("status", "accepted_quantity", "fill_quantity", "expected_message"),
+    [
+        (
+            BrokerOrderStatus.ACCEPTED,
+            2.0,
+            None,
+            "responses[0].accepted_quantity cannot exceed submitted_quantity",
+        ),
+        (
+            BrokerOrderStatus.PARTIALLY_FILLED,
+            1.0,
+            2.0,
+            "responses[0].fill_quantity cannot exceed submitted_quantity",
+        ),
+        (
+            BrokerOrderStatus.PARTIALLY_FILLED,
+            0.5,
+            1.0,
+            "responses[0].fill_quantity cannot exceed accepted_quantity",
+        ),
+        (
+            BrokerOrderStatus.PARTIALLY_FILLED,
+            1.0,
+            1.0,
+            "responses[0].partial fill_quantity must be less than submitted_quantity",
+        ),
+        (
+            BrokerOrderStatus.FILLED,
+            1.0,
+            0.5,
+            "responses[0].filled fill_quantity must equal submitted_quantity",
+        ),
+    ],
+)
+def test_broker_response_artifact_writer_rejects_impossible_response_quantities(
+    tmp_path,
+    status,
+    accepted_quantity,
+    fill_quantity,
+    expected_message,
+):
+    adapter = AlpacaPaperExportAdapter(client_prefix=f"response-writer-{status.value}-quantity")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=status,
+                    broker_order_id=f"paper-writer-{status.value}-quantity-1",
+                    submitted_quantity=1.0,
+                    accepted_quantity=accepted_quantity,
+                    fill_quantity=fill_quantity,
+                    fill_price=190.0 if fill_quantity is not None else None,
+                    submitted_at="2026-06-02T09:30:00Z",
+                    broker_timestamp="2026-06-02T09:30:01Z",
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert expected_message in str(exc)
+    else:
+        raise AssertionError(f"expected {status.value} impossible quantity to be rejected by writer")
 
 
 @pytest.mark.parametrize("status", [BrokerOrderStatus.PARTIALLY_FILLED, BrokerOrderStatus.FILLED])

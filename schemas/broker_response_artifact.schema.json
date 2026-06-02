@@ -153,6 +153,19 @@
               "rejection_reason": { "type": "string", "minLength": 1 }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": { "enum": ["accepted", "partially_filled", "filled", "canceled", "expired"] }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "broker_order_id": { "type": "string", "minLength": 1 }
+            }
+          }
         }
       ]
     }

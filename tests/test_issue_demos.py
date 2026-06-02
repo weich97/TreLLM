@@ -130,6 +130,18 @@ def test_broker_handoff_artifact_rejects_market_order_with_limit_price(tmp_path)
     assert "orders[0].market orders must not include limit_price" in errors
 
 
+def test_broker_handoff_artifact_rejects_nonfinite_quantity(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="handoff-nonfinite")
+    adapter.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path)
+    artifact = tmp_path / "alpaca_paper_orders.json"
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["orders"][0]["quantity"] = float("nan")
+
+    errors = validate_broker_handoff_artifact(payload)
+
+    assert "orders[0].quantity must be a positive finite number" in errors
+
+
 def test_broker_safety_config_blocks_disallowed_orders(tmp_path):
     adapter = AlpacaPaperExportAdapter(
         safety=BrokerSafetyConfig(

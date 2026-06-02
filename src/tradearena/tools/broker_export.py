@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+import math
 import re
 from collections import Counter
 from dataclasses import asdict, dataclass, field, replace
@@ -10,7 +11,7 @@ from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 from statistics import fmean
-from typing import Protocol, cast, runtime_checkable
+from typing import Protocol, TypeGuard, cast, runtime_checkable
 
 from tradearena.core.domain import Order, OrderType, Side
 
@@ -93,13 +94,16 @@ class BrokerSafetyConfig:
     def validate_order(self, order: Order, *, reference_price: float | None = None) -> None:
         """Validate one order before export, dry run, sandbox, or live handoff."""
 
+        quantity = float(order.quantity)
+        if not math.isfinite(quantity) or quantity <= 0:
+            raise BrokerAdapterContractError("order quantity must be a positive finite number")
         if self.kill_switch:
             raise BrokerAdapterContractError("broker adapter kill switch is enabled")
         if self.allowed_symbols and order.symbol not in self.allowed_symbols:
             raise BrokerAdapterContractError(f"symbol {order.symbol} is not in the broker adapter allow-list")
         if order.order_type not in self.allowed_order_types:
             raise BrokerAdapterContractError(f"order type {order.order_type.value} is not allowed")
-        if self.max_quantity is not None and float(order.quantity) > self.max_quantity:
+        if self.max_quantity is not None and quantity > self.max_quantity:
             raise BrokerAdapterContractError(f"quantity {order.quantity} exceeds max_quantity {self.max_quantity}")
         if self.mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED:
             self._validate_live_approval(order)
@@ -108,8 +112,9 @@ class BrokerSafetyConfig:
         if self.max_notional is not None:
             if reference_price is None:
                 raise BrokerAdapterContractError("max_notional checks require a reference_price")
-            if reference_price is not None:
-                notional = abs(float(order.quantity) * float(reference_price))
+            if not _is_positive_finite_number(reference_price):
+                raise BrokerAdapterContractError("max_notional checks require a positive finite reference_price")
+            notional = abs(quantity * float(reference_price))
         if self.max_notional is not None and notional is not None:
             if notional > self.max_notional:
                 raise BrokerAdapterContractError(
@@ -491,7 +496,7 @@ def validate_broker_approval_artifact(
         errors.append("account_mode must be live for broker approval artifacts")
     for field_name in ("max_notional", "max_quantity"):
         value = payload.get(field_name)
-        if not isinstance(value, (int, float)) or value <= 0:
+        if not _is_positive_finite_number(value):
             errors.append(f"{field_name} must be a positive number")
     allowed_symbols = payload.get("allowed_symbols")
     if (
@@ -838,7 +843,7 @@ def _validate_approval_request_scope(
         if quantity > max_quantity:
             errors.append(f"orders[{idx}].quantity {quantity} exceeds approval max_quantity {max_quantity}")
         limit_price = order.get("limit_price")
-        if not isinstance(limit_price, (int, float)) or limit_price <= 0:
+        if not _is_positive_finite_number(limit_price):
             errors.append(f"orders[{idx}].notional cannot be checked without a positive limit_price")
             continue
         notional = abs(quantity * float(limit_price))
@@ -988,6 +993,18 @@ def _is_iso_timestamp_with_timezone(value: str) -> bool:
     return bool(_ISO_TIMESTAMP_WITH_TZ_RE.fullmatch(value)) and _parse_timestamp(value) is not None
 
 
+def _is_finite_number(value: object) -> TypeGuard[int | float]:
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(float(value))
+
+
+def _is_positive_finite_number(value: object) -> TypeGuard[int | float]:
+    return _is_finite_number(value) and float(value) > 0
+
+
+def _is_non_negative_finite_number(value: object) -> TypeGuard[int | float]:
+    return _is_finite_number(value) and float(value) >= 0
+
+
 def _dry_run_safety(safety: BrokerSafetyConfig | None) -> BrokerSafetyConfig:
     if safety is None:
         return BrokerSafetyConfig(mode=BrokerAdapterMode.DRY_RUN)
@@ -1061,21 +1078,21 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
         errors.append(f"responses[{idx}].broker_timestamp must be at or after submitted_at")
     for field_name in ("submitted_quantity", "accepted_quantity", "fill_quantity", "fill_price", "fees"):
         value = response.get(field_name)
-        if value is not None and (not isinstance(value, (int, float)) or value < 0):
+        if value is not None and not _is_non_negative_finite_number(value):
             errors.append(f"responses[{idx}].{field_name} must be a non-negative number or null")
     submitted_quantity = response.get("submitted_quantity")
     accepted_quantity = response.get("accepted_quantity")
     fill_quantity = response.get("fill_quantity")
     fill_price = response.get("fill_price")
-    if not isinstance(submitted_quantity, (int, float)) or submitted_quantity <= 0:
+    if not _is_positive_finite_number(submitted_quantity):
         errors.append(f"responses[{idx}].submitted_quantity must be a positive number")
-    if isinstance(submitted_quantity, (int, float)):
-        if isinstance(accepted_quantity, (int, float)) and accepted_quantity > submitted_quantity:
+    if _is_finite_number(submitted_quantity):
+        if _is_finite_number(accepted_quantity) and float(accepted_quantity) > float(submitted_quantity):
             errors.append(f"responses[{idx}].accepted_quantity cannot exceed submitted_quantity")
-        if isinstance(fill_quantity, (int, float)) and fill_quantity > submitted_quantity:
+        if _is_finite_number(fill_quantity) and float(fill_quantity) > float(submitted_quantity):
             errors.append(f"responses[{idx}].fill_quantity cannot exceed submitted_quantity")
-    if isinstance(accepted_quantity, (int, float)) and isinstance(fill_quantity, (int, float)):
-        if fill_quantity > accepted_quantity:
+    if _is_finite_number(accepted_quantity) and _is_finite_number(fill_quantity):
+        if float(fill_quantity) > float(accepted_quantity):
             errors.append(f"responses[{idx}].fill_quantity cannot exceed accepted_quantity")
     accepted_quantity_statuses = {
         BrokerOrderStatus.ACCEPTED.value,
@@ -1083,32 +1100,32 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
         BrokerOrderStatus.FILLED.value,
     }
     if response.get("status") in accepted_quantity_statuses:
-        if not isinstance(accepted_quantity, (int, float)) or accepted_quantity <= 0:
+        if not _is_positive_finite_number(accepted_quantity):
             errors.append(
                 f"responses[{idx}].{response.get('status')} responses require a positive accepted_quantity"
             )
     if response.get("status") == BrokerOrderStatus.ACCEPTED.value:
-        if isinstance(fill_quantity, (int, float)) and fill_quantity > 0:
+        if _is_positive_finite_number(fill_quantity):
             errors.append(f"responses[{idx}].accepted responses must not report fill_quantity")
-        if isinstance(fill_price, (int, float)) and fill_price > 0:
+        if _is_positive_finite_number(fill_price):
             errors.append(f"responses[{idx}].accepted responses must not report fill_price")
     if response.get("status") == BrokerOrderStatus.REJECTED.value:
-        if isinstance(fill_quantity, (int, float)) and fill_quantity > 0:
+        if _is_positive_finite_number(fill_quantity):
             errors.append(f"responses[{idx}].rejected responses must not report fill_quantity")
-        if isinstance(fill_price, (int, float)) and fill_price > 0:
+        if _is_positive_finite_number(fill_price):
             errors.append(f"responses[{idx}].rejected responses must not report fill_price")
     if response.get("status") == BrokerOrderStatus.PARTIALLY_FILLED.value:
-        if not isinstance(fill_quantity, (int, float)) or fill_quantity <= 0:
+        if not _is_positive_finite_number(fill_quantity):
             errors.append(f"responses[{idx}].partial fill_quantity must be positive")
-        elif isinstance(submitted_quantity, (int, float)) and fill_quantity >= submitted_quantity:
+        elif _is_finite_number(submitted_quantity) and float(fill_quantity) >= float(submitted_quantity):
             errors.append(f"responses[{idx}].partial fill_quantity must be less than submitted_quantity")
     if response.get("status") == BrokerOrderStatus.FILLED.value:
-        if not isinstance(fill_quantity, (int, float)) or fill_quantity <= 0:
+        if not _is_positive_finite_number(fill_quantity):
             errors.append(f"responses[{idx}].filled responses require a positive fill_quantity")
-        elif isinstance(submitted_quantity, (int, float)) and fill_quantity != submitted_quantity:
+        elif _is_finite_number(submitted_quantity) and float(fill_quantity) != float(submitted_quantity):
             errors.append(f"responses[{idx}].filled fill_quantity must equal submitted_quantity")
     if response.get("status") in {BrokerOrderStatus.PARTIALLY_FILLED.value, BrokerOrderStatus.FILLED.value}:
-        if not isinstance(fill_price, (int, float)) or fill_price <= 0:
+        if not _is_positive_finite_number(fill_price):
             errors.append(f"responses[{idx}].filled or partially_filled responses require a positive fill_price")
     return errors
 
@@ -1149,20 +1166,20 @@ def _validate_broker_handoff_order(
     if order.get("order_type") not in {"market", "limit"}:
         errors.append(f"orders[{idx}].order_type must be market or limit")
     quantity = order.get("quantity")
-    if not isinstance(quantity, (int, float)) or quantity <= 0:
-        errors.append(f"orders[{idx}].quantity must be a positive number")
+    if not _is_positive_finite_number(quantity):
+        errors.append(f"orders[{idx}].quantity must be a positive finite number")
     limit_price = order.get("limit_price")
-    if limit_price is not None and (not isinstance(limit_price, (int, float)) or limit_price <= 0):
-        errors.append(f"orders[{idx}].limit_price must be a positive number or null")
+    if limit_price is not None and not _is_positive_finite_number(limit_price):
+        errors.append(f"orders[{idx}].limit_price must be a positive finite number or null")
     if order.get("order_type") == OrderType.LIMIT.value and (
-        not isinstance(limit_price, (int, float)) or limit_price <= 0
+        not _is_positive_finite_number(limit_price)
     ):
         errors.append(f"orders[{idx}].limit orders require a positive limit_price")
     if order.get("order_type") == OrderType.MARKET.value and limit_price is not None:
         errors.append(f"orders[{idx}].market orders must not include limit_price")
     max_notional = order.get("max_notional")
-    if max_notional is not None and (not isinstance(max_notional, (int, float)) or max_notional <= 0):
-        errors.append(f"orders[{idx}].max_notional must be a positive number or null")
+    if max_notional is not None and not _is_positive_finite_number(max_notional):
+        errors.append(f"orders[{idx}].max_notional must be a positive finite number or null")
     if order.get("submit_live") is not (adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED.value):
         errors.append(f"orders[{idx}].submit_live must match live_human_approved mode")
     expected_approval = (
@@ -1205,6 +1222,6 @@ def _validate_reconciliation(
         if not isinstance(value, int) or value < 0:
             errors.append(f"reconciliation.{field_name} must be a non-negative integer")
     fill_ratio = reconciliation.get("fill_ratio_mean")
-    if fill_ratio is not None and (not isinstance(fill_ratio, (int, float)) or fill_ratio < 0):
+    if fill_ratio is not None and not _is_non_negative_finite_number(fill_ratio):
         errors.append("reconciliation.fill_ratio_mean must be a non-negative number or null")
     return errors

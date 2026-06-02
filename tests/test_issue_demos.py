@@ -433,6 +433,33 @@ def test_broker_response_artifact_rejects_fill_exceeding_accepted_quantity(tmp_p
     assert "responses[0].fill_quantity cannot exceed accepted_quantity" in validate_broker_response_artifact(payload)
 
 
+def test_broker_response_artifact_rejects_rejection_without_reason(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-rejection-reason")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.REJECTED,
+                submitted_quantity=1.0,
+                rejection_reason=None,
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    assert "responses[0].rejection_reason must be non-empty for rejected responses" in validate_broker_response_artifact(
+        payload
+    )
+
+
 def test_broker_response_artifact_rejects_live_mode_with_paper_account():
     payload = {
         "schema": "tradearena_broker_response_artifact_v0.1",

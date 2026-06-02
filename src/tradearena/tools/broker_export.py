@@ -1024,6 +1024,8 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
         errors.append(f"responses[{idx}].client_order_id must be non-empty")
     if response.get("status") not in {status.value for status in BrokerOrderStatus}:
         errors.append(f"responses[{idx}].status is not a supported broker order status")
+    if response.get("status") == BrokerOrderStatus.REJECTED.value and not response.get("rejection_reason"):
+        errors.append(f"responses[{idx}].rejection_reason must be non-empty for rejected responses")
     if not response.get("account_mode"):
         errors.append(f"responses[{idx}].account_mode must be non-empty")
     for field_name in ("submitted_quantity", "accepted_quantity", "fill_quantity", "fill_price", "fees"):

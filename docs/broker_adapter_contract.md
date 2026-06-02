@@ -120,6 +120,8 @@ missing and unmatched response counts.
 Response validation also rejects impossible quantity relationships, including
 `accepted_quantity` or `fill_quantity` values greater than `submitted_quantity`,
 or `fill_quantity` values greater than `accepted_quantity`.
+Rejected response rows must include a non-empty, redacted `rejection_reason`
+so reconciliation artifacts explain why an order did not proceed.
 For `live_human_approved` response artifacts, `account_mode` must be `live`;
 paper or sandbox broker responses should use `paper_sandbox` or another
 non-live adapter mode.

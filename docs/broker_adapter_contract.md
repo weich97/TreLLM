@@ -122,7 +122,8 @@ Response validation also rejects impossible quantity relationships, including
 or `fill_quantity` values greater than `accepted_quantity`.
 Every response row must include `submitted_at` and `broker_timestamp` as ISO
 timestamps with explicit timezone offsets so reconciliation can sort events and
-measure broker latency without locale-dependent parsing.
+measure broker latency without locale-dependent parsing. `broker_timestamp`
+must be at or after `submitted_at`.
 Every response row's `account_mode` must match the artifact-level
 `account_mode`; publish separate artifacts for paper and live accounts.
 Each response row must use a unique `client_order_id`; duplicate broker

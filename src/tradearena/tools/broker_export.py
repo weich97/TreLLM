@@ -1055,6 +1055,12 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
         value = response.get(field_name)
         if not isinstance(value, str) or not _is_iso_timestamp_with_timezone(value):
             errors.append(f"responses[{idx}].{field_name} must be an ISO timestamp with timezone")
+    submitted_at = response.get("submitted_at")
+    broker_timestamp = response.get("broker_timestamp")
+    submitted_dt = _parse_timestamp(submitted_at) if isinstance(submitted_at, str) else None
+    broker_dt = _parse_timestamp(broker_timestamp) if isinstance(broker_timestamp, str) else None
+    if submitted_dt is not None and broker_dt is not None and broker_dt < submitted_dt:
+        errors.append(f"responses[{idx}].broker_timestamp must be at or after submitted_at")
     for field_name in ("submitted_quantity", "accepted_quantity", "fill_quantity", "fill_price", "fees"):
         value = response.get(field_name)
         if value is not None and (not isinstance(value, (int, float)) or value < 0):

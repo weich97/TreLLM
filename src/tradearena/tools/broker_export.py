@@ -697,12 +697,18 @@ def validate_broker_response_artifact(payload: dict[str, object]) -> list[str]:
         reconciliation = {}
 
     status_counts = {status.value: 0 for status in BrokerOrderStatus}
+    seen_response_ids: set[str] = set()
     for idx, response in enumerate(responses):
         if not isinstance(response, dict):
             errors.append(f"responses[{idx}] must be an object")
             continue
         response_errors = _validate_broker_response_row(response, idx)
         errors.extend(response_errors)
+        client_order_id = response.get("client_order_id")
+        if isinstance(client_order_id, str) and client_order_id:
+            if client_order_id in seen_response_ids:
+                errors.append(f"responses[{idx}].client_order_id duplicates an earlier response")
+            seen_response_ids.add(client_order_id)
         status = response.get("status")
         if isinstance(status, str) and status in status_counts:
             status_counts[status] += 1

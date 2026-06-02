@@ -612,6 +612,44 @@ def test_broker_response_artifact_rejects_malformed_timestamps(tmp_path, field_n
     )
 
 
+def test_broker_response_artifact_rejects_duplicate_client_order_ids(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-duplicate-id")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.ACCEPTED,
+                broker_order_id="paper-duplicate-1",
+                submitted_quantity=1.0,
+                accepted_quantity=1.0,
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            ),
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.ACCEPTED,
+                broker_order_id="paper-duplicate-2",
+                submitted_quantity=1.0,
+                accepted_quantity=1.0,
+                submitted_at="2026-06-02T09:30:02Z",
+                broker_timestamp="2026-06-02T09:30:03Z",
+                account_mode="paper",
+            ),
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    assert "responses[1].client_order_id duplicates an earlier response" in validate_broker_response_artifact(payload)
+
+
 def test_broker_response_artifact_rejects_live_mode_with_paper_account():
     payload = {
         "schema": "tradearena_broker_response_artifact_v0.1",

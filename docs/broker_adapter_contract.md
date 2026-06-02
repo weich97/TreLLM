@@ -123,6 +123,9 @@ or `fill_quantity` values greater than `accepted_quantity`.
 Every response row must include `submitted_at` and `broker_timestamp` as ISO
 timestamps with explicit timezone offsets so reconciliation can sort events and
 measure broker latency without locale-dependent parsing.
+Each response row must use a unique `client_order_id`; duplicate broker
+responses for the same client order must be consolidated before publishing the
+artifact.
 Rejected response rows must include a non-empty, redacted `rejection_reason`
 so reconciliation artifacts explain why an order did not proceed.
 `partially_filled` rows must report a positive `fill_quantity` that remains

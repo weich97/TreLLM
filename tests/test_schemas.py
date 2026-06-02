@@ -221,6 +221,37 @@ def test_broker_response_artifact_schema_rejects_nonpositive_accepted_quantity_f
     assert ("responses", 0, "accepted_quantity") in paths
 
 
+def test_broker_response_artifact_schema_rejects_empty_rejection_reason_for_rejected_status(tmp_path: Path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-recon-rejected-reason")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])
+    output = tmp_path / "broker_response_artifact.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.REJECTED,
+                submitted_quantity=1.0,
+                rejection_reason="paper account symbol permission mismatch",
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=output,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    payload["responses"][0]["rejection_reason"] = ""
+
+    errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("responses", 0, "rejection_reason") in paths
+
+
 def test_broker_response_artifact_schema_rejects_live_flag_mismatch(tmp_path: Path):
     adapter = AlpacaPaperExportAdapter(client_prefix="schema-recon-mismatch")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])

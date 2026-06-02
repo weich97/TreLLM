@@ -140,6 +140,19 @@
               "accepted_quantity": { "type": "number", "exclusiveMinimum": 0 }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": { "const": "rejected" }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "rejection_reason": { "type": "string", "minLength": 1 }
+            }
+          }
         }
       ]
     }

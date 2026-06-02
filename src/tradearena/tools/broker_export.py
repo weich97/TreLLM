@@ -916,8 +916,13 @@ def _validate_response_request_bindings(
                 errors.append(f"responses[{idx}].accepted responses must not report fill_quantity")
             if _is_positive_finite_number(response.fill_price):
                 errors.append(f"responses[{idx}].accepted responses must not report fill_price")
-        if response.status == BrokerOrderStatus.REJECTED and not response.rejection_reason:
-            errors.append(f"responses[{idx}].rejection_reason must be non-empty for rejected responses")
+        if response.status == BrokerOrderStatus.REJECTED:
+            if not response.rejection_reason:
+                errors.append(f"responses[{idx}].rejection_reason must be non-empty for rejected responses")
+            if _is_positive_finite_number(response.fill_quantity):
+                errors.append(f"responses[{idx}].rejected responses must not report fill_quantity")
+            if _is_positive_finite_number(response.fill_price):
+                errors.append(f"responses[{idx}].rejected responses must not report fill_price")
         if response.client_order_id in seen_response_ids:
             errors.append(f"responses[{idx}].client_order_id duplicates an earlier response")
         seen_response_ids.add(response.client_order_id)

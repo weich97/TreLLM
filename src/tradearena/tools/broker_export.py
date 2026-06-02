@@ -1087,6 +1087,11 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
             errors.append(
                 f"responses[{idx}].{response.get('status')} responses require a positive accepted_quantity"
             )
+    if response.get("status") == BrokerOrderStatus.ACCEPTED.value:
+        if isinstance(fill_quantity, (int, float)) and fill_quantity > 0:
+            errors.append(f"responses[{idx}].accepted responses must not report fill_quantity")
+        if isinstance(fill_price, (int, float)) and fill_price > 0:
+            errors.append(f"responses[{idx}].accepted responses must not report fill_price")
     if response.get("status") == BrokerOrderStatus.PARTIALLY_FILLED.value:
         if not isinstance(fill_quantity, (int, float)) or fill_quantity <= 0:
             errors.append(f"responses[{idx}].partial fill_quantity must be positive")

@@ -851,6 +851,68 @@ def test_broker_response_artifact_rejects_active_status_without_accepted_quantit
     )
 
 
+def test_broker_response_artifact_rejects_accepted_status_with_fill_quantity(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-accepted-with-fill")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.ACCEPTED,
+                broker_order_id="paper-accepted-fill-1",
+                submitted_quantity=1.0,
+                accepted_quantity=1.0,
+                fill_quantity=0.5,
+                fill_price=190.0,
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    assert "responses[0].accepted responses must not report fill_quantity" in validate_broker_response_artifact(
+        payload
+    )
+
+
+def test_broker_response_artifact_rejects_accepted_status_with_fill_price(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-accepted-with-price")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.ACCEPTED,
+                broker_order_id="paper-accepted-price-1",
+                submitted_quantity=1.0,
+                accepted_quantity=1.0,
+                fill_quantity=None,
+                fill_price=190.0,
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    assert "responses[0].accepted responses must not report fill_price" in validate_broker_response_artifact(payload)
+
+
 def test_broker_response_artifact_rejects_live_mode_with_paper_account():
     payload = {
         "schema": "tradearena_broker_response_artifact_v0.1",

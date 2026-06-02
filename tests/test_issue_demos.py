@@ -1640,6 +1640,36 @@ def test_broker_response_artifact_writer_rejects_missing_or_zero_submitted_quant
         raise AssertionError("expected missing or zero submitted_quantity to be rejected by writer")
 
 
+@pytest.mark.parametrize("field_name", ["accepted_quantity", "fill_quantity", "fill_price", "fees"])
+def test_broker_response_artifact_writer_rejects_negative_optional_numeric_fields(tmp_path, field_name):
+    adapter = AlpacaPaperExportAdapter(client_prefix=f"response-writer-negative-{field_name}")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    response_kwargs = {
+        "client_order_id": requests[0].client_order_id,
+        "status": BrokerOrderStatus.REJECTED,
+        "submitted_quantity": 1.0,
+        "rejection_reason": "paper account symbol permission mismatch",
+        "submitted_at": "2026-06-02T09:30:00Z",
+        "broker_timestamp": "2026-06-02T09:30:01Z",
+        "account_mode": "paper",
+        field_name: -0.01,
+    }
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[BrokerResponse(**response_kwargs)],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert f"responses[0].{field_name} must be a non-negative number or null" in str(exc)
+    else:
+        raise AssertionError(f"expected negative {field_name} to be rejected by writer")
+
+
 def test_broker_response_artifact_rejects_live_mode_with_paper_account():
     payload = {
         "schema": "tradearena_broker_response_artifact_v0.1",

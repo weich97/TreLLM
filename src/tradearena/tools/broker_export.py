@@ -924,6 +924,10 @@ def _validate_response_request_bindings(
             errors.append(
                 f"responses[{idx}].broker_order_id must be non-empty for {response.status.value} broker responses"
             )
+        for field_name in ("accepted_quantity", "fill_quantity", "fill_price", "fees"):
+            value = getattr(response, field_name)
+            if value is not None and not _is_non_negative_finite_number(value):
+                errors.append(f"responses[{idx}].{field_name} must be a non-negative number or null")
         if not _is_positive_finite_number(response.submitted_quantity):
             errors.append(f"responses[{idx}].submitted_quantity must be a positive number")
         if response.status in {

@@ -166,6 +166,20 @@
               "broker_order_id": { "type": "string", "minLength": 1 }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": { "enum": ["partially_filled", "filled"] }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "fill_quantity": { "type": "number", "exclusiveMinimum": 0 },
+              "fill_price": { "type": "number", "exclusiveMinimum": 0 }
+            }
+          }
         }
       ]
     }

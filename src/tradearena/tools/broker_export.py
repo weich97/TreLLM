@@ -1038,6 +1038,9 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
             errors.append(f"responses[{idx}].accepted_quantity cannot exceed submitted_quantity")
         if isinstance(fill_quantity, (int, float)) and fill_quantity > submitted_quantity:
             errors.append(f"responses[{idx}].fill_quantity cannot exceed submitted_quantity")
+    if isinstance(accepted_quantity, (int, float)) and isinstance(fill_quantity, (int, float)):
+        if fill_quantity > accepted_quantity:
+            errors.append(f"responses[{idx}].fill_quantity cannot exceed accepted_quantity")
     return errors
 
 

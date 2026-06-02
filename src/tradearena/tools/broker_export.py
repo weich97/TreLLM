@@ -986,6 +986,8 @@ def _validate_response_request_bindings(
                 errors.append(f"responses[{idx}].rejected responses must not report fill_quantity")
             if _is_positive_finite_number(response.fill_price):
                 errors.append(f"responses[{idx}].rejected responses must not report fill_price")
+        if response.status == BrokerOrderStatus.UNKNOWN and not response.rejection_reason:
+            errors.append(f"responses[{idx}].rejection_reason must be non-empty for unknown responses")
         if response.client_order_id in seen_response_ids:
             errors.append(f"responses[{idx}].client_order_id duplicates an earlier response")
         seen_response_ids.add(response.client_order_id)
@@ -1196,6 +1198,8 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
         errors.append(f"responses[{idx}].status is not a supported broker order status")
     if response.get("status") == BrokerOrderStatus.REJECTED.value and not response.get("rejection_reason"):
         errors.append(f"responses[{idx}].rejection_reason must be non-empty for rejected responses")
+    if response.get("status") == BrokerOrderStatus.UNKNOWN.value and not response.get("rejection_reason"):
+        errors.append(f"responses[{idx}].rejection_reason must be non-empty for unknown responses")
     broker_order_statuses = {
         BrokerOrderStatus.ACCEPTED.value,
         BrokerOrderStatus.PARTIALLY_FILLED.value,

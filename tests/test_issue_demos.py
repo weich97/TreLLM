@@ -1757,6 +1757,65 @@ def test_broker_response_artifact_writer_rejects_empty_client_order_id(tmp_path)
         raise AssertionError("expected empty response client_order_id to be rejected by writer")
 
 
+def test_broker_response_artifact_rejects_unknown_status_without_reason(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-unknown-reason")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.UNKNOWN,
+                submitted_quantity=1.0,
+                rejection_reason="broker response status could not be mapped",
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0]["rejection_reason"] = None
+
+    assert "responses[0].rejection_reason must be non-empty for unknown responses" in validate_broker_response_artifact(
+        payload
+    )
+
+
+def test_broker_response_artifact_writer_requires_reason_for_unknown_responses(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-unknown-reason")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.UNKNOWN,
+                    submitted_quantity=1.0,
+                    rejection_reason=None,
+                    submitted_at="2026-06-02T09:30:00Z",
+                    broker_timestamp="2026-06-02T09:30:01Z",
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "responses[0].rejection_reason must be non-empty for unknown responses" in str(exc)
+    else:
+        raise AssertionError("expected unknown response without reason to be rejected by writer")
+
+
 def test_broker_response_artifact_rejects_live_mode_with_paper_account():
     payload = {
         "schema": "tradearena_broker_response_artifact_v0.1",

@@ -164,6 +164,19 @@
         {
           "if": {
             "properties": {
+              "status": { "const": "unknown" }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "rejection_reason": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
               "status": { "enum": ["accepted", "partially_filled", "filled", "canceled", "expired"] }
             },
             "required": ["status"]

@@ -901,6 +901,19 @@ def _validate_response_request_bindings(
     if adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED and account_mode != "live":
         errors.append("live_human_approved response artifacts require account_mode live")
     for idx, response in enumerate(responses):
+        submitted_dt = None
+        broker_dt = None
+        for field_name in ("submitted_at", "broker_timestamp"):
+            value = getattr(response, field_name)
+            if value is not None:
+                if not _is_iso_timestamp_with_timezone(value):
+                    errors.append(f"responses[{idx}].{field_name} must be an ISO timestamp with timezone")
+                elif field_name == "submitted_at":
+                    submitted_dt = _parse_timestamp(value)
+                else:
+                    broker_dt = _parse_timestamp(value)
+        if submitted_dt is not None and broker_dt is not None and broker_dt < submitted_dt:
+            errors.append(f"responses[{idx}].broker_timestamp must be at or after submitted_at")
         if response.status in {
             BrokerOrderStatus.ACCEPTED,
             BrokerOrderStatus.PARTIALLY_FILLED,

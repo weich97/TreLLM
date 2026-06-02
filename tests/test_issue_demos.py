@@ -1049,6 +1049,67 @@ def test_broker_response_artifact_rejects_malformed_timestamps(tmp_path, field_n
     )
 
 
+@pytest.mark.parametrize("field_name", ["submitted_at", "broker_timestamp"])
+def test_broker_response_artifact_writer_rejects_malformed_timestamps(tmp_path, field_name):
+    adapter = AlpacaPaperExportAdapter(client_prefix=f"response-writer-{field_name}")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    response_kwargs = {
+        "client_order_id": requests[0].client_order_id,
+        "status": BrokerOrderStatus.ACCEPTED,
+        "broker_order_id": "paper-writer-malformed-time-1",
+        "submitted_quantity": 1.0,
+        "accepted_quantity": 1.0,
+        "submitted_at": "2026-06-02T09:30:00Z",
+        "broker_timestamp": "2026-06-02T09:30:01Z",
+        "account_mode": "paper",
+        field_name: "June 2, 2026",
+    }
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[BrokerResponse(**response_kwargs)],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert f"responses[0].{field_name} must be an ISO timestamp with timezone" in str(exc)
+    else:
+        raise AssertionError(f"expected malformed {field_name} to be rejected by writer")
+
+
+def test_broker_response_artifact_writer_rejects_broker_timestamp_before_submission(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-time-order")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.ACCEPTED,
+                    broker_order_id="paper-writer-time-order-1",
+                    submitted_quantity=1.0,
+                    accepted_quantity=1.0,
+                    submitted_at="2026-06-02T09:30:01Z",
+                    broker_timestamp="2026-06-02T09:30:00Z",
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "responses[0].broker_timestamp must be at or after submitted_at" in str(exc)
+    else:
+        raise AssertionError("expected broker_timestamp before submitted_at to be rejected by writer")
+
+
 def test_broker_response_artifact_rejects_duplicate_client_order_ids(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="response-duplicate-id")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
@@ -1199,8 +1260,8 @@ def test_broker_response_artifact_rejects_broker_timestamp_before_submission(tmp
                 broker_order_id="paper-time-order-1",
                 submitted_quantity=1.0,
                 accepted_quantity=1.0,
-                submitted_at="2026-06-02T09:30:01Z",
-                broker_timestamp="2026-06-02T09:30:00Z",
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
                 account_mode="paper",
             )
         ],
@@ -1210,6 +1271,8 @@ def test_broker_response_artifact_rejects_broker_timestamp_before_submission(tmp
         account_mode="paper",
     )
     payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0]["submitted_at"] = "2026-06-02T09:30:01Z"
+    payload["responses"][0]["broker_timestamp"] = "2026-06-02T09:30:00Z"
 
     assert "responses[0].broker_timestamp must be at or after submitted_at" in validate_broker_response_artifact(
         payload

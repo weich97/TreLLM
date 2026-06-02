@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import pytest
 from jsonschema import Draft202012Validator
 
 import scripts.validate_reproduction_report as reproduction_validator
@@ -171,6 +172,53 @@ def test_broker_response_artifact_schema_rejects_nonpositive_submitted_quantity(
     paths = {tuple(error.path) for error in errors}
 
     assert ("responses", 0, "submitted_quantity") in paths
+
+
+@pytest.mark.parametrize(
+    ("status", "fill_quantity", "fill_price"),
+    [
+        (BrokerOrderStatus.ACCEPTED, None, None),
+        (BrokerOrderStatus.PARTIALLY_FILLED, 0.5, 100.0),
+        (BrokerOrderStatus.FILLED, 1.0, 100.0),
+    ],
+)
+def test_broker_response_artifact_schema_rejects_nonpositive_accepted_quantity_for_active_statuses(
+    tmp_path: Path,
+    status: BrokerOrderStatus,
+    fill_quantity: float | None,
+    fill_price: float | None,
+):
+    adapter = AlpacaPaperExportAdapter(client_prefix=f"schema-recon-accepted-{status.value}")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])
+    output = tmp_path / "broker_response_artifact.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=status,
+                broker_order_id=f"paper-schema-accepted-{status.value}",
+                submitted_quantity=1.0,
+                accepted_quantity=1.0,
+                fill_quantity=fill_quantity,
+                fill_price=fill_price,
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=output,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    payload["responses"][0]["accepted_quantity"] = 0.0
+
+    errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("responses", 0, "accepted_quantity") in paths
 
 
 def test_broker_response_artifact_schema_rejects_live_flag_mismatch(tmp_path: Path):

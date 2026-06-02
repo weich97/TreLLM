@@ -591,6 +591,18 @@ def test_broker_handoff_artifact_schema_rejects_limit_order_without_limit_price(
     assert ("orders", 0, "limit_price") in paths
 
 
+def test_broker_handoff_artifact_schema_rejects_market_order_with_limit_price(tmp_path: Path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-handoff-market-price")
+    adapter.write([Order("AAPL", Side.BUY, 1.0, reason="schema test")], tmp_path)
+    payload = json.loads((tmp_path / "alpaca_paper_orders.json").read_text(encoding="utf-8"))
+    payload["orders"][0]["limit_price"] = 100.0
+
+    errors = sorted(_validator("broker_handoff_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("orders", 0, "limit_price") in paths
+
+
 def test_broker_handoff_artifact_schema_requires_live_account_for_live_mode(tmp_path: Path):
     adapter = AlpacaPaperExportAdapter(client_prefix="schema-live-handoff-account")
     adapter.write([Order("AAPL", Side.BUY, 1.0, reason="schema test")], tmp_path)

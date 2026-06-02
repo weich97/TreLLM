@@ -211,6 +211,19 @@
               "limit_price": { "type": "number", "exclusiveMinimum": 0 }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "order_type": { "const": "market" }
+            },
+            "required": ["order_type"]
+          },
+          "then": {
+            "properties": {
+              "limit_price": { "type": "null" }
+            }
+          }
         }
       ]
     }

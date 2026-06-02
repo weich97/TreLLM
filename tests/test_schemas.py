@@ -539,6 +539,32 @@ def test_broker_response_artifact_schema_requires_live_account_for_live_mode(tmp
     assert ("account_mode",) in paths
 
 
+def test_broker_response_artifact_schema_requires_live_response_accounts_for_live_mode(tmp_path: Path):
+    output = tmp_path / "broker_response_artifact.json"
+    write_broker_response_artifact(
+        requests=[],
+        responses=[
+            BrokerResponse(
+                client_order_id="live-response-account-1",
+                status=BrokerOrderStatus.REJECTED,
+                submitted_quantity=1.0,
+                rejection_reason="paper row in live artifact",
+                account_mode="paper",
+            )
+        ],
+        output=output,
+        adapter="schema-live-response-account",
+        adapter_mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+        account_mode="live",
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+
+    errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("responses", 0, "account_mode") in paths
+
+
 def test_broker_handoff_artifact_schema_validates_writer_output(tmp_path: Path):
     adapter = AlpacaPaperExportAdapter(client_prefix="schema-handoff")
     adapter.write([Order("AAPL", Side.BUY, 1.0, reason="schema test")], tmp_path)

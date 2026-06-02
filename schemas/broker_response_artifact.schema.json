@@ -68,7 +68,14 @@
       "then": {
         "properties": {
           "account_mode": { "const": "live" },
-          "live_submission": { "const": true }
+          "live_submission": { "const": true },
+          "responses": {
+            "items": {
+              "properties": {
+                "account_mode": { "const": "live" }
+              }
+            }
+          }
         }
       }
     },

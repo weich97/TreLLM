@@ -180,6 +180,20 @@
               "fill_price": { "type": "number", "exclusiveMinimum": 0 }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": { "enum": ["accepted", "rejected"] }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "fill_quantity": { "type": ["number", "null"], "maximum": 0 },
+              "fill_price": { "type": ["number", "null"], "maximum": 0 }
+            }
+          }
         }
       ]
     }

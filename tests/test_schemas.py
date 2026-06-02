@@ -392,6 +392,112 @@ def test_broker_response_artifact_schema_rejects_nonpositive_fill_price_for_fill
     assert ("responses", 0, "fill_price") in paths
 
 
+@pytest.mark.parametrize(
+    ("status", "broker_order_id", "accepted_quantity", "rejection_reason"),
+    [
+        (BrokerOrderStatus.ACCEPTED, "paper-schema-no-fill-accepted", 1.0, None),
+        (
+            BrokerOrderStatus.REJECTED,
+            None,
+            None,
+            "paper account symbol permission mismatch",
+        ),
+    ],
+)
+def test_broker_response_artifact_schema_rejects_fill_quantity_for_nonfill_statuses(
+    tmp_path: Path,
+    status: BrokerOrderStatus,
+    broker_order_id: str | None,
+    accepted_quantity: float | None,
+    rejection_reason: str | None,
+):
+    adapter = AlpacaPaperExportAdapter(client_prefix=f"schema-recon-no-fill-qty-{status.value}")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])
+    output = tmp_path / "broker_response_artifact.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=status,
+                broker_order_id=broker_order_id,
+                submitted_quantity=1.0,
+                accepted_quantity=accepted_quantity,
+                fill_quantity=None,
+                fill_price=None,
+                rejection_reason=rejection_reason,
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=output,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    payload["responses"][0]["fill_quantity"] = 0.5
+
+    errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("responses", 0, "fill_quantity") in paths
+
+
+@pytest.mark.parametrize(
+    ("status", "broker_order_id", "accepted_quantity", "rejection_reason"),
+    [
+        (BrokerOrderStatus.ACCEPTED, "paper-schema-no-price-accepted", 1.0, None),
+        (
+            BrokerOrderStatus.REJECTED,
+            None,
+            None,
+            "paper account symbol permission mismatch",
+        ),
+    ],
+)
+def test_broker_response_artifact_schema_rejects_fill_price_for_nonfill_statuses(
+    tmp_path: Path,
+    status: BrokerOrderStatus,
+    broker_order_id: str | None,
+    accepted_quantity: float | None,
+    rejection_reason: str | None,
+):
+    adapter = AlpacaPaperExportAdapter(client_prefix=f"schema-recon-no-fill-price-{status.value}")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])
+    output = tmp_path / "broker_response_artifact.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=status,
+                broker_order_id=broker_order_id,
+                submitted_quantity=1.0,
+                accepted_quantity=accepted_quantity,
+                fill_quantity=None,
+                fill_price=None,
+                rejection_reason=rejection_reason,
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=output,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    payload["responses"][0]["fill_price"] = 100.0
+
+    errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("responses", 0, "fill_price") in paths
+
+
 def test_broker_response_artifact_schema_rejects_live_flag_mismatch(tmp_path: Path):
     adapter = AlpacaPaperExportAdapter(client_prefix="schema-recon-mismatch")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])

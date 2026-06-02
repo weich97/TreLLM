@@ -494,7 +494,10 @@ def test_broker_approval_artifact_builds_live_safety_config(tmp_path):
             reference_price=100.0,
         )
     except BrokerAdapterContractError as exc:
-        assert "does not match an approved broker handoff order" in str(exc)
+        assert (
+            "does not match an approved broker handoff order" in str(exc)
+            or "approved broker handoff order count 0" in str(exc)
+        )
     else:
         raise AssertionError("expected unreviewed-order failure from approval artifact safety")
 
@@ -1026,9 +1029,52 @@ def test_broker_safety_from_bound_approval_rejects_unreviewed_order(tmp_path):
             tmp_path / "unreviewed",
         )
     except BrokerAdapterContractError as exc:
-        assert "does not match an approved broker handoff order" in str(exc)
+        assert (
+            "does not match an approved broker handoff order" in str(exc)
+            or "approved broker handoff order count 0" in str(exc)
+        )
     else:
         raise AssertionError("expected unreviewed order to be rejected by bound live safety")
+
+
+def test_broker_safety_from_bound_approval_rejects_duplicate_reviewed_order_reuse(tmp_path):
+    adapter = DryRunBrokerAdapter(
+        client_prefix="approval-duplicate-bind",
+        safety=BrokerSafetyConfig(account_mode="paper", max_quantity=5.0, allowed_symbols=("AAPL",)),
+    )
+    reviewed_order = Order(
+        "AAPL",
+        Side.BUY,
+        1.0,
+        order_type=OrderType.LIMIT,
+        limit_price=100.0,
+        reason="reviewed order",
+    )
+    adapter.write([reviewed_order], tmp_path)
+    request_path = tmp_path / "dry_run_orders.json"
+    approval_payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=250.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-duplicate-bound-001",
+        account_mode="live",
+        max_quantity=5.0,
+        request_artifact_hash=broker_handoff_artifact_hash(request_path),
+    )
+    safety = broker_safety_from_approval_artifact(approval_payload, request_artifact=request_path)
+    live_adapter = AlpacaPaperExportAdapter(client_prefix="duplicate-bound-live", safety=safety)
+
+    try:
+        live_adapter.write([reviewed_order, reviewed_order], tmp_path / "duplicate")
+    except BrokerAdapterContractError as exc:
+        assert "approved broker handoff order count" in str(exc)
+    else:
+        raise AssertionError("expected duplicate reuse of one reviewed order to be rejected")
 
 
 def test_broker_approval_binding_cli_and_script_reject_hash_mismatch(tmp_path):

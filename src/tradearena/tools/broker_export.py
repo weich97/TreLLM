@@ -4,6 +4,7 @@ import csv
 import hashlib
 import json
 import re
+from collections import Counter
 from dataclasses import asdict, dataclass, field, replace
 from datetime import datetime, timezone
 from enum import Enum
@@ -218,9 +219,9 @@ class AlpacaPaperExportAdapter:
 
     def convert(self, orders: list[Order] | tuple[Order, ...]) -> list[AlpacaPaperOrder]:
         rows: list[AlpacaPaperOrder] = []
-        for idx, order in enumerate(orders, start=1):
-            if order.side == Side.HOLD or order.quantity <= 0:
-                continue
+        eligible_orders = [order for order in orders if order.side != Side.HOLD and order.quantity > 0]
+        _validate_approved_order_counts(self.safety, eligible_orders)
+        for idx, order in enumerate(eligible_orders, start=1):
             self.safety.validate_order(order, reference_price=order.limit_price)
             rows.append(
                 AlpacaPaperOrder(
@@ -831,6 +832,19 @@ def _approved_order_fingerprints_from_request(payload_or_path: dict[str, object]
         if isinstance(order, dict):
             fingerprints.append(_order_fingerprint_from_handoff(order))
     return tuple(fingerprints)
+
+
+def _validate_approved_order_counts(safety: BrokerSafetyConfig, orders: list[Order]) -> None:
+    if safety.mode != BrokerAdapterMode.LIVE_HUMAN_APPROVED or not safety.approved_order_fingerprints:
+        return
+    approved_counts = Counter(safety.approved_order_fingerprints)
+    requested_counts = Counter(_order_fingerprint_from_order(order) for order in orders)
+    for fingerprint, requested_count in requested_counts.items():
+        approved_count = approved_counts.get(fingerprint, 0)
+        if requested_count > approved_count:
+            raise BrokerAdapterContractError(
+                f"requested order count {requested_count} exceeds approved broker handoff order count {approved_count}"
+            )
 
 
 def _order_fingerprint_from_order(order: Order) -> str:

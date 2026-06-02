@@ -1051,6 +1051,8 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
     if response.get("status") == BrokerOrderStatus.FILLED.value:
         if not isinstance(fill_quantity, (int, float)) or fill_quantity <= 0:
             errors.append(f"responses[{idx}].filled responses require a positive fill_quantity")
+        elif isinstance(submitted_quantity, (int, float)) and fill_quantity != submitted_quantity:
+            errors.append(f"responses[{idx}].filled fill_quantity must equal submitted_quantity")
     return errors
 
 

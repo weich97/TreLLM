@@ -516,6 +516,34 @@ def test_broker_response_artifact_rejects_filled_without_fill_quantity(tmp_path)
     )
 
 
+def test_broker_response_artifact_rejects_filled_with_partial_quantity(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-filled-partial")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.FILLED,
+                submitted_quantity=1.0,
+                accepted_quantity=1.0,
+                fill_quantity=0.5,
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    assert "responses[0].filled fill_quantity must equal submitted_quantity" in validate_broker_response_artifact(
+        payload
+    )
+
+
 def test_broker_response_artifact_rejects_live_mode_with_paper_account():
     payload = {
         "schema": "tradearena_broker_response_artifact_v0.1",

@@ -316,6 +316,7 @@ def test_broker_response_artifact_validator_and_cli_reject_count_mismatch(tmp_pa
             BrokerResponse(
                 client_order_id=requests[0].client_order_id,
                 status=BrokerOrderStatus.FILLED,
+                broker_order_id="paper-filled-count-1",
                 submitted_quantity=1.0,
                 fill_quantity=1.0,
                 fill_price=190.0,
@@ -648,6 +649,36 @@ def test_broker_response_artifact_rejects_duplicate_client_order_ids(tmp_path):
     payload = json.loads(artifact.read_text(encoding="utf-8"))
 
     assert "responses[1].client_order_id duplicates an earlier response" in validate_broker_response_artifact(payload)
+
+
+def test_broker_response_artifact_requires_broker_order_id_for_accepted_responses(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-broker-order-id")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.ACCEPTED,
+                broker_order_id=None,
+                submitted_quantity=1.0,
+                accepted_quantity=1.0,
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    assert "responses[0].broker_order_id must be non-empty for accepted broker responses" in (
+        validate_broker_response_artifact(payload)
+    )
 
 
 def test_broker_response_artifact_rejects_live_mode_with_paper_account():

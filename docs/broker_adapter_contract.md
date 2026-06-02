@@ -126,6 +126,9 @@ measure broker latency without locale-dependent parsing.
 Each response row must use a unique `client_order_id`; duplicate broker
 responses for the same client order must be consolidated before publishing the
 artifact.
+Accepted, partially filled, filled, canceled, and expired rows must include a
+non-empty `broker_order_id`; rejected rows may omit it when the broker never
+created an order.
 Rejected response rows must include a non-empty, redacted `rejection_reason`
 so reconciliation artifacts explain why an order did not proceed.
 `partially_filled` rows must report a positive `fill_quantity` that remains

@@ -913,6 +913,62 @@ def test_broker_response_artifact_rejects_accepted_status_with_fill_price(tmp_pa
     assert "responses[0].accepted responses must not report fill_price" in validate_broker_response_artifact(payload)
 
 
+def test_broker_response_artifact_rejects_rejected_status_with_fill_quantity(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-rejected-with-fill")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.REJECTED,
+                submitted_quantity=1.0,
+                fill_quantity=0.5,
+                rejection_reason="paper account symbol permission mismatch",
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    assert "responses[0].rejected responses must not report fill_quantity" in validate_broker_response_artifact(payload)
+
+
+def test_broker_response_artifact_rejects_rejected_status_with_fill_price(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-rejected-with-price")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.REJECTED,
+                submitted_quantity=1.0,
+                fill_price=190.0,
+                rejection_reason="paper account symbol permission mismatch",
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    assert "responses[0].rejected responses must not report fill_price" in validate_broker_response_artifact(payload)
+
+
 def test_broker_response_artifact_rejects_live_mode_with_paper_account():
     payload = {
         "schema": "tradearena_broker_response_artifact_v0.1",

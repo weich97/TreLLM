@@ -134,7 +134,8 @@ non-empty `broker_order_id`; rejected rows may omit it when the broker never
 created an order. Non-empty `broker_order_id` values must also be unique within
 the artifact.
 Rejected response rows must include a non-empty, redacted `rejection_reason`
-so reconciliation artifacts explain why an order did not proceed.
+so reconciliation artifacts explain why an order did not proceed. `rejected`
+rows must not report `fill_quantity` or `fill_price`.
 `accepted`, `partially_filled`, and `filled` rows must report a positive
 `accepted_quantity`.
 `accepted` rows must not report `fill_quantity` or `fill_price`; use

@@ -186,7 +186,9 @@ symbol, order-type, quantity, and notional limits as the approval.
 enforced inside the live-safety creation path, and the resulting safety gate
 only accepts orders that match the reviewed handoff orders. Batch conversion
 also enforces the reviewed order counts, so one approved handoff row cannot be
-reused multiple times in the same live write.
+reused multiple times in the same live write. Broker execution instructions
+captured in the handoff row, including `time_in_force`, must also match the
+reviewed request before live conversion is allowed.
 Pass `now=` when validating or consuming approval artifacts so stale approvals
 are rejected before any live-mode safety config is created.
 

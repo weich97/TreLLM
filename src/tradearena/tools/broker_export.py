@@ -86,6 +86,7 @@ class BrokerSafetyConfig:
     allowed_symbols: tuple[str, ...] = field(default_factory=tuple)
     allowed_order_types: tuple[OrderType, ...] = field(default_factory=lambda: (OrderType.MARKET, OrderType.LIMIT))
     approved_order_fingerprints: tuple[str, ...] = field(default_factory=tuple)
+    approved_order_execution_fingerprints: tuple[str, ...] = field(default_factory=tuple)
     kill_switch: bool = False
     approval: BrokerApproval | None = None
 
@@ -220,7 +221,7 @@ class AlpacaPaperExportAdapter:
     def convert(self, orders: list[Order] | tuple[Order, ...]) -> list[AlpacaPaperOrder]:
         rows: list[AlpacaPaperOrder] = []
         eligible_orders = [order for order in orders if order.side != Side.HOLD and order.quantity > 0]
-        _validate_approved_order_counts(self.safety, eligible_orders)
+        _validate_approved_order_counts(self.safety, eligible_orders, time_in_force=self.time_in_force)
         for idx, order in enumerate(eligible_orders, start=1):
             self.safety.validate_order(order, reference_price=order.limit_price)
             rows.append(
@@ -639,6 +640,9 @@ def broker_safety_from_approval_artifact(
     approved_order_fingerprints = (
         _approved_order_fingerprints_from_request(request_artifact) if request_artifact is not None else ()
     )
+    approved_order_execution_fingerprints = (
+        _approved_order_execution_fingerprints_from_request(request_artifact) if request_artifact is not None else ()
+    )
     return BrokerSafetyConfig(
         mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
         account_mode=str(payload["account_mode"]),
@@ -647,6 +651,7 @@ def broker_safety_from_approval_artifact(
         allowed_symbols=tuple(approval.allowed_symbols),
         allowed_order_types=order_types,
         approved_order_fingerprints=approved_order_fingerprints,
+        approved_order_execution_fingerprints=approved_order_execution_fingerprints,
         approval=approval,
     )
 
@@ -843,7 +848,25 @@ def _approved_order_fingerprints_from_request(payload_or_path: dict[str, object]
     return tuple(fingerprints)
 
 
-def _validate_approved_order_counts(safety: BrokerSafetyConfig, orders: list[Order]) -> None:
+def _approved_order_execution_fingerprints_from_request(payload_or_path: dict[str, object] | str | Path) -> tuple[str, ...]:
+    request_payload = _load_broker_artifact_payload(payload_or_path)
+    errors = validate_broker_handoff_artifact(request_payload)
+    if errors:
+        raise BrokerAdapterContractError("; ".join(errors))
+    orders = cast(list[object] | tuple[object, ...], request_payload["orders"])
+    fingerprints = []
+    for order in orders:
+        if isinstance(order, dict):
+            fingerprints.append(_order_execution_fingerprint_from_handoff(order))
+    return tuple(fingerprints)
+
+
+def _validate_approved_order_counts(
+    safety: BrokerSafetyConfig,
+    orders: list[Order],
+    *,
+    time_in_force: str,
+) -> None:
     if safety.mode != BrokerAdapterMode.LIVE_HUMAN_APPROVED or not safety.approved_order_fingerprints:
         return
     approved_counts = Counter(safety.approved_order_fingerprints)
@@ -853,6 +876,18 @@ def _validate_approved_order_counts(safety: BrokerSafetyConfig, orders: list[Ord
         if requested_count > approved_count:
             raise BrokerAdapterContractError(
                 f"requested order count {requested_count} exceeds approved broker handoff order count {approved_count}"
+            )
+    if not safety.approved_order_execution_fingerprints:
+        return
+    approved_execution_counts = Counter(safety.approved_order_execution_fingerprints)
+    requested_execution_counts = Counter(
+        _order_execution_fingerprint_from_order(order, time_in_force=time_in_force) for order in orders
+    )
+    for fingerprint, requested_count in requested_execution_counts.items():
+        approved_count = approved_execution_counts.get(fingerprint, 0)
+        if requested_count > approved_count:
+            raise BrokerAdapterContractError(
+                "requested order time_in_force or count does not match the approved broker handoff order"
             )
 
 
@@ -876,6 +911,28 @@ def _order_fingerprint_from_handoff(order: dict[object, object]) -> str:
     )
 
 
+def _order_execution_fingerprint_from_order(order: Order, *, time_in_force: str) -> str:
+    return _order_fingerprint(
+        symbol=order.symbol,
+        side=order.side.value,
+        order_type=_alpaca_order_type(order.order_type),
+        quantity=order.quantity,
+        limit_price=order.limit_price,
+        time_in_force=time_in_force,
+    )
+
+
+def _order_execution_fingerprint_from_handoff(order: dict[object, object]) -> str:
+    return _order_fingerprint(
+        symbol=str(order.get("symbol")),
+        side=str(order.get("side")),
+        order_type=str(order.get("order_type")),
+        quantity=float(cast(str | int | float, order.get("quantity", 0.0))),
+        limit_price=cast(float | None, order.get("limit_price")),
+        time_in_force=str(order.get("time_in_force")),
+    )
+
+
 def _order_fingerprint(
     *,
     symbol: str,
@@ -883,6 +940,7 @@ def _order_fingerprint(
     order_type: str,
     quantity: float,
     limit_price: float | None,
+    time_in_force: str | None = None,
 ) -> str:
     payload = {
         "symbol": symbol,
@@ -891,6 +949,8 @@ def _order_fingerprint(
         "quantity": round(float(quantity), 8),
         "limit_price": None if limit_price is None else round(float(limit_price), 8),
     }
+    if time_in_force is not None:
+        payload["time_in_force"] = time_in_force
     canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 

@@ -72,6 +72,7 @@ def main() -> int:
             status=BrokerOrderStatus.REJECTED,
             submitted_quantity=1.0,
             rejection_reason="paper account symbol permission mismatch",
+            submitted_at="2026-05-31T14:30:00Z",
             broker_timestamp="2026-05-31T14:30:05Z",
             account_mode="paper",
         ),

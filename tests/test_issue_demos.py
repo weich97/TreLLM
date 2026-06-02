@@ -319,6 +319,8 @@ def test_broker_response_artifact_validator_and_cli_reject_count_mismatch(tmp_pa
                 submitted_quantity=1.0,
                 fill_quantity=1.0,
                 fill_price=190.0,
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
                 account_mode="paper",
             )
         ],
@@ -576,6 +578,36 @@ def test_broker_response_artifact_rejects_fills_without_fill_price(tmp_path, sta
     payload = json.loads(artifact.read_text(encoding="utf-8"))
 
     assert "responses[0].filled or partially_filled responses require a positive fill_price" in (
+        validate_broker_response_artifact(payload)
+    )
+
+
+@pytest.mark.parametrize("field_name", ["submitted_at", "broker_timestamp"])
+def test_broker_response_artifact_rejects_malformed_timestamps(tmp_path, field_name):
+    adapter = AlpacaPaperExportAdapter(client_prefix=f"response-{field_name}")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    response = BrokerResponse(
+        client_order_id=requests[0].client_order_id,
+        status=BrokerOrderStatus.ACCEPTED,
+        submitted_quantity=1.0,
+        accepted_quantity=1.0,
+        submitted_at="2026-06-02T09:30:00Z",
+        broker_timestamp="2026-06-02T09:30:01Z",
+        account_mode="paper",
+    )
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[response],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0][field_name] = "June 2, 2026"
+
+    assert f"responses[0].{field_name} must be an ISO timestamp with timezone" in (
         validate_broker_response_artifact(payload)
     )
 

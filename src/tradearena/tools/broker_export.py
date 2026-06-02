@@ -1028,6 +1028,10 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
         errors.append(f"responses[{idx}].rejection_reason must be non-empty for rejected responses")
     if not response.get("account_mode"):
         errors.append(f"responses[{idx}].account_mode must be non-empty")
+    for field_name in ("submitted_at", "broker_timestamp"):
+        value = response.get(field_name)
+        if not isinstance(value, str) or not _is_iso_timestamp_with_timezone(value):
+            errors.append(f"responses[{idx}].{field_name} must be an ISO timestamp with timezone")
     for field_name in ("submitted_quantity", "accepted_quantity", "fill_quantity", "fill_price", "fees"):
         value = response.get(field_name)
         if value is not None and (not isinstance(value, (int, float)) or value < 0):

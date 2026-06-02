@@ -705,6 +705,8 @@ def validate_broker_response_artifact(payload: dict[str, object]) -> list[str]:
             continue
         response_errors = _validate_broker_response_row(response, idx)
         errors.extend(response_errors)
+        if response.get("account_mode") != payload.get("account_mode"):
+            errors.append(f"responses[{idx}].account_mode must match artifact account_mode")
         client_order_id = response.get("client_order_id")
         if isinstance(client_order_id, str) and client_order_id:
             if client_order_id in seen_response_ids:

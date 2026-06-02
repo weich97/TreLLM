@@ -911,6 +911,12 @@ def _validate_response_request_bindings(
             errors.append(
                 f"responses[{idx}].broker_order_id must be non-empty for {response.status.value} broker responses"
             )
+        if response.status in {
+            BrokerOrderStatus.ACCEPTED,
+            BrokerOrderStatus.PARTIALLY_FILLED,
+            BrokerOrderStatus.FILLED,
+        } and not _is_positive_finite_number(response.accepted_quantity):
+            errors.append(f"responses[{idx}].{response.status.value} responses require a positive accepted_quantity")
         if response.status == BrokerOrderStatus.ACCEPTED:
             if _is_positive_finite_number(response.fill_quantity):
                 errors.append(f"responses[{idx}].accepted responses must not report fill_quantity")

@@ -393,6 +393,9 @@ def write_broker_response_artifact(
 ) -> dict[str, str | int | bool]:
     path = Path(output)
     path.parent.mkdir(parents=True, exist_ok=True)
+    binding_errors = _validate_response_request_quantities(requests, responses)
+    if binding_errors:
+        raise BrokerAdapterContractError("; ".join(binding_errors))
     summary = reconcile_broker_responses(requests, responses)
     live_submission = adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED
     written_at = _utc_now_iso()
@@ -877,6 +880,27 @@ def _approved_order_execution_fingerprints_from_request(payload_or_path: dict[st
         if isinstance(order, dict):
             fingerprints.append(_order_execution_fingerprint_from_handoff(order))
     return tuple(fingerprints)
+
+
+def _validate_response_request_quantities(
+    requests: list[AlpacaPaperOrder] | tuple[AlpacaPaperOrder, ...],
+    responses: list[BrokerResponse] | tuple[BrokerResponse, ...],
+) -> list[str]:
+    request_quantities = {request.client_order_id: float(request.quantity) for request in requests}
+    errors: list[str] = []
+    for idx, response in enumerate(responses):
+        request_quantity = request_quantities.get(response.client_order_id)
+        if request_quantity is None or response.submitted_quantity is None:
+            continue
+        if not _is_positive_finite_number(response.submitted_quantity):
+            continue
+        submitted_quantity = float(response.submitted_quantity)
+        if round(submitted_quantity, 8) != round(request_quantity, 8):
+            errors.append(
+                f"responses[{idx}].submitted_quantity {submitted_quantity} "
+                f"does not match request quantity {request_quantity}"
+            )
+    return errors
 
 
 def _validate_approved_order_counts(

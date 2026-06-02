@@ -401,6 +401,33 @@ def test_broker_response_artifact_writer_emits_validator_clean_defaults(tmp_path
     assert validate_broker_response_artifact(payload) == []
 
 
+def test_broker_response_artifact_writer_rejects_submitted_quantity_mismatch(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-request-quantity")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.REJECTED,
+                    submitted_quantity=2.0,
+                    rejection_reason="broker reported a different submitted quantity",
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "submitted_quantity 2.0 does not match request quantity 1.0" in str(exc)
+    else:
+        raise AssertionError("expected submitted quantity mismatch failure")
+
+
 def test_broker_response_artifact_validator_and_cli_reject_count_mismatch(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="validate-recon")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])

@@ -1156,6 +1156,10 @@ def _validate_broker_handoff_order(
     limit_price = order.get("limit_price")
     if limit_price is not None and (not isinstance(limit_price, (int, float)) or limit_price <= 0):
         errors.append(f"orders[{idx}].limit_price must be a positive number or null")
+    if order.get("order_type") == OrderType.LIMIT.value and (
+        not isinstance(limit_price, (int, float)) or limit_price <= 0
+    ):
+        errors.append(f"orders[{idx}].limit orders require a positive limit_price")
     max_notional = order.get("max_notional")
     if max_notional is not None and (not isinstance(max_notional, (int, float)) or max_notional <= 0):
         errors.append(f"orders[{idx}].max_notional must be a positive number or null")

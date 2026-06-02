@@ -103,6 +103,21 @@ def test_broker_handoff_artifact_rejects_order_account_mode_mismatch(tmp_path):
     assert "orders[0].account_mode must match artifact account_mode" in errors
 
 
+def test_broker_handoff_artifact_rejects_limit_order_without_limit_price(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="handoff-limit-price")
+    adapter.write(
+        [Order("AAPL", Side.BUY, 1.0, order_type=OrderType.LIMIT, limit_price=100.0, reason="unit test")],
+        tmp_path,
+    )
+    artifact = tmp_path / "alpaca_paper_orders.json"
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["orders"][0]["limit_price"] = None
+
+    errors = validate_broker_handoff_artifact(payload)
+
+    assert "orders[0].limit orders require a positive limit_price" in errors
+
+
 def test_broker_safety_config_blocks_disallowed_orders(tmp_path):
     adapter = AlpacaPaperExportAdapter(
         safety=BrokerSafetyConfig(

@@ -198,6 +198,19 @@
               "approval_status": { "const": "requires_human_approval" }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "order_type": { "const": "limit" }
+            },
+            "required": ["order_type"]
+          },
+          "then": {
+            "properties": {
+              "limit_price": { "type": "number", "exclusiveMinimum": 0 }
+            }
+          }
         }
       ]
     }

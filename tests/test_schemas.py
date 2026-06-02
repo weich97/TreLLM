@@ -11,7 +11,7 @@ import pytest
 from jsonschema import Draft202012Validator
 
 import scripts.validate_reproduction_report as reproduction_validator
-from tradearena.core.domain import Order, Side
+from tradearena.core.domain import Order, OrderType, Side
 from tradearena.core.trajectory import StepRecord, Trajectory
 from tradearena.evaluation.submissions import validate_submission_file
 from tradearena.tools import (
@@ -574,6 +574,21 @@ def test_broker_handoff_artifact_schema_rejects_order_adapter_mode_mismatch(tmp_
     paths = {tuple(error.path) for error in errors}
 
     assert ("orders", 0, "adapter_mode") in paths
+
+
+def test_broker_handoff_artifact_schema_rejects_limit_order_without_limit_price(tmp_path: Path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-handoff-limit-price")
+    adapter.write(
+        [Order("AAPL", Side.BUY, 1.0, order_type=OrderType.LIMIT, limit_price=100.0, reason="schema test")],
+        tmp_path,
+    )
+    payload = json.loads((tmp_path / "alpaca_paper_orders.json").read_text(encoding="utf-8"))
+    payload["orders"][0]["limit_price"] = None
+
+    errors = sorted(_validator("broker_handoff_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("orders", 0, "limit_price") in paths
 
 
 def test_broker_handoff_artifact_schema_requires_live_account_for_live_mode(tmp_path: Path):

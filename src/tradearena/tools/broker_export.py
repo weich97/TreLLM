@@ -921,6 +921,8 @@ def _validate_response_request_bindings(
                     broker_dt = _parse_timestamp(value)
         if submitted_dt is not None and broker_dt is not None and broker_dt < submitted_dt:
             errors.append(f"responses[{idx}].broker_timestamp must be at or after submitted_at")
+        if not response.client_order_id:
+            errors.append(f"responses[{idx}].client_order_id must be non-empty")
         if response.status in {
             BrokerOrderStatus.ACCEPTED,
             BrokerOrderStatus.PARTIALLY_FILLED,

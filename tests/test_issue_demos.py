@@ -318,6 +318,7 @@ def test_broker_response_artifact_validator_and_cli_reject_count_mismatch(tmp_pa
                 status=BrokerOrderStatus.FILLED,
                 broker_order_id="paper-filled-count-1",
                 submitted_quantity=1.0,
+                accepted_quantity=1.0,
                 fill_quantity=1.0,
                 fill_price=190.0,
                 submitted_at="2026-06-02T09:30:00Z",
@@ -779,6 +780,74 @@ def test_broker_response_artifact_rejects_broker_timestamp_before_submission(tmp
 
     assert "responses[0].broker_timestamp must be at or after submitted_at" in validate_broker_response_artifact(
         payload
+    )
+
+
+def test_broker_response_artifact_rejects_filled_without_accepted_quantity(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-filled-accepted")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.FILLED,
+                broker_order_id="paper-filled-accepted-1",
+                submitted_quantity=1.0,
+                accepted_quantity=None,
+                fill_quantity=1.0,
+                fill_price=190.0,
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    assert "responses[0].filled responses require a positive accepted_quantity" in validate_broker_response_artifact(
+        payload
+    )
+
+
+@pytest.mark.parametrize(
+    "status",
+    [BrokerOrderStatus.ACCEPTED, BrokerOrderStatus.PARTIALLY_FILLED],
+)
+def test_broker_response_artifact_rejects_active_status_without_accepted_quantity(tmp_path, status):
+    adapter = AlpacaPaperExportAdapter(client_prefix=f"response-{status.value}-accepted")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=status,
+                broker_order_id=f"paper-{status.value}-accepted-1",
+                submitted_quantity=1.0,
+                accepted_quantity=None,
+                fill_quantity=0.5 if status is BrokerOrderStatus.PARTIALLY_FILLED else None,
+                fill_price=190.0 if status is BrokerOrderStatus.PARTIALLY_FILLED else None,
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    assert f"responses[0].{status.value} responses require a positive accepted_quantity" in (
+        validate_broker_response_artifact(payload)
     )
 
 

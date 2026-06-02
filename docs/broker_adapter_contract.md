@@ -135,6 +135,8 @@ created an order. Non-empty `broker_order_id` values must also be unique within
 the artifact.
 Rejected response rows must include a non-empty, redacted `rejection_reason`
 so reconciliation artifacts explain why an order did not proceed.
+`accepted`, `partially_filled`, and `filled` rows must report a positive
+`accepted_quantity`.
 `partially_filled` rows must report a positive `fill_quantity` that remains
 below `submitted_quantity`; a full fill should use the `filled` status instead.
 `filled` rows must also report a positive `fill_quantity` equal to

@@ -1077,6 +1077,16 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
     if isinstance(accepted_quantity, (int, float)) and isinstance(fill_quantity, (int, float)):
         if fill_quantity > accepted_quantity:
             errors.append(f"responses[{idx}].fill_quantity cannot exceed accepted_quantity")
+    accepted_quantity_statuses = {
+        BrokerOrderStatus.ACCEPTED.value,
+        BrokerOrderStatus.PARTIALLY_FILLED.value,
+        BrokerOrderStatus.FILLED.value,
+    }
+    if response.get("status") in accepted_quantity_statuses:
+        if not isinstance(accepted_quantity, (int, float)) or accepted_quantity <= 0:
+            errors.append(
+                f"responses[{idx}].{response.get('status')} responses require a positive accepted_quantity"
+            )
     if response.get("status") == BrokerOrderStatus.PARTIALLY_FILLED.value:
         if not isinstance(fill_quantity, (int, float)) or fill_quantity <= 0:
             errors.append(f"responses[{idx}].partial fill_quantity must be positive")

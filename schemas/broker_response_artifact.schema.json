@@ -111,7 +111,7 @@
           "enum": ["accepted", "rejected", "partially_filled", "filled", "canceled", "expired", "unknown"]
         },
         "broker_order_id": { "type": ["string", "null"] },
-        "submitted_quantity": { "type": ["number", "null"], "minimum": 0 },
+        "submitted_quantity": { "type": "number", "exclusiveMinimum": 0 },
         "accepted_quantity": { "type": ["number", "null"], "minimum": 0 },
         "fill_quantity": { "type": ["number", "null"], "minimum": 0 },
         "fill_price": { "type": ["number", "null"], "minimum": 0 },

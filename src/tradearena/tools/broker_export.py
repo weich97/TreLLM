@@ -896,9 +896,13 @@ def _validate_response_request_bindings(
 ) -> list[str]:
     request_quantities = {request.client_order_id: float(request.quantity) for request in requests}
     errors: list[str] = []
+    seen_response_ids: set[str] = set()
     if adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED and account_mode != "live":
         errors.append("live_human_approved response artifacts require account_mode live")
     for idx, response in enumerate(responses):
+        if response.client_order_id in seen_response_ids:
+            errors.append(f"responses[{idx}].client_order_id duplicates an earlier response")
+        seen_response_ids.add(response.client_order_id)
         if response.account_mode != account_mode:
             errors.append(
                 f"responses[{idx}].account_mode {response.account_mode} "

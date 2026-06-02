@@ -922,6 +922,15 @@ def _validate_response_request_bindings(
                 errors.append(f"responses[{idx}].accepted responses must not report fill_quantity")
             if _is_positive_finite_number(response.fill_price):
                 errors.append(f"responses[{idx}].accepted responses must not report fill_price")
+        if response.status == BrokerOrderStatus.PARTIALLY_FILLED:
+            if not _is_positive_finite_number(response.fill_quantity):
+                errors.append(f"responses[{idx}].partial fill_quantity must be positive")
+        if response.status == BrokerOrderStatus.FILLED:
+            if not _is_positive_finite_number(response.fill_quantity):
+                errors.append(f"responses[{idx}].filled responses require a positive fill_quantity")
+        if response.status in {BrokerOrderStatus.PARTIALLY_FILLED, BrokerOrderStatus.FILLED}:
+            if not _is_positive_finite_number(response.fill_price):
+                errors.append(f"responses[{idx}].filled or partially_filled responses require a positive fill_price")
         if response.status == BrokerOrderStatus.REJECTED:
             if not response.rejection_reason:
                 errors.append(f"responses[{idx}].rejection_reason must be non-empty for rejected responses")

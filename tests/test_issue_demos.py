@@ -670,6 +670,7 @@ def test_broker_response_artifact_rejects_impossible_fill_quantities(tmp_path):
                 submitted_quantity=1.0,
                 accepted_quantity=1.0,
                 fill_quantity=2.0,
+                fill_price=190.0,
                 account_mode="paper",
             )
         ],
@@ -725,6 +726,7 @@ def test_broker_response_artifact_rejects_fill_exceeding_accepted_quantity(tmp_p
                 submitted_quantity=1.0,
                 accepted_quantity=0.5,
                 fill_quantity=1.0,
+                fill_price=190.0,
                 account_mode="paper",
             )
         ],
@@ -780,6 +782,7 @@ def test_broker_response_artifact_rejects_partial_fill_with_full_quantity(tmp_pa
                 submitted_quantity=1.0,
                 accepted_quantity=1.0,
                 fill_quantity=1.0,
+                fill_price=190.0,
                 account_mode="paper",
             )
         ],
@@ -808,7 +811,8 @@ def test_broker_response_artifact_rejects_filled_without_fill_quantity(tmp_path)
                 broker_order_id="paper-filled-missing-quantity-1",
                 submitted_quantity=1.0,
                 accepted_quantity=1.0,
-                fill_quantity=None,
+                fill_quantity=1.0,
+                fill_price=190.0,
                 account_mode="paper",
             )
         ],
@@ -818,6 +822,7 @@ def test_broker_response_artifact_rejects_filled_without_fill_quantity(tmp_path)
         account_mode="paper",
     )
     payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0]["fill_quantity"] = None
 
     assert "responses[0].filled responses require a positive fill_quantity" in validate_broker_response_artifact(
         payload
@@ -838,6 +843,7 @@ def test_broker_response_artifact_rejects_filled_with_partial_quantity(tmp_path)
                 submitted_quantity=1.0,
                 accepted_quantity=1.0,
                 fill_quantity=0.5,
+                fill_price=190.0,
                 account_mode="paper",
             )
         ],
@@ -871,7 +877,7 @@ def test_broker_response_artifact_rejects_fills_without_fill_price(tmp_path, sta
                 submitted_quantity=1.0,
                 accepted_quantity=1.0,
                 fill_quantity=0.5 if status is BrokerOrderStatus.PARTIALLY_FILLED else 1.0,
-                fill_price=None,
+                fill_price=190.0,
                 account_mode="paper",
             )
         ],
@@ -881,10 +887,56 @@ def test_broker_response_artifact_rejects_fills_without_fill_price(tmp_path, sta
         account_mode="paper",
     )
     payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0]["fill_price"] = None
 
     assert "responses[0].filled or partially_filled responses require a positive fill_price" in (
         validate_broker_response_artifact(payload)
     )
+
+
+@pytest.mark.parametrize("status", [BrokerOrderStatus.PARTIALLY_FILLED, BrokerOrderStatus.FILLED])
+@pytest.mark.parametrize("field_name", ["fill_quantity", "fill_price"])
+@pytest.mark.parametrize("field_value", [None, 0.0])
+def test_broker_response_artifact_writer_rejects_fills_without_positive_fill_fields(
+    tmp_path,
+    status,
+    field_name,
+    field_value,
+):
+    adapter = AlpacaPaperExportAdapter(client_prefix=f"response-writer-{status.value}-{field_name}")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    response_kwargs = {
+        "client_order_id": requests[0].client_order_id,
+        "status": status,
+        "broker_order_id": f"paper-writer-{status.value}-{field_name}-1",
+        "submitted_quantity": 1.0,
+        "accepted_quantity": 1.0,
+        "fill_quantity": 0.5 if status is BrokerOrderStatus.PARTIALLY_FILLED else 1.0,
+        "fill_price": 190.0,
+        "submitted_at": "2026-06-02T09:30:00Z",
+        "broker_timestamp": "2026-06-02T09:30:01Z",
+        "account_mode": "paper",
+        field_name: field_value,
+    }
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[BrokerResponse(**response_kwargs)],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        if field_name == "fill_quantity" and status is BrokerOrderStatus.FILLED:
+            assert "responses[0].filled responses require a positive fill_quantity" in str(exc)
+        elif field_name == "fill_quantity":
+            assert "responses[0].partial fill_quantity must be positive" in str(exc)
+        else:
+            assert "responses[0].filled or partially_filled responses require a positive fill_price" in str(exc)
+    else:
+        raise AssertionError(f"expected {status.value} response {field_name} to be rejected by writer")
 
 
 @pytest.mark.parametrize("field_name", ["submitted_at", "broker_timestamp"])

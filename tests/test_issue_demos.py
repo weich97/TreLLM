@@ -546,6 +546,34 @@ def test_broker_response_artifact_writer_rejects_duplicate_broker_order_ids(tmp_
         raise AssertionError("expected duplicate broker_order_id failure")
 
 
+def test_broker_response_artifact_writer_requires_broker_order_id_for_accepted_responses(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-broker-id")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.ACCEPTED,
+                    broker_order_id=None,
+                    submitted_quantity=1.0,
+                    accepted_quantity=1.0,
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "responses[0].broker_order_id must be non-empty for accepted broker responses" in str(exc)
+    else:
+        raise AssertionError("expected missing broker_order_id failure")
+
+
 def test_broker_response_artifact_validator_and_cli_reject_count_mismatch(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="validate-recon")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
@@ -611,6 +639,7 @@ def test_broker_response_artifact_rejects_impossible_fill_quantities(tmp_path):
             BrokerResponse(
                 client_order_id=requests[0].client_order_id,
                 status=BrokerOrderStatus.PARTIALLY_FILLED,
+                broker_order_id="paper-impossible-fill-1",
                 submitted_quantity=1.0,
                 accepted_quantity=1.0,
                 fill_quantity=2.0,
@@ -637,6 +666,7 @@ def test_broker_response_artifact_rejects_impossible_accepted_quantities(tmp_pat
             BrokerResponse(
                 client_order_id=requests[0].client_order_id,
                 status=BrokerOrderStatus.ACCEPTED,
+                broker_order_id="paper-impossible-accepted-1",
                 submitted_quantity=1.0,
                 accepted_quantity=2.0,
                 account_mode="paper",
@@ -664,6 +694,7 @@ def test_broker_response_artifact_rejects_fill_exceeding_accepted_quantity(tmp_p
             BrokerResponse(
                 client_order_id=requests[0].client_order_id,
                 status=BrokerOrderStatus.PARTIALLY_FILLED,
+                broker_order_id="paper-fill-vs-accepted-1",
                 submitted_quantity=1.0,
                 accepted_quantity=0.5,
                 fill_quantity=1.0,
@@ -717,6 +748,7 @@ def test_broker_response_artifact_rejects_partial_fill_with_full_quantity(tmp_pa
             BrokerResponse(
                 client_order_id=requests[0].client_order_id,
                 status=BrokerOrderStatus.PARTIALLY_FILLED,
+                broker_order_id="paper-partial-full-1",
                 submitted_quantity=1.0,
                 accepted_quantity=1.0,
                 fill_quantity=1.0,
@@ -745,6 +777,7 @@ def test_broker_response_artifact_rejects_filled_without_fill_quantity(tmp_path)
             BrokerResponse(
                 client_order_id=requests[0].client_order_id,
                 status=BrokerOrderStatus.FILLED,
+                broker_order_id="paper-filled-missing-quantity-1",
                 submitted_quantity=1.0,
                 accepted_quantity=1.0,
                 fill_quantity=None,
@@ -773,6 +806,7 @@ def test_broker_response_artifact_rejects_filled_with_partial_quantity(tmp_path)
             BrokerResponse(
                 client_order_id=requests[0].client_order_id,
                 status=BrokerOrderStatus.FILLED,
+                broker_order_id="paper-filled-partial-1",
                 submitted_quantity=1.0,
                 accepted_quantity=1.0,
                 fill_quantity=0.5,
@@ -805,6 +839,7 @@ def test_broker_response_artifact_rejects_fills_without_fill_price(tmp_path, sta
             BrokerResponse(
                 client_order_id=requests[0].client_order_id,
                 status=status,
+                broker_order_id=f"paper-{status.value}-missing-price-1",
                 submitted_quantity=1.0,
                 accepted_quantity=1.0,
                 fill_quantity=0.5 if status is BrokerOrderStatus.PARTIALLY_FILLED else 1.0,
@@ -831,6 +866,7 @@ def test_broker_response_artifact_rejects_malformed_timestamps(tmp_path, field_n
     response = BrokerResponse(
         client_order_id=requests[0].client_order_id,
         status=BrokerOrderStatus.ACCEPTED,
+        broker_order_id="paper-malformed-time-1",
         submitted_quantity=1.0,
         accepted_quantity=1.0,
         submitted_at="2026-06-02T09:30:00Z",
@@ -897,7 +933,7 @@ def test_broker_response_artifact_requires_broker_order_id_for_accepted_response
             BrokerResponse(
                 client_order_id=requests[0].client_order_id,
                 status=BrokerOrderStatus.ACCEPTED,
-                broker_order_id=None,
+                broker_order_id="paper-broker-order-id-1",
                 submitted_quantity=1.0,
                 accepted_quantity=1.0,
                 submitted_at="2026-06-02T09:30:00Z",
@@ -911,6 +947,7 @@ def test_broker_response_artifact_requires_broker_order_id_for_accepted_response
         account_mode="paper",
     )
     payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0]["broker_order_id"] = None
 
     assert "responses[0].broker_order_id must be non-empty for accepted broker responses" in (
         validate_broker_response_artifact(payload)

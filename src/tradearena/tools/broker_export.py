@@ -901,6 +901,16 @@ def _validate_response_request_bindings(
     if adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED and account_mode != "live":
         errors.append("live_human_approved response artifacts require account_mode live")
     for idx, response in enumerate(responses):
+        if response.status in {
+            BrokerOrderStatus.ACCEPTED,
+            BrokerOrderStatus.PARTIALLY_FILLED,
+            BrokerOrderStatus.FILLED,
+            BrokerOrderStatus.CANCELED,
+            BrokerOrderStatus.EXPIRED,
+        } and not response.broker_order_id:
+            errors.append(
+                f"responses[{idx}].broker_order_id must be non-empty for {response.status.value} broker responses"
+            )
         if response.client_order_id in seen_response_ids:
             errors.append(f"responses[{idx}].client_order_id duplicates an earlier response")
         seen_response_ids.add(response.client_order_id)

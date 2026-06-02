@@ -505,6 +505,47 @@ def test_broker_response_artifact_writer_rejects_duplicate_client_order_ids(tmp_
         raise AssertionError("expected duplicate client_order_id failure")
 
 
+def test_broker_response_artifact_writer_rejects_duplicate_broker_order_ids(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-broker-duplicate")
+    requests = adapter.convert(
+        [
+            Order("AAPL", Side.BUY, 1.0, reason="unit test"),
+            Order("MSFT", Side.BUY, 1.0, reason="unit test"),
+        ]
+    )
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.ACCEPTED,
+                    broker_order_id="paper-duplicate-broker",
+                    submitted_quantity=1.0,
+                    accepted_quantity=1.0,
+                    account_mode="paper",
+                ),
+                BrokerResponse(
+                    client_order_id=requests[1].client_order_id,
+                    status=BrokerOrderStatus.ACCEPTED,
+                    broker_order_id="paper-duplicate-broker",
+                    submitted_quantity=1.0,
+                    accepted_quantity=1.0,
+                    account_mode="paper",
+                ),
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "responses[1].broker_order_id duplicates an earlier response" in str(exc)
+    else:
+        raise AssertionError("expected duplicate broker_order_id failure")
+
+
 def test_broker_response_artifact_validator_and_cli_reject_count_mismatch(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="validate-recon")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
@@ -901,7 +942,7 @@ def test_broker_response_artifact_rejects_duplicate_broker_order_ids(tmp_path):
             BrokerResponse(
                 client_order_id=requests[1].client_order_id,
                 status=BrokerOrderStatus.ACCEPTED,
-                broker_order_id="paper-duplicate-broker-1",
+                broker_order_id="paper-duplicate-broker-2",
                 submitted_quantity=1.0,
                 accepted_quantity=1.0,
                 submitted_at="2026-06-02T09:30:02Z",
@@ -915,6 +956,7 @@ def test_broker_response_artifact_rejects_duplicate_broker_order_ids(tmp_path):
         account_mode="paper",
     )
     payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][1]["broker_order_id"] = payload["responses"][0]["broker_order_id"]
 
     assert "responses[1].broker_order_id duplicates an earlier response" in validate_broker_response_artifact(payload)
 

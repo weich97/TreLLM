@@ -106,10 +106,8 @@ class BrokerSafetyConfig:
 
         notional = None
         if self.max_notional is not None:
-            if reference_price is None and self.mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED:
-                raise BrokerAdapterContractError(
-                    "live_human_approved mode requires a reference_price for max_notional checks"
-                )
+            if reference_price is None:
+                raise BrokerAdapterContractError("max_notional checks require a reference_price")
             if reference_price is not None:
                 notional = abs(float(order.quantity) * float(reference_price))
         if self.max_notional is not None and notional is not None:

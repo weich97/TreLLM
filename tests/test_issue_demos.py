@@ -146,6 +146,23 @@ def test_broker_safety_config_blocks_disallowed_orders(tmp_path):
         raise AssertionError("expected broker adapter allow-list failure")
 
 
+def test_broker_safety_config_requires_reference_price_for_market_notional_limit(tmp_path):
+    adapter = AlpacaPaperExportAdapter(
+        safety=BrokerSafetyConfig(
+            account_mode="paper",
+            max_notional=100.0,
+            max_quantity=10.0,
+        )
+    )
+
+    try:
+        adapter.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path)
+    except BrokerAdapterContractError as exc:
+        assert "reference_price" in str(exc)
+    else:
+        raise AssertionError("expected reference price failure for max_notional market order")
+
+
 def test_dry_run_broker_adapter_writes_validated_handoff_without_live_submission(tmp_path):
     adapter = DryRunBrokerAdapter(
         client_prefix="dry-unit",

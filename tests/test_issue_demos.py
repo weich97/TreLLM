@@ -428,6 +428,33 @@ def test_broker_response_artifact_writer_rejects_submitted_quantity_mismatch(tmp
         raise AssertionError("expected submitted quantity mismatch failure")
 
 
+def test_broker_response_artifact_writer_rejects_account_mode_mismatch(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-account-binding")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.REJECTED,
+                    submitted_quantity=1.0,
+                    rejection_reason="broker account mismatch",
+                    account_mode="live",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "responses[0].account_mode live does not match artifact account_mode paper" in str(exc)
+    else:
+        raise AssertionError("expected response account_mode mismatch failure")
+
+
 def test_broker_response_artifact_validator_and_cli_reject_count_mismatch(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="validate-recon")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
@@ -862,7 +889,7 @@ def test_broker_response_artifact_rejects_row_account_mode_mismatch(tmp_path):
                 accepted_quantity=1.0,
                 submitted_at="2026-06-02T09:30:00Z",
                 broker_timestamp="2026-06-02T09:30:01Z",
-                account_mode="live",
+                account_mode="paper",
             )
         ],
         output=artifact,
@@ -871,6 +898,7 @@ def test_broker_response_artifact_rejects_row_account_mode_mismatch(tmp_path):
         account_mode="paper",
     )
     payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0]["account_mode"] = "live"
 
     assert "responses[0].account_mode must match artifact account_mode" in validate_broker_response_artifact(payload)
 

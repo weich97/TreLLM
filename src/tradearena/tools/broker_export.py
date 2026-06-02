@@ -393,7 +393,7 @@ def write_broker_response_artifact(
 ) -> dict[str, str | int | bool]:
     path = Path(output)
     path.parent.mkdir(parents=True, exist_ok=True)
-    binding_errors = _validate_response_request_quantities(requests, responses)
+    binding_errors = _validate_response_request_bindings(requests, responses, account_mode=account_mode)
     if binding_errors:
         raise BrokerAdapterContractError("; ".join(binding_errors))
     summary = reconcile_broker_responses(requests, responses)
@@ -882,13 +882,20 @@ def _approved_order_execution_fingerprints_from_request(payload_or_path: dict[st
     return tuple(fingerprints)
 
 
-def _validate_response_request_quantities(
+def _validate_response_request_bindings(
     requests: list[AlpacaPaperOrder] | tuple[AlpacaPaperOrder, ...],
     responses: list[BrokerResponse] | tuple[BrokerResponse, ...],
+    *,
+    account_mode: str,
 ) -> list[str]:
     request_quantities = {request.client_order_id: float(request.quantity) for request in requests}
     errors: list[str] = []
     for idx, response in enumerate(responses):
+        if response.account_mode != account_mode:
+            errors.append(
+                f"responses[{idx}].account_mode {response.account_mode} "
+                f"does not match artifact account_mode {account_mode}"
+            )
         request_quantity = request_quantities.get(response.client_order_id)
         if request_quantity is None or response.submitted_quantity is None:
             continue

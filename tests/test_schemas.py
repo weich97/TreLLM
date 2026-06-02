@@ -549,7 +549,7 @@ def test_broker_response_artifact_schema_requires_live_response_accounts_for_liv
                 status=BrokerOrderStatus.REJECTED,
                 submitted_quantity=1.0,
                 rejection_reason="paper row in live artifact",
-                account_mode="paper",
+                account_mode="live",
             )
         ],
         output=output,
@@ -558,6 +558,7 @@ def test_broker_response_artifact_schema_requires_live_response_accounts_for_liv
         account_mode="live",
     )
     payload = json.loads(output.read_text(encoding="utf-8"))
+    payload["responses"][0]["account_mode"] = "paper"
 
     errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
     paths = {tuple(error.path) for error in errors}

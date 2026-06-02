@@ -782,7 +782,7 @@ def validate_broker_handoff_artifact(payload: dict[str, object]) -> list[str]:
         if not isinstance(order, dict):
             errors.append(f"orders[{idx}] must be an object")
             continue
-        errors.extend(_validate_broker_handoff_order(order, idx, adapter_mode))
+        errors.extend(_validate_broker_handoff_order(order, idx, adapter_mode, payload.get("account_mode")))
     return errors
 
 
@@ -1115,7 +1115,12 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
     return errors
 
 
-def _validate_broker_handoff_order(order: dict[str, object], idx: int, adapter_mode: object) -> list[str]:
+def _validate_broker_handoff_order(
+    order: dict[str, object],
+    idx: int,
+    adapter_mode: object,
+    artifact_account_mode: object,
+) -> list[str]:
     errors: list[str] = []
     required = set(AlpacaPaperOrder.__dataclass_fields__)
     missing = sorted(required - set(order))
@@ -1139,6 +1144,8 @@ def _validate_broker_handoff_order(order: dict[str, object], idx: int, adapter_m
             errors.append(f"orders[{idx}].{field_name} must be non-empty")
     if order.get("adapter_mode") != adapter_mode:
         errors.append(f"orders[{idx}].adapter_mode must match artifact adapter_mode")
+    if order.get("account_mode") != artifact_account_mode:
+        errors.append(f"orders[{idx}].account_mode must match artifact account_mode")
     if order.get("side") not in {"buy", "sell"}:
         errors.append(f"orders[{idx}].side must be buy or sell")
     if order.get("order_type") not in {"market", "limit"}:

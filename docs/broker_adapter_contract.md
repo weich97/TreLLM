@@ -120,6 +120,7 @@ missing and unmatched response counts.
 Response validation also rejects impossible quantity relationships, including
 `accepted_quantity` or `fill_quantity` values greater than `submitted_quantity`,
 or `fill_quantity` values greater than `accepted_quantity`.
+Every response row must report a positive `submitted_quantity`.
 Every response row must include `submitted_at` and `broker_timestamp` as ISO
 timestamps with explicit timezone offsets so reconciliation can sort events and
 measure broker latency without locale-dependent parsing. `broker_timestamp`

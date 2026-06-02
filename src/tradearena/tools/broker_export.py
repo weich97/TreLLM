@@ -1069,6 +1069,8 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
     accepted_quantity = response.get("accepted_quantity")
     fill_quantity = response.get("fill_quantity")
     fill_price = response.get("fill_price")
+    if not isinstance(submitted_quantity, (int, float)) or submitted_quantity <= 0:
+        errors.append(f"responses[{idx}].submitted_quantity must be a positive number")
     if isinstance(submitted_quantity, (int, float)):
         if isinstance(accepted_quantity, (int, float)) and accepted_quantity > submitted_quantity:
             errors.append(f"responses[{idx}].accepted_quantity cannot exceed submitted_quantity")

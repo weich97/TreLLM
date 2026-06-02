@@ -122,6 +122,8 @@ Response validation also rejects impossible quantity relationships, including
 or `fill_quantity` values greater than `accepted_quantity`.
 Rejected response rows must include a non-empty, redacted `rejection_reason`
 so reconciliation artifacts explain why an order did not proceed.
+`partially_filled` rows must report a positive `fill_quantity` that remains
+below `submitted_quantity`; a full fill should use the `filled` status instead.
 For `live_human_approved` response artifacts, `account_mode` must be `live`;
 paper or sandbox broker responses should use `paper_sandbox` or another
 non-live adapter mode.

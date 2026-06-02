@@ -375,6 +375,32 @@ def test_broker_response_artifact_summarizes_reconciliation(tmp_path):
     assert payload["responses"][0]["status"] == "partially_filled"
 
 
+def test_broker_response_artifact_writer_emits_validator_clean_defaults(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="writer-defaults")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.REJECTED,
+                submitted_quantity=1.0,
+                rejection_reason="paper sandbox rejected order",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    assert validate_broker_response_artifact(payload) == []
+
+
 def test_broker_response_artifact_validator_and_cli_reject_count_mismatch(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="validate-recon")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])

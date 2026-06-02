@@ -395,6 +395,7 @@ def write_broker_response_artifact(
     path.parent.mkdir(parents=True, exist_ok=True)
     summary = reconcile_broker_responses(requests, responses)
     live_submission = adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED
+    written_at = _utc_now_iso()
     payload: dict[str, object] = {
         "schema": "tradearena_broker_response_artifact_v0.1",
         "adapter": adapter,
@@ -402,7 +403,7 @@ def write_broker_response_artifact(
         "account_mode": account_mode,
         "live_submission": live_submission,
         "reconciliation": asdict(summary),
-        "responses": [_response_dict(response) for response in responses],
+        "responses": [_response_dict(response, default_timestamp=written_at) for response in responses],
     }
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return {
@@ -1021,9 +1022,16 @@ def _approval_status(safety: BrokerSafetyConfig) -> str:
     return "requires_human_approval"
 
 
-def _response_dict(response: BrokerResponse) -> dict[str, object]:
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def _response_dict(response: BrokerResponse, *, default_timestamp: str | None = None) -> dict[str, object]:
     row = asdict(response)
     row["status"] = response.status.value
+    if default_timestamp is not None:
+        row["submitted_at"] = row["submitted_at"] or default_timestamp
+        row["broker_timestamp"] = row["broker_timestamp"] or default_timestamp
     return row
 
 

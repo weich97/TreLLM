@@ -455,6 +455,22 @@ def test_broker_response_artifact_writer_rejects_account_mode_mismatch(tmp_path)
         raise AssertionError("expected response account_mode mismatch failure")
 
 
+def test_broker_response_artifact_writer_requires_live_account_for_live_mode(tmp_path):
+    try:
+        write_broker_response_artifact(
+            requests=[],
+            responses=[],
+            output=tmp_path / "broker_response.json",
+            adapter="live-writer-unit",
+            adapter_mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "live_human_approved response artifacts require account_mode live" in str(exc)
+    else:
+        raise AssertionError("expected live response account_mode failure")
+
+
 def test_broker_response_artifact_validator_and_cli_reject_count_mismatch(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="validate-recon")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])

@@ -529,9 +529,10 @@ def test_broker_response_artifact_schema_requires_live_account_for_live_mode(tmp
         output=output,
         adapter=adapter.name,
         adapter_mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
-        account_mode="paper",
+        account_mode="live",
     )
     payload = json.loads(output.read_text(encoding="utf-8"))
+    payload["account_mode"] = "paper"
 
     errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
     paths = {tuple(error.path) for error in errors}

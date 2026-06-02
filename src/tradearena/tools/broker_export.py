@@ -393,7 +393,12 @@ def write_broker_response_artifact(
 ) -> dict[str, str | int | bool]:
     path = Path(output)
     path.parent.mkdir(parents=True, exist_ok=True)
-    binding_errors = _validate_response_request_bindings(requests, responses, account_mode=account_mode)
+    binding_errors = _validate_response_request_bindings(
+        requests,
+        responses,
+        adapter_mode=adapter_mode,
+        account_mode=account_mode,
+    )
     if binding_errors:
         raise BrokerAdapterContractError("; ".join(binding_errors))
     summary = reconcile_broker_responses(requests, responses)
@@ -886,10 +891,13 @@ def _validate_response_request_bindings(
     requests: list[AlpacaPaperOrder] | tuple[AlpacaPaperOrder, ...],
     responses: list[BrokerResponse] | tuple[BrokerResponse, ...],
     *,
+    adapter_mode: BrokerAdapterMode,
     account_mode: str,
 ) -> list[str]:
     request_quantities = {request.client_order_id: float(request.quantity) for request in requests}
     errors: list[str] = []
+    if adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED and account_mode != "live":
+        errors.append("live_human_approved response artifacts require account_mode live")
     for idx, response in enumerate(responses):
         if response.account_mode != account_mode:
             errors.append(

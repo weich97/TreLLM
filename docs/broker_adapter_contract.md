@@ -177,11 +177,11 @@ approval binding until a reviewed reference-price field is added.
 Adapter implementations can turn a validated approval artifact into the
 runtime safety gate with `broker_safety_from_approval_artifact(...)`; the
 result is a `BrokerSafetyConfig` in `live_human_approved` mode with the same
-symbol, order-type, quantity, and notional limits as the approval. Pass
-`request_artifact=` to `broker_safety_from_approval_artifact(...)` so the
-approval/request binding is enforced inside the live-safety creation path and
-the resulting safety gate only accepts orders that match the reviewed handoff
-orders.
+symbol, order-type, quantity, and notional limits as the approval.
+`request_artifact=` is required when calling
+`broker_safety_from_approval_artifact(...)`; the approval/request binding is
+enforced inside the live-safety creation path, and the resulting safety gate
+only accepts orders that match the reviewed handoff orders.
 Pass `now=` when validating or consuming approval artifacts so stale approvals
 are rejected before any live-mode safety config is created.
 

@@ -146,8 +146,8 @@ Runtime code can consume this contract with
 validation or conversion. Use `broker_handoff_artifact_hash(...)` to populate
 `request_artifact_hash` with a `sha256:` plus 64 lowercase hex value, and pass
 `request_artifact=` to
-`broker_safety_from_approval_artifact(...)` when an approval is meant to
-authorize one specific broker handoff artifact.
+`broker_safety_from_approval_artifact(...)` so live safety creation is bound to
+the exact reviewed broker handoff artifact.
 
 Validate a broker approval artifact with:
 

@@ -448,7 +448,16 @@ def test_broker_approval_artifact_requires_live_account_mode():
     assert "account_mode must be live for broker approval artifacts" in validate_broker_approval_artifact(payload)
 
 
-def test_broker_approval_artifact_builds_live_safety_config():
+def test_broker_approval_artifact_builds_live_safety_config(tmp_path):
+    adapter = DryRunBrokerAdapter(
+        client_prefix="approval-safety",
+        safety=BrokerSafetyConfig(account_mode="paper", max_quantity=5.0, allowed_symbols=("AAPL", "MSFT")),
+    )
+    adapter.write(
+        [Order("AAPL", Side.BUY, 2.0, order_type=OrderType.LIMIT, limit_price=100.0, reason="approved")],
+        tmp_path,
+    )
+    request_path = tmp_path / "dry_run_orders.json"
     payload = build_broker_approval_artifact(
         BrokerApproval(
             approval_status="approved",
@@ -462,10 +471,11 @@ def test_broker_approval_artifact_builds_live_safety_config():
         account_mode="live",
         max_quantity=5.0,
         allowed_order_types=(OrderType.LIMIT,),
+        request_artifact_hash=broker_handoff_artifact_hash(request_path),
     )
 
     approval = broker_approval_from_artifact(payload)
-    safety = broker_safety_from_approval_artifact(payload)
+    safety = broker_safety_from_approval_artifact(payload, request_artifact=request_path)
 
     assert approval.allowed_symbols == ("AAPL", "MSFT")
     assert safety.mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED
@@ -484,9 +494,33 @@ def test_broker_approval_artifact_builds_live_safety_config():
             reference_price=100.0,
         )
     except BrokerAdapterContractError as exc:
-        assert "max_notional" in str(exc)
+        assert "does not match an approved broker handoff order" in str(exc)
     else:
-        raise AssertionError("expected max_notional failure from approval artifact safety")
+        raise AssertionError("expected unreviewed-order failure from approval artifact safety")
+
+
+def test_broker_safety_from_approval_artifact_requires_reviewed_request_artifact():
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=250.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-unbound-safety-001",
+        account_mode="live",
+        max_quantity=5.0,
+        request_artifact_hash="sha256:" + "1" * 64,
+    )
+
+    try:
+        broker_safety_from_approval_artifact(payload)
+    except BrokerAdapterContractError as exc:
+        assert "request_artifact is required to build live safety from a broker approval artifact" in str(exc)
+    else:
+        raise AssertionError("expected unbound live safety creation to be rejected")
 
 
 def test_broker_approval_artifact_rejects_expired_approval():

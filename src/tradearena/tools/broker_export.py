@@ -614,6 +614,13 @@ def broker_safety_from_approval_artifact(
 ) -> BrokerSafetyConfig:
     """Build live human-approved safety limits from a broker approval artifact."""
 
+    errors = validate_broker_approval_artifact(payload, now=now)
+    if errors:
+        raise BrokerAdapterContractError("; ".join(errors))
+    if request_artifact is None:
+        raise BrokerAdapterContractError(
+            "request_artifact is required to build live safety from a broker approval artifact"
+        )
     approval = broker_approval_from_artifact(payload, now=now, request_artifact=request_artifact)
     order_types = tuple(
         OrderType(str(order_type))

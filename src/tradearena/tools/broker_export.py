@@ -572,6 +572,15 @@ def validate_broker_approval_request_binding(
         return [*errors, str(exc)]
     request_errors = validate_broker_handoff_artifact(request_payload)
     errors.extend(request_errors)
+    if (
+        not request_errors
+        and (
+            request_payload.get("adapter_mode") == BrokerAdapterMode.LIVE_HUMAN_APPROVED.value
+            or request_payload.get("live_submission") is True
+            or request_payload.get("manual_approval_required") is not True
+        )
+    ):
+        errors.append("request artifact must be a pre-live broker-review handoff, not live_human_approved")
     request_hash = approval_payload.get("request_artifact_hash")
     if not isinstance(request_hash, str) or not request_hash:
         errors.append("request_artifact_hash is required to bind approval to a broker handoff artifact")

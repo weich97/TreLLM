@@ -789,6 +789,49 @@ def test_broker_approval_artifact_binds_to_handoff_request_hash(tmp_path):
     ]
 
 
+def test_broker_approval_binding_rejects_already_live_handoff_request(tmp_path):
+    adapter = AlpacaPaperExportAdapter(
+        client_prefix="approval-live-request",
+        safety=BrokerSafetyConfig(
+            mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+            account_mode="live",
+            max_notional=1000.0,
+            max_quantity=10.0,
+            approval=BrokerApproval(
+                approval_status="approved",
+                approved_by="operator-7",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=1000.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="unit test approval",
+            ),
+        ),
+    )
+    adapter.write(
+        [Order("AAPL", Side.BUY, 1.0, order_type=OrderType.LIMIT, limit_price=100.0, reason="already live")],
+        tmp_path,
+    )
+    request_path = tmp_path / "alpaca_paper_orders.json"
+    approval_payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:05:00Z",
+            max_notional=250.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-live-request-001",
+        account_mode="live",
+        max_quantity=5.0,
+        request_artifact_hash=broker_handoff_artifact_hash(request_path),
+    )
+
+    assert validate_broker_approval_request_binding(approval_payload, request_path) == [
+        "request artifact must be a pre-live broker-review handoff, not live_human_approved"
+    ]
+
+
 def test_broker_handoff_hash_cli_and_script_validate_before_printing_hash(tmp_path):
     adapter = DryRunBrokerAdapter(
         client_prefix="hash-cli",

@@ -161,7 +161,10 @@ compute `broker_handoff_artifact_hash(request_artifact)` and store it in
 then run
 `validate_broker_approval_request_binding(approval, request_artifact)` before
 building any live-mode safety config. This prevents an operator approval for one
-handoff file from being reused against a different order request.
+handoff file from being reused against a different order request. The reviewed
+request artifact must be a pre-live broker-review handoff with
+`live_submission=false` and `manual_approval_required=true`; approval binding
+rejects handoff artifacts that are already in `live_human_approved` mode.
 Reviewers can compute the reviewed request hash with
 `tradearena hash-broker-handoff <request.json>` or
 `python scripts/hash_broker_handoff_artifact.py <request.json>`; both commands

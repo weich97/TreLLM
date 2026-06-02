@@ -51,6 +51,44 @@
     {
       "if": {
         "properties": {
+          "adapter_mode": { "const": "offline_export" }
+        },
+        "required": ["adapter_mode"]
+      },
+      "then": {
+        "properties": {
+          "orders": {
+            "items": {
+              "properties": {
+                "adapter_mode": { "const": "offline_export" }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "adapter_mode": { "const": "dry_run" }
+        },
+        "required": ["adapter_mode"]
+      },
+      "then": {
+        "properties": {
+          "orders": {
+            "items": {
+              "properties": {
+                "adapter_mode": { "const": "dry_run" }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
           "adapter_mode": { "const": "paper_sandbox" }
         },
         "required": ["adapter_mode"]
@@ -59,7 +97,14 @@
         "properties": {
           "paper_only": { "const": false },
           "live_submission": { "const": false },
-          "manual_approval_required": { "const": true }
+          "manual_approval_required": { "const": true },
+          "orders": {
+            "items": {
+              "properties": {
+                "adapter_mode": { "const": "paper_sandbox" }
+              }
+            }
+          }
         }
       }
     },
@@ -75,7 +120,14 @@
           "account_mode": { "const": "live" },
           "paper_only": { "const": false },
           "live_submission": { "const": true },
-          "manual_approval_required": { "const": false }
+          "manual_approval_required": { "const": false },
+          "orders": {
+            "items": {
+              "properties": {
+                "adapter_mode": { "const": "live_human_approved" }
+              }
+            }
+          }
         }
       }
     }

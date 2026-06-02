@@ -561,6 +561,21 @@ def test_broker_handoff_artifact_schema_rejects_mode_flag_mismatch(tmp_path: Pat
     assert ("orders", 0, "submit_live") in paths
 
 
+def test_broker_handoff_artifact_schema_rejects_order_adapter_mode_mismatch(tmp_path: Path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-handoff-order-mode")
+    adapter.write([Order("AAPL", Side.BUY, 1.0, reason="schema test")], tmp_path)
+    payload = json.loads((tmp_path / "alpaca_paper_orders.json").read_text(encoding="utf-8"))
+    payload["orders"][0]["adapter_mode"] = "live_human_approved"
+    payload["orders"][0]["account_mode"] = "live"
+    payload["orders"][0]["submit_live"] = True
+    payload["orders"][0]["approval_status"] = "approved"
+
+    errors = sorted(_validator("broker_handoff_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("orders", 0, "adapter_mode") in paths
+
+
 def test_broker_handoff_artifact_schema_requires_live_account_for_live_mode(tmp_path: Path):
     adapter = AlpacaPaperExportAdapter(client_prefix="schema-live-handoff-account")
     adapter.write([Order("AAPL", Side.BUY, 1.0, reason="schema test")], tmp_path)

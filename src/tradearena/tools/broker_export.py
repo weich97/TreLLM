@@ -393,12 +393,19 @@ def write_broker_response_artifact(
 ) -> dict[str, str | int | bool]:
     path = Path(output)
     path.parent.mkdir(parents=True, exist_ok=True)
+    artifact_errors: list[str] = []
+    if not adapter:
+        artifact_errors.append("adapter must be non-empty")
+    if not account_mode:
+        artifact_errors.append("account_mode must be non-empty")
     binding_errors = _validate_response_request_bindings(
         requests,
         responses,
         adapter_mode=adapter_mode,
         account_mode=account_mode,
     )
+    if artifact_errors:
+        raise BrokerAdapterContractError("; ".join([*artifact_errors, *binding_errors]))
     if binding_errors:
         raise BrokerAdapterContractError("; ".join(binding_errors))
     summary = reconcile_broker_responses(requests, responses)

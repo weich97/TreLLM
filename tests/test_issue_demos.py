@@ -1670,6 +1670,64 @@ def test_broker_response_artifact_writer_rejects_negative_optional_numeric_field
         raise AssertionError(f"expected negative {field_name} to be rejected by writer")
 
 
+def test_broker_response_artifact_writer_rejects_empty_adapter_name(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-empty-adapter")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.REJECTED,
+                    submitted_quantity=1.0,
+                    rejection_reason="paper account symbol permission mismatch",
+                    submitted_at="2026-06-02T09:30:00Z",
+                    broker_timestamp="2026-06-02T09:30:01Z",
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter="",
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "adapter must be non-empty" in str(exc)
+    else:
+        raise AssertionError("expected empty response artifact adapter name to be rejected by writer")
+
+
+def test_broker_response_artifact_writer_rejects_empty_artifact_account_mode(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-empty-account")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.REJECTED,
+                    submitted_quantity=1.0,
+                    rejection_reason="paper account symbol permission mismatch",
+                    submitted_at="2026-06-02T09:30:00Z",
+                    broker_timestamp="2026-06-02T09:30:01Z",
+                    account_mode="",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "account_mode must be non-empty" in str(exc)
+    else:
+        raise AssertionError("expected empty response artifact account_mode to be rejected by writer")
+
+
 def test_broker_response_artifact_rejects_live_mode_with_paper_account():
     payload = {
         "schema": "tradearena_broker_response_artifact_v0.1",

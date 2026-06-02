@@ -574,6 +574,33 @@ def test_broker_response_artifact_writer_requires_broker_order_id_for_accepted_r
         raise AssertionError("expected missing broker_order_id failure")
 
 
+def test_broker_response_artifact_writer_requires_rejection_reason_for_rejected_responses(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-rejection-reason")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.REJECTED,
+                    submitted_quantity=1.0,
+                    rejection_reason=None,
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "responses[0].rejection_reason must be non-empty for rejected responses" in str(exc)
+    else:
+        raise AssertionError("expected missing rejection_reason failure")
+
+
 def test_broker_response_artifact_validator_and_cli_reject_count_mismatch(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="validate-recon")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
@@ -722,7 +749,7 @@ def test_broker_response_artifact_rejects_rejection_without_reason(tmp_path):
                 client_order_id=requests[0].client_order_id,
                 status=BrokerOrderStatus.REJECTED,
                 submitted_quantity=1.0,
-                rejection_reason=None,
+                rejection_reason="paper account symbol permission mismatch",
                 account_mode="paper",
             )
         ],
@@ -732,6 +759,7 @@ def test_broker_response_artifact_rejects_rejection_without_reason(tmp_path):
         account_mode="paper",
     )
     payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0]["rejection_reason"] = None
 
     assert "responses[0].rejection_reason must be non-empty for rejected responses" in validate_broker_response_artifact(
         payload

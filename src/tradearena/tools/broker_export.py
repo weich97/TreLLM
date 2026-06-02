@@ -911,6 +911,8 @@ def _validate_response_request_bindings(
             errors.append(
                 f"responses[{idx}].broker_order_id must be non-empty for {response.status.value} broker responses"
             )
+        if response.status == BrokerOrderStatus.REJECTED and not response.rejection_reason:
+            errors.append(f"responses[{idx}].rejection_reason must be non-empty for rejected responses")
         if response.client_order_id in seen_response_ids:
             errors.append(f"responses[{idx}].client_order_id duplicates an earlier response")
         seen_response_ids.add(response.client_order_id)

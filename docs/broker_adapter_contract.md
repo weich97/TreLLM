@@ -117,6 +117,8 @@ This artifact is part of the audit trail, not a throwaway log.
 this artifact. It records `tradearena_broker_response_artifact_v0.1`, the
 adapter mode, account mode, response rows, and a reconciliation summary with
 missing and unmatched response counts.
+Response validation also rejects impossible quantity relationships, including
+`accepted_quantity` or `fill_quantity` values greater than `submitted_quantity`.
 For `live_human_approved` response artifacts, `account_mode` must be `live`;
 paper or sandbox broker responses should use `paper_sandbox` or another
 non-live adapter mode.

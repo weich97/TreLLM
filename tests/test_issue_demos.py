@@ -354,6 +354,59 @@ def test_broker_response_artifact_validator_and_cli_reject_count_mismatch(tmp_pa
     assert "reconciliation.filled_count must be 1; got 0" in result.stdout
 
 
+def test_broker_response_artifact_rejects_impossible_fill_quantities(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-quantity")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.PARTIALLY_FILLED,
+                submitted_quantity=1.0,
+                accepted_quantity=1.0,
+                fill_quantity=2.0,
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    assert "responses[0].fill_quantity cannot exceed submitted_quantity" in validate_broker_response_artifact(payload)
+
+
+def test_broker_response_artifact_rejects_impossible_accepted_quantities(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-accepted-quantity")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.ACCEPTED,
+                submitted_quantity=1.0,
+                accepted_quantity=2.0,
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    assert "responses[0].accepted_quantity cannot exceed submitted_quantity" in validate_broker_response_artifact(
+        payload
+    )
+
+
 def test_broker_response_artifact_rejects_live_mode_with_paper_account():
     payload = {
         "schema": "tradearena_broker_response_artifact_v0.1",

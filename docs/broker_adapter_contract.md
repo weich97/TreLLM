@@ -125,7 +125,8 @@ so reconciliation artifacts explain why an order did not proceed.
 `partially_filled` rows must report a positive `fill_quantity` that remains
 below `submitted_quantity`; a full fill should use the `filled` status instead.
 `filled` rows must also report a positive `fill_quantity` equal to
-`submitted_quantity`.
+`submitted_quantity`. Any `partially_filled` or `filled` row must also report a
+positive `fill_price` so audit tools can attribute execution costs.
 For `live_human_approved` response artifacts, `account_mode` must be `live`;
 paper or sandbox broker responses should use `paper_sandbox` or another
 non-live adapter mode.

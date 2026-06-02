@@ -6,6 +6,8 @@ import sys
 from datetime import date, datetime
 from pathlib import Path
 
+import pytest
+
 from tradearena.core.domain import Order, OrderType, Side
 from tradearena.factory import build_default_system, default_registry
 from tradearena.planning import load_holdings_csv
@@ -316,6 +318,7 @@ def test_broker_response_artifact_validator_and_cli_reject_count_mismatch(tmp_pa
                 status=BrokerOrderStatus.FILLED,
                 submitted_quantity=1.0,
                 fill_quantity=1.0,
+                fill_price=190.0,
                 account_mode="paper",
             )
         ],
@@ -541,6 +544,39 @@ def test_broker_response_artifact_rejects_filled_with_partial_quantity(tmp_path)
 
     assert "responses[0].filled fill_quantity must equal submitted_quantity" in validate_broker_response_artifact(
         payload
+    )
+
+
+@pytest.mark.parametrize(
+    "status",
+    [BrokerOrderStatus.PARTIALLY_FILLED, BrokerOrderStatus.FILLED],
+)
+def test_broker_response_artifact_rejects_fills_without_fill_price(tmp_path, status):
+    adapter = AlpacaPaperExportAdapter(client_prefix=f"response-{status.value}-price")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=status,
+                submitted_quantity=1.0,
+                accepted_quantity=1.0,
+                fill_quantity=0.5 if status is BrokerOrderStatus.PARTIALLY_FILLED else 1.0,
+                fill_price=None,
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    assert "responses[0].filled or partially_filled responses require a positive fill_price" in (
+        validate_broker_response_artifact(payload)
     )
 
 

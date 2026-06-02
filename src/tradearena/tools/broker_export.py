@@ -1035,6 +1035,7 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
     submitted_quantity = response.get("submitted_quantity")
     accepted_quantity = response.get("accepted_quantity")
     fill_quantity = response.get("fill_quantity")
+    fill_price = response.get("fill_price")
     if isinstance(submitted_quantity, (int, float)):
         if isinstance(accepted_quantity, (int, float)) and accepted_quantity > submitted_quantity:
             errors.append(f"responses[{idx}].accepted_quantity cannot exceed submitted_quantity")
@@ -1053,6 +1054,9 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
             errors.append(f"responses[{idx}].filled responses require a positive fill_quantity")
         elif isinstance(submitted_quantity, (int, float)) and fill_quantity != submitted_quantity:
             errors.append(f"responses[{idx}].filled fill_quantity must equal submitted_quantity")
+    if response.get("status") in {BrokerOrderStatus.PARTIALLY_FILLED.value, BrokerOrderStatus.FILLED.value}:
+        if not isinstance(fill_price, (int, float)) or fill_price <= 0:
+            errors.append(f"responses[{idx}].filled or partially_filled responses require a positive fill_price")
     return errors
 
 

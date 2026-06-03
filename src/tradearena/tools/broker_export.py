@@ -808,11 +808,17 @@ def validate_broker_handoff_artifact(payload: dict[str, object]) -> list[str]:
     if not isinstance(orders, list):
         errors.append("orders must be a list")
         orders = []
+    seen_client_order_ids: set[str] = set()
     for idx, order in enumerate(orders):
         if not isinstance(order, dict):
             errors.append(f"orders[{idx}] must be an object")
             continue
         errors.extend(_validate_broker_handoff_order(order, idx, adapter_mode, payload.get("account_mode")))
+        client_order_id = order.get("client_order_id")
+        if isinstance(client_order_id, str) and client_order_id:
+            if client_order_id in seen_client_order_ids:
+                errors.append(f"orders[{idx}].client_order_id duplicates an earlier order")
+            seen_client_order_ids.add(client_order_id)
     return errors
 
 

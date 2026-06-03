@@ -95,6 +95,9 @@ Adapter implementations must satisfy these invariants:
 - live-mode handoff writers must validate live limits, account mode, and human
   approval before writing an artifact, even when the filtered order list is
   empty;
+- `live_human_approved` handoff artifacts must not set `kill_switch: true`; a
+  tripped kill-switch stops the live path before any live-submission artifact is
+  written;
 - allowed symbols and allowed order types are enforced before broker handoff;
 - broker credentials are read from environment variables or an OS secret
   manager, never from committed files or command-line arguments;

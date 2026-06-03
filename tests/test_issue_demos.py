@@ -351,6 +351,33 @@ def test_live_human_approved_mode_validates_safety_even_without_orders(tmp_path)
         raise AssertionError("expected empty live handoff to validate live safety")
 
 
+def test_live_human_approved_mode_rejects_kill_switch_without_orders(tmp_path):
+    adapter = AlpacaPaperExportAdapter(
+        safety=BrokerSafetyConfig(
+            mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+            account_mode="live",
+            max_notional=1000.0,
+            max_quantity=10.0,
+            kill_switch=True,
+            approval=BrokerApproval(
+                approval_status="approved",
+                approved_by="unit-operator",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=1000.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="unit test approval",
+            ),
+        )
+    )
+
+    try:
+        adapter.write([], tmp_path)
+    except BrokerAdapterContractError as exc:
+        assert "broker adapter kill switch is enabled" in str(exc)
+    else:
+        raise AssertionError("expected kill switch to block empty live handoff")
+
+
 def test_live_human_approved_handoff_requires_live_account_mode(tmp_path):
     adapter = AlpacaPaperExportAdapter(
         safety=BrokerSafetyConfig(
@@ -394,6 +421,30 @@ def test_live_human_approved_handoff_requires_live_account_mode(tmp_path):
     assert "account_mode must be live for live_human_approved broker handoff artifacts" in validate_broker_handoff_artifact(
         payload
     )
+
+
+def test_live_human_approved_handoff_rejects_kill_switch_artifact(tmp_path):
+    adapter = AlpacaPaperExportAdapter(
+        safety=BrokerSafetyConfig(
+            mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+            account_mode="live",
+            max_notional=1000.0,
+            max_quantity=10.0,
+            approval=BrokerApproval(
+                approval_status="approved",
+                approved_by="unit-operator",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=1000.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="unit test approval",
+            ),
+        )
+    )
+    adapter.write([], tmp_path)
+    payload = json.loads((tmp_path / "alpaca_paper_orders.json").read_text(encoding="utf-8"))
+    payload["kill_switch"] = True
+
+    assert "live_human_approved handoff artifacts must not set kill_switch" in validate_broker_handoff_artifact(payload)
 
 
 def test_broker_response_artifact_summarizes_reconciliation(tmp_path):

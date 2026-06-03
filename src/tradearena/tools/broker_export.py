@@ -136,6 +136,8 @@ class BrokerSafetyConfig:
 
         if self.mode != BrokerAdapterMode.LIVE_HUMAN_APPROVED:
             return
+        if self.kill_switch:
+            raise BrokerAdapterContractError("broker adapter kill switch is enabled")
         if self.max_notional is None or self.max_quantity is None:
             raise BrokerAdapterContractError("live_human_approved mode requires max_notional and max_quantity limits")
         if self.approval is None or not self.approval.is_approved:
@@ -815,6 +817,8 @@ def validate_broker_handoff_artifact(payload: dict[str, object]) -> list[str]:
         errors.append("account_mode must be non-empty")
     if adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED.value and payload.get("account_mode") != "live":
         errors.append("account_mode must be live for live_human_approved broker handoff artifacts")
+    if adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED.value and payload.get("kill_switch") is True:
+        errors.append("live_human_approved handoff artifacts must not set kill_switch")
     paper_only_modes = {BrokerAdapterMode.OFFLINE_EXPORT.value, BrokerAdapterMode.DRY_RUN.value}
     if payload.get("paper_only") is not (adapter_mode in paper_only_modes):
         errors.append("paper_only must match adapter_mode in offline_export or dry_run")

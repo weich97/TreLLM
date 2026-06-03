@@ -2033,6 +2033,65 @@ def test_broker_response_artifact_writer_requires_reason_for_unknown_responses(t
         raise AssertionError("expected unknown response without reason to be rejected by writer")
 
 
+def test_broker_response_artifact_rejects_unknown_status_with_fill_quantity(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-unknown-fill")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.UNKNOWN,
+                submitted_quantity=1.0,
+                fill_quantity=None,
+                rejection_reason="broker response status could not be mapped",
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0]["fill_quantity"] = 0.5
+
+    assert "responses[0].unknown responses must not report fill_quantity" in validate_broker_response_artifact(payload)
+
+
+def test_broker_response_artifact_writer_rejects_unknown_status_with_fill_quantity(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-unknown-fill")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.UNKNOWN,
+                    submitted_quantity=1.0,
+                    fill_quantity=0.5,
+                    rejection_reason="broker response status could not be mapped",
+                    submitted_at="2026-06-02T09:30:00Z",
+                    broker_timestamp="2026-06-02T09:30:01Z",
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "responses[0].unknown responses must not report fill_quantity" in str(exc)
+    else:
+        raise AssertionError("expected unknown response fill_quantity to be rejected by writer")
+
+
 def test_broker_response_artifact_rejects_live_mode_with_paper_account():
     payload = {
         "schema": "tradearena_broker_response_artifact_v0.1",

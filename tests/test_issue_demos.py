@@ -1547,6 +1547,69 @@ def test_broker_response_artifact_writer_rejects_active_status_without_positive_
         raise AssertionError(f"expected {status.value} response accepted_quantity to be rejected by writer")
 
 
+@pytest.mark.parametrize("status", [BrokerOrderStatus.CANCELED, BrokerOrderStatus.EXPIRED])
+@pytest.mark.parametrize("field_name", ["fill_quantity", "fill_price"])
+def test_broker_response_artifact_rejects_terminal_status_with_fill_fields(tmp_path, status, field_name):
+    adapter = AlpacaPaperExportAdapter(client_prefix=f"response-{status.value}-{field_name}")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=status,
+                broker_order_id=f"paper-{status.value}-{field_name}-1",
+                submitted_quantity=1.0,
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0][field_name] = 1.0
+
+    assert f"responses[0].{status.value} responses must not report {field_name}" in validate_broker_response_artifact(
+        payload
+    )
+
+
+@pytest.mark.parametrize("status", [BrokerOrderStatus.CANCELED, BrokerOrderStatus.EXPIRED])
+@pytest.mark.parametrize("field_name", ["fill_quantity", "fill_price"])
+def test_broker_response_artifact_writer_rejects_terminal_status_with_fill_fields(tmp_path, status, field_name):
+    adapter = AlpacaPaperExportAdapter(client_prefix=f"response-writer-{status.value}-{field_name}")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    response_kwargs = {
+        "client_order_id": requests[0].client_order_id,
+        "status": status,
+        "broker_order_id": f"paper-writer-{status.value}-{field_name}-1",
+        "submitted_quantity": 1.0,
+        "submitted_at": "2026-06-02T09:30:00Z",
+        "broker_timestamp": "2026-06-02T09:30:01Z",
+        "account_mode": "paper",
+        field_name: 1.0,
+    }
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[BrokerResponse(**response_kwargs)],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert f"responses[0].{status.value} responses must not report {field_name}" in str(exc)
+    else:
+        raise AssertionError(f"expected {status.value} response {field_name} to be rejected by writer")
+
+
 def test_broker_response_artifact_rejects_rejected_status_with_accepted_quantity(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="response-rejected-with-accepted")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])

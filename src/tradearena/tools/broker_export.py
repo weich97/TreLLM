@@ -1031,6 +1031,10 @@ def _validate_response_request_bindings(
             for field_name in ("accepted_quantity", "fill_quantity", "fill_price", "fees"):
                 if _is_positive_finite_number(getattr(response, field_name)):
                     errors.append(f"responses[{idx}].unknown responses must not report {field_name}")
+        if response.status in {BrokerOrderStatus.CANCELED, BrokerOrderStatus.EXPIRED}:
+            for field_name in ("fill_quantity", "fill_price"):
+                if _is_positive_finite_number(getattr(response, field_name)):
+                    errors.append(f"responses[{idx}].{response.status.value} responses must not report {field_name}")
         if response.client_order_id in seen_response_ids:
             errors.append(f"responses[{idx}].client_order_id duplicates an earlier response")
         seen_response_ids.add(response.client_order_id)
@@ -1317,6 +1321,10 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
         for field_name in ("accepted_quantity", "fill_quantity", "fill_price", "fees"):
             if _is_positive_finite_number(response.get(field_name)):
                 errors.append(f"responses[{idx}].unknown responses must not report {field_name}")
+    if response.get("status") in {BrokerOrderStatus.CANCELED.value, BrokerOrderStatus.EXPIRED.value}:
+        for field_name in ("fill_quantity", "fill_price"):
+            if _is_positive_finite_number(response.get(field_name)):
+                errors.append(f"responses[{idx}].{response.get('status')} responses must not report {field_name}")
     if response.get("status") == BrokerOrderStatus.PARTIALLY_FILLED.value:
         if not _is_positive_finite_number(fill_quantity):
             errors.append(f"responses[{idx}].partial fill_quantity must be positive")

@@ -1411,6 +1411,9 @@ def _validate_reconciliation(
         value = reconciliation.get(field_name)
         if not isinstance(value, int) or value < 0:
             errors.append(f"reconciliation.{field_name} must be a non-negative integer")
+    unmatched_response_count = reconciliation.get("unmatched_response_count")
+    if isinstance(unmatched_response_count, int) and unmatched_response_count > response_count:
+        errors.append(f"reconciliation.unmatched_response_count cannot exceed response_count {response_count}")
     fill_ratio = reconciliation.get("fill_ratio_mean")
     if fill_ratio is not None and not _is_non_negative_finite_number(fill_ratio):
         errors.append("reconciliation.fill_ratio_mean must be a non-negative number or null")

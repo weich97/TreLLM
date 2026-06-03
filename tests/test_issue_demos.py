@@ -782,6 +782,36 @@ def test_broker_response_artifact_rejects_bad_fill_ratio_mean(tmp_path):
     assert "reconciliation.fill_ratio_mean must be 0.5; got 0.25" in validate_broker_response_artifact(payload)
 
 
+def test_broker_response_artifact_rejects_impossible_unmatched_response_count(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-unmatched")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id="external-order",
+                status=BrokerOrderStatus.REJECTED,
+                submitted_quantity=1.0,
+                rejection_reason="not from this request",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["reconciliation"]["unmatched_response_count"] = 2
+
+    assert (
+        "reconciliation.unmatched_response_count cannot exceed response_count 1"
+        in validate_broker_response_artifact(payload)
+    )
+
+
 def test_broker_response_artifact_rejects_impossible_fill_quantities(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="response-quantity")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])

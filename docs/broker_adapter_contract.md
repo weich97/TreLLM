@@ -122,6 +122,10 @@ missing and unmatched response counts.
 Response validation also rejects impossible quantity relationships, including
 `accepted_quantity` or `fill_quantity` values greater than `submitted_quantity`,
 or `fill_quantity` values greater than `accepted_quantity`.
+All numeric response fields (`submitted_quantity`, `accepted_quantity`,
+`fill_quantity`, `fill_price`, and `fees`) must be non-negative finite numbers
+or `null`; use `null` or zero for fields that do not apply to a terminal
+non-execution status.
 Every response row must report a positive `submitted_quantity`.
 Every response row must include `submitted_at` and `broker_timestamp` as ISO
 timestamps with explicit timezone offsets so reconciliation can sort events and
@@ -140,7 +144,11 @@ Rejected response rows must include a non-empty, redacted `rejection_reason`
 so reconciliation artifacts explain why an order did not proceed. `unknown`
 rows must also include a non-empty, redacted `rejection_reason` that explains
 which broker status, parser failure, or adapter error prevented classification.
-`rejected` rows must not report `fill_quantity` or `fill_price`.
+`rejected` rows must not report positive `accepted_quantity`, `fill_quantity`,
+`fill_price`, or `fees`.
+`unknown` rows must not report positive `accepted_quantity`, `fill_quantity`,
+`fill_price`, or `fees`; classify the order before publishing execution or cost
+fields.
 `accepted`, `partially_filled`, and `filled` rows must report a positive
 `accepted_quantity`.
 `accepted` rows must not report `fill_quantity` or `fill_price`; use
@@ -150,6 +158,13 @@ below `submitted_quantity`; a full fill should use the `filled` status instead.
 `filled` rows must also report a positive `fill_quantity` equal to
 `submitted_quantity`. Any `partially_filled` or `filled` row must also report a
 positive `fill_price` so audit tools can attribute execution costs.
+`canceled` and `expired` rows must not report positive `fill_quantity` or
+`fill_price`; use `partially_filled` if a cancel/expiry follows a broker-visible
+partial execution that the artifact needs to represent.
+The reconciliation summary is not free-form. Validators recompute
+`response_count`, each status count, `fill_ratio_mean`, and the
+`unmatched_response_count <= response_count` invariant from the response rows,
+then reject artifacts whose summary does not match those rows.
 For `live_human_approved` response artifacts, `account_mode` must be `live`;
 paper or sandbox broker responses should use `paper_sandbox` or another
 non-live adapter mode.

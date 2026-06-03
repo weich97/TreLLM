@@ -735,6 +735,7 @@ def validate_broker_response_artifact(payload: dict[str, object]) -> list[str]:
     status_counts = {status.value: 0 for status in BrokerOrderStatus}
     seen_response_ids: set[str] = set()
     seen_broker_order_ids: set[str] = set()
+    fill_ratios: list[float] = []
     for idx, response in enumerate(responses):
         if not isinstance(response, dict):
             errors.append(f"responses[{idx}] must be an object")
@@ -756,8 +757,13 @@ def validate_broker_response_artifact(payload: dict[str, object]) -> list[str]:
         status = response.get("status")
         if isinstance(status, str) and status in status_counts:
             status_counts[status] += 1
+        submitted_quantity = response.get("submitted_quantity")
+        fill_quantity = response.get("fill_quantity")
+        if _is_positive_finite_number(submitted_quantity) and _is_non_negative_finite_number(fill_quantity):
+            fill_ratios.append(float(fill_quantity) / float(submitted_quantity))
 
-    errors.extend(_validate_reconciliation(reconciliation, len(responses), status_counts))
+    expected_fill_ratio = round(fmean(fill_ratios), 8) if fill_ratios else None
+    errors.extend(_validate_reconciliation(reconciliation, len(responses), status_counts, expected_fill_ratio))
     return errors
 
 
@@ -1371,6 +1377,7 @@ def _validate_reconciliation(
     reconciliation: dict[str, object],
     response_count: int,
     status_counts: dict[str, int],
+    expected_fill_ratio: float | None,
 ) -> list[str]:
     errors: list[str] = []
     count_fields = {
@@ -1401,4 +1408,6 @@ def _validate_reconciliation(
     fill_ratio = reconciliation.get("fill_ratio_mean")
     if fill_ratio is not None and not _is_non_negative_finite_number(fill_ratio):
         errors.append("reconciliation.fill_ratio_mean must be a non-negative number or null")
+    elif fill_ratio != expected_fill_ratio:
+        errors.append(f"reconciliation.fill_ratio_mean must be {expected_fill_ratio}; got {fill_ratio}")
     return errors

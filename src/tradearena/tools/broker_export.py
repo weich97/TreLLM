@@ -525,6 +525,8 @@ def validate_broker_approval_artifact(
         or not all(isinstance(item, str) and item for item in allowed_symbols)
     ):
         errors.append("allowed_symbols must be a non-empty list of symbols")
+    elif len(allowed_symbols) != len(set(allowed_symbols)):
+        errors.append("allowed_symbols must not contain duplicates")
     allowed_order_types = payload.get("allowed_order_types")
     supported_types = {OrderType.MARKET.value, OrderType.LIMIT.value}
     if (
@@ -533,6 +535,8 @@ def validate_broker_approval_artifact(
         or any(item not in supported_types for item in allowed_order_types)
     ):
         errors.append("allowed_order_types must contain market or limit")
+    elif len(allowed_order_types) != len(set(allowed_order_types)):
+        errors.append("allowed_order_types must not contain duplicates")
     if not payload.get("approval_reason"):
         errors.append("approval_reason must be non-empty")
     request_hash = payload.get("request_artifact_hash")

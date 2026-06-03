@@ -1931,6 +1931,32 @@ def test_broker_approval_artifact_requires_live_account_mode():
     assert "account_mode must be live for broker approval artifacts" in validate_broker_approval_artifact(payload)
 
 
+@pytest.mark.parametrize(
+    ("field_name", "field_value", "expected_error"),
+    [
+        ("allowed_symbols", ["AAPL", "AAPL"], "allowed_symbols must not contain duplicates"),
+        ("allowed_order_types", ["market", "market"], "allowed_order_types must not contain duplicates"),
+    ],
+)
+def test_broker_approval_artifact_rejects_duplicate_scopes(field_name, field_value, expected_error):
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=250.0,
+            allowed_symbols=("AAPL", "MSFT"),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-duplicate-scope-001",
+        account_mode="live",
+        max_quantity=5.0,
+    )
+    payload[field_name] = field_value
+
+    assert expected_error in validate_broker_approval_artifact(payload)
+
+
 def test_broker_approval_artifact_builds_live_safety_config(tmp_path):
     adapter = DryRunBrokerAdapter(
         client_prefix="approval-safety",

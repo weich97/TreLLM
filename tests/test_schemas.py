@@ -767,6 +767,35 @@ def test_broker_approval_artifact_schema_requires_live_account_mode():
     assert list(errors[0].path) == ["account_mode"]
 
 
+@pytest.mark.parametrize(
+    ("field_name", "field_value"),
+    [
+        ("allowed_symbols", ["AAPL", "AAPL"]),
+        ("allowed_order_types", ["market", "market"]),
+    ],
+)
+def test_broker_approval_artifact_schema_rejects_duplicate_scopes(field_name: str, field_value: list[str]):
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=2500.0,
+            allowed_symbols=("AAPL", "MSFT"),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-schema-duplicate-scope-001",
+        account_mode="live",
+        max_quantity=5.0,
+    )
+    payload[field_name] = field_value
+
+    errors = sorted(_validator("broker_approval_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert (field_name,) in paths
+
+
 def test_all_example_benchmark_submissions_match_schema_and_runtime_validator():
     validator = _validator("benchmark_submission.schema.json")
 

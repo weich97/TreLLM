@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+from dataclasses import replace
 from datetime import date, datetime
 from pathlib import Path
 
@@ -488,6 +489,39 @@ def test_broker_response_artifact_writer_rejects_submitted_quantity_mismatch(tmp
         assert "submitted_quantity 2.0 does not match request quantity 1.0" in str(exc)
     else:
         raise AssertionError("expected submitted quantity mismatch failure")
+
+
+def test_broker_response_artifact_writer_rejects_duplicate_request_ids(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-request-duplicate")
+    requests = adapter.convert(
+        [
+            Order("AAPL", Side.BUY, 1.0, reason="unit test"),
+            Order("MSFT", Side.SELL, 2.0, reason="unit test"),
+        ]
+    )
+    duplicate_requests = [requests[0], replace(requests[1], client_order_id=requests[0].client_order_id)]
+
+    try:
+        write_broker_response_artifact(
+            requests=duplicate_requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.REJECTED,
+                    submitted_quantity=1.0,
+                    rejection_reason="duplicate request id should be rejected",
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "requests[1].client_order_id duplicates an earlier request" in str(exc)
+    else:
+        raise AssertionError("expected duplicate request id failure")
 
 
 def test_broker_response_artifact_writer_rejects_account_mode_mismatch(tmp_path):

@@ -338,6 +338,19 @@ def test_live_human_approved_mode_requires_approval_and_marks_live(tmp_path):
     assert payload["orders"][0]["approval_status"] == "approved"
 
 
+def test_live_human_approved_mode_validates_safety_even_without_orders(tmp_path):
+    adapter = AlpacaPaperExportAdapter(
+        safety=BrokerSafetyConfig(mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED)
+    )
+
+    try:
+        adapter.write([], tmp_path)
+    except BrokerAdapterContractError as exc:
+        assert "live_human_approved mode requires max_notional and max_quantity limits" in str(exc)
+    else:
+        raise AssertionError("expected empty live handoff to validate live safety")
+
+
 def test_live_human_approved_handoff_requires_live_account_mode(tmp_path):
     adapter = AlpacaPaperExportAdapter(
         safety=BrokerSafetyConfig(

@@ -131,24 +131,32 @@ class BrokerSafetyConfig:
                     f"order notional {notional:.2f} exceeds approval max_notional {self.approval.max_notional:.2f}"
                 )
 
-    def submit_live_flag(self) -> bool:
-        return self.mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED
+    def validate_handoff_config(self) -> None:
+        """Validate mode-level broker safety before writing a handoff artifact."""
 
-    def _validate_live_approval(self, order: Order) -> None:
+        if self.mode != BrokerAdapterMode.LIVE_HUMAN_APPROVED:
+            return
         if self.max_notional is None or self.max_quantity is None:
             raise BrokerAdapterContractError("live_human_approved mode requires max_notional and max_quantity limits")
         if self.approval is None or not self.approval.is_approved:
             raise BrokerAdapterContractError("live_human_approved mode requires an approved human approval record")
         if self.account_mode != "live":
             raise BrokerAdapterContractError("live_human_approved mode requires account_mode live")
+        if self.approval.max_notional <= 0:
+            raise BrokerAdapterContractError("live_human_approved mode requires a positive approval max_notional")
+
+    def submit_live_flag(self) -> bool:
+        return self.mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED
+
+    def _validate_live_approval(self, order: Order) -> None:
+        self.validate_handoff_config()
+        approval = cast(BrokerApproval, self.approval)
         if self.approved_order_fingerprints and _order_fingerprint_from_order(order) not in set(
             self.approved_order_fingerprints
         ):
             raise BrokerAdapterContractError("order does not match an approved broker handoff order")
-        if self.approval.allowed_symbols and order.symbol not in self.approval.allowed_symbols:
+        if approval.allowed_symbols and order.symbol not in approval.allowed_symbols:
             raise BrokerAdapterContractError(f"symbol {order.symbol} is outside the human approval scope")
-        if self.approval.max_notional <= 0:
-            raise BrokerAdapterContractError("live_human_approved mode requires a positive approval max_notional")
 
 
 @dataclass(frozen=True)
@@ -229,6 +237,7 @@ class AlpacaPaperExportAdapter:
     def convert(self, orders: list[Order] | tuple[Order, ...]) -> list[AlpacaPaperOrder]:
         rows: list[AlpacaPaperOrder] = []
         _validate_time_in_force(self.time_in_force)
+        self.safety.validate_handoff_config()
         eligible_orders = [order for order in orders if order.side != Side.HOLD and order.quantity > 0]
         _validate_approved_order_counts(self.safety, eligible_orders, time_in_force=self.time_in_force)
         for idx, order in enumerate(eligible_orders, start=1):

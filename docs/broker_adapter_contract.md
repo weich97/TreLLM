@@ -92,6 +92,9 @@ Adapter implementations must satisfy these invariants:
   enforced;
 - live orders must satisfy both the adapter max-notional limit and the human
   approval max-notional limit;
+- live-mode handoff writers must validate live limits, account mode, and human
+  approval before writing an artifact, even when the filtered order list is
+  empty;
 - allowed symbols and allowed order types are enforced before broker handoff;
 - broker credentials are read from environment variables or an OS secret
   manager, never from committed files or command-line arguments;

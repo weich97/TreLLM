@@ -2092,6 +2092,67 @@ def test_broker_response_artifact_writer_rejects_unknown_status_with_fill_quanti
         raise AssertionError("expected unknown response fill_quantity to be rejected by writer")
 
 
+@pytest.mark.parametrize("field_name", ["accepted_quantity", "fill_price"])
+def test_broker_response_artifact_rejects_unknown_status_with_execution_fields(tmp_path, field_name):
+    adapter = AlpacaPaperExportAdapter(client_prefix=f"response-unknown-{field_name}")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.UNKNOWN,
+                submitted_quantity=1.0,
+                rejection_reason="broker response status could not be mapped",
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0][field_name] = 1.0
+
+    assert f"responses[0].unknown responses must not report {field_name}" in validate_broker_response_artifact(
+        payload
+    )
+
+
+@pytest.mark.parametrize("field_name", ["accepted_quantity", "fill_price"])
+def test_broker_response_artifact_writer_rejects_unknown_status_with_execution_fields(tmp_path, field_name):
+    adapter = AlpacaPaperExportAdapter(client_prefix=f"response-writer-unknown-{field_name}")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    response_kwargs = {
+        "client_order_id": requests[0].client_order_id,
+        "status": BrokerOrderStatus.UNKNOWN,
+        "submitted_quantity": 1.0,
+        "rejection_reason": "broker response status could not be mapped",
+        "submitted_at": "2026-06-02T09:30:00Z",
+        "broker_timestamp": "2026-06-02T09:30:01Z",
+        "account_mode": "paper",
+        field_name: 1.0,
+    }
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[BrokerResponse(**response_kwargs)],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert f"responses[0].unknown responses must not report {field_name}" in str(exc)
+    else:
+        raise AssertionError(f"expected unknown response {field_name} to be rejected by writer")
+
+
 def test_broker_response_artifact_rejects_live_mode_with_paper_account():
     payload = {
         "schema": "tradearena_broker_response_artifact_v0.1",

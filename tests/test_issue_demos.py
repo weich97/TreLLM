@@ -2150,7 +2150,7 @@ def test_broker_response_artifact_writer_rejects_unknown_status_with_fill_quanti
         raise AssertionError("expected unknown response fill_quantity to be rejected by writer")
 
 
-@pytest.mark.parametrize("field_name", ["accepted_quantity", "fill_price"])
+@pytest.mark.parametrize("field_name", ["accepted_quantity", "fill_price", "fees"])
 def test_broker_response_artifact_rejects_unknown_status_with_execution_fields(tmp_path, field_name):
     adapter = AlpacaPaperExportAdapter(client_prefix=f"response-unknown-{field_name}")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
@@ -2181,7 +2181,7 @@ def test_broker_response_artifact_rejects_unknown_status_with_execution_fields(t
     )
 
 
-@pytest.mark.parametrize("field_name", ["accepted_quantity", "fill_price"])
+@pytest.mark.parametrize("field_name", ["accepted_quantity", "fill_price", "fees"])
 def test_broker_response_artifact_writer_rejects_unknown_status_with_execution_fields(tmp_path, field_name):
     adapter = AlpacaPaperExportAdapter(client_prefix=f"response-writer-unknown-{field_name}")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])

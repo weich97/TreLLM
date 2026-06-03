@@ -1998,6 +1998,33 @@ def test_broker_approval_artifact_rejects_duplicate_scopes(field_name, field_val
     assert expected_error in validate_broker_approval_artifact(payload)
 
 
+@pytest.mark.parametrize(
+    ("allowed_symbols", "allowed_order_types", "expected_error"),
+    [
+        (("AAPL", "AAPL"), (OrderType.MARKET,), "allowed_symbols must not contain duplicates"),
+        (("AAPL",), (OrderType.MARKET, OrderType.MARKET), "allowed_order_types must not contain duplicates"),
+    ],
+)
+def test_broker_approval_artifact_builder_rejects_duplicate_scopes(
+    allowed_symbols, allowed_order_types, expected_error
+):
+    with pytest.raises(BrokerAdapterContractError, match=expected_error):
+        build_broker_approval_artifact(
+            BrokerApproval(
+                approval_status="approved",
+                approved_by="operator-7",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=250.0,
+                allowed_symbols=allowed_symbols,
+                approval_reason="paper shadow checks passed",
+            ),
+            approval_id="approval-builder-duplicate-scope-001",
+            account_mode="live",
+            max_quantity=5.0,
+            allowed_order_types=allowed_order_types,
+        )
+
+
 def test_broker_approval_artifact_builds_live_safety_config(tmp_path):
     adapter = DryRunBrokerAdapter(
         client_prefix="approval-safety",

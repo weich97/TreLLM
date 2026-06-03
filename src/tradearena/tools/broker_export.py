@@ -449,6 +449,12 @@ def build_broker_approval_artifact(
 ) -> dict[str, object]:
     """Build a redacted human approval artifact for future live handoff review."""
 
+    if len(approval.allowed_symbols) != len(set(approval.allowed_symbols)):
+        raise BrokerAdapterContractError("allowed_symbols must not contain duplicates")
+    order_type_values = [order_type.value for order_type in allowed_order_types]
+    if len(order_type_values) != len(set(order_type_values)):
+        raise BrokerAdapterContractError("allowed_order_types must not contain duplicates")
+
     return {
         "schema": "tradearena_broker_approval_artifact_v0.1",
         "approval_id": approval_id,
@@ -460,7 +466,7 @@ def build_broker_approval_artifact(
         "max_notional": approval.max_notional,
         "max_quantity": max_quantity,
         "allowed_symbols": list(approval.allowed_symbols),
-        "allowed_order_types": [order_type.value for order_type in allowed_order_types],
+        "allowed_order_types": order_type_values,
         "approval_reason": approval.approval_reason,
         "request_artifact_hash": request_artifact_hash,
     }

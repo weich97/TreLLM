@@ -1547,6 +1547,67 @@ def test_broker_response_artifact_writer_rejects_active_status_without_positive_
         raise AssertionError(f"expected {status.value} response accepted_quantity to be rejected by writer")
 
 
+def test_broker_response_artifact_rejects_rejected_status_with_accepted_quantity(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-rejected-with-accepted")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.REJECTED,
+                submitted_quantity=1.0,
+                accepted_quantity=None,
+                rejection_reason="broker rejected order",
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0]["accepted_quantity"] = 1.0
+
+    assert "responses[0].rejected responses must not report accepted_quantity" in validate_broker_response_artifact(
+        payload
+    )
+
+
+def test_broker_response_artifact_writer_rejects_rejected_status_with_accepted_quantity(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-rejected-accepted")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.REJECTED,
+                    submitted_quantity=1.0,
+                    accepted_quantity=1.0,
+                    rejection_reason="broker rejected order",
+                    submitted_at="2026-06-02T09:30:00Z",
+                    broker_timestamp="2026-06-02T09:30:01Z",
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "responses[0].rejected responses must not report accepted_quantity" in str(exc)
+    else:
+        raise AssertionError("expected rejected accepted_quantity failure")
+
+
 def test_broker_response_artifact_rejects_accepted_status_with_fill_quantity(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="response-accepted-with-fill")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])

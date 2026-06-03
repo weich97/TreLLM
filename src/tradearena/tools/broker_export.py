@@ -1017,6 +1017,8 @@ def _validate_response_request_bindings(
         if response.status == BrokerOrderStatus.REJECTED:
             if not response.rejection_reason:
                 errors.append(f"responses[{idx}].rejection_reason must be non-empty for rejected responses")
+            if _is_positive_finite_number(response.accepted_quantity):
+                errors.append(f"responses[{idx}].rejected responses must not report accepted_quantity")
             if _is_positive_finite_number(response.fill_quantity):
                 errors.append(f"responses[{idx}].rejected responses must not report fill_quantity")
             if _is_positive_finite_number(response.fill_price):
@@ -1297,6 +1299,8 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
         if _is_positive_finite_number(fill_price):
             errors.append(f"responses[{idx}].accepted responses must not report fill_price")
     if response.get("status") == BrokerOrderStatus.REJECTED.value:
+        if _is_positive_finite_number(accepted_quantity):
+            errors.append(f"responses[{idx}].rejected responses must not report accepted_quantity")
         if _is_positive_finite_number(fill_quantity):
             errors.append(f"responses[{idx}].rejected responses must not report fill_quantity")
         if _is_positive_finite_number(fill_price):

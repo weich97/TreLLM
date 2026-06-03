@@ -86,6 +86,8 @@ Adapter implementations must satisfy these invariants:
 - `live_human_approved` handoff artifacts must use `account_mode: "live"`;
 - live mode requires an explicit approval record;
 - live mode requires max notional and max quantity limits;
+- any configured max-notional or max-quantity limit must be positive and
+  finite;
 - live mode must have a reference price whenever max-notional checks are
   enforced;
 - live orders must satisfy both the adapter max-notional limit and the human

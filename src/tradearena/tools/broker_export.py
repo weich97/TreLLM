@@ -94,6 +94,10 @@ class BrokerSafetyConfig:
     def validate_order(self, order: Order, *, reference_price: float | None = None) -> None:
         """Validate one order before export, dry run, sandbox, or live handoff."""
 
+        if self.max_quantity is not None and not _is_positive_finite_number(self.max_quantity):
+            raise BrokerAdapterContractError("max_quantity must be a positive finite number")
+        if self.max_notional is not None and not _is_positive_finite_number(self.max_notional):
+            raise BrokerAdapterContractError("max_notional must be a positive finite number")
         quantity = float(order.quantity)
         if not math.isfinite(quantity) or quantity <= 0:
             raise BrokerAdapterContractError("order quantity must be a positive finite number")

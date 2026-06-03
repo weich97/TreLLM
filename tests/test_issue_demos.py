@@ -175,6 +175,27 @@ def test_broker_safety_config_requires_reference_price_for_market_notional_limit
         raise AssertionError("expected reference price failure for max_notional market order")
 
 
+@pytest.mark.parametrize(
+    ("field_name", "safety"),
+    [
+        ("max_quantity", BrokerSafetyConfig(account_mode="paper", max_quantity=0.0)),
+        ("max_notional", BrokerSafetyConfig(account_mode="paper", max_notional=0.0, max_quantity=10.0)),
+    ],
+)
+def test_broker_safety_config_rejects_nonpositive_limits(tmp_path, field_name, safety):
+    adapter = AlpacaPaperExportAdapter(safety=safety)
+
+    try:
+        adapter.write(
+            [Order("AAPL", Side.BUY, 1.0, order_type=OrderType.LIMIT, limit_price=100.0, reason="unit test")],
+            tmp_path,
+        )
+    except BrokerAdapterContractError as exc:
+        assert f"{field_name} must be a positive finite number" in str(exc)
+    else:
+        raise AssertionError(f"expected nonpositive {field_name} safety limit failure")
+
+
 def test_dry_run_broker_adapter_writes_validated_handoff_without_live_submission(tmp_path):
     adapter = DryRunBrokerAdapter(
         client_prefix="dry-unit",

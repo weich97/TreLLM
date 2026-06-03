@@ -1762,6 +1762,34 @@ def test_broker_response_artifact_rejects_rejected_status_with_fill_price(tmp_pa
     assert "responses[0].rejected responses must not report fill_price" in validate_broker_response_artifact(payload)
 
 
+def test_broker_response_artifact_rejects_rejected_status_with_fees(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-rejected-with-fees")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.REJECTED,
+                submitted_quantity=1.0,
+                rejection_reason="paper account symbol permission mismatch",
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0]["fees"] = 0.01
+
+    assert "responses[0].rejected responses must not report fees" in validate_broker_response_artifact(payload)
+
+
 @pytest.mark.parametrize(
     ("field_name", "field_value"),
     [("fill_quantity", 0.5), ("fill_price", 190.0)],
@@ -1793,6 +1821,36 @@ def test_broker_response_artifact_writer_rejects_rejected_response_fills(tmp_pat
         assert f"responses[0].rejected responses must not report {field_name}" in str(exc)
     else:
         raise AssertionError(f"expected rejected response {field_name} to be rejected by writer")
+
+
+def test_broker_response_artifact_writer_rejects_rejected_response_fees(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-rejected-fees")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.REJECTED,
+                    submitted_quantity=1.0,
+                    fees=0.01,
+                    rejection_reason="paper account symbol permission mismatch",
+                    submitted_at="2026-06-02T09:30:00Z",
+                    broker_timestamp="2026-06-02T09:30:01Z",
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "responses[0].rejected responses must not report fees" in str(exc)
+    else:
+        raise AssertionError("expected rejected response fees to be rejected by writer")
 
 
 @pytest.mark.parametrize("submitted_quantity", [None, 0.0])

@@ -1023,6 +1023,8 @@ def _validate_response_request_bindings(
                 errors.append(f"responses[{idx}].rejected responses must not report fill_quantity")
             if _is_positive_finite_number(response.fill_price):
                 errors.append(f"responses[{idx}].rejected responses must not report fill_price")
+            if _is_positive_finite_number(response.fees):
+                errors.append(f"responses[{idx}].rejected responses must not report fees")
         if response.status == BrokerOrderStatus.UNKNOWN and not response.rejection_reason:
             errors.append(f"responses[{idx}].rejection_reason must be non-empty for unknown responses")
         if response.status == BrokerOrderStatus.UNKNOWN:
@@ -1309,6 +1311,8 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
             errors.append(f"responses[{idx}].rejected responses must not report fill_quantity")
         if _is_positive_finite_number(fill_price):
             errors.append(f"responses[{idx}].rejected responses must not report fill_price")
+        if _is_positive_finite_number(response.get("fees")):
+            errors.append(f"responses[{idx}].rejected responses must not report fees")
     if response.get("status") == BrokerOrderStatus.UNKNOWN.value:
         for field_name in ("accepted_quantity", "fill_quantity", "fill_price"):
             if _is_positive_finite_number(response.get(field_name)):

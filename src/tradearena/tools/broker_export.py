@@ -19,6 +19,7 @@ _SHA256_ARTIFACT_HASH_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 _ISO_TIMESTAMP_WITH_TZ_RE = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$"
 )
+_SUPPORTED_TIME_IN_FORCE = ("cls", "day", "fok", "gtc", "ioc", "opg")
 
 
 class BrokerAdapterMode(str, Enum):
@@ -227,6 +228,7 @@ class AlpacaPaperExportAdapter:
 
     def convert(self, orders: list[Order] | tuple[Order, ...]) -> list[AlpacaPaperOrder]:
         rows: list[AlpacaPaperOrder] = []
+        _validate_time_in_force(self.time_in_force)
         eligible_orders = [order for order in orders if order.side != Side.HOLD and order.quantity > 0]
         _validate_approved_order_counts(self.safety, eligible_orders, time_in_force=self.time_in_force)
         for idx, order in enumerate(eligible_orders, start=1):
@@ -302,6 +304,7 @@ class DryRunBrokerAdapter:
 
     def convert(self, orders: list[Order] | tuple[Order, ...]) -> list[AlpacaPaperOrder]:
         rows: list[AlpacaPaperOrder] = []
+        _validate_time_in_force(self.time_in_force)
         for idx, order in enumerate(orders, start=1):
             if order.side == Side.HOLD or order.quantity <= 0:
                 continue
@@ -1159,6 +1162,13 @@ def _safe_symbol(symbol: str) -> str:
     return "".join(char.lower() if char.isalnum() else "-" for char in symbol).strip("-")
 
 
+def _validate_time_in_force(time_in_force: object) -> None:
+    if time_in_force not in _SUPPORTED_TIME_IN_FORCE:
+        raise BrokerAdapterContractError(
+            f"time_in_force must be one of {', '.join(_SUPPORTED_TIME_IN_FORCE)}"
+        )
+
+
 def _approval_status(safety: BrokerSafetyConfig) -> str:
     if safety.mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED:
         return "approved"
@@ -1318,6 +1328,8 @@ def _validate_broker_handoff_order(
         errors.append(f"orders[{idx}].side must be buy or sell")
     if order.get("order_type") not in {"market", "limit"}:
         errors.append(f"orders[{idx}].order_type must be market or limit")
+    if order.get("time_in_force") not in _SUPPORTED_TIME_IN_FORCE:
+        errors.append(f"orders[{idx}].time_in_force must be one of {', '.join(_SUPPORTED_TIME_IN_FORCE)}")
     quantity = order.get("quantity")
     if not _is_positive_finite_number(quantity):
         errors.append(f"orders[{idx}].quantity must be a positive finite number")

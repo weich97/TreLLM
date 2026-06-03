@@ -130,6 +130,29 @@ def test_broker_handoff_artifact_rejects_market_order_with_limit_price(tmp_path)
     assert "orders[0].market orders must not include limit_price" in errors
 
 
+def test_broker_handoff_artifact_rejects_unsupported_time_in_force(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="handoff-time-in-force")
+    adapter.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path)
+    artifact = tmp_path / "alpaca_paper_orders.json"
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["orders"][0]["time_in_force"] = "banana"
+
+    errors = validate_broker_handoff_artifact(payload)
+
+    assert "orders[0].time_in_force must be one of cls, day, fok, gtc, ioc, opg" in errors
+
+
+def test_broker_handoff_writer_rejects_unsupported_time_in_force(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="handoff-writer-tif", time_in_force="banana")
+
+    try:
+        adapter.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path)
+    except BrokerAdapterContractError as exc:
+        assert "time_in_force must be one of cls, day, fok, gtc, ioc, opg" in str(exc)
+    else:
+        raise AssertionError("expected unsupported time_in_force to be rejected by writer")
+
+
 def test_broker_handoff_artifact_rejects_nonfinite_quantity(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="handoff-nonfinite")
     adapter.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path)

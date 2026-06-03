@@ -162,7 +162,7 @@
         "side": { "type": "string", "enum": ["buy", "sell"] },
         "order_type": { "type": "string", "enum": ["market", "limit"] },
         "quantity": { "type": "number", "exclusiveMinimum": 0 },
-        "time_in_force": { "type": "string", "minLength": 1 },
+        "time_in_force": { "type": "string", "enum": ["cls", "day", "fok", "gtc", "ioc", "opg"] },
         "limit_price": { "type": ["number", "null"], "exclusiveMinimum": 0 },
         "submit_live": { "type": "boolean" },
         "approval_status": { "type": "string", "enum": ["approved", "requires_human_approval"] },

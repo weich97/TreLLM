@@ -75,7 +75,12 @@ class BrokerApproval:
 
     @property
     def is_approved(self) -> bool:
-        return self.approval_status == "approved" and bool(self.approved_by) and bool(self.approved_at)
+        return (
+            self.approval_status == "approved"
+            and _has_text(self.approved_by)
+            and _has_text(self.approved_at)
+            and _has_text(self.approval_reason)
+        )
 
 
 @dataclass(frozen=True)

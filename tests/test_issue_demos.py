@@ -368,6 +368,35 @@ def test_live_human_approved_mode_requires_approval_and_marks_live(tmp_path):
     else:
         raise AssertionError("expected missing approval failure")
 
+    for field_name in ("approved_by", "approved_at", "approval_reason"):
+        approval_kwargs = {
+            "approval_status": "approved",
+            "approved_by": "unit-operator",
+            "approved_at": "2026-05-31T12:00:00Z",
+            "max_notional": 1000.0,
+            "allowed_symbols": ("AAPL",),
+            "approval_reason": "unit test approval",
+        }
+        approval_kwargs[field_name] = "   "
+        blank_approval = AlpacaPaperExportAdapter(
+            safety=BrokerSafetyConfig(
+                mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+                account_mode="live",
+                max_notional=1000.0,
+                max_quantity=10.0,
+                approval=BrokerApproval(**approval_kwargs),
+            )
+        )
+        try:
+            blank_approval.write(
+                [Order("AAPL", Side.BUY, 1.0, order_type=OrderType.LIMIT, limit_price=50.0, reason="unit test")],
+                tmp_path / f"blank-{field_name}",
+            )
+        except BrokerAdapterContractError as exc:
+            assert "approved human approval record" in str(exc)
+        else:
+            raise AssertionError(f"expected blank approval {field_name} failure")
+
     approved = AlpacaPaperExportAdapter(
         safety=BrokerSafetyConfig(
             mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,

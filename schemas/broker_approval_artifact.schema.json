@@ -21,11 +21,11 @@
   ],
   "properties": {
     "schema": { "const": "tradearena_broker_approval_artifact_v0.1" },
-    "approval_id": { "type": "string", "minLength": 1 },
+    "approval_id": { "type": "string", "pattern": "\\S" },
     "approval_status": { "const": "approved" },
     "approved_by": {
       "type": "string",
-      "minLength": 1,
+      "pattern": "\\S",
       "not": { "pattern": "@" }
     },
     "approved_at": {
@@ -43,7 +43,7 @@
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "type": "string", "minLength": 1 }
+      "items": { "type": "string", "pattern": "\\S" }
     },
     "allowed_order_types": {
       "type": "array",
@@ -51,7 +51,7 @@
       "uniqueItems": true,
       "items": { "type": "string", "enum": ["market", "limit"] }
     },
-    "approval_reason": { "type": "string", "minLength": 1 },
+    "approval_reason": { "type": "string", "pattern": "\\S" },
     "request_artifact_hash": {
       "type": "string",
       "pattern": "^sha256:[0-9a-f]{64}$"

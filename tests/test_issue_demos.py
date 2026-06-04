@@ -2583,6 +2583,36 @@ def test_broker_approval_artifact_requires_live_account_mode():
 @pytest.mark.parametrize(
     ("field_name", "field_value", "expected_error"),
     [
+        ("approval_id", "   ", "approval_id must be non-empty"),
+        ("approved_by", "   ", "approved_by must be non-empty"),
+        ("approval_reason", "   ", "approval_reason must be non-empty"),
+        ("allowed_symbols", ["   "], "allowed_symbols must be a non-empty list of symbols"),
+    ],
+)
+def test_broker_approval_artifact_rejects_blank_text_fields(field_name, field_value, expected_error):
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=250.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-blank-text-001",
+        account_mode="live",
+        max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
+        request_artifact_hash="sha256:" + "1" * 64,
+    )
+    payload[field_name] = field_value
+
+    assert expected_error in validate_broker_approval_artifact(payload)
+
+
+@pytest.mark.parametrize(
+    ("field_name", "field_value", "expected_error"),
+    [
         ("allowed_symbols", ["AAPL", "AAPL"], "allowed_symbols must not contain duplicates"),
         ("allowed_order_types", ["market", "market"], "allowed_order_types must not contain duplicates"),
     ],
@@ -2655,7 +2685,7 @@ def test_broker_approval_artifact_builder_rejects_duplicate_scopes(
         (
             BrokerApproval(
                 approval_status="approved",
-                approved_by="",
+                approved_by="   ",
                 approved_at="2026-05-31T12:00:00Z",
                 max_notional=250.0,
                 allowed_symbols=("AAPL",),
@@ -2707,7 +2737,7 @@ def test_broker_approval_artifact_builder_rejects_duplicate_scopes(
                 approved_at="2026-05-31T12:00:00Z",
                 max_notional=250.0,
                 allowed_symbols=("AAPL",),
-                approval_reason="",
+                approval_reason="   ",
             ),
             5.0,
             "approval_reason must be non-empty",
@@ -2743,7 +2773,7 @@ def test_broker_approval_artifact_builder_rejects_invalid_approval_fields(
 @pytest.mark.parametrize(
     ("approval_id", "account_mode", "allowed_symbols", "allowed_order_types", "expected_error"),
     [
-        ("", "live", ("AAPL",), (OrderType.MARKET,), "approval_id must be non-empty"),
+        ("   ", "live", ("AAPL",), (OrderType.MARKET,), "approval_id must be non-empty"),
         (
             "approval-builder-paper-account-001",
             "paper",
@@ -2755,6 +2785,13 @@ def test_broker_approval_artifact_builder_rejects_invalid_approval_fields(
             "approval-builder-empty-symbols-001",
             "live",
             (),
+            (OrderType.MARKET,),
+            "allowed_symbols must be a non-empty list of symbols",
+        ),
+        (
+            "approval-builder-blank-symbol-001",
+            "live",
+            ("   ",),
             (OrderType.MARKET,),
             "allowed_symbols must be a non-empty list of symbols",
         ),

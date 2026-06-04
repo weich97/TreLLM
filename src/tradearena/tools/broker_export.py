@@ -468,7 +468,7 @@ def build_broker_approval_artifact(
 
     if approval.approval_status != "approved":
         raise BrokerAdapterContractError("approval_status must be approved")
-    if not approval.approved_by:
+    if not _has_text(approval.approved_by):
         raise BrokerAdapterContractError("approved_by must be non-empty")
     if "@" in approval.approved_by:
         raise BrokerAdapterContractError("approved_by must be a redacted operator id, not an email address")
@@ -478,13 +478,13 @@ def build_broker_approval_artifact(
         raise BrokerAdapterContractError("max_notional must be a positive number")
     if not _is_positive_finite_number(max_quantity):
         raise BrokerAdapterContractError("max_quantity must be a positive number")
-    if not approval.approval_reason:
+    if not _has_text(approval.approval_reason):
         raise BrokerAdapterContractError("approval_reason must be non-empty")
-    if not approval_id:
+    if not _has_text(approval_id):
         raise BrokerAdapterContractError("approval_id must be non-empty")
     if account_mode != "live":
         raise BrokerAdapterContractError("account_mode must be live for broker approval artifacts")
-    if not approval.allowed_symbols or not all(isinstance(symbol, str) and symbol for symbol in approval.allowed_symbols):
+    if not approval.allowed_symbols or not all(_has_text(symbol) for symbol in approval.allowed_symbols):
         raise BrokerAdapterContractError("allowed_symbols must be a non-empty list of symbols")
     if len(approval.allowed_symbols) != len(set(approval.allowed_symbols)):
         raise BrokerAdapterContractError("allowed_symbols must not contain duplicates")
@@ -558,12 +558,12 @@ def validate_broker_approval_artifact(
         errors.append(f"unexpected fields: {', '.join(extra)}")
     if payload.get("schema") != "tradearena_broker_approval_artifact_v0.1":
         errors.append("schema must be 'tradearena_broker_approval_artifact_v0.1'")
-    if not payload.get("approval_id"):
+    if not _has_text(payload.get("approval_id")):
         errors.append("approval_id must be non-empty")
     if payload.get("approval_status") != "approved":
         errors.append("approval_status must be approved")
     approved_by = payload.get("approved_by")
-    if not isinstance(approved_by, str) or not approved_by:
+    if not _has_text(approved_by):
         errors.append("approved_by must be non-empty")
     elif "@" in approved_by:
         errors.append("approved_by must be a redacted operator id, not an email address")
@@ -585,7 +585,7 @@ def validate_broker_approval_artifact(
     if (
         not isinstance(allowed_symbols, list)
         or not allowed_symbols
-        or not all(isinstance(item, str) and item for item in allowed_symbols)
+        or not all(_has_text(item) for item in allowed_symbols)
     ):
         errors.append("allowed_symbols must be a non-empty list of symbols")
     elif len(allowed_symbols) != len(set(allowed_symbols)):
@@ -600,7 +600,7 @@ def validate_broker_approval_artifact(
         errors.append("allowed_order_types must contain market or limit")
     elif len(allowed_order_types) != len(set(allowed_order_types)):
         errors.append("allowed_order_types must not contain duplicates")
-    if not payload.get("approval_reason"):
+    if not _has_text(payload.get("approval_reason")):
         errors.append("approval_reason must be non-empty")
     request_hash = payload.get("request_artifact_hash")
     if not isinstance(request_hash, str) or not request_hash:
@@ -1259,6 +1259,10 @@ def _is_positive_finite_number(value: object) -> TypeGuard[int | float]:
 
 def _is_non_negative_finite_number(value: object) -> TypeGuard[int | float]:
     return _is_finite_number(value) and float(value) >= 0
+
+
+def _has_text(value: object) -> TypeGuard[str]:
+    return isinstance(value, str) and bool(value.strip())
 
 
 def _dry_run_safety(safety: BrokerSafetyConfig | None) -> BrokerSafetyConfig:

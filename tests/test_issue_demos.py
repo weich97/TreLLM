@@ -566,6 +566,44 @@ def test_live_human_approved_mode_validates_safety_even_without_orders(tmp_path)
         raise AssertionError("expected empty live handoff to validate live safety")
 
 
+@pytest.mark.parametrize(
+    ("field_name", "field_value", "expected_error"),
+    [
+        ("max_notional", float("nan"), "max_notional must be a positive finite number"),
+        ("max_quantity", 0.0, "max_quantity must be a positive finite number"),
+    ],
+)
+def test_live_human_approved_mode_rejects_invalid_limits_without_orders(
+    tmp_path,
+    field_name,
+    field_value,
+    expected_error,
+):
+    safety_kwargs = {
+        "mode": BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+        "account_mode": "live",
+        "max_notional": 1000.0,
+        "max_quantity": 10.0,
+        "approval": BrokerApproval(
+            approval_status="approved",
+            approved_by="unit-operator",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=1000.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="unit test approval",
+        ),
+    }
+    safety_kwargs[field_name] = field_value
+    adapter = AlpacaPaperExportAdapter(safety=BrokerSafetyConfig(**safety_kwargs))
+
+    try:
+        adapter.write([], tmp_path / field_name)
+    except BrokerAdapterContractError as exc:
+        assert expected_error in str(exc)
+    else:
+        raise AssertionError(f"expected empty live handoff to reject invalid {field_name}")
+
+
 def test_live_human_approved_mode_rejects_kill_switch_without_orders(tmp_path):
     adapter = AlpacaPaperExportAdapter(
         safety=BrokerSafetyConfig(

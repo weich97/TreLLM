@@ -150,6 +150,10 @@ class BrokerSafetyConfig:
             raise BrokerAdapterContractError("broker adapter kill switch is enabled")
         if self.max_notional is None or self.max_quantity is None:
             raise BrokerAdapterContractError("live_human_approved mode requires max_notional and max_quantity limits")
+        if not _is_positive_finite_number(self.max_notional):
+            raise BrokerAdapterContractError("max_notional must be a positive finite number")
+        if not _is_positive_finite_number(self.max_quantity):
+            raise BrokerAdapterContractError("max_quantity must be a positive finite number")
         if self.approval is None or not self.approval.is_approved:
             raise BrokerAdapterContractError("live_human_approved mode requires an approved human approval record")
         if self.account_mode != "live":

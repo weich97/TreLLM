@@ -502,6 +502,32 @@ def test_live_human_approved_mode_requires_approval_and_marks_live(tmp_path):
         else:
             raise AssertionError(f"expected blank approval {field_name} failure")
 
+    unredacted_operator_approval = AlpacaPaperExportAdapter(
+        safety=BrokerSafetyConfig(
+            mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+            account_mode="live",
+            max_notional=1000.0,
+            max_quantity=10.0,
+            approval=BrokerApproval(
+                approval_status="approved",
+                approved_by="operator@example.com",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=100.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="unit test approval",
+            ),
+        )
+    )
+    try:
+        unredacted_operator_approval.write(
+            [Order("AAPL", Side.BUY, 1.0, order_type=OrderType.LIMIT, limit_price=50.0, reason="unit test")],
+            tmp_path / "unredacted-operator-approval",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "approved_by must be a redacted operator id, not an email address" in str(exc)
+    else:
+        raise AssertionError("expected unredacted live approval operator failure")
+
     approved = AlpacaPaperExportAdapter(
         safety=BrokerSafetyConfig(
             mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,

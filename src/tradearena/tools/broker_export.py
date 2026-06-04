@@ -161,6 +161,8 @@ class BrokerSafetyConfig:
             raise BrokerAdapterContractError("allowed_order_types must not contain duplicates")
         if self.approval is None or not self.approval.is_approved:
             raise BrokerAdapterContractError("live_human_approved mode requires an approved human approval record")
+        if "@" in self.approval.approved_by:
+            raise BrokerAdapterContractError("approved_by must be a redacted operator id, not an email address")
         if self.account_mode != "live":
             raise BrokerAdapterContractError("live_human_approved mode requires account_mode live")
         if not _is_iso_timestamp_with_timezone(self.approval.approved_at):

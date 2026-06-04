@@ -908,8 +908,11 @@ def validate_broker_handoff_artifact_file(path: str | Path) -> tuple[dict[str, o
 
 
 def _read_broker_artifact_json_file(path: str | Path) -> tuple[object, list[str]]:
+    artifact_path = Path(path)
     try:
-        return json.loads(Path(path).read_text(encoding="utf-8")), []
+        return json.loads(artifact_path.read_text(encoding="utf-8")), []
+    except FileNotFoundError:
+        return {}, [f"broker artifact file does not exist: {artifact_path}"]
     except json.JSONDecodeError:
         return {}, ["broker artifact file must contain valid JSON"]
 

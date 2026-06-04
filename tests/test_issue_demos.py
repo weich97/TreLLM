@@ -3177,6 +3177,21 @@ def test_broker_artifact_file_validators_report_missing_paths(tmp_path):
         assert errors == [f"broker artifact file does not exist: {missing}"]
 
 
+def test_broker_artifact_file_validators_report_directory_paths(tmp_path):
+    artifact_dir = tmp_path / "broker_artifact_dir"
+    artifact_dir.mkdir()
+
+    for validator in (
+        validate_broker_handoff_artifact_file,
+        validate_broker_approval_artifact_file,
+        validate_broker_response_artifact_file,
+    ):
+        payload, errors = validator(artifact_dir)
+
+        assert payload == {}
+        assert errors == [f"broker artifact path is not a file: {artifact_dir}"]
+
+
 def test_broker_artifact_validator_scripts_report_malformed_json(tmp_path):
     broken = tmp_path / "broken.json"
     broken.write_text('{"schema": ', encoding="utf-8")
@@ -3218,6 +3233,27 @@ def test_broker_artifact_validator_scripts_report_missing_paths(tmp_path):
         assert "Traceback" not in result.stderr
 
 
+def test_broker_artifact_validator_scripts_report_directory_paths(tmp_path):
+    artifact_dir = tmp_path / "broker_artifact_dir"
+    artifact_dir.mkdir()
+
+    for script in (
+        "scripts/validate_broker_handoff_artifact.py",
+        "scripts/validate_broker_approval_artifact.py",
+        "scripts/validate_broker_response_artifact.py",
+    ):
+        result = subprocess.run(
+            [sys.executable, script, str(artifact_dir)],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+
+        assert result.returncode == 1
+        assert f"broker artifact path is not a file: {artifact_dir}" in result.stdout
+        assert "Traceback" not in result.stderr
+
+
 def test_broker_handoff_hash_helper_reports_malformed_json_path(tmp_path):
     broken = tmp_path / "broken_handoff.json"
     broken.write_text('{"schema": ', encoding="utf-8")
@@ -3239,6 +3275,18 @@ def test_broker_handoff_hash_helper_reports_missing_path(tmp_path):
         assert str(exc) == f"broker artifact file does not exist: {missing}"
     else:
         raise AssertionError("missing broker handoff JSON was hashed")
+
+
+def test_broker_handoff_hash_helper_reports_directory_path(tmp_path):
+    artifact_dir = tmp_path / "handoff_dir"
+    artifact_dir.mkdir()
+
+    try:
+        broker_handoff_artifact_hash(artifact_dir)
+    except BrokerAdapterContractError as exc:
+        assert str(exc) == f"broker artifact path is not a file: {artifact_dir}"
+    else:
+        raise AssertionError("directory broker handoff path was hashed")
 
 
 def test_broker_approval_artifact_binds_to_handoff_request_hash(tmp_path):

@@ -575,6 +575,29 @@ The full checklist is in
 The long-term staged path is in
 [`docs/live_trading_readiness.md`](docs/live_trading_readiness.md).
 
+## Live Trading Safety Contract
+
+Broker-facing contributions must preserve a human-gated path from reviewed
+intent to broker-visible response. A live adapter may only use
+`live_human_approved` after a pre-live broker-review request has been hashed,
+approved, bound to that exact request, and revalidated before submission.
+
+Before sharing a broker-facing PR, run the relevant checks:
+
+```bash
+tradearena validate-broker-handoff outputs/examples/broker_approval_safety/dry_run_orders.json
+tradearena hash-broker-handoff outputs/examples/broker_approval_safety/dry_run_orders.json
+tradearena validate-broker-approval outputs/examples/broker_approval_safety/broker_approval_artifact.json --now 2026-05-31T12:30:00Z
+tradearena validate-broker-approval-binding outputs/examples/broker_approval_safety/broker_approval_artifact.json outputs/examples/broker_approval_safety/dry_run_orders.json --now 2026-05-31T12:30:00Z
+tradearena validate-broker-response outputs/examples/broker_response_reconciliation/broker_response_artifact.json
+```
+
+The approval must contain a redacted operator ID, positive finite notional and
+quantity limits, allowed symbols and order types, an expiry, and the exact
+pre-live broker-review request hash. Response artifacts must stay separated by
+account mode and explain rejected or unknown broker statuses with redacted
+reasons.
+
 ## Install And Run
 
 From a clone:

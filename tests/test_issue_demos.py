@@ -604,6 +604,44 @@ def test_live_human_approved_mode_rejects_invalid_limits_without_orders(
         raise AssertionError(f"expected empty live handoff to reject invalid {field_name}")
 
 
+@pytest.mark.parametrize(
+    ("allowed_order_types", "expected_error"),
+    [
+        ((), "allowed_order_types must contain market or limit"),
+        ((OrderType.MARKET, OrderType.MARKET), "allowed_order_types must not contain duplicates"),
+    ],
+)
+def test_live_human_approved_mode_rejects_invalid_order_type_scope_without_orders(
+    tmp_path,
+    allowed_order_types,
+    expected_error,
+):
+    adapter = AlpacaPaperExportAdapter(
+        safety=BrokerSafetyConfig(
+            mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+            account_mode="live",
+            max_notional=1000.0,
+            max_quantity=10.0,
+            allowed_order_types=allowed_order_types,
+            approval=BrokerApproval(
+                approval_status="approved",
+                approved_by="unit-operator",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=1000.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="unit test approval",
+            ),
+        )
+    )
+
+    try:
+        adapter.write([], tmp_path / "invalid-order-type-scope")
+    except BrokerAdapterContractError as exc:
+        assert expected_error in str(exc)
+    else:
+        raise AssertionError("expected empty live handoff to reject invalid allowed_order_types")
+
+
 def test_live_human_approved_mode_rejects_kill_switch_without_orders(tmp_path):
     adapter = AlpacaPaperExportAdapter(
         safety=BrokerSafetyConfig(

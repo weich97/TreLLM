@@ -22,7 +22,7 @@
       "type": "string",
       "enum": ["offline_export", "dry_run", "paper_sandbox", "live_human_approved"]
     },
-    "account_mode": { "type": "string", "minLength": 1 },
+    "account_mode": { "type": "string", "enum": ["none", "paper", "live"] },
     "paper_only": { "type": "boolean" },
     "live_submission": { "type": "boolean" },
     "manual_approval_required": { "type": "boolean" },
@@ -160,7 +160,7 @@
           "type": "string",
           "enum": ["offline_export", "dry_run", "paper_sandbox", "live_human_approved"]
         },
-        "account_mode": { "type": "string", "minLength": 1 },
+        "account_mode": { "type": "string", "enum": ["none", "paper", "live"] },
         "symbol": { "type": "string", "minLength": 1 },
         "side": { "type": "string", "enum": ["buy", "sell"] },
         "order_type": { "type": "string", "enum": ["market", "limit"] },

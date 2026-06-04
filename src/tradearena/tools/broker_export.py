@@ -19,6 +19,7 @@ _SHA256_ARTIFACT_HASH_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 _ISO_TIMESTAMP_WITH_TZ_RE = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$"
 )
+_SUPPORTED_ACCOUNT_MODES = ("none", "paper", "live")
 _SUPPORTED_TIME_IN_FORCE = ("cls", "day", "fok", "gtc", "ioc", "opg")
 
 
@@ -134,6 +135,8 @@ class BrokerSafetyConfig:
     def validate_handoff_config(self) -> None:
         """Validate mode-level broker safety before writing a handoff artifact."""
 
+        if self.account_mode not in _SUPPORTED_ACCOUNT_MODES:
+            raise BrokerAdapterContractError("account_mode must be one of none, paper, live")
         if self.mode != BrokerAdapterMode.LIVE_HUMAN_APPROVED:
             if self.account_mode == "live":
                 raise BrokerAdapterContractError("non-live handoff artifacts must not use account_mode live")
@@ -769,6 +772,8 @@ def validate_broker_response_artifact(payload: dict[str, object]) -> list[str]:
         errors.append("adapter_mode must be one of offline_export, dry_run, paper_sandbox, live_human_approved")
     if not payload.get("account_mode"):
         errors.append("account_mode must be non-empty")
+    elif payload.get("account_mode") not in _SUPPORTED_ACCOUNT_MODES:
+        errors.append("account_mode must be one of none, paper, live")
     if payload.get("live_submission") is not (adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED.value):
         errors.append("live_submission must match adapter_mode == live_human_approved")
     if adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED.value and payload.get("account_mode") != "live":
@@ -857,6 +862,8 @@ def validate_broker_handoff_artifact(payload: dict[str, object]) -> list[str]:
         errors.append("adapter_mode must be one of offline_export, dry_run, paper_sandbox, live_human_approved")
     if not payload.get("account_mode"):
         errors.append("account_mode must be non-empty")
+    elif payload.get("account_mode") not in _SUPPORTED_ACCOUNT_MODES:
+        errors.append("account_mode must be one of none, paper, live")
     if adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED.value and payload.get("account_mode") != "live":
         errors.append("account_mode must be live for live_human_approved broker handoff artifacts")
     if adapter_mode != BrokerAdapterMode.LIVE_HUMAN_APPROVED.value and payload.get("account_mode") == "live":
@@ -997,6 +1004,8 @@ def _validate_response_request_bindings(
         request_quantities[request.client_order_id] = float(request.quantity)
     seen_response_ids: set[str] = set()
     seen_broker_order_ids: set[str] = set()
+    if account_mode not in _SUPPORTED_ACCOUNT_MODES:
+        errors.append("account_mode must be one of none, paper, live")
     if adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED and account_mode != "live":
         errors.append("live_human_approved response artifacts require account_mode live")
     if adapter_mode != BrokerAdapterMode.LIVE_HUMAN_APPROVED and account_mode == "live":

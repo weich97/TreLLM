@@ -648,6 +648,25 @@ def test_broker_response_artifact_schema_rejects_live_account_for_non_live_mode(
     assert ("account_mode",) in paths
 
 
+def test_broker_response_artifact_schema_rejects_unknown_account_mode(tmp_path: Path):
+    output = tmp_path / "broker_response_artifact.json"
+    write_broker_response_artifact(
+        requests=[],
+        responses=[],
+        output=output,
+        adapter="schema-response-unknown-account",
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    payload["account_mode"] = "simulation"
+
+    errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("account_mode",) in paths
+
+
 def test_broker_response_artifact_schema_rejects_live_response_account_for_non_live_mode(tmp_path: Path):
     output = tmp_path / "broker_response_artifact.json"
     write_broker_response_artifact(
@@ -811,6 +830,18 @@ def test_broker_handoff_artifact_schema_rejects_live_account_for_non_live_mode(t
 
     assert ("account_mode",) in paths
     assert ("orders", 0, "account_mode") in paths
+
+
+def test_broker_handoff_artifact_schema_rejects_unknown_account_mode(tmp_path: Path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-handoff-unknown-account")
+    adapter.write([Order("AAPL", Side.BUY, 1.0, reason="schema test")], tmp_path)
+    payload = json.loads((tmp_path / "alpaca_paper_orders.json").read_text(encoding="utf-8"))
+    payload["account_mode"] = "simulation"
+
+    errors = sorted(_validator("broker_handoff_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("account_mode",) in paths
 
 
 def test_broker_handoff_artifact_schema_rejects_live_kill_switch(tmp_path: Path):

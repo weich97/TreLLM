@@ -460,6 +460,20 @@ def build_broker_approval_artifact(
 ) -> dict[str, object]:
     """Build a redacted human approval artifact for future live handoff review."""
 
+    if approval.approval_status != "approved":
+        raise BrokerAdapterContractError("approval_status must be approved")
+    if not approval.approved_by:
+        raise BrokerAdapterContractError("approved_by must be non-empty")
+    if "@" in approval.approved_by:
+        raise BrokerAdapterContractError("approved_by must be a redacted operator id, not an email address")
+    if not approval.approved_at or not _is_iso_timestamp_with_timezone(approval.approved_at):
+        raise BrokerAdapterContractError("approved_at must be an ISO timestamp with timezone")
+    if not _is_positive_finite_number(approval.max_notional):
+        raise BrokerAdapterContractError("max_notional must be a positive number")
+    if not _is_positive_finite_number(max_quantity):
+        raise BrokerAdapterContractError("max_quantity must be a positive number")
+    if not approval.approval_reason:
+        raise BrokerAdapterContractError("approval_reason must be non-empty")
     if len(approval.allowed_symbols) != len(set(approval.allowed_symbols)):
         raise BrokerAdapterContractError("allowed_symbols must not contain duplicates")
     order_type_values = [order_type.value for order_type in allowed_order_types]

@@ -2492,6 +2492,109 @@ def test_broker_approval_artifact_builder_rejects_duplicate_scopes(
         )
 
 
+@pytest.mark.parametrize(
+    ("approval", "max_quantity", "expected_error"),
+    [
+        (
+            BrokerApproval(
+                approval_status="pending",
+                approved_by="operator-7",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=250.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="paper shadow checks passed",
+            ),
+            5.0,
+            "approval_status must be approved",
+        ),
+        (
+            BrokerApproval(
+                approval_status="approved",
+                approved_by="",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=250.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="paper shadow checks passed",
+            ),
+            5.0,
+            "approved_by must be non-empty",
+        ),
+        (
+            BrokerApproval(
+                approval_status="approved",
+                approved_by="operator@example.com",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=250.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="paper shadow checks passed",
+            ),
+            5.0,
+            "approved_by must be a redacted operator id, not an email address",
+        ),
+        (
+            BrokerApproval(
+                approval_status="approved",
+                approved_by="operator-7",
+                approved_at="May 31, noon",
+                max_notional=250.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="paper shadow checks passed",
+            ),
+            5.0,
+            "approved_at must be an ISO timestamp with timezone",
+        ),
+        (
+            BrokerApproval(
+                approval_status="approved",
+                approved_by="operator-7",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=0.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="paper shadow checks passed",
+            ),
+            5.0,
+            "max_notional must be a positive number",
+        ),
+        (
+            BrokerApproval(
+                approval_status="approved",
+                approved_by="operator-7",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=250.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="",
+            ),
+            5.0,
+            "approval_reason must be non-empty",
+        ),
+        (
+            BrokerApproval(
+                approval_status="approved",
+                approved_by="operator-7",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=250.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="paper shadow checks passed",
+            ),
+            0.0,
+            "max_quantity must be a positive number",
+        ),
+    ],
+)
+def test_broker_approval_artifact_builder_rejects_invalid_approval_fields(
+    approval: BrokerApproval, max_quantity: float, expected_error: str
+):
+    with pytest.raises(BrokerAdapterContractError, match=expected_error):
+        build_broker_approval_artifact(
+            approval,
+            approval_id="approval-builder-invalid-fields-001",
+            account_mode="live",
+            max_quantity=max_quantity,
+            expires_at="2026-05-31T13:00:00Z",
+            request_artifact_hash="sha256:" + "1" * 64,
+        )
+
+
 def test_broker_approval_artifact_builds_live_safety_config(tmp_path):
     adapter = DryRunBrokerAdapter(
         client_prefix="approval-safety",

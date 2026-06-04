@@ -878,6 +878,32 @@ def test_broker_handoff_artifact_schema_rejects_unknown_account_mode(tmp_path: P
     assert ("account_mode",) in paths
 
 
+@pytest.mark.parametrize(
+    ("field_path", "expected_path"),
+    [
+        (("adapter",), ("adapter",)),
+        (("orders", 0, "client_order_id"), ("orders", 0, "client_order_id")),
+        (("orders", 0, "symbol"), ("orders", 0, "symbol")),
+        (("orders", 0, "reason"), ("orders", 0, "reason")),
+    ],
+)
+def test_broker_handoff_artifact_schema_rejects_blank_text_fields(
+    tmp_path: Path, field_path: tuple[object, ...], expected_path: tuple[object, ...]
+):
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-handoff-blank-text")
+    adapter.write([Order("AAPL", Side.BUY, 1.0, reason="schema test")], tmp_path)
+    payload = json.loads((tmp_path / "alpaca_paper_orders.json").read_text(encoding="utf-8"))
+    target = payload
+    for key in field_path[:-1]:
+        target = target[key]
+    target[field_path[-1]] = "   "
+
+    errors = sorted(_validator("broker_handoff_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert expected_path in paths
+
+
 def test_broker_handoff_artifact_schema_rejects_order_account_mode_mismatch(tmp_path: Path):
     adapter = AlpacaPaperExportAdapter(
         client_prefix="schema-handoff-row-account-mode",

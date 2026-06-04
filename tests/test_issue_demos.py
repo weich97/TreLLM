@@ -164,6 +164,27 @@ def test_broker_handoff_artifact_rejects_unknown_account_mode():
     assert "account_mode must be one of none, paper, live" in validate_broker_handoff_artifact(payload)
 
 
+@pytest.mark.parametrize(
+    ("field_path", "expected_error"),
+    [
+        (("adapter",), "adapter must be non-empty"),
+        (("orders", 0, "client_order_id"), "orders[0].client_order_id must be non-empty"),
+        (("orders", 0, "symbol"), "orders[0].symbol must be non-empty"),
+        (("orders", 0, "reason"), "orders[0].reason must be non-empty"),
+    ],
+)
+def test_broker_handoff_artifact_rejects_blank_text_fields(tmp_path, field_path, expected_error):
+    adapter = AlpacaPaperExportAdapter(client_prefix="handoff-blank-text")
+    adapter.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path)
+    payload = json.loads((tmp_path / "alpaca_paper_orders.json").read_text(encoding="utf-8"))
+    target = payload
+    for key in field_path[:-1]:
+        target = target[key]
+    target[field_path[-1]] = "   "
+
+    assert expected_error in validate_broker_handoff_artifact(payload)
+
+
 def test_broker_handoff_artifact_rejects_duplicate_client_order_ids(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="handoff-duplicate-client-id")
     adapter.write(

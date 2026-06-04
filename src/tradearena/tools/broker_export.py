@@ -855,7 +855,7 @@ def validate_broker_handoff_artifact(payload: dict[str, object]) -> list[str]:
         errors.append(f"unexpected fields: {', '.join(extra)}")
     if payload.get("schema") != "tradearena_broker_handoff_artifact_v0.1":
         errors.append("schema must be 'tradearena_broker_handoff_artifact_v0.1'")
-    if not payload.get("adapter"):
+    if not _has_text(payload.get("adapter")):
         errors.append("adapter must be non-empty")
     adapter_mode = payload.get("adapter_mode")
     if adapter_mode not in {mode.value for mode in BrokerAdapterMode}:
@@ -1443,7 +1443,7 @@ def _validate_broker_handoff_order(
         "reason",
     )
     for field_name in required_text_fields:
-        if not order.get(field_name):
+        if not _has_text(order.get(field_name)):
             errors.append(f"orders[{idx}].{field_name} must be non-empty")
     if order.get("adapter_mode") != adapter_mode:
         errors.append(f"orders[{idx}].adapter_mode must match artifact adapter_mode")

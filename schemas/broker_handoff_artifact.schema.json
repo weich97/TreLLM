@@ -17,7 +17,7 @@
   "additionalProperties": false,
   "properties": {
     "schema": { "const": "tradearena_broker_handoff_artifact_v0.1" },
-    "adapter": { "type": "string", "minLength": 1 },
+    "adapter": { "type": "string", "pattern": "\\S" },
     "adapter_mode": {
       "type": "string",
       "enum": ["offline_export", "dry_run", "paper_sandbox", "live_human_approved"]
@@ -212,13 +212,13 @@
       ],
       "additionalProperties": false,
       "properties": {
-        "client_order_id": { "type": "string", "minLength": 1 },
+        "client_order_id": { "type": "string", "pattern": "\\S" },
         "adapter_mode": {
           "type": "string",
           "enum": ["offline_export", "dry_run", "paper_sandbox", "live_human_approved"]
         },
         "account_mode": { "type": "string", "enum": ["none", "paper", "live"] },
-        "symbol": { "type": "string", "minLength": 1 },
+        "symbol": { "type": "string", "pattern": "\\S" },
         "side": { "type": "string", "enum": ["buy", "sell"] },
         "order_type": { "type": "string", "enum": ["market", "limit"] },
         "quantity": { "type": "number", "exclusiveMinimum": 0 },
@@ -227,7 +227,7 @@
         "submit_live": { "type": "boolean" },
         "approval_status": { "type": "string", "enum": ["approved", "requires_human_approval"] },
         "max_notional": { "type": ["number", "null"], "exclusiveMinimum": 0 },
-        "reason": { "type": "string", "minLength": 1 }
+        "reason": { "type": "string", "pattern": "\\S" }
       },
       "allOf": [
         {

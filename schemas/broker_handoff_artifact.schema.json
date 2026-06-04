@@ -121,6 +121,7 @@
           "paper_only": { "const": false },
           "live_submission": { "const": true },
           "manual_approval_required": { "const": false },
+          "kill_switch": { "const": false },
           "orders": {
             "items": {
               "properties": {

@@ -204,7 +204,53 @@
         {
           "if": {
             "properties": {
-              "status": { "enum": ["accepted", "rejected"] }
+              "status": { "const": "accepted" }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "fill_quantity": { "type": ["number", "null"], "maximum": 0 },
+              "fill_price": { "type": ["number", "null"], "maximum": 0 }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": { "const": "rejected" }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "accepted_quantity": { "type": ["number", "null"], "maximum": 0 },
+              "fill_quantity": { "type": ["number", "null"], "maximum": 0 },
+              "fill_price": { "type": ["number", "null"], "maximum": 0 },
+              "fees": { "type": ["number", "null"], "maximum": 0 }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": { "const": "unknown" }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "accepted_quantity": { "type": ["number", "null"], "maximum": 0 },
+              "fill_quantity": { "type": ["number", "null"], "maximum": 0 },
+              "fill_price": { "type": ["number", "null"], "maximum": 0 },
+              "fees": { "type": ["number", "null"], "maximum": 0 }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": { "enum": ["canceled", "expired"] }
             },
             "required": ["status"]
           },

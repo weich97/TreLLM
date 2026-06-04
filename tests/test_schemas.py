@@ -529,6 +529,64 @@ def test_broker_response_artifact_schema_rejects_fill_price_for_nonfill_statuses
     assert ("responses", 0, "fill_price") in paths
 
 
+@pytest.mark.parametrize(
+    ("status", "field_name", "field_value", "broker_order_id", "rejection_reason"),
+    [
+        (BrokerOrderStatus.REJECTED, "accepted_quantity", 1.0, None, "broker rejected order"),
+        (BrokerOrderStatus.REJECTED, "fees", 0.01, None, "broker rejected order"),
+        (BrokerOrderStatus.UNKNOWN, "accepted_quantity", 1.0, None, "unmapped broker status"),
+        (BrokerOrderStatus.UNKNOWN, "fill_quantity", 0.5, None, "unmapped broker status"),
+        (BrokerOrderStatus.UNKNOWN, "fill_price", 100.0, None, "unmapped broker status"),
+        (BrokerOrderStatus.UNKNOWN, "fees", 0.01, None, "unmapped broker status"),
+        (BrokerOrderStatus.CANCELED, "fill_quantity", 0.5, "paper-canceled-schema", None),
+        (BrokerOrderStatus.CANCELED, "fill_price", 100.0, "paper-canceled-schema", None),
+        (BrokerOrderStatus.EXPIRED, "fill_quantity", 0.5, "paper-expired-schema", None),
+        (BrokerOrderStatus.EXPIRED, "fill_price", 100.0, "paper-expired-schema", None),
+    ],
+)
+def test_broker_response_artifact_schema_rejects_status_forbidden_positive_fields(
+    tmp_path: Path,
+    status: BrokerOrderStatus,
+    field_name: str,
+    field_value: float,
+    broker_order_id: str | None,
+    rejection_reason: str | None,
+):
+    adapter = AlpacaPaperExportAdapter(client_prefix=f"schema-response-forbidden-{status.value}-{field_name}")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])
+    output = tmp_path / "broker_response_artifact.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=status,
+                broker_order_id=broker_order_id,
+                submitted_quantity=1.0,
+                accepted_quantity=None,
+                fill_quantity=None,
+                fill_price=None,
+                fees=None,
+                rejection_reason=rejection_reason,
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=output,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    payload["responses"][0][field_name] = field_value
+
+    errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("responses", 0, field_name) in paths
+
+
 def test_broker_response_artifact_schema_rejects_live_flag_mismatch(tmp_path: Path):
     adapter = AlpacaPaperExportAdapter(client_prefix="schema-recon-mismatch")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])

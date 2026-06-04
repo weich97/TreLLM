@@ -1,14 +1,13 @@
 <p align="center">
   <img src="docs/assets/tradearena_wordmark.svg"
-       alt="TradeArena wordmark"
+       alt="TradeArena leaderboard wordmark"
        width="780">
 </p>
 
 <p align="center">
   <strong>
-    TradeArena is a live-ready audit and risk-control framework for financial
-    agents: it records how model intent is transformed by risk gates, execution
-    models, broker-review handoffs, and reproducible audit trails.
+    TreLLM is an LLM-driven trading audit and control system. TradeArena is
+    its public leaderboard for ranking auditable agent runs.
   </strong>
 </p>
 
@@ -86,17 +85,18 @@
   </a>
 </p>
 
-# TradeArena
+# TreLLM
 
-TradeArena is not investment advice or a promise of profitable trading. Its
+TreLLM is not investment advice or a promise of profitable trading. Its
 default commands do not submit live orders. Its long-term direction is a
 live-ready, human-gated control plane where financial-agent intent remains
 auditable, reproducible, risk-checked, and explainable before any broker-facing
 workflow can act.
 
-TradeArena is an audit microscope for financial agents: it records what a model
+TreLLM is an audit microscope for financial agents: it records what a model
 wanted to do, how risk controls revised it, how execution frictions changed the
 fill, and whether the result can be replayed, hashed, redacted, and compared.
+TradeArena is its public leaderboard for ranking auditable agent runs.
 
 ```json
 {
@@ -125,6 +125,16 @@ The project is still an early-stage research prototype, but it is intentionally
 organized so future broker-facing adapters can inherit the same risk gates,
 execution calibration, human approval records, reconciliation artifacts, and
 audit logs. See [`docs/live_trading_readiness.md`](docs/live_trading_readiness.md).
+
+## Name And Compatibility
+
+TreLLM is the system name for the LLM-driven trading audit and control plane.
+TradeArena names the leaderboard, benchmark cards, ranking tables, and public
+comparison surfaces inside that system.
+The `tradearena` command and package remain the compatibility surface for the
+current public release, so existing notebooks, install commands, imports, and
+GitHub Pages links keep working while the system identity moves beyond a
+benchmark-only framing.
 
 ## External Validators Wanted
 

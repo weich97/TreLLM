@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tradearena-benchmark"
 version = "0.2.0"
-description = "Auditable research prototype for financial-agent reliability, risk gates, and intent-to-execution trajectories."
+description = "LLM-driven trading audit and control system with replayable trajectories, risk gates, and TradeArena leaderboard artifacts."
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "TradeArena Contributors" }]

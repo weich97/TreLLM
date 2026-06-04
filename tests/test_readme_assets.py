@@ -43,3 +43,17 @@ def test_readme_surfaces_live_trading_safety_contract():
 
     for snippet in required_snippets:
         assert snippet in readme
+
+
+def test_readme_surfaces_trellm_identity_split():
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+
+    required_snippets = [
+        "# TreLLM",
+        "TreLLM is an LLM-driven trading audit and control system.",
+        "TradeArena is its public leaderboard for ranking auditable agent runs.",
+        "The `tradearena` command and package remain the compatibility surface",
+    ]
+
+    for snippet in required_snippets:
+        assert snippet in readme

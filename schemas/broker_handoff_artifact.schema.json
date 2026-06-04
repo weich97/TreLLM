@@ -133,6 +133,63 @@
           }
         }
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "account_mode": { "const": "none" }
+        },
+        "required": ["account_mode"]
+      },
+      "then": {
+        "properties": {
+          "orders": {
+            "items": {
+              "properties": {
+                "account_mode": { "const": "none" }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "account_mode": { "const": "paper" }
+        },
+        "required": ["account_mode"]
+      },
+      "then": {
+        "properties": {
+          "orders": {
+            "items": {
+              "properties": {
+                "account_mode": { "const": "paper" }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "account_mode": { "const": "live" }
+        },
+        "required": ["account_mode"]
+      },
+      "then": {
+        "properties": {
+          "orders": {
+            "items": {
+              "properties": {
+                "account_mode": { "const": "live" }
+              }
+            }
+          }
+        }
+      }
     }
   ],
   "$defs": {

@@ -20,6 +20,7 @@ from tradearena.tools import (
     BrokerApproval,
     BrokerOrderStatus,
     BrokerResponse,
+    BrokerSafetyConfig,
     build_broker_approval_artifact,
     write_broker_response_artifact,
 )
@@ -667,6 +668,39 @@ def test_broker_response_artifact_schema_rejects_unknown_account_mode(tmp_path: 
     assert ("account_mode",) in paths
 
 
+def test_broker_response_artifact_schema_rejects_row_account_mode_mismatch(tmp_path: Path):
+    output = tmp_path / "broker_response_artifact.json"
+    write_broker_response_artifact(
+        requests=[],
+        responses=[
+            BrokerResponse(
+                client_order_id="schema-response-row-account-mode",
+                status=BrokerOrderStatus.ACCEPTED,
+                broker_order_id="paper-schema-row-account-mode-1",
+                submitted_quantity=1.0,
+                accepted_quantity=1.0,
+                fill_quantity=None,
+                fill_price=None,
+                fees=0.0,
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=output,
+        adapter="schema-response-row-account-mode",
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    payload["responses"][0]["account_mode"] = "none"
+
+    errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("responses", 0, "account_mode") in paths
+
+
 def test_broker_response_artifact_schema_rejects_live_response_account_for_non_live_mode(tmp_path: Path):
     output = tmp_path / "broker_response_artifact.json"
     write_broker_response_artifact(
@@ -842,6 +876,21 @@ def test_broker_handoff_artifact_schema_rejects_unknown_account_mode(tmp_path: P
     paths = {tuple(error.path) for error in errors}
 
     assert ("account_mode",) in paths
+
+
+def test_broker_handoff_artifact_schema_rejects_order_account_mode_mismatch(tmp_path: Path):
+    adapter = AlpacaPaperExportAdapter(
+        client_prefix="schema-handoff-row-account-mode",
+        safety=BrokerSafetyConfig(account_mode="paper"),
+    )
+    adapter.write([Order("AAPL", Side.BUY, 1.0, reason="schema test")], tmp_path)
+    payload = json.loads((tmp_path / "alpaca_paper_orders.json").read_text(encoding="utf-8"))
+    payload["orders"][0]["account_mode"] = "none"
+
+    errors = sorted(_validator("broker_handoff_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("orders", 0, "account_mode") in paths
 
 
 def test_broker_handoff_artifact_schema_rejects_live_kill_switch(tmp_path: Path):

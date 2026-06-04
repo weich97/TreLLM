@@ -847,7 +847,7 @@ def test_broker_approval_artifact_schema_rejects_malformed_timestamps():
         BrokerApproval(
             approval_status="approved",
             approved_by="operator-7",
-            approved_at="May 31, noon",
+            approved_at="2026-05-31T12:00:00Z",
             max_notional=2500.0,
             allowed_symbols=("AAPL", "MSFT"),
             approval_reason="paper shadow checks passed",
@@ -855,9 +855,11 @@ def test_broker_approval_artifact_schema_rejects_malformed_timestamps():
         approval_id="approval-schema-bad-time-001",
         account_mode="live",
         max_quantity=5.0,
-        expires_at="tomorrow",
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash="sha256:" + "1" * 64,
     )
+    payload["approved_at"] = "May 31, noon"
+    payload["expires_at"] = "tomorrow"
 
     errors = sorted(_validator("broker_approval_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
     paths = {tuple(error.path) for error in errors}

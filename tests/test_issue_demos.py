@@ -2613,6 +2613,35 @@ def test_broker_approval_artifact_builder_requires_expiry():
         )
 
 
+@pytest.mark.parametrize(
+    ("approved_at", "expires_at", "expected_error"),
+    [
+        ("2026-05-31T12:00:00Z", "tomorrow", "expires_at must be an ISO timestamp with timezone"),
+        ("2026-05-31T12:00:00Z", "2026-05-31T12:00:00Z", "expires_at must be after approved_at"),
+        ("2026-05-31T12:00:00Z", "2026-05-31T11:59:59Z", "expires_at must be after approved_at"),
+    ],
+)
+def test_broker_approval_artifact_builder_rejects_invalid_expiry_window(
+    approved_at: str, expires_at: str, expected_error: str
+):
+    with pytest.raises(BrokerAdapterContractError, match=expected_error):
+        build_broker_approval_artifact(
+            BrokerApproval(
+                approval_status="approved",
+                approved_by="operator-7",
+                approved_at=approved_at,
+                max_notional=250.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="paper shadow checks passed",
+            ),
+            approval_id="approval-bad-expiry-window-001",
+            account_mode="live",
+            max_quantity=5.0,
+            expires_at=expires_at,
+            request_artifact_hash="sha256:" + "1" * 64,
+        )
+
+
 def test_broker_approval_artifact_rejects_null_expiry():
     payload = {
         "schema": "tradearena_broker_approval_artifact_v0.1",
@@ -2755,7 +2784,7 @@ def test_broker_approval_artifact_rejects_malformed_timestamps():
         BrokerApproval(
             approval_status="approved",
             approved_by="operator-7",
-            approved_at="May 31, noon",
+            approved_at="2026-05-31T12:00:00Z",
             max_notional=250.0,
             allowed_symbols=("AAPL",),
             approval_reason="paper shadow checks passed",
@@ -2763,9 +2792,11 @@ def test_broker_approval_artifact_rejects_malformed_timestamps():
         approval_id="approval-bad-time-001",
         account_mode="live",
         max_quantity=5.0,
-        expires_at="tomorrow",
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash="sha256:" + "1" * 64,
     )
+    payload["approved_at"] = "May 31, noon"
+    payload["expires_at"] = "tomorrow"
 
     errors = validate_broker_approval_artifact(payload)
     assert "approved_at must be an ISO timestamp with timezone" in errors
@@ -2785,9 +2816,10 @@ def test_broker_approval_artifact_rejects_expiry_before_approval_time():
         approval_id="approval-reversed-window-001",
         account_mode="live",
         max_quantity=5.0,
-        expires_at="2026-05-31T11:59:59Z",
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash="sha256:" + "1" * 64,
     )
+    payload["expires_at"] = "2026-05-31T11:59:59Z"
 
     assert "expires_at must be after approved_at" in validate_broker_approval_artifact(payload)
 

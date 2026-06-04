@@ -467,6 +467,13 @@ def build_broker_approval_artifact(
         raise BrokerAdapterContractError("allowed_order_types must not contain duplicates")
     if not expires_at:
         raise BrokerAdapterContractError("expires_at is required for broker approval artifacts")
+    if not _is_iso_timestamp_with_timezone(expires_at):
+        raise BrokerAdapterContractError("expires_at must be an ISO timestamp with timezone")
+    if _is_iso_timestamp_with_timezone(approval.approved_at):
+        approved_dt = _parse_timestamp(approval.approved_at)
+        expires_dt = _parse_timestamp(expires_at)
+        if approved_dt is not None and expires_dt is not None and expires_dt <= approved_dt:
+            raise BrokerAdapterContractError("expires_at must be after approved_at")
     if not request_artifact_hash:
         raise BrokerAdapterContractError(
             "request_artifact_hash is required to bind approval to a broker handoff artifact"

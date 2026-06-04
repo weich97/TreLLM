@@ -806,7 +806,9 @@ def test_broker_approval_artifact_schema_requires_request_hash_binding():
         approval_id="approval-schema-unbound-001",
         account_mode="live",
         max_quantity=5.0,
+        request_artifact_hash="sha256:" + "1" * 64,
     )
+    payload["request_artifact_hash"] = None
 
     errors = sorted(_validator("broker_approval_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
     paths = {tuple(error.path) for error in errors}
@@ -827,8 +829,9 @@ def test_broker_approval_artifact_schema_rejects_malformed_request_hash():
         approval_id="approval-schema-bad-hash-001",
         account_mode="live",
         max_quantity=5.0,
-        request_artifact_hash="sha256:demo-redacted-request-hash",
+        request_artifact_hash="sha256:" + "1" * 64,
     )
+    payload["request_artifact_hash"] = "sha256:demo-redacted-request-hash"
 
     errors = sorted(_validator("broker_approval_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
 
@@ -850,6 +853,7 @@ def test_broker_approval_artifact_schema_rejects_malformed_timestamps():
         account_mode="live",
         max_quantity=5.0,
         expires_at="tomorrow",
+        request_artifact_hash="sha256:" + "1" * 64,
     )
 
     errors = sorted(_validator("broker_approval_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)

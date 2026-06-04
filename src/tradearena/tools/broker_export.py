@@ -454,9 +454,9 @@ def build_broker_approval_artifact(
     approval_id: str,
     account_mode: str,
     max_quantity: float,
+    request_artifact_hash: str,
     allowed_order_types: tuple[OrderType, ...] = (OrderType.MARKET, OrderType.LIMIT),
     expires_at: str | None = None,
-    request_artifact_hash: str | None = None,
 ) -> dict[str, object]:
     """Build a redacted human approval artifact for future live handoff review."""
 
@@ -465,6 +465,12 @@ def build_broker_approval_artifact(
     order_type_values = [order_type.value for order_type in allowed_order_types]
     if len(order_type_values) != len(set(order_type_values)):
         raise BrokerAdapterContractError("allowed_order_types must not contain duplicates")
+    if not request_artifact_hash:
+        raise BrokerAdapterContractError(
+            "request_artifact_hash is required to bind approval to a broker handoff artifact"
+        )
+    if not _SHA256_ARTIFACT_HASH_RE.fullmatch(request_artifact_hash):
+        raise BrokerAdapterContractError("request_artifact_hash must be sha256:<64 lowercase hex chars>")
 
     return {
         "schema": "tradearena_broker_approval_artifact_v0.1",

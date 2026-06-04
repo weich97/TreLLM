@@ -2428,6 +2428,7 @@ def test_broker_approval_artifact_requires_live_account_mode():
         approval_id="approval-paper-account-001",
         account_mode="paper",
         max_quantity=5.0,
+        request_artifact_hash="sha256:" + "1" * 64,
     )
 
     assert "account_mode must be live for broker approval artifacts" in validate_broker_approval_artifact(payload)
@@ -2453,6 +2454,7 @@ def test_broker_approval_artifact_rejects_duplicate_scopes(field_name, field_val
         approval_id="approval-duplicate-scope-001",
         account_mode="live",
         max_quantity=5.0,
+        request_artifact_hash="sha256:" + "1" * 64,
     )
     payload[field_name] = field_value
 
@@ -2482,6 +2484,7 @@ def test_broker_approval_artifact_builder_rejects_duplicate_scopes(
             approval_id="approval-builder-duplicate-scope-001",
             account_mode="live",
             max_quantity=5.0,
+            request_artifact_hash="sha256:" + "1" * 64,
             allowed_order_types=allowed_order_types,
         )
 
@@ -2564,24 +2567,25 @@ def test_broker_safety_from_approval_artifact_requires_reviewed_request_artifact
         raise AssertionError("expected unbound live safety creation to be rejected")
 
 
-def test_broker_approval_artifact_requires_request_hash_binding():
-    payload = build_broker_approval_artifact(
-        BrokerApproval(
-            approval_status="approved",
-            approved_by="operator-7",
-            approved_at="2026-05-31T12:00:00Z",
-            max_notional=250.0,
-            allowed_symbols=("AAPL",),
-            approval_reason="paper shadow checks passed",
-        ),
-        approval_id="approval-unbound-artifact-001",
-        account_mode="live",
-        max_quantity=5.0,
-    )
-
-    assert validate_broker_approval_artifact(payload) == [
-        "request_artifact_hash is required to bind approval to a broker handoff artifact"
-    ]
+def test_broker_approval_artifact_builder_requires_request_hash_binding():
+    with pytest.raises(
+        BrokerAdapterContractError,
+        match="request_artifact_hash is required to bind approval to a broker handoff artifact",
+    ):
+        build_broker_approval_artifact(
+            BrokerApproval(
+                approval_status="approved",
+                approved_by="operator-7",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=250.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="paper shadow checks passed",
+            ),
+            approval_id="approval-unbound-artifact-001",
+            account_mode="live",
+            max_quantity=5.0,
+            request_artifact_hash="",
+        )
 
 
 def test_broker_approval_artifact_rejects_expired_approval():
@@ -2598,6 +2602,7 @@ def test_broker_approval_artifact_rejects_expired_approval():
         account_mode="live",
         max_quantity=5.0,
         expires_at="2026-05-31T13:00:00Z",
+        request_artifact_hash="sha256:" + "1" * 64,
     )
 
     errors = validate_broker_approval_artifact(payload, now="2026-05-31T14:00:00Z")
@@ -2624,6 +2629,7 @@ def test_broker_approval_validator_cli_and_script_reject_expired_approval_with_n
         account_mode="live",
         max_quantity=5.0,
         expires_at="2026-05-31T13:00:00Z",
+        request_artifact_hash="sha256:" + "1" * 64,
     )
     artifact = tmp_path / "broker_approval.json"
     artifact.write_text(json.dumps(payload), encoding="utf-8")
@@ -2674,6 +2680,7 @@ def test_broker_approval_validator_cli_rejects_malformed_now_even_without_expiry
         approval_id="approval-bad-now-001",
         account_mode="live",
         max_quantity=5.0,
+        request_artifact_hash="sha256:" + "1" * 64,
     )
     artifact = tmp_path / "broker_approval.json"
     artifact.write_text(json.dumps(payload), encoding="utf-8")
@@ -2711,6 +2718,7 @@ def test_broker_approval_artifact_rejects_malformed_timestamps():
         account_mode="live",
         max_quantity=5.0,
         expires_at="tomorrow",
+        request_artifact_hash="sha256:" + "1" * 64,
     )
 
     errors = validate_broker_approval_artifact(payload)
@@ -2732,6 +2740,7 @@ def test_broker_approval_artifact_rejects_expiry_before_approval_time():
         account_mode="live",
         max_quantity=5.0,
         expires_at="2026-05-31T11:59:59Z",
+        request_artifact_hash="sha256:" + "1" * 64,
     )
 
     assert "expires_at must be after approved_at" in validate_broker_approval_artifact(payload)
@@ -2750,8 +2759,9 @@ def test_broker_approval_artifact_rejects_malformed_request_hash():
         approval_id="approval-bad-hash-001",
         account_mode="live",
         max_quantity=5.0,
-        request_artifact_hash="sha256:demo-redacted-request-hash",
+        request_artifact_hash="sha256:" + "1" * 64,
     )
+    payload["request_artifact_hash"] = "sha256:demo-redacted-request-hash"
 
     assert validate_broker_approval_artifact(payload) == [
         "request_artifact_hash must be sha256:<64 lowercase hex chars>"

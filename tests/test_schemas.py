@@ -903,11 +903,12 @@ def test_broker_approval_artifact_schema_requires_live_account_mode():
             approval_reason="paper shadow checks passed",
         ),
         approval_id="approval-schema-paper-account-001",
-        account_mode="paper",
+        account_mode="live",
         max_quantity=5.0,
         expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash="sha256:" + "1" * 64,
     )
+    payload["account_mode"] = "paper"
 
     errors = sorted(_validator("broker_approval_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
 

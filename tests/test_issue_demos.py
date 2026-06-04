@@ -2426,11 +2426,12 @@ def test_broker_approval_artifact_requires_live_account_mode():
             approval_reason="paper shadow checks passed",
         ),
         approval_id="approval-paper-account-001",
-        account_mode="paper",
+        account_mode="live",
         max_quantity=5.0,
         expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash="sha256:" + "1" * 64,
     )
+    payload["account_mode"] = "paper"
 
     assert "account_mode must be live for broker approval artifacts" in validate_broker_approval_artifact(payload)
 
@@ -2590,6 +2591,59 @@ def test_broker_approval_artifact_builder_rejects_invalid_approval_fields(
             approval_id="approval-builder-invalid-fields-001",
             account_mode="live",
             max_quantity=max_quantity,
+            expires_at="2026-05-31T13:00:00Z",
+            request_artifact_hash="sha256:" + "1" * 64,
+        )
+
+
+@pytest.mark.parametrize(
+    ("approval_id", "account_mode", "allowed_symbols", "allowed_order_types", "expected_error"),
+    [
+        ("", "live", ("AAPL",), (OrderType.MARKET,), "approval_id must be non-empty"),
+        (
+            "approval-builder-paper-account-001",
+            "paper",
+            ("AAPL",),
+            (OrderType.MARKET,),
+            "account_mode must be live for broker approval artifacts",
+        ),
+        (
+            "approval-builder-empty-symbols-001",
+            "live",
+            (),
+            (OrderType.MARKET,),
+            "allowed_symbols must be a non-empty list of symbols",
+        ),
+        (
+            "approval-builder-empty-order-types-001",
+            "live",
+            ("AAPL",),
+            (),
+            "allowed_order_types must contain market or limit",
+        ),
+    ],
+)
+def test_broker_approval_artifact_builder_rejects_invalid_artifact_scope_fields(
+    approval_id: str,
+    account_mode: str,
+    allowed_symbols: tuple[str, ...],
+    allowed_order_types: tuple[OrderType, ...],
+    expected_error: str,
+):
+    with pytest.raises(BrokerAdapterContractError, match=expected_error):
+        build_broker_approval_artifact(
+            BrokerApproval(
+                approval_status="approved",
+                approved_by="operator-7",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=250.0,
+                allowed_symbols=allowed_symbols,
+                approval_reason="paper shadow checks passed",
+            ),
+            approval_id=approval_id,
+            account_mode=account_mode,
+            max_quantity=5.0,
+            allowed_order_types=allowed_order_types,
             expires_at="2026-05-31T13:00:00Z",
             request_artifact_hash="sha256:" + "1" * 64,
         )

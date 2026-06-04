@@ -474,9 +474,17 @@ def build_broker_approval_artifact(
         raise BrokerAdapterContractError("max_quantity must be a positive number")
     if not approval.approval_reason:
         raise BrokerAdapterContractError("approval_reason must be non-empty")
+    if not approval_id:
+        raise BrokerAdapterContractError("approval_id must be non-empty")
+    if account_mode != "live":
+        raise BrokerAdapterContractError("account_mode must be live for broker approval artifacts")
+    if not approval.allowed_symbols or not all(isinstance(symbol, str) and symbol for symbol in approval.allowed_symbols):
+        raise BrokerAdapterContractError("allowed_symbols must be a non-empty list of symbols")
     if len(approval.allowed_symbols) != len(set(approval.allowed_symbols)):
         raise BrokerAdapterContractError("allowed_symbols must not contain duplicates")
     order_type_values = [order_type.value for order_type in allowed_order_types]
+    if not order_type_values:
+        raise BrokerAdapterContractError("allowed_order_types must contain market or limit")
     if len(order_type_values) != len(set(order_type_values)):
         raise BrokerAdapterContractError("allowed_order_types must not contain duplicates")
     if not expires_at:

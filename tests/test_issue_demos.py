@@ -420,6 +420,59 @@ def test_live_human_approved_mode_requires_approval_and_marks_live(tmp_path):
     else:
         raise AssertionError("expected nonfinite approval max_notional failure")
 
+    for allowed_symbols in ((), ("   ",)):
+        unscoped_approval = AlpacaPaperExportAdapter(
+            safety=BrokerSafetyConfig(
+                mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+                account_mode="live",
+                max_notional=1000.0,
+                max_quantity=10.0,
+                approval=BrokerApproval(
+                    approval_status="approved",
+                    approved_by="unit-operator",
+                    approved_at="2026-05-31T12:00:00Z",
+                    max_notional=1000.0,
+                    allowed_symbols=allowed_symbols,
+                    approval_reason="unit test approval",
+                ),
+            )
+        )
+        try:
+            unscoped_approval.write(
+                [Order("AAPL", Side.BUY, 1.0, order_type=OrderType.LIMIT, limit_price=50.0, reason="unit test")],
+                tmp_path / f"unscoped-approval-{len(allowed_symbols)}",
+            )
+        except BrokerAdapterContractError as exc:
+            assert "approval allowed_symbols must be a non-empty list of symbols" in str(exc)
+        else:
+            raise AssertionError("expected unscoped live approval allowed_symbols failure")
+
+    duplicate_symbol_approval = AlpacaPaperExportAdapter(
+        safety=BrokerSafetyConfig(
+            mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+            account_mode="live",
+            max_notional=1000.0,
+            max_quantity=10.0,
+            approval=BrokerApproval(
+                approval_status="approved",
+                approved_by="unit-operator",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=1000.0,
+                allowed_symbols=("AAPL", "AAPL"),
+                approval_reason="unit test approval",
+            ),
+        )
+    )
+    try:
+        duplicate_symbol_approval.write(
+            [Order("AAPL", Side.BUY, 1.0, order_type=OrderType.LIMIT, limit_price=50.0, reason="unit test")],
+            tmp_path / "duplicate-symbol-approval",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "approval allowed_symbols must not contain duplicates" in str(exc)
+    else:
+        raise AssertionError("expected duplicate live approval allowed_symbols failure")
+
     for field_name in ("approved_by", "approved_at", "approval_reason"):
         approval_kwargs = {
             "approval_status": "approved",

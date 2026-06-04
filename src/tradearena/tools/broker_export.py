@@ -158,6 +158,10 @@ class BrokerSafetyConfig:
             raise BrokerAdapterContractError("approval approved_at must be an ISO timestamp with timezone")
         if not _is_positive_finite_number(self.approval.max_notional):
             raise BrokerAdapterContractError("live_human_approved mode requires a positive finite approval max_notional")
+        if not self.approval.allowed_symbols or not all(_has_text(symbol) for symbol in self.approval.allowed_symbols):
+            raise BrokerAdapterContractError("approval allowed_symbols must be a non-empty list of symbols")
+        if len(self.approval.allowed_symbols) != len(set(self.approval.allowed_symbols)):
+            raise BrokerAdapterContractError("approval allowed_symbols must not contain duplicates")
 
     def submit_live_flag(self) -> bool:
         return self.mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED

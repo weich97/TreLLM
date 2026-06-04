@@ -135,6 +135,8 @@ class BrokerSafetyConfig:
         """Validate mode-level broker safety before writing a handoff artifact."""
 
         if self.mode != BrokerAdapterMode.LIVE_HUMAN_APPROVED:
+            if self.account_mode == "live":
+                raise BrokerAdapterContractError("non-live handoff artifacts must not use account_mode live")
             return
         if self.kill_switch:
             raise BrokerAdapterContractError("broker adapter kill switch is enabled")
@@ -316,6 +318,7 @@ class DryRunBrokerAdapter:
     def convert(self, orders: list[Order] | tuple[Order, ...]) -> list[AlpacaPaperOrder]:
         rows: list[AlpacaPaperOrder] = []
         _validate_time_in_force(self.time_in_force)
+        self.safety.validate_handoff_config()
         for idx, order in enumerate(orders, start=1):
             if order.side == Side.HOLD or order.quantity <= 0:
                 continue
@@ -856,6 +859,8 @@ def validate_broker_handoff_artifact(payload: dict[str, object]) -> list[str]:
         errors.append("account_mode must be non-empty")
     if adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED.value and payload.get("account_mode") != "live":
         errors.append("account_mode must be live for live_human_approved broker handoff artifacts")
+    if adapter_mode != BrokerAdapterMode.LIVE_HUMAN_APPROVED.value and payload.get("account_mode") == "live":
+        errors.append("non-live handoff artifacts must not use account_mode live")
     if adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED.value and payload.get("kill_switch") is True:
         errors.append("live_human_approved handoff artifacts must not set kill_switch")
     paper_only_modes = {BrokerAdapterMode.OFFLINE_EXPORT.value, BrokerAdapterMode.DRY_RUN.value}

@@ -104,6 +104,36 @@ def test_broker_handoff_artifact_rejects_order_account_mode_mismatch(tmp_path):
     assert "orders[0].account_mode must match artifact account_mode" in errors
 
 
+def test_broker_handoff_writer_rejects_live_account_for_non_live_mode(tmp_path):
+    adapter = DryRunBrokerAdapter(
+        client_prefix="handoff-live-account-non-live",
+        safety=BrokerSafetyConfig(account_mode="live", max_quantity=2.0, allowed_symbols=("AAPL",)),
+    )
+
+    try:
+        adapter.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path)
+    except BrokerAdapterContractError as exc:
+        assert "non-live handoff artifacts must not use account_mode live" in str(exc)
+    else:
+        raise AssertionError("expected non-live handoff account_mode live failure")
+
+
+def test_broker_handoff_artifact_rejects_live_account_for_non_live_mode():
+    payload = {
+        "schema": "tradearena_broker_handoff_artifact_v0.1",
+        "adapter": "dry-run-unit-adapter",
+        "adapter_mode": "dry_run",
+        "account_mode": "live",
+        "paper_only": True,
+        "live_submission": False,
+        "manual_approval_required": True,
+        "kill_switch": False,
+        "orders": [],
+    }
+
+    assert "non-live handoff artifacts must not use account_mode live" in validate_broker_handoff_artifact(payload)
+
+
 def test_broker_handoff_artifact_rejects_duplicate_client_order_ids(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="handoff-duplicate-client-id")
     adapter.write(

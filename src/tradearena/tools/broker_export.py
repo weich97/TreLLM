@@ -418,9 +418,9 @@ def write_broker_response_artifact(
     path = Path(output)
     path.parent.mkdir(parents=True, exist_ok=True)
     artifact_errors: list[str] = []
-    if not adapter:
+    if not _has_text(adapter):
         artifact_errors.append("adapter must be non-empty")
-    if not account_mode:
+    if not _has_text(account_mode):
         artifact_errors.append("account_mode must be non-empty")
     binding_errors = _validate_response_request_bindings(
         requests,
@@ -765,12 +765,12 @@ def validate_broker_response_artifact(payload: dict[str, object]) -> list[str]:
         errors.append(f"unexpected fields: {', '.join(extra)}")
     if payload.get("schema") != "tradearena_broker_response_artifact_v0.1":
         errors.append("schema must be 'tradearena_broker_response_artifact_v0.1'")
-    if not payload.get("adapter"):
+    if not _has_text(payload.get("adapter")):
         errors.append("adapter must be non-empty")
     adapter_mode = payload.get("adapter_mode")
     if adapter_mode not in {mode.value for mode in BrokerAdapterMode}:
         errors.append("adapter_mode must be one of offline_export, dry_run, paper_sandbox, live_human_approved")
-    if not payload.get("account_mode"):
+    if not _has_text(payload.get("account_mode")):
         errors.append("account_mode must be non-empty")
     elif payload.get("account_mode") not in _SUPPORTED_ACCOUNT_MODES:
         errors.append("account_mode must be one of none, paper, live")
@@ -1029,7 +1029,7 @@ def _validate_response_request_bindings(
                     broker_dt = _parse_timestamp(value)
         if submitted_dt is not None and broker_dt is not None and broker_dt < submitted_dt:
             errors.append(f"responses[{idx}].broker_timestamp must be at or after submitted_at")
-        if not response.client_order_id:
+        if not _has_text(response.client_order_id):
             errors.append(f"responses[{idx}].client_order_id must be non-empty")
         if response.status in {
             BrokerOrderStatus.ACCEPTED,
@@ -1037,7 +1037,7 @@ def _validate_response_request_bindings(
             BrokerOrderStatus.FILLED,
             BrokerOrderStatus.CANCELED,
             BrokerOrderStatus.EXPIRED,
-        } and not response.broker_order_id:
+        } and not _has_text(response.broker_order_id):
             errors.append(
                 f"responses[{idx}].broker_order_id must be non-empty for {response.status.value} broker responses"
             )
@@ -1088,7 +1088,7 @@ def _validate_response_request_bindings(
             if not _is_positive_finite_number(response.fill_price):
                 errors.append(f"responses[{idx}].filled or partially_filled responses require a positive fill_price")
         if response.status == BrokerOrderStatus.REJECTED:
-            if not response.rejection_reason:
+            if not _has_text(response.rejection_reason):
                 errors.append(f"responses[{idx}].rejection_reason must be non-empty for rejected responses")
             if _is_positive_finite_number(response.accepted_quantity):
                 errors.append(f"responses[{idx}].rejected responses must not report accepted_quantity")
@@ -1098,7 +1098,7 @@ def _validate_response_request_bindings(
                 errors.append(f"responses[{idx}].rejected responses must not report fill_price")
             if _is_positive_finite_number(response.fees):
                 errors.append(f"responses[{idx}].rejected responses must not report fees")
-        if response.status == BrokerOrderStatus.UNKNOWN and not response.rejection_reason:
+        if response.status == BrokerOrderStatus.UNKNOWN and not _has_text(response.rejection_reason):
             errors.append(f"responses[{idx}].rejection_reason must be non-empty for unknown responses")
         if response.status == BrokerOrderStatus.UNKNOWN:
             for field_name in ("accepted_quantity", "fill_quantity", "fill_price", "fees"):
@@ -1111,7 +1111,7 @@ def _validate_response_request_bindings(
         if response.client_order_id in seen_response_ids:
             errors.append(f"responses[{idx}].client_order_id duplicates an earlier response")
         seen_response_ids.add(response.client_order_id)
-        if response.broker_order_id:
+        if _has_text(response.broker_order_id):
             if response.broker_order_id in seen_broker_order_ids:
                 errors.append(f"responses[{idx}].broker_order_id duplicates an earlier response")
             seen_broker_order_ids.add(response.broker_order_id)
@@ -1323,13 +1323,15 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
     extra = sorted(set(response) - required)
     if extra:
         errors.append(f"responses[{idx}] has unexpected fields: {', '.join(extra)}")
-    if not response.get("client_order_id"):
+    if not _has_text(response.get("client_order_id")):
         errors.append(f"responses[{idx}].client_order_id must be non-empty")
     if response.get("status") not in {status.value for status in BrokerOrderStatus}:
         errors.append(f"responses[{idx}].status is not a supported broker order status")
-    if response.get("status") == BrokerOrderStatus.REJECTED.value and not response.get("rejection_reason"):
+    if response.get("status") == BrokerOrderStatus.REJECTED.value and not _has_text(
+        response.get("rejection_reason")
+    ):
         errors.append(f"responses[{idx}].rejection_reason must be non-empty for rejected responses")
-    if response.get("status") == BrokerOrderStatus.UNKNOWN.value and not response.get("rejection_reason"):
+    if response.get("status") == BrokerOrderStatus.UNKNOWN.value and not _has_text(response.get("rejection_reason")):
         errors.append(f"responses[{idx}].rejection_reason must be non-empty for unknown responses")
     broker_order_statuses = {
         BrokerOrderStatus.ACCEPTED.value,
@@ -1338,9 +1340,9 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
         BrokerOrderStatus.CANCELED.value,
         BrokerOrderStatus.EXPIRED.value,
     }
-    if response.get("status") in broker_order_statuses and not response.get("broker_order_id"):
+    if response.get("status") in broker_order_statuses and not _has_text(response.get("broker_order_id")):
         errors.append(f"responses[{idx}].broker_order_id must be non-empty for {response.get('status')} broker responses")
-    if not response.get("account_mode"):
+    if not _has_text(response.get("account_mode")):
         errors.append(f"responses[{idx}].account_mode must be non-empty")
     for field_name in ("submitted_at", "broker_timestamp"):
         value = response.get(field_name)

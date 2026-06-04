@@ -253,6 +253,37 @@ def test_broker_response_artifact_schema_rejects_empty_rejection_reason_for_reje
     assert ("responses", 0, "rejection_reason") in paths
 
 
+def test_broker_response_artifact_schema_rejects_blank_rejection_reason_for_rejected_status(tmp_path: Path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-recon-rejected-blank-reason")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])
+    output = tmp_path / "broker_response_artifact.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.REJECTED,
+                submitted_quantity=1.0,
+                rejection_reason="paper account symbol permission mismatch",
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=output,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    payload["responses"][0]["rejection_reason"] = "   "
+
+    errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("responses", 0, "rejection_reason") in paths
+
+
 def test_broker_response_artifact_schema_rejects_empty_reason_for_unknown_status(tmp_path: Path):
     adapter = AlpacaPaperExportAdapter(client_prefix="schema-recon-unknown-reason")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])
@@ -277,6 +308,37 @@ def test_broker_response_artifact_schema_rejects_empty_reason_for_unknown_status
     )
     payload = json.loads(output.read_text(encoding="utf-8"))
     payload["responses"][0]["rejection_reason"] = ""
+
+    errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("responses", 0, "rejection_reason") in paths
+
+
+def test_broker_response_artifact_schema_rejects_blank_reason_for_unknown_status(tmp_path: Path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-recon-unknown-blank-reason")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])
+    output = tmp_path / "broker_response_artifact.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.UNKNOWN,
+                submitted_quantity=1.0,
+                rejection_reason="broker response status could not be mapped",
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=output,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    payload["responses"][0]["rejection_reason"] = "   "
 
     errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
     paths = {tuple(error.path) for error in errors}
@@ -327,6 +389,38 @@ def test_broker_response_artifact_schema_rejects_empty_broker_order_id_for_broke
     )
     payload = json.loads(output.read_text(encoding="utf-8"))
     payload["responses"][0]["broker_order_id"] = ""
+
+    errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("responses", 0, "broker_order_id") in paths
+
+
+def test_broker_response_artifact_schema_rejects_blank_broker_order_id_for_broker_status(tmp_path: Path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-recon-blank-broker-id")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])
+    output = tmp_path / "broker_response_artifact.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.ACCEPTED,
+                broker_order_id="paper-schema-broker-id-blank",
+                submitted_quantity=1.0,
+                accepted_quantity=1.0,
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=output,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    payload["responses"][0]["broker_order_id"] = "   "
 
     errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
     paths = {tuple(error.path) for error in errors}

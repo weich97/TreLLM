@@ -15,7 +15,7 @@
   "additionalProperties": false,
   "properties": {
     "schema": { "const": "tradearena_broker_response_artifact_v0.1" },
-    "adapter": { "type": "string", "minLength": 1 },
+    "adapter": { "type": "string", "pattern": "\\S" },
     "adapter_mode": {
       "type": "string",
       "enum": ["offline_export", "dry_run", "paper_sandbox", "live_human_approved"]
@@ -177,7 +177,7 @@
       ],
       "additionalProperties": false,
       "properties": {
-        "client_order_id": { "type": "string", "minLength": 1 },
+        "client_order_id": { "type": "string", "pattern": "\\S" },
         "status": {
           "type": "string",
           "enum": ["accepted", "rejected", "partially_filled", "filled", "canceled", "expired", "unknown"]
@@ -222,7 +222,7 @@
           },
           "then": {
             "properties": {
-              "rejection_reason": { "type": "string", "minLength": 1 }
+              "rejection_reason": { "type": "string", "pattern": "\\S" }
             }
           }
         },
@@ -235,7 +235,7 @@
           },
           "then": {
             "properties": {
-              "rejection_reason": { "type": "string", "minLength": 1 }
+              "rejection_reason": { "type": "string", "pattern": "\\S" }
             }
           }
         },
@@ -248,7 +248,7 @@
           },
           "then": {
             "properties": {
-              "broker_order_id": { "type": "string", "minLength": 1 }
+              "broker_order_id": { "type": "string", "pattern": "\\S" }
             }
           }
         },

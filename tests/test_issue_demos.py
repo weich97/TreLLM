@@ -2214,6 +2214,35 @@ def test_broker_response_artifact_writer_rejects_empty_adapter_name(tmp_path):
         raise AssertionError("expected empty response artifact adapter name to be rejected by writer")
 
 
+def test_broker_response_artifact_writer_rejects_blank_adapter_name(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-blank-adapter")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.REJECTED,
+                    submitted_quantity=1.0,
+                    rejection_reason="paper account symbol permission mismatch",
+                    submitted_at="2026-06-02T09:30:00Z",
+                    broker_timestamp="2026-06-02T09:30:01Z",
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter="   ",
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "adapter must be non-empty" in str(exc)
+    else:
+        raise AssertionError("expected blank response artifact adapter name to be rejected by writer")
+
+
 def test_broker_response_artifact_writer_rejects_empty_artifact_account_mode(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-empty-account")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
@@ -2272,6 +2301,95 @@ def test_broker_response_artifact_writer_rejects_empty_client_order_id(tmp_path)
         raise AssertionError("expected empty response client_order_id to be rejected by writer")
 
 
+def test_broker_response_artifact_writer_rejects_blank_client_order_id(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-blank-client-id")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id="   ",
+                    status=BrokerOrderStatus.REJECTED,
+                    submitted_quantity=1.0,
+                    rejection_reason="paper account symbol permission mismatch",
+                    submitted_at="2026-06-02T09:30:00Z",
+                    broker_timestamp="2026-06-02T09:30:01Z",
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "responses[0].client_order_id must be non-empty" in str(exc)
+    else:
+        raise AssertionError("expected blank response client_order_id to be rejected by writer")
+
+
+def test_broker_response_artifact_writer_rejects_blank_broker_order_id_for_accepted_responses(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-blank-broker-id")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.ACCEPTED,
+                    broker_order_id="   ",
+                    submitted_quantity=1.0,
+                    accepted_quantity=1.0,
+                    submitted_at="2026-06-02T09:30:00Z",
+                    broker_timestamp="2026-06-02T09:30:01Z",
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "responses[0].broker_order_id must be non-empty for accepted broker responses" in str(exc)
+    else:
+        raise AssertionError("expected accepted response with blank broker_order_id to be rejected by writer")
+
+
+@pytest.mark.parametrize("status", [BrokerOrderStatus.REJECTED, BrokerOrderStatus.UNKNOWN])
+def test_broker_response_artifact_writer_rejects_blank_reason_for_terminal_responses(tmp_path, status):
+    adapter = AlpacaPaperExportAdapter(client_prefix=f"response-writer-blank-{status.value}-reason")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=status,
+                    submitted_quantity=1.0,
+                    rejection_reason="   ",
+                    submitted_at="2026-06-02T09:30:00Z",
+                    broker_timestamp="2026-06-02T09:30:01Z",
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert f"responses[0].rejection_reason must be non-empty for {status.value} responses" in str(exc)
+    else:
+        raise AssertionError(f"expected {status.value} response with blank reason to be rejected by writer")
+
+
 def test_broker_response_artifact_rejects_unknown_status_without_reason(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="response-unknown-reason")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
@@ -2299,6 +2417,80 @@ def test_broker_response_artifact_rejects_unknown_status_without_reason(tmp_path
 
     assert "responses[0].rejection_reason must be non-empty for unknown responses" in validate_broker_response_artifact(
         payload
+    )
+
+
+@pytest.mark.parametrize(
+    ("field_name", "expected_error"),
+    [
+        ("adapter", "adapter must be non-empty"),
+        ("client_order_id", "responses[0].client_order_id must be non-empty"),
+        (
+            "broker_order_id",
+            "responses[0].broker_order_id must be non-empty for accepted broker responses",
+        ),
+    ],
+)
+def test_broker_response_artifact_validator_rejects_blank_response_text(tmp_path, field_name, expected_error):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-validator-blank-text")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.ACCEPTED,
+                broker_order_id="paper-validator-blank-text-1",
+                submitted_quantity=1.0,
+                accepted_quantity=1.0,
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+    if field_name == "adapter":
+        payload["adapter"] = "   "
+    else:
+        payload["responses"][0][field_name] = "   "
+
+    assert expected_error in validate_broker_response_artifact(payload)
+
+
+@pytest.mark.parametrize("status", [BrokerOrderStatus.REJECTED, BrokerOrderStatus.UNKNOWN])
+def test_broker_response_artifact_validator_rejects_blank_reason(tmp_path, status):
+    adapter = AlpacaPaperExportAdapter(client_prefix=f"response-validator-blank-{status.value}-reason")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=status,
+                submitted_quantity=1.0,
+                rejection_reason=f"{status.value} response reason",
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["responses"][0]["rejection_reason"] = "   "
+
+    assert f"responses[0].rejection_reason must be non-empty for {status.value} responses" in (
+        validate_broker_response_artifact(payload)
     )
 
 

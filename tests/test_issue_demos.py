@@ -2382,6 +2382,7 @@ def test_broker_approval_artifact_validator_and_cli_reject_unredacted_operator(t
         max_quantity=5.0,
         allowed_order_types=(OrderType.MARKET, OrderType.LIMIT),
         expires_at="2026-05-31T13:00:00Z",
+        request_artifact_hash="sha256:" + "1" * 64,
     )
     artifact = tmp_path / "broker_approval.json"
     artifact.write_text(json.dumps(payload), encoding="utf-8")
@@ -2563,6 +2564,26 @@ def test_broker_safety_from_approval_artifact_requires_reviewed_request_artifact
         raise AssertionError("expected unbound live safety creation to be rejected")
 
 
+def test_broker_approval_artifact_requires_request_hash_binding():
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=250.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-unbound-artifact-001",
+        account_mode="live",
+        max_quantity=5.0,
+    )
+
+    assert validate_broker_approval_artifact(payload) == [
+        "request_artifact_hash is required to bind approval to a broker handoff artifact"
+    ]
+
+
 def test_broker_approval_artifact_rejects_expired_approval():
     payload = build_broker_approval_artifact(
         BrokerApproval(
@@ -2733,7 +2754,7 @@ def test_broker_approval_artifact_rejects_malformed_request_hash():
     )
 
     assert validate_broker_approval_artifact(payload) == [
-        "request_artifact_hash must be sha256:<64 lowercase hex chars> or null"
+        "request_artifact_hash must be sha256:<64 lowercase hex chars>"
     ]
 
 

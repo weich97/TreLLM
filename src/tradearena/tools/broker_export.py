@@ -560,10 +560,10 @@ def validate_broker_approval_artifact(
     if not payload.get("approval_reason"):
         errors.append("approval_reason must be non-empty")
     request_hash = payload.get("request_artifact_hash")
-    if request_hash is not None and not isinstance(request_hash, str):
-        errors.append("request_artifact_hash must be a string or null")
-    elif isinstance(request_hash, str) and not _SHA256_ARTIFACT_HASH_RE.fullmatch(request_hash):
-        errors.append("request_artifact_hash must be sha256:<64 lowercase hex chars> or null")
+    if not isinstance(request_hash, str) or not request_hash:
+        errors.append("request_artifact_hash is required to bind approval to a broker handoff artifact")
+    elif not _SHA256_ARTIFACT_HASH_RE.fullmatch(request_hash):
+        errors.append("request_artifact_hash must be sha256:<64 lowercase hex chars>")
     expires_at = payload.get("expires_at")
     if expires_at is not None and not isinstance(expires_at, str):
         errors.append("expires_at must be a string or null")

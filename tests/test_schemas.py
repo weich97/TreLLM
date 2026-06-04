@@ -787,9 +787,31 @@ def test_broker_approval_artifact_schema_validates_writer_output():
         approval_id="approval-schema-001",
         account_mode="live",
         max_quantity=5.0,
+        request_artifact_hash="sha256:" + "1" * 64,
     )
 
     _validator("broker_approval_artifact.schema.json").validate(payload)
+
+
+def test_broker_approval_artifact_schema_requires_request_hash_binding():
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=2500.0,
+            allowed_symbols=("AAPL", "MSFT"),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-schema-unbound-001",
+        account_mode="live",
+        max_quantity=5.0,
+    )
+
+    errors = sorted(_validator("broker_approval_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("request_artifact_hash",) in paths
 
 
 def test_broker_approval_artifact_schema_rejects_malformed_request_hash():
@@ -850,6 +872,7 @@ def test_broker_approval_artifact_schema_requires_live_account_mode():
         approval_id="approval-schema-paper-account-001",
         account_mode="paper",
         max_quantity=5.0,
+        request_artifact_hash="sha256:" + "1" * 64,
     )
 
     errors = sorted(_validator("broker_approval_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
@@ -878,6 +901,7 @@ def test_broker_approval_artifact_schema_rejects_duplicate_scopes(field_name: st
         approval_id="approval-schema-duplicate-scope-001",
         account_mode="live",
         max_quantity=5.0,
+        request_artifact_hash="sha256:" + "1" * 64,
     )
     payload[field_name] = field_value
 

@@ -455,8 +455,8 @@ def build_broker_approval_artifact(
     account_mode: str,
     max_quantity: float,
     request_artifact_hash: str,
+    expires_at: str,
     allowed_order_types: tuple[OrderType, ...] = (OrderType.MARKET, OrderType.LIMIT),
-    expires_at: str | None = None,
 ) -> dict[str, object]:
     """Build a redacted human approval artifact for future live handoff review."""
 
@@ -465,6 +465,8 @@ def build_broker_approval_artifact(
     order_type_values = [order_type.value for order_type in allowed_order_types]
     if len(order_type_values) != len(set(order_type_values)):
         raise BrokerAdapterContractError("allowed_order_types must not contain duplicates")
+    if not expires_at:
+        raise BrokerAdapterContractError("expires_at is required for broker approval artifacts")
     if not request_artifact_hash:
         raise BrokerAdapterContractError(
             "request_artifact_hash is required to bind approval to a broker handoff artifact"
@@ -571,17 +573,17 @@ def validate_broker_approval_artifact(
     elif not _SHA256_ARTIFACT_HASH_RE.fullmatch(request_hash):
         errors.append("request_artifact_hash must be sha256:<64 lowercase hex chars>")
     expires_at = payload.get("expires_at")
-    if expires_at is not None and not isinstance(expires_at, str):
-        errors.append("expires_at must be a string or null")
-    elif expires_at and not _is_iso_timestamp_with_timezone(expires_at):
-        errors.append("expires_at must be an ISO timestamp with timezone or null")
-    elif expires_at:
+    if not isinstance(expires_at, str) or not expires_at:
+        errors.append("expires_at is required for broker approval artifacts")
+    elif not _is_iso_timestamp_with_timezone(expires_at):
+        errors.append("expires_at must be an ISO timestamp with timezone")
+    else:
         expires_dt = _parse_timestamp(expires_at)
         if approved_dt is not None and expires_dt is not None and expires_dt <= approved_dt:
             errors.append("expires_at must be after approved_at")
         if now is not None and now_dt is not None:
             if expires_dt is None:
-                errors.append("expires_at must be an ISO timestamp or null")
+                errors.append("expires_at must be an ISO timestamp")
             elif expires_dt <= now_dt:
                 errors.append("approval artifact is expired")
     return errors

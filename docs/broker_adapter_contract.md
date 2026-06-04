@@ -204,10 +204,10 @@ broker-facing PR or paper-sandbox run report.
 The adapter should reject stale, missing, or over-broad approvals. Approval
 artifacts are only valid for `account_mode: "live"`; paper and sandbox reviews
 should use handoff or response artifacts instead. Approval records should use
-redacted operator IDs in public artifacts, and `approved_at`
+redacted operator IDs in public artifacts, and both `approved_at`
 and `expires_at` must be ISO timestamps with timezone information, such as
-`2026-05-31T12:00:00Z`. When `expires_at` is present, it must be later than
-`approved_at`. Approval artifacts can be checked with
+`2026-05-31T12:00:00Z`. `expires_at` is required and must be later than
+`approved_at`, so every approval is time-boxed. Approval artifacts can be checked with
 `tradearena validate-broker-approval <artifact.json> --now <ISO_TIMESTAMP>`.
 The approval should also bind to the exact request artifact that was reviewed:
 compute `broker_handoff_artifact_hash(request_artifact)` and store it in

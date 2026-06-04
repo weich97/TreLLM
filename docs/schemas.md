@@ -136,10 +136,10 @@ Broker approval artifacts can be validated against
 [`../schemas/broker_approval_artifact.schema.json`](../schemas/broker_approval_artifact.schema.json).
 The schema fixes the public `tradearena_broker_approval_artifact_v0.1`
 contract for redacted operator approval, account mode, max notional, max
-quantity, allowed symbols, allowed order types, and required request-artifact
-hash binding. Approval timestamps must be ISO timestamps with timezone information;
-runtime validation also requires `expires_at` to be later than `approved_at`
-when an expiry is present.
+quantity, allowed symbols, allowed order types, required expiry, and required
+request-artifact hash binding. Approval timestamps must be ISO timestamps with
+timezone information; runtime validation also requires `expires_at` to be later
+than `approved_at`.
 Runtime code can consume this contract with
 `broker_safety_from_approval_artifact(...)` to build a live human-approved
 `BrokerSafetyConfig`; pass `now=` to reject expired approval artifacts during

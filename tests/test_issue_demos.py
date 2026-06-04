@@ -2428,6 +2428,7 @@ def test_broker_approval_artifact_requires_live_account_mode():
         approval_id="approval-paper-account-001",
         account_mode="paper",
         max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash="sha256:" + "1" * 64,
     )
 
@@ -2454,6 +2455,7 @@ def test_broker_approval_artifact_rejects_duplicate_scopes(field_name, field_val
         approval_id="approval-duplicate-scope-001",
         account_mode="live",
         max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash="sha256:" + "1" * 64,
     )
     payload[field_name] = field_value
@@ -2484,6 +2486,7 @@ def test_broker_approval_artifact_builder_rejects_duplicate_scopes(
             approval_id="approval-builder-duplicate-scope-001",
             account_mode="live",
             max_quantity=5.0,
+            expires_at="2026-05-31T13:00:00Z",
             request_artifact_hash="sha256:" + "1" * 64,
             allowed_order_types=allowed_order_types,
         )
@@ -2512,6 +2515,7 @@ def test_broker_approval_artifact_builds_live_safety_config(tmp_path):
         account_mode="live",
         max_quantity=5.0,
         allowed_order_types=(OrderType.LIMIT,),
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash=broker_handoff_artifact_hash(request_path),
     )
 
@@ -2556,6 +2560,7 @@ def test_broker_safety_from_approval_artifact_requires_reviewed_request_artifact
         approval_id="approval-unbound-safety-001",
         account_mode="live",
         max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash="sha256:" + "1" * 64,
     )
 
@@ -2584,8 +2589,48 @@ def test_broker_approval_artifact_builder_requires_request_hash_binding():
             approval_id="approval-unbound-artifact-001",
             account_mode="live",
             max_quantity=5.0,
+            expires_at="2026-05-31T13:00:00Z",
             request_artifact_hash="",
         )
+
+
+def test_broker_approval_artifact_builder_requires_expiry():
+    with pytest.raises(BrokerAdapterContractError, match="expires_at is required for broker approval artifacts"):
+        build_broker_approval_artifact(
+            BrokerApproval(
+                approval_status="approved",
+                approved_by="operator-7",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=250.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="paper shadow checks passed",
+            ),
+            approval_id="approval-no-expiry-001",
+            account_mode="live",
+            max_quantity=5.0,
+            expires_at="",
+            request_artifact_hash="sha256:" + "1" * 64,
+        )
+
+
+def test_broker_approval_artifact_rejects_null_expiry():
+    payload = {
+        "schema": "tradearena_broker_approval_artifact_v0.1",
+        "approval_id": "approval-null-expiry-001",
+        "approval_status": "approved",
+        "approved_by": "operator-7",
+        "approved_at": "2026-05-31T12:00:00Z",
+        "expires_at": None,
+        "account_mode": "live",
+        "max_notional": 250.0,
+        "max_quantity": 5.0,
+        "allowed_symbols": ["AAPL"],
+        "allowed_order_types": ["market"],
+        "approval_reason": "paper shadow checks passed",
+        "request_artifact_hash": "sha256:" + "1" * 64,
+    }
+
+    assert validate_broker_approval_artifact(payload) == ["expires_at is required for broker approval artifacts"]
 
 
 def test_broker_approval_artifact_rejects_expired_approval():
@@ -2680,6 +2725,7 @@ def test_broker_approval_validator_cli_rejects_malformed_now_even_without_expiry
         approval_id="approval-bad-now-001",
         account_mode="live",
         max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash="sha256:" + "1" * 64,
     )
     artifact = tmp_path / "broker_approval.json"
@@ -2723,7 +2769,7 @@ def test_broker_approval_artifact_rejects_malformed_timestamps():
 
     errors = validate_broker_approval_artifact(payload)
     assert "approved_at must be an ISO timestamp with timezone" in errors
-    assert "expires_at must be an ISO timestamp with timezone or null" in errors
+    assert "expires_at must be an ISO timestamp with timezone" in errors
 
 
 def test_broker_approval_artifact_rejects_expiry_before_approval_time():
@@ -2759,6 +2805,7 @@ def test_broker_approval_artifact_rejects_malformed_request_hash():
         approval_id="approval-bad-hash-001",
         account_mode="live",
         max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash="sha256:" + "1" * 64,
     )
     payload["request_artifact_hash"] = "sha256:demo-redacted-request-hash"
@@ -2844,6 +2891,7 @@ def test_broker_approval_artifact_binds_to_handoff_request_hash(tmp_path):
         approval_id="approval-bound-001",
         account_mode="live",
         max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash=request_hash,
     )
 
@@ -2892,6 +2940,7 @@ def test_broker_approval_binding_rejects_already_live_handoff_request(tmp_path):
         approval_id="approval-live-request-001",
         account_mode="live",
         max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash=broker_handoff_artifact_hash(request_path),
     )
 
@@ -2991,6 +3040,7 @@ def test_broker_approval_binding_reports_invalid_handoff_without_raising(tmp_pat
         approval_id="approval-invalid-request",
         account_mode="live",
         max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash=request_hash,
     )
 
@@ -3022,6 +3072,7 @@ def test_broker_approval_request_binding_rejects_orders_outside_approval_scope(t
         account_mode="live",
         max_quantity=1.0,
         allowed_order_types=(OrderType.MARKET,),
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash=broker_handoff_artifact_hash(request_path),
     )
 
@@ -3058,6 +3109,7 @@ def test_broker_approval_request_binding_requires_calculable_notional(tmp_path):
         account_mode="live",
         max_quantity=5.0,
         allowed_order_types=(OrderType.MARKET,),
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash=broker_handoff_artifact_hash(request_path),
     )
 
@@ -3088,6 +3140,7 @@ def test_broker_safety_from_approval_artifact_can_require_request_binding(tmp_pa
         approval_id="approval-safety-bound-001",
         account_mode="live",
         max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash=broker_handoff_artifact_hash(request_path),
     )
 
@@ -3125,6 +3178,7 @@ def test_broker_safety_from_bound_approval_rejects_unreviewed_order(tmp_path):
         approval_id="approval-runtime-bound-001",
         account_mode="live",
         max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash=broker_handoff_artifact_hash(request_path),
     )
     safety = broker_safety_from_approval_artifact(approval_payload, request_artifact=request_path)
@@ -3175,6 +3229,7 @@ def test_broker_safety_from_bound_approval_rejects_duplicate_reviewed_order_reus
         approval_id="approval-duplicate-bound-001",
         account_mode="live",
         max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash=broker_handoff_artifact_hash(request_path),
     )
     safety = broker_safety_from_approval_artifact(approval_payload, request_artifact=request_path)
@@ -3216,6 +3271,7 @@ def test_broker_safety_from_bound_approval_rejects_time_in_force_change(tmp_path
         approval_id="approval-tif-bound-001",
         account_mode="live",
         max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash=broker_handoff_artifact_hash(request_path),
     )
     safety = broker_safety_from_approval_artifact(approval_payload, request_artifact=request_path)
@@ -3251,6 +3307,7 @@ def test_broker_approval_binding_cli_and_script_reject_hash_mismatch(tmp_path):
         approval_id="approval-bound-cli-001",
         account_mode="live",
         max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash=broker_handoff_artifact_hash(request_path),
     )
     approval_path = tmp_path / "broker_approval.json"
@@ -3325,6 +3382,7 @@ def test_broker_approval_binding_script_reports_malformed_request_json(tmp_path)
         approval_id="approval-malformed-request",
         account_mode="live",
         max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
         request_artifact_hash="sha256:" + "0" * 64,
     )
     approval_path = tmp_path / "broker_approval.json"

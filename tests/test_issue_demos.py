@@ -368,6 +368,58 @@ def test_live_human_approved_mode_requires_approval_and_marks_live(tmp_path):
     else:
         raise AssertionError("expected missing approval failure")
 
+    malformed_time_approval = AlpacaPaperExportAdapter(
+        safety=BrokerSafetyConfig(
+            mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+            account_mode="live",
+            max_notional=1000.0,
+            max_quantity=10.0,
+            approval=BrokerApproval(
+                approval_status="approved",
+                approved_by="unit-operator",
+                approved_at="not-a-timestamp",
+                max_notional=1000.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="unit test approval",
+            ),
+        )
+    )
+    try:
+        malformed_time_approval.write(
+            [Order("AAPL", Side.BUY, 1.0, order_type=OrderType.LIMIT, limit_price=50.0, reason="unit test")],
+            tmp_path / "malformed-approval-time",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "approval approved_at must be an ISO timestamp with timezone" in str(exc)
+    else:
+        raise AssertionError("expected malformed live approval timestamp failure")
+
+    nonfinite_approval_notional = AlpacaPaperExportAdapter(
+        safety=BrokerSafetyConfig(
+            mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+            account_mode="live",
+            max_notional=1000.0,
+            max_quantity=10.0,
+            approval=BrokerApproval(
+                approval_status="approved",
+                approved_by="unit-operator",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=float("nan"),
+                allowed_symbols=("AAPL",),
+                approval_reason="unit test approval",
+            ),
+        )
+    )
+    try:
+        nonfinite_approval_notional.write(
+            [Order("AAPL", Side.BUY, 1.0, order_type=OrderType.LIMIT, limit_price=50.0, reason="unit test")],
+            tmp_path / "nonfinite-approval-notional",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "live_human_approved mode requires a positive finite approval max_notional" in str(exc)
+    else:
+        raise AssertionError("expected nonfinite approval max_notional failure")
+
     for field_name in ("approved_by", "approved_at", "approval_reason"):
         approval_kwargs = {
             "approval_status": "approved",

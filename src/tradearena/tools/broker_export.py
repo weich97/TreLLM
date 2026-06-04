@@ -154,8 +154,10 @@ class BrokerSafetyConfig:
             raise BrokerAdapterContractError("live_human_approved mode requires an approved human approval record")
         if self.account_mode != "live":
             raise BrokerAdapterContractError("live_human_approved mode requires account_mode live")
-        if self.approval.max_notional <= 0:
-            raise BrokerAdapterContractError("live_human_approved mode requires a positive approval max_notional")
+        if not _is_iso_timestamp_with_timezone(self.approval.approved_at):
+            raise BrokerAdapterContractError("approval approved_at must be an ISO timestamp with timezone")
+        if not _is_positive_finite_number(self.approval.max_notional):
+            raise BrokerAdapterContractError("live_human_approved mode requires a positive finite approval max_notional")
 
     def submit_live_flag(self) -> bool:
         return self.mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED

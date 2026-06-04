@@ -770,6 +770,8 @@ def validate_broker_response_artifact(payload: dict[str, object]) -> list[str]:
         errors.append("live_submission must match adapter_mode == live_human_approved")
     if adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED.value and payload.get("account_mode") != "live":
         errors.append("account_mode must be live for live_human_approved broker response artifacts")
+    if adapter_mode != BrokerAdapterMode.LIVE_HUMAN_APPROVED.value and payload.get("account_mode") == "live":
+        errors.append("non-live response artifacts must not use account_mode live")
 
     responses = payload.get("responses")
     if not isinstance(responses, list):
@@ -992,6 +994,8 @@ def _validate_response_request_bindings(
     seen_broker_order_ids: set[str] = set()
     if adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED and account_mode != "live":
         errors.append("live_human_approved response artifacts require account_mode live")
+    if adapter_mode != BrokerAdapterMode.LIVE_HUMAN_APPROVED and account_mode == "live":
+        errors.append("non-live response artifacts must not use account_mode live")
     for idx, response in enumerate(responses):
         submitted_dt = None
         broker_dt = None

@@ -629,6 +629,25 @@ def test_broker_response_artifact_schema_requires_live_account_for_live_mode(tmp
     assert ("account_mode",) in paths
 
 
+def test_broker_response_artifact_schema_rejects_live_account_for_non_live_mode(tmp_path: Path):
+    output = tmp_path / "broker_response_artifact.json"
+    write_broker_response_artifact(
+        requests=[],
+        responses=[],
+        output=output,
+        adapter="schema-paper-live-account",
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    payload["account_mode"] = "live"
+
+    errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("account_mode",) in paths
+
+
 def test_broker_response_artifact_schema_requires_live_response_accounts_for_live_mode(tmp_path: Path):
     output = tmp_path / "broker_response_artifact.json"
     write_broker_response_artifact(

@@ -631,6 +631,22 @@ def test_broker_response_artifact_writer_requires_live_account_for_live_mode(tmp
         raise AssertionError("expected live response account_mode failure")
 
 
+def test_broker_response_artifact_writer_rejects_live_account_for_non_live_mode(tmp_path):
+    try:
+        write_broker_response_artifact(
+            requests=[],
+            responses=[],
+            output=tmp_path / "broker_response.json",
+            adapter="paper-writer-unit",
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="live",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "non-live response artifacts must not use account_mode live" in str(exc)
+    else:
+        raise AssertionError("expected non-live response account_mode live failure")
+
+
 def test_broker_response_artifact_writer_rejects_duplicate_client_order_ids(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-duplicate")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
@@ -2364,6 +2380,32 @@ def test_broker_response_artifact_rejects_live_mode_with_paper_account():
     assert "account_mode must be live for live_human_approved broker response artifacts" in validate_broker_response_artifact(
         payload
     )
+
+
+def test_broker_response_artifact_rejects_non_live_mode_with_live_account():
+    payload = {
+        "schema": "tradearena_broker_response_artifact_v0.1",
+        "adapter": "paper-unit-adapter",
+        "adapter_mode": "paper_sandbox",
+        "account_mode": "live",
+        "live_submission": False,
+        "reconciliation": {
+            "response_count": 0,
+            "accepted_count": 0,
+            "rejected_count": 0,
+            "partial_fill_count": 0,
+            "filled_count": 0,
+            "canceled_count": 0,
+            "expired_count": 0,
+            "unknown_count": 0,
+            "unmatched_response_count": 0,
+            "missing_response_count": 0,
+            "fill_ratio_mean": None,
+        },
+        "responses": [],
+    }
+
+    assert "non-live response artifacts must not use account_mode live" in validate_broker_response_artifact(payload)
 
 
 def test_broker_approval_artifact_validator_and_cli_reject_unredacted_operator(tmp_path):

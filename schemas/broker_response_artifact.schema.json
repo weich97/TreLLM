@@ -89,7 +89,14 @@
       "then": {
         "properties": {
           "account_mode": { "not": { "const": "live" } },
-          "live_submission": { "const": false }
+          "live_submission": { "const": false },
+          "responses": {
+            "items": {
+              "properties": {
+                "account_mode": { "not": { "const": "live" } }
+              }
+            }
+          }
         }
       }
     }

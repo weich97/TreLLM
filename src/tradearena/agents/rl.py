@@ -12,7 +12,7 @@ class DeterministicRLAllocationStrategy:
 
     This is a CI-safe integration baseline, not a trained policy. A real
     FinRL/Qlib-style policy can replace `_policy_scores` while keeping the same
-    TradeArena strategy interface and downstream risk/execution/evaluation stack.
+    TreLLM strategy interface and downstream risk/execution/evaluation stack.
     """
 
     max_long_weight: float = 0.35

@@ -6,7 +6,7 @@ without changing the runner.
 
 ## Trace Mapping
 
-| TradeArena record | OpenTelemetry-style span | Evals or trace-style field |
+| TreLLM record | OpenTelemetry-style span | Evals or trace-style field |
 | --- | --- | --- |
 | market snapshot | `market.observe` | input context |
 | analyst signal | `agent.analyze` | tool or model-derived signal |

@@ -233,7 +233,7 @@ are the right calibration surfaces:
   [`10.21314/JOR.2001.041`](https://doi.org/10.21314/JOR.2001.041).
 - Almgren, R., Thum, C., Hauptmann, E., and Li, H. (2005). "Direct Estimation
   of Equity Market Impact." This is the model class most relevant to replacing
-  TradeArena's default `market_impact` coefficient with a fill-log estimate;
+  TreLLM's default `market_impact` coefficient with a fill-log estimate;
   see the Risk article summary:
   [`Equity market impact`](https://www.risk.net/derivatives/structured-products/1500270/equity-market-impact).
 - Bouchaud, J.-P., Farmer, J. D., and Lillo, F. (2009). "How Markets Slowly
@@ -264,5 +264,5 @@ frictions, to stress-test risk gates, and to measure how decisions change after
 partial fills or rejections. Use calibrated quote/fill parameters before making
 claims about live venue execution quality, expected alpha after costs, or
 broker-specific implementation shortfall. Use quote or fill replay before
-claiming that TradeArena explains realized transaction costs for a specific
+claiming that TreLLM explains realized transaction costs for a specific
 market, broker, or order-routing setup.

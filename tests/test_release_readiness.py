@@ -65,7 +65,12 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         "Convert approved TradeArena orders into broker-review files.\n"
         "TradeArena's compact execution equation.\n"
         "TradeArena execution-stress equation.\n"
-        "upgrades TradeArena from an OHLCV-only smoke test.\n",
+        "upgrades TradeArena from an OHLCV-only smoke test.\n"
+        "TradeArena Replay:\n"
+        "| TradeArena record | OpenTelemetry-style span | Evals or trace-style field |\n"
+        "TradeArena's default `market_impact` coefficient.\n"
+        "claiming that TradeArena explains realized transaction costs.\n"
+        "TradeArena strategy interface and downstream risk/execution/evaluation stack.\n",
         encoding="utf-8",
     )
     readme.write_text(
@@ -112,6 +117,17 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
     assert "legacy public identity phrase 'TradeArena's compact execution equation' found in docs/schemas.md" in failures
     assert "legacy public identity phrase 'TradeArena execution-stress equation' found in docs/schemas.md" in failures
     assert "legacy public identity phrase 'upgrades TradeArena from an OHLCV-only smoke test' found in docs/schemas.md" in failures
+    assert "legacy public identity phrase 'TradeArena Replay:' found in docs/schemas.md" in failures
+    assert (
+        "legacy public identity phrase '| TradeArena record | OpenTelemetry-style span | Evals or trace-style field |' "
+        "found in docs/schemas.md"
+    ) in failures
+    assert "legacy public identity phrase 'TradeArena's default `market_impact` coefficient' found in docs/schemas.md" in failures
+    assert "legacy public identity phrase 'claiming that TradeArena explains realized transaction costs' found in docs/schemas.md" in failures
+    assert (
+        "legacy public identity phrase 'TradeArena strategy interface and downstream risk/execution/evaluation stack.' "
+        "found in docs/schemas.md"
+    ) in failures
 
 
 def test_release_readiness_flags_stale_release_candidate_artifact_hash(tmp_path: Path):

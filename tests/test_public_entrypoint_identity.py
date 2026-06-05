@@ -305,6 +305,7 @@ def test_developer_docs_use_trellm_for_system_surfaces():
         ],
         "docs/observability.md": [
             "TreLLM trajectories are already structured logs.",
+            "| TreLLM record | OpenTelemetry-style span | Evals or trace-style field |",
         ],
         "docs/plugin_development.md": [
             "TreLLM plugins are small Python objects that implement one narrow protocol:",
@@ -334,12 +335,37 @@ def test_developer_docs_use_trellm_for_system_surfaces():
         ],
         "docs/execution_model.md": [
             "TreLLM's execution layer is a configurable paper-execution stress model.",
+            "TreLLM's default `market_impact` coefficient with a fill-log estimate",
+            "claiming that TreLLM explains realized transaction costs",
+        ],
+        "src/tradearena/agents/rl.py": [
+            "TreLLM strategy interface and downstream risk/execution/evaluation stack.",
         ],
     }
     for path, snippets in required_snippets.items():
         text = _normalized(_read_text(path))
         for snippet in snippets:
             assert _normalized(snippet) in text
+
+    forbidden_snippets = {
+        "docs/observability.md": [
+            "| TradeArena record | OpenTelemetry-style span | Evals or trace-style field |",
+        ],
+        "docs/execution_model.md": [
+            "TradeArena's default `market_impact` coefficient",
+            "claiming that TradeArena explains realized transaction costs",
+        ],
+        "src/tradearena/agents/rl.py": [
+            "TradeArena strategy interface and downstream risk/execution/evaluation stack.",
+        ],
+        "src/tradearena/cli.py": [
+            "TradeArena Replay:",
+        ],
+    }
+    for path, snippets in forbidden_snippets.items():
+        text = _normalized(_read_text(path))
+        for snippet in snippets:
+            assert _normalized(snippet) not in text
 
 
 def test_utility_cli_help_uses_trellm_for_system_artifacts():

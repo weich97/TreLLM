@@ -130,7 +130,8 @@ def test_render_audit_report_from_minimal_trajectory(tmp_path: Path):
         capture_output=True,
     )
 
-    assert "TradeArena Replay: unit_audit step 1 / 1" in result.stdout
+    assert "TreLLM Replay: unit_audit step 1 / 1" in result.stdout
+    assert "TradeArena Replay:" not in result.stdout
     assert "Intent -> Approved" in result.stdout
     assert "0.750 -> 0.250" in result.stdout
 

@@ -830,7 +830,7 @@ def _replay_check_summary(checks: object, limit: int = 6) -> list[dict[str, Any]
 
 def _format_replay_summary(summary: dict[str, Any]) -> str:
     lines = [
-        f"TradeArena Replay: {summary['experiment']} step {summary['step']} / {summary['step_count']}",
+        f"TreLLM Replay: {summary['experiment']} step {summary['step']} / {summary['step_count']}",
         f"timestamp: {summary['timestamp']}",
         "",
         "Observation",

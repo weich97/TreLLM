@@ -270,6 +270,11 @@ LEGACY_PUBLIC_IDENTITY_PHRASES = [
     "TradeArena's compact execution equation",
     "TradeArena execution-stress equation",
     "upgrades TradeArena from an OHLCV-only smoke test",
+    "TradeArena Replay:",
+    "| TradeArena record | OpenTelemetry-style span | Evals or trace-style field |",
+    "TradeArena's default `market_impact` coefficient",
+    "claiming that TradeArena explains realized transaction costs",
+    "TradeArena strategy interface and downstream risk/execution/evaluation stack.",
 ]
 CI_REQUIRED_GATE_COMMANDS = [
     "python -m compileall src scripts examples tests -q",

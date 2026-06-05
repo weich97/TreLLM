@@ -394,10 +394,30 @@ def _check_release_candidate_manifest_hashes(root: Path, manifest_rel: str) -> l
 
 
 def _release_artifact_bytes(root: Path, rel: str, path: Path) -> bytes:
+    if _git_path_has_worktree_changes(root, rel):
+        return _canonical_worktree_bytes(path)
     blob = _git_blob_bytes(root, rel)
     if blob is not None:
         return blob
-    return path.read_bytes()
+    return _canonical_worktree_bytes(path)
+
+
+def _git_path_has_worktree_changes(root: Path, rel: str) -> bool:
+    result = subprocess.run(
+        ["git", "status", "--short", "--", rel],
+        cwd=root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    return bool(result.stdout.strip())
+
+
+def _canonical_worktree_bytes(path: Path) -> bytes:
+    content = path.read_bytes()
+    if b"\0" in content:
+        return content
+    return content.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
 
 
 def _git_blob_bytes(root: Path, rel: str) -> bytes | None:

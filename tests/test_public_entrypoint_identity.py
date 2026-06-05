@@ -71,7 +71,7 @@ def test_claim_and_validation_docs_use_trellm_for_system_claims():
     required_snippets = {
         "docs/benchmark_maturity.md": [
             "TreLLM should be presented as an early-stage research prototype until three forms of evidence exist in public:",
-            "TradeArena can credibly describe its leaderboard as a niche benchmark only after the following minimum evidence exists:",
+            "TreLLM can credibly describe itself as externally validated, and TradeArena can credibly describe its leaderboard module as a niche benchmark",
         ],
         "docs/claim_boundaries.md": [
             "TreLLM separates three kinds of claims.",
@@ -371,11 +371,11 @@ def test_generated_public_copy_sources_use_trellm_system_identity():
         ],
         "scripts/build_benchmark_page.py": [
             "TreLLM is a financial-agent reliability audit and control system. TradeArena is the",
-            "benchmark card and leaderboard surface, not a profitability claim.",
+            "public leaderboard and benchmark-card module inside that system",
         ],
         "docs/results/benchmark_v0_2.md": [
-            "TreLLM is a financial-agent reliability audit and control system. TradeArena is the benchmark",
-            "card and leaderboard surface, not a profitability claim.",
+            "TreLLM is a financial-agent reliability audit and control system. TradeArena is the public leaderboard",
+            "benchmark-card module inside that system",
         ],
         "docs/benchmark_submissions.md": [
             "TradeArena accepts redacted leaderboard manifests so users can compare runs",

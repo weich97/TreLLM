@@ -1,13 +1,14 @@
 # Claim Boundary Review
 
 The trajectory recording statement is an engineering claim: the artifact shows
-that TradeArena can record a trajectory from intent to risk and execution state.
+that TreLLM can record a trajectory from intent to risk and execution state.
+TradeArena can present the resulting evidence as a leaderboard artifact.
 
 The shared stress comparison is a benchmark claim because it uses common
 stress-only execution assumptions across rows. It should not be promoted to a
 scientific claim about model profitability.
 
-The single-run profitability claim is unsupported and should be weaken to a
+The single-run profitability claim is unsupported and should be weakened to a
 reliability observation from one run. It is not enough evidence for a general
 model claim.
 

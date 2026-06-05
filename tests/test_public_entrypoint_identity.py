@@ -95,6 +95,11 @@ def test_claim_review_examples_assign_recording_claims_to_trellm():
         "examples/skill_tasks/claim_boundary_provider_drift_001/candidate_claims.md": [
             '"TreLLM records model intent, risk edits, simulated fills, and replay hashes for paper-only benchmark runs summarized in TradeArena rows."',
         ],
+        "examples/skill_task_answers/reference/claim_boundary_001.md": [
+            "that TreLLM can record a trajectory from intent to risk and execution state.",
+            "TradeArena can present the resulting evidence as a leaderboard artifact.",
+            "The single-run profitability claim is unsupported and should be weakened",
+        ],
         "examples/skill_task_answers/reference/claim_boundary_provider_drift_001.md": [
             "Claim 2 is an engineering claim: TreLLM records intent, risk edits, simulated fills, and replay hashes for paper-only benchmark runs.",
             "TradeArena can summarize that evidence as a leaderboard row, but the recording capability belongs to TreLLM.",

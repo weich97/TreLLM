@@ -20,7 +20,7 @@ This is a local release-candidate manifest. Tagging and PyPI publication are sep
 
 ## Artifact Hashes
 
-- `README.md`: present sha256:9497b67ec0736040a0c8fecd68e4360ef2f034f7456b5621b63854bec2fbdce5
+- `README.md`: present sha256:9d5862278156a937630d1e42cb6d6061a9f66e0816897ae6c35036735bb3ae9d
 - `pyproject.toml`: present sha256:6cde28f31f7dbe325100d910b5e2fafd8c531f37109d2d6cf49964ec47ac188f
 - `benchmarks/v0.2/spec.json`: present sha256:8e688190ff17bc0fca691bcd600bc56bb13d1215d2b5d6a8ac611ae70e17b156
 - `docs/results/benchmark_v0_2.md`: present sha256:319a45938b5708862ea06e280b78089bfe5b08f37a69006fe3707d1796126122

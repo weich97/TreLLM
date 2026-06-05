@@ -1,10 +1,10 @@
 {
   "artifact_hashes": [
     {
-      "bytes": 43235,
+      "bytes": 43242,
       "exists": true,
       "path": "README.md",
-      "sha256": "sha256:9497b67ec0736040a0c8fecd68e4360ef2f034f7456b5621b63854bec2fbdce5"
+      "sha256": "sha256:9d5862278156a937630d1e42cb6d6061a9f66e0816897ae6c35036735bb3ae9d"
     },
     {
       "bytes": 2264,

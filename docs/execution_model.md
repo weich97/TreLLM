@@ -1,6 +1,6 @@
 # Execution Model And Calibration
 
-TradeArena's execution layer is a configurable paper-execution stress model. It
+TreLLM's execution layer is a configurable paper-execution stress model. It
 is designed to make execution assumptions explicit and replayable. It should not
 be read as broker-grade transaction-cost analysis unless the parameters are
 calibrated with venue quotes, broker fee schedules, order timestamps, and

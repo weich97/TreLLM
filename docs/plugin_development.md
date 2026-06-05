@@ -1,6 +1,6 @@
 # Plugin Development Guide
 
-TradeArena plugins are small Python objects that implement one narrow protocol:
+TreLLM plugins are small Python objects that implement one narrow protocol:
 data, analyst, strategy, risk, execution, simulator, memory, or evaluator. The
 runner owns orchestration; plugins own one behavior boundary.
 

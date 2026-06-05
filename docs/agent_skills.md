@@ -1,6 +1,6 @@
-# TradeArena Agent Skills
+# TreLLM Agent Skills
 
-TradeArena agent skills are repository workflow templates for audit,
+TreLLM agent skills are repository workflow templates for audit,
 reproduction, execution calibration, claim-boundary review, and plugin authoring.
 They are deliberately outside `src/tradearena` so they do not become runtime
 trading features.

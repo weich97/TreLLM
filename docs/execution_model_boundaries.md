@@ -1,6 +1,6 @@
 # Execution Model Boundaries
 
-TradeArena separates execution assumptions into explicit import surfaces:
+TreLLM separates execution assumptions into explicit import surfaces:
 
 | Surface | Module | Intended claim |
 | --- | --- | --- |

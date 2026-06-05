@@ -7,7 +7,7 @@ Use these after enabling GitHub Discussions.
 Prompt:
 
 ```text
-TradeArena currently records observation, signals, proposed decisions, approved
+TreLLM currently records observation, signals, proposed decisions, approved
 decisions, risk reports, orders, fills, portfolio state, memory events,
 execution simulator state, and random seed.
 
@@ -58,6 +58,6 @@ exports, and future supervised live adapters?
 
 Call to action:
 
-If you use TradeArena in a class, project, or internal evaluation, post the
+If you use TreLLM in a class, project, or internal evaluation, post the
 scenario you want to reproduce.
 ```

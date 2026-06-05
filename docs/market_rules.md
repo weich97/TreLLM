@@ -1,6 +1,6 @@
 # Market Rules And Stress Presets
 
-TradeArena's default simulator is market-agnostic. Market-specific realism
+TreLLM's default simulator is market-agnostic. Market-specific realism
 should be added as explicit rule plugins or scenario presets so reviewers can
 see which assumptions are active.
 
@@ -14,7 +14,7 @@ see which assumptions are active.
 | Crypto | 24/7 sessions, venue fee tiers, funding or borrow costs, spread shocks | liquidity and fees can change faster than daily bars show |
 | Futures | contract rolls, expiry, margin, tick size, session breaks | continuous prices can hide roll and margin risk |
 
-TradeArena now exposes these as testable rule-package helpers in
+TreLLM now exposes these as testable rule-package helpers in
 [`src/tradearena/tools/market_rules.py`](../src/tradearena/tools/market_rules.py).
 They are intentionally separate from the default simulator so a benchmark row
 can state exactly which venue rule layer was active.

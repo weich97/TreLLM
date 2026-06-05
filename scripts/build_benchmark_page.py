@@ -202,10 +202,10 @@ def _markdown(
         f"# {BENCHMARK_TITLE}",
         "",
         _wrap(
-            "TradeArena is a financial-agent reliability benchmark and audit "
-            "framework, not a profitability claim. This page gives a compact, "
-            "citable snapshot of what the v0.2 artifacts show under execution "
-            "realism, risk gates, and replayable intent-to-execution trajectories."
+            "TreLLM is a financial-agent reliability audit framework. TradeArena is the "
+            "benchmark card and leaderboard surface, not a profitability claim. This page "
+            "gives a compact, citable snapshot of what the v0.2 artifacts show under "
+            "execution realism, risk gates, and replayable intent-to-execution trajectories."
         ),
         "",
         "## One-Sentence Finding",

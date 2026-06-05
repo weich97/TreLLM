@@ -1,7 +1,8 @@
 # Public Artifact Privacy
 
-TradeArena separates local debugging records from public benchmark artifacts.
-This boundary is enforced in code and CI, not only by contributor convention.
+TreLLM separates local debugging records from public TradeArena leaderboard
+artifacts. This boundary is enforced in code and CI, not only by contributor
+convention.
 
 | Mode | Intended location | Behavior |
 | --- | --- | --- |

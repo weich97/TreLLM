@@ -7,7 +7,7 @@ from tradearena.core.redaction import scan_public_artifact_paths
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Scan public TradeArena artifacts for raw prompt/response or secret leakage.")
+    parser = argparse.ArgumentParser(description="Scan public TreLLM artifacts for raw prompt/response or secret leakage.")
     parser.add_argument("paths", nargs="+", help="Files or directories to scan.")
     args = parser.parse_args()
 

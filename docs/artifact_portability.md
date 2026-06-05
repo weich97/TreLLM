@@ -1,6 +1,6 @@
 # Artifact Portability Policy
 
-TradeArena artifacts should be easy to move between local machines, CI, paper
+TreLLM artifacts should be easy to move between local machines, CI, paper
 appendices, and external validation reports without leaking secrets.
 
 ## Track In Git

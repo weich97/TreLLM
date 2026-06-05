@@ -1,6 +1,6 @@
 # Observability Roadmap
 
-TradeArena trajectories are already structured logs. The next step is to make
+TreLLM trajectories are already structured logs. The next step is to make
 them portable into common experiment-tracking and trace-inspection systems
 without changing the runner.
 

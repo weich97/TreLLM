@@ -1,6 +1,6 @@
 # Extension Walkthrough
 
-TradeArena is designed around narrow protocol surfaces. A contributor should be
+TreLLM is designed around narrow protocol surfaces. A contributor should be
 able to add one module without editing the runner, schemas, execution simulator,
 memory store, or evaluators owned by other modules.
 

@@ -1,6 +1,6 @@
 # Benchmark Submissions
 
-TradeArena accepts redacted benchmark manifests so users can compare runs
+TradeArena accepts redacted leaderboard manifests so users can compare runs
 without sharing raw provider prompts, responses, credentials, or private
 portfolio data.
 

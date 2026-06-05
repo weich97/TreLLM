@@ -1,6 +1,6 @@
-# TradeArena Schemas
+# TreLLM Schemas
 
-TradeArena treats a financial AI agent as an auditable reliability lifecycle,
+TreLLM treats a financial AI agent as an auditable reliability lifecycle,
 not a black-box signal generator. A benchmark step records the following
 protocol surfaces.
 

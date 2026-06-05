@@ -1,6 +1,6 @@
 # Financial-Audit Agent Task Suite
 
-TradeArena skills are evaluated as audit workflows, not as trading strategies.
+TreLLM skills are evaluated as audit workflows, not as trading strategies.
 The central question is:
 
 > Can an LLM or coding agent reliably audit financial decisions, understand

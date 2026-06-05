@@ -113,3 +113,85 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
         text = _normalized(_read_text(path))
         for snippet in snippets:
             assert _normalized(snippet) in text
+
+
+def test_developer_docs_use_trellm_for_system_surfaces():
+    required_snippets = {
+        "docs/artifact_portability.md": [
+            "TreLLM artifacts should be easy to move between local machines",
+        ],
+        "docs/observability.md": [
+            "TreLLM trajectories are already structured logs.",
+        ],
+        "docs/plugin_development.md": [
+            "TreLLM plugins are small Python objects that implement one narrow protocol:",
+        ],
+        "docs/extension_walkthrough.md": [
+            "TreLLM is designed around narrow protocol surfaces.",
+        ],
+        "docs/public_artifact_privacy.md": [
+            "TreLLM separates local debugging records from public TradeArena leaderboard artifacts.",
+        ],
+        "docs/execution_model_boundaries.md": [
+            "TreLLM separates execution assumptions into explicit import surfaces:",
+        ],
+        "docs/schemas.md": [
+            "# TreLLM Schemas",
+            "TreLLM treats a financial AI agent as an auditable reliability lifecycle",
+        ],
+        "docs/retail_planning.md": [
+            "TreLLM includes an offline-friendly planning layer",
+        ],
+        "docs/market_rules.md": [
+            "TreLLM's default simulator is market-agnostic.",
+            "TreLLM now exposes these as testable rule-package helpers",
+        ],
+        "docs/financial_audit_agent_benchmark.md": [
+            "TreLLM skills are evaluated as audit workflows, not as trading strategies.",
+        ],
+        "docs/execution_model.md": [
+            "TreLLM's execution layer is a configurable paper-execution stress model.",
+        ],
+    }
+    for path, snippets in required_snippets.items():
+        text = _normalized(_read_text(path))
+        for snippet in snippets:
+            assert _normalized(snippet) in text
+
+
+def test_generated_public_copy_sources_use_trellm_system_identity():
+    required_snippets = {
+        "docs/agent_skills.md": [
+            "# TreLLM Agent Skills",
+            "TreLLM agent skills are repository workflow templates for audit",
+        ],
+        "scripts/build_demo_video.py": [
+            '"title": "TreLLM in 3 Minutes"',
+            "TreLLM separates intended allocation from what the market simulator can actually fill.",
+            '"title": "What TreLLM is for"',
+            'description="Build a captioned 3-minute TreLLM demo video."',
+            '"TreLLM showcase"',
+        ],
+        "scripts/score_skill_task_report.py": [
+            "# TreLLM Skill Task Matrix",
+            "TreLLM skills help agents inspect, reproduce, audit, and extend TradeArena leaderboard artifacts.",
+        ],
+        "scripts/scan_public_artifacts.py": [
+            "Scan public TreLLM artifacts for raw prompt/response or secret leakage.",
+        ],
+        "scripts/build_benchmark_page.py": [
+            "TreLLM is a financial-agent reliability audit framework. TradeArena is the",
+            "benchmark card and leaderboard surface, not a profitability claim.",
+        ],
+        "docs/benchmark_submissions.md": [
+            "TradeArena accepts redacted leaderboard manifests so users can compare runs",
+        ],
+        "docs/launch/discussion_seeds.md": [
+            "TreLLM currently records observation, signals, proposed decisions, approved",
+            "If you use TreLLM in a class, project, or internal evaluation",
+        ],
+    }
+    for path, snippets in required_snippets.items():
+        text = _normalized(_read_text(path))
+        for snippet in snippets:
+            assert _normalized(snippet) in text

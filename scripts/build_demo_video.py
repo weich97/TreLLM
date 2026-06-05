@@ -23,7 +23,7 @@ SLIDES = [
     {
         "id": "title",
         "duration": 12,
-        "title": "TradeArena in 3 Minutes",
+        "title": "TreLLM in 3 Minutes",
         "subtitle": "Agent reliability, risk-aware AI systems, and intent-to-execution audit for financial decision agents.",
         "bullets": [
             "Every decision becomes a replayable trajectory.",
@@ -38,7 +38,7 @@ SLIDES = [
         "subtitle": "The showcase builds a local portal from deterministic demos and tracked diagnostic snapshots.",
         "terminal": [
             "$ python scripts/run_showcase.py",
-            "TradeArena showcase",
+            "TreLLM showcase",
             "A one-command quickstart repo tour for new users, reviewers, and launch posts.",
             "[ok] outputs/examples/index.html",
             "[ok] outputs/examples/audit_report.html",
@@ -75,7 +75,7 @@ SLIDES = [
         "id": "execution_realism",
         "duration": 24,
         "title": "Stress execution realism",
-        "subtitle": "TradeArena separates intended allocation from what the market simulator can actually fill.",
+        "subtitle": "TreLLM separates intended allocation from what the market simulator can actually fill.",
         "source": EXAMPLE_DIR / "execution_realism_sweep.svg",
         "bullets": [
             "Fees, slippage, latency, liquidity limits",
@@ -110,8 +110,8 @@ SLIDES = [
     {
         "id": "outro",
         "duration": 18,
-        "title": "What TradeArena is for",
-        "subtitle": "Not another black-box trading bot: a benchmark and audit layer for financial-agent reliability.",
+        "title": "What TreLLM is for",
+        "subtitle": "Not another black-box trading bot: an audit and control system for financial-agent reliability. TradeArena is the public leaderboard and benchmark module.",
         "bullets": [
             "Reproduce decisions, not just returns.",
             "Compare agents under the same execution and risk lifecycle.",
@@ -122,7 +122,7 @@ SLIDES = [
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Build a captioned 3-minute TradeArena demo video.")
+    parser = argparse.ArgumentParser(description="Build a captioned 3-minute TreLLM demo video.")
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT), help="Output MP4 path.")
     parser.add_argument("--work-dir", default=str(DEFAULT_WORK_DIR), help="Temporary frame/segment directory.")
     parser.add_argument(

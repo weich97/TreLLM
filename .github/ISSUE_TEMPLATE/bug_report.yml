@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a reproducible TradeArena issue
+description: Report a reproducible TreLLM system or TradeArena leaderboard issue
 title: "[Bug] "
 labels: ["bug"]
 body:

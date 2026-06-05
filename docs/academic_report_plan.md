@@ -8,9 +8,9 @@ The public technical report is now available as:
 
 See [`docs/research_report.md`](research_report.md) for citation metadata.
 
-TradeArena currently has technical documentation and benchmark artifacts. A
-credible academic report needs a narrower scientific argument, explicit evidence,
-and limitations that a reviewer can audit.
+TreLLM currently has technical documentation and TradeArena leaderboard
+artifacts. A credible academic report needs a narrower scientific argument,
+explicit evidence, and limitations that a reviewer can audit.
 
 ## Report Positioning
 
@@ -48,7 +48,7 @@ Use this ladder to avoid overclaiming:
 
 | Claim level | Acceptable statement | Required support |
 | --- | --- | --- |
-| Prototype | TradeArena can run auditable offline and paper/sandbox agent loops | CI, tests, deterministic smoke artifacts |
+| Prototype | TreLLM can run auditable offline and paper/sandbox agent loops | CI, tests, deterministic smoke artifacts |
 | Benchmark | TradeArena can compare agents under shared risk and execution assumptions | Reproducible metrics, schema validation, benchmark rows |
 | Scientific | Structured risk feedback changes LLM decision behavior | Multiple models, ablations, confidence intervals, external validation |
 | Execution realism | The simulator approximates realized trading costs | Quote/fill-log calibration against private or licensed fills |

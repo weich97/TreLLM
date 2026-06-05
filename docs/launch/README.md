@@ -1,7 +1,7 @@
-# TradeArena Project Metadata
+# TreLLM Project Metadata
 
 Use this page for repository setup, project listings, and quickstart links.
-TradeArena's public positioning is:
+TreLLM's public positioning is:
 
 > We audit how autonomous financial agents move from intent to risk-aware,
 > execution-realistic actions.
@@ -17,11 +17,11 @@ Open-source research prototype for financial-agent reliability, risk-aware AI sy
 Longer description:
 
 ```text
-TradeArena turns every financial-agent decision into a traceable trajectory:
+TreLLM turns every financial-agent decision into a traceable trajectory:
 observation -> signal -> intended allocation -> risk gate -> order ->
 fill/rejection -> portfolio state -> diagnostic report. It ships quickstart demos
 for audit reports, execution realism, risk gates, extension paths, A-share
-rules, retail planning, and reproducible benchmark artifacts.
+rules, retail planning, and reproducible TradeArena leaderboard artifacts.
 ```
 
 ## GitHub Topics
@@ -83,5 +83,5 @@ https://weich97.github.io/TradeArena/demo_video.html
 ## Suggested Repository Description
 
 ```text
-Auditable financial-agent reliability framework with replayable trajectories, risk gates, paper execution, and quickstart demos.
+LLM-driven trading audit and control system with replayable trajectories, risk gates, paper execution, and TradeArena leaderboard artifacts.
 ```

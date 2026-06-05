@@ -1,6 +1,6 @@
 # GitHub Pages Demo
 
-TradeArena publishes the project landing page and quickstart showcase as a
+TreLLM publishes the project landing page and quickstart showcase as a
 static GitHub Pages site:
 
 ```text

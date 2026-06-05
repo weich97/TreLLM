@@ -1,9 +1,10 @@
 # Contributor Roadmap
 
-TradeArena grows best when contributions make financial AI agents easier to
-evaluate, audit, reproduce, or extend. This roadmap groups good issues and
-research extensions by contributor profile so newcomers do not need to infer
-where they fit.
+TreLLM grows best when contributions make financial AI agents easier to
+evaluate, audit, reproduce, control, or extend. TradeArena is the public
+leaderboard and benchmark module inside that system. This roadmap groups good
+issues and research extensions by contributor profile so newcomers do not need
+to infer where they fit.
 
 For concrete issue-sized tasks, use
 [`docs/community_tasks.md`](community_tasks.md).
@@ -35,8 +36,8 @@ result artifact under `outputs/examples/`.
 
 ## Route B2: Broker / Trading Operations
 
-These contributions move TradeArena from benchmark research toward
-human-gated, live-ready trading infrastructure.
+These contributions move TreLLM from benchmark research toward human-gated,
+live-ready trading infrastructure.
 
 - Harden broker-review exports with approval fields and reconciliation IDs.
 - Add dry-run broker adapters that validate request shape without network
@@ -51,7 +52,7 @@ reviewable demo artifact, and compliance with
 
 ## Route C: ML / LLM Evaluation
 
-These contributions strengthen TradeArena as an agent benchmark.
+These contributions strengthen the TradeArena leaderboard and benchmark module.
 
 - Redacted trajectory benchmark submissions using `schemas/benchmark_submission.schema.json`.
 - Reasoning-mode ablations, including rationale-free and tool-restricted modes.

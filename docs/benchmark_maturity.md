@@ -1,6 +1,6 @@
-# Benchmark Maturity Track
+# System And Leaderboard Maturity Track
 
-TradeArena should be presented as an early-stage research prototype until three
+TreLLM should be presented as an early-stage research prototype until three
 forms of evidence exist in public:
 
 1. a stable academic report that states the scientific claim and limitations;
@@ -26,8 +26,8 @@ replicable evidence.
 
 ## Evidence Bar
 
-TradeArena can credibly describe itself as a niche benchmark only after the
-following minimum evidence exists:
+TradeArena can credibly describe its leaderboard as a niche benchmark only
+after the following minimum evidence exists:
 
 | Evidence | Minimum public bar |
 | --- | --- |

@@ -1,5 +1,5 @@
 name: Research extension
-description: Suggest an experiment that could strengthen the paper or benchmark suite
+description: Suggest an experiment that could strengthen the TreLLM system research or TradeArena leaderboard suite
 title: "[Research] "
 labels: ["research", "paper"]
 body:
@@ -25,5 +25,5 @@ body:
   - type: textarea
     id: output
     attributes:
-      label: Paper or repository output
+      label: Paper, system, or leaderboard output
       description: Table, figure, appendix note, demo, or benchmark row.

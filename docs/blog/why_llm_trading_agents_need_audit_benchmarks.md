@@ -8,7 +8,7 @@ portfolio state, risk constraints, market timestamp, execution assumptions, and
 random seed. If those surfaces are not recorded, a return curve is hard to
 audit and harder to reproduce.
 
-TradeArena takes a different view. It treats a financial AI agent as an
+TreLLM takes a different view. It treats a financial AI agent as an
 auditable decision-making system:
 
 ```text
@@ -18,7 +18,7 @@ observation -> signal -> intended allocation -> risk gate -> order
 
 ## What Changes Under Realistic Execution?
 
-Ideal backtests often assume immediate fills. TradeArena exposes the friction:
+Ideal backtests often assume immediate fills. TreLLM exposes the friction:
 
 - fees and slippage
 - latency
@@ -33,7 +33,7 @@ completeness alongside return and drawdown.
 ## Why Risk Gates Matter
 
 LLM-backed agents can produce confident allocations that violate risk budgets or
-market rules. TradeArena makes the intervention explicit:
+market rules. TreLLM makes the intervention explicit:
 
 - intended decisions
 - approved decisions
@@ -55,8 +55,9 @@ A useful benchmark should answer:
 - What portfolio state resulted?
 - Which reproducibility fields identify the run?
 
-TradeArena renders this as a browser-readable audit report and keeps compact
-result snapshots for public reproduction.
+TreLLM renders this as a browser-readable audit report and keeps compact result
+snapshots for public reproduction. TradeArena is its public leaderboard and
+benchmark module for comparing reviewed rows.
 
 ## Try It
 
@@ -76,6 +77,6 @@ GitHub Pages:
 - <https://weich97.github.io/TradeArena/>
 - <https://weich97.github.io/TradeArena/benchmark-v0.2.html>
 
-TradeArena is not financial advice and not a live trading bot. It is an
-open-source research prototype for studying whether autonomous financial agents
-are reproducible, risk-aware, and execution-realistic.
+TreLLM is not financial advice and not a live trading bot. It is an open-source
+research prototype for studying whether autonomous financial agents are
+reproducible, risk-aware, and execution-realistic.

@@ -8,7 +8,8 @@
 - [ ] Demo or documentation
 - [ ] New plugin or adapter
 - [ ] Research experiment
-- [ ] Benchmark or registry artifact update
+- [ ] TreLLM system change
+- [ ] TradeArena leaderboard or registry artifact update
 
 ## Validation
 

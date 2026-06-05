@@ -1,6 +1,6 @@
 # Demo Matrix
 
-This matrix maps TradeArena capabilities to hands-on repository artifacts. The
+This matrix maps TreLLM capabilities to hands-on repository artifacts. The
 goal is to help a new user find one runnable example for each framework surface
 without reading the full source tree.
 
@@ -211,6 +211,6 @@ without reading the full source tree.
   - `docs/live_trading_readiness.md`
   - `docs/broker_adapter_contract.md`
 - Artifact: staged checklist and broker adapter safety contract.
-- Shows: how TradeArena should progress from paper research to broker-review
+- Shows: how TreLLM should progress from paper research to broker-review
   exports, paper sandboxes, and future human-approved live adapters without
   making live submission a default path.

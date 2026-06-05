@@ -1,14 +1,16 @@
 # Community Participation
 
-TradeArena should not describe itself as community-backed until public,
-reviewable participation exists. This document defines what counts and how to
-contribute without exposing provider text, credentials, or private trading data.
+TreLLM should not describe itself as community-backed until public, reviewable
+participation exists. TradeArena names the public leaderboard and benchmark
+module where reviewed rows can be compared. This document defines what counts
+and how to contribute without exposing provider text, credentials, or private
+trading data.
 
 ## Current Position
 
-TradeArena is an early-stage research prototype. Maintainer-authored examples,
-release notes, benchmark cards, and generated demos are scaffolding. They are
-not evidence of external adoption.
+TreLLM is an early-stage research prototype. Maintainer-authored examples,
+release notes, TradeArena leaderboard cards, and generated demos are
+scaffolding. They are not evidence of external adoption.
 
 ## What Counts
 
@@ -16,7 +18,7 @@ not evidence of external adoption.
 | --- | --- | --- |
 | Non-maintainer bug report with reproduction | Yes | Include environment, command, and observed output |
 | External validation report | Yes | Use `docs/external_validation.md` |
-| Redacted benchmark manifest | Yes, after review | Must pass schema validation and omit raw provider text |
+| TradeArena leaderboard row | Yes, after review | Must pass schema validation and omit raw provider text |
 | New data, risk, execution, or evaluator plugin | Yes, after merge | Include a demo and test |
 | Maintainer-generated paper artifacts | No | Useful but not external participation |
 | Star count or download count alone | No | Interest is not validation |
@@ -58,4 +60,5 @@ A community contribution should be small enough to audit:
 | First external methodology critique resolved | A reviewer concern leads to a code or documentation change |
 
 Until these milestones exist, public language should say "early-stage research
-prototype" rather than "community benchmark."
+prototype with a public TradeArena leaderboard module" rather than "community
+benchmark."

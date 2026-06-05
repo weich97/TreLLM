@@ -1,9 +1,11 @@
 # External Validation Quickstart
 
-TradeArena needs external evidence: reports from people who are not maintainers
-and who can show exactly what they ran, what artifacts were produced, and where
-the result diverged or matched. This page is the shortest path from a fresh
-clone to a useful validation issue.
+TreLLM needs external evidence: reports from people who are not maintainers and
+who can show exactly what they ran, what artifacts were produced, and where the
+result diverged or matched. TradeArena leaderboard rows are one reviewable
+submission path, but reproduction and calibration reports are equally
+important. This page is the shortest path from a fresh clone to a useful
+validation issue.
 
 ## Pick One Path
 
@@ -69,7 +71,7 @@ Every useful validation report should include:
 Counts as external validation:
 
 - a reproducible no-key report with manifest and command log;
-- a schema-valid redacted benchmark row;
+- a schema-valid redacted TradeArena leaderboard row;
 - a quote/fill calibration report with data source, sample size, residuals, and
   replay error;
 - a claim-boundary critique that maps one public claim to evidence and a
@@ -87,7 +89,7 @@ Does not count by itself:
 
 ## Why This Matters
 
-TradeArena should not claim community validation until people outside the
+TreLLM should not claim community validation until people outside the
 maintainer set have reproduced commands, submitted benchmark rows, calibrated
 execution assumptions, or challenged public claims. External validation is how
 the project separates engineering demos from benchmark evidence.

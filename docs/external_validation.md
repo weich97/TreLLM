@@ -1,8 +1,8 @@
 # External Validation Protocol
 
-External validation is the evidence that makes a benchmark more than a
-maintainer-run demo. A validation report should let another reader reproduce the
-same result or understand why the result diverged.
+External validation is the evidence that makes TreLLM more than a
+maintainer-run demo. A validation report should let another reader reproduce
+the same result or understand why the result diverged.
 
 If you want the shortest path, start with
 [`external_validation_quickstart.md`](external_validation_quickstart.md). This
@@ -14,7 +14,7 @@ External validation must come from a person or organization outside the
 maintainer set. It can be:
 
 - a deterministic smoke-test reproduction;
-- a redacted LLM benchmark row;
+- a redacted LLM benchmark row for the TradeArena leaderboard;
 - a historical-market replay using documented data sources;
 - a quote/fill-log execution calibration report;
 - a critique that finds a reproducibility, documentation, or methodology issue.
@@ -75,7 +75,8 @@ Report:
 ## Five Starter Validation Tasks
 
 These are the preferred first external reports because each one is small,
-reviewable, and directly improves the benchmark evidence chain.
+reviewable, and directly improves the TreLLM evidence chain and TradeArena
+leaderboard context.
 
 | Task | Target time | Submit |
 | --- | ---: | --- |
@@ -143,4 +144,5 @@ Maintainers should review whether:
 - the data source and license are acceptable;
 - the reported claim matches the evidence.
 
-Accepted validations can be linked from the benchmark registry or release notes.
+accepted validations can be linked from the TradeArena leaderboard registry or
+release notes.

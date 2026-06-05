@@ -264,7 +264,7 @@ def _write_markdown(path: Path, summary: dict[str, object]) -> None:
     metrics = summary["metrics"]
     text = f"""# Extension Walkthrough Output
 
-This run demonstrates the TradeArena contribution path:
+This run demonstrates the TreLLM contribution path:
 
 1. Add a custom analyst that emits `Signal` objects.
 2. Add a custom risk manager that emits auditable `RiskReport` records.
@@ -303,7 +303,7 @@ def _write_svg(path: Path, summary: dict[str, object]) -> None:
         ("5. You add", "Evaluator plugin", custom["evaluator"], "#ea580c"),
     ]
     parts = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-label="TradeArena extension walkthrough">',
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-label="TreLLM extension walkthrough">',
         '<rect width="100%" height="100%" fill="#f8fafc"/>',
         _text(42, 52, "Bring your own module: plug into the protocol, not the core", 24, "#0f172a", 800),
         _text(42, 82, "This hands-on demo swaps in a custom analyst, risk manager, and evaluator while reusing the runner, strategy, simulator, memory, and trajectory logger.", 13, "#64748b", 500),

@@ -1,6 +1,6 @@
 # Broker Adapter Contract
 
-This contract defines the minimum bar for any TradeArena adapter that touches a
+This contract defines the minimum bar for any TreLLM adapter that touches a
 broker, exchange, paper account, or order-management workflow. It applies to
 offline exports, paper trading sandboxes, and future human-approved live
 adapters.
@@ -118,7 +118,7 @@ Any adapter that calls a broker API should write a response artifact with:
 - submitted timestamp and broker timestamp;
 - fill price, fill quantity, fees, and liquidity flags when available;
 - account mode: paper or live;
-- reconciliation status against the original TradeArena order.
+- reconciliation status against the original TreLLM order.
 
 This artifact is part of the audit trail, not a throwaway log.
 `write_broker_response_artifact(...)` writes the repository's first version of

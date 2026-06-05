@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Audit a TradeArena trajectory from agent intent to risk-gated decision, order,
+Audit a TreLLM trajectory from agent intent to risk-gated decision, order,
 fill, portfolio state, and post-trade attribution.
 
 ## When To Use

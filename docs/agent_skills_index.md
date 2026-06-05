@@ -13,8 +13,8 @@ unless recorded in the TradeArena run manifest.
 | [`tradearena-execution-calibration`](../skills/tradearena-execution-calibration/SKILL.md) | Classify execution evidence as stress-only, calibrated, quote replay, or fill replay, and state which transaction-cost claims are supported. | 2 |
 | [`tradearena-plugin-author`](../skills/tradearena-plugin-author/SKILL.md) | Help a coding agent author or review one narrow TreLLM plugin without changing runner orchestration. | 2 |
 | [`tradearena-reproduction-review`](../skills/tradearena-reproduction-review/SKILL.md) | Review a reproduction pack, benchmark row, or external validation report for hash stability and artifact completeness. | 1 |
-| [`tradearena-risk-gate-review`](../skills/tradearena-risk-gate-review/SKILL.md) | Review TradeArena risk-manager behavior without treating return as the primary outcome. | 2 |
-| [`tradearena-trajectory-audit`](../skills/tradearena-trajectory-audit/SKILL.md) | Audit a TradeArena trajectory from agent intent to risk-gated decision, order, fill, portfolio state, and post-trade attribution. | 2 |
+| [`tradearena-risk-gate-review`](../skills/tradearena-risk-gate-review/SKILL.md) | Review TreLLM risk-manager behavior without treating return as the primary outcome. | 2 |
+| [`tradearena-trajectory-audit`](../skills/tradearena-trajectory-audit/SKILL.md) | Audit a TreLLM trajectory from agent intent to risk-gated decision, order, fill, portfolio state, and post-trade attribution. | 2 |
 
 ## Contract
 

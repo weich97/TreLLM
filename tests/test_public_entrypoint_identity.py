@@ -364,13 +364,23 @@ def test_extension_and_skill_surfaces_use_trellm_system_identity():
             "The TreLLM system intentionally keeps interfaces narrow.",
             "A new LLM agent, FinRL policy, broker adapter, or risk model should be able to enter by implementing only the protocol it owns.",
         ],
+        "docs/broker_adapter_contract.md": [
+            "This contract defines the minimum bar for any TreLLM adapter that touches a broker",
+            "- reconciliation status against the original TreLLM order.",
+        ],
         "skills/README.md": [
             "# TreLLM Agent Skills",
             "TreLLM skills are workflow templates for humans, reviewers, and coding agents",
             "| `tradearena-plugin-author` | Author or review narrow TreLLM plugins |",
+            "Skills should prefer existing TreLLM validation commands over ad hoc scripts.",
         ],
         "skills/skill_template/SKILL.md": [
             "# TreLLM Skill Template",
+            "- inspect a TreLLM trajectory JSON;",
+            "Prefer existing TreLLM commands before inventing new scripts:",
+        ],
+        "skills/skill_template/resources/safety_boundary.md": [
+            "TreLLM skills operate on repository artifacts and local files.",
         ],
         "skills/tradearena-claim-boundary-review/SKILL.md": [
             "# TreLLM Claim Boundary Review Skill",
@@ -386,14 +396,18 @@ def test_extension_and_skill_surfaces_use_trellm_system_identity():
         ],
         "skills/tradearena-risk-gate-review/SKILL.md": [
             "# TreLLM Risk Gate Review Skill",
+            "Review TreLLM risk-manager behavior without treating return as the primary outcome.",
         ],
         "skills/tradearena-trajectory-audit/SKILL.md": [
             "# TreLLM Trajectory Audit Skill",
+            "Audit a TreLLM trajectory from agent intent to risk-gated decision",
         ],
         "docs/agent_skills_index.md": [
             "# TreLLM Agent Skills Index",
             "Skills are TreLLM repository workflows for audit, reproduction, calibration,",
             "unless recorded in the TradeArena run manifest.",
+            "Review TreLLM risk-manager behavior without treating return as the primary outcome.",
+            "Audit a TreLLM trajectory from agent intent to risk-gated decision",
         ],
         "examples/skill_tasks/README.md": [
             "# TreLLM Skill Task Suite",
@@ -420,6 +434,10 @@ def test_extension_and_skill_surfaces_use_trellm_system_identity():
         ],
         "scripts/validate_skill_contract.py": [
             'description="Validate TreLLM agent skill contracts."',
+        ],
+        "examples/extension_walkthrough_demo.py": [
+            "This run demonstrates the TreLLM contribution path:",
+            'aria-label="TreLLM extension walkthrough"',
         ],
     }
     for path, snippets in required_snippets.items():

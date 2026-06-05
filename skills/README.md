@@ -18,7 +18,7 @@ and author narrow plugins.
   private holdings, or raw provider logs.
 - Skills must report missing evidence before making a benchmark or scientific
   conclusion.
-- Skills should prefer existing TradeArena validation commands over ad hoc
+- Skills should prefer existing TreLLM validation commands over ad hoc
   scripts.
 
 ## Included Skills

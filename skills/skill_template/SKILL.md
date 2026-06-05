@@ -13,7 +13,7 @@ live-order execution tool.
 
 Use this skill when the user asks to:
 
-- inspect a TradeArena trajectory JSON;
+- inspect a TreLLM trajectory JSON;
 - explain risk-gate edits, blocks, or violations;
 - classify a benchmark claim;
 - reproduce a deterministic benchmark artifact;
@@ -75,7 +75,7 @@ Return:
 
 ## Validation Commands
 
-Prefer existing TradeArena commands before inventing new scripts:
+Prefer existing TreLLM commands before inventing new scripts:
 
 ```bash
 tradearena hash-run <trajectory.json>

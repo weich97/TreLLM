@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Review TradeArena risk-manager behavior without treating return as the primary
+Review TreLLM risk-manager behavior without treating return as the primary
 outcome.
 
 ## When To Use

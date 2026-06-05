@@ -1,6 +1,6 @@
 # Safety Boundary
 
-TradeArena skills operate on repository artifacts and local files. They do not
+TreLLM skills operate on repository artifacts and local files. They do not
 place trades, give investment advice, request secrets, or certify profitability.
 
 If a skill is used inside a benchmarked agent, the skill text must be recorded

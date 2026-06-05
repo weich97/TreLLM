@@ -67,7 +67,7 @@ class ChatResponse:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=(
-            "Run provider-hosted models on TradeArena financial-audit skill tasks. "
+            "Run provider-hosted models on TreLLM financial-audit skill tasks. "
             "Bare model names use Poe; DeepSeek rows must use deepseek:<model>."
         )
     )

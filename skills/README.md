@@ -1,8 +1,9 @@
-# TradeArena Agent Skills
+# TreLLM Agent Skills
 
-TradeArena skills are workflow templates for humans, reviewers, and coding
-agents working with TradeArena artifacts. They are not benchmark-agent prompts,
-trading strategies, broker tools, or investment-advice modules.
+TreLLM skills are workflow templates for humans, reviewers, and coding agents
+working with TreLLM system artifacts and TradeArena leaderboard artifacts. They
+are not benchmark-agent prompts, trading strategies, broker tools, or
+investment-advice modules.
 
 Use these skills to audit trajectories, review risk gates, classify claim
 boundaries, reproduce benchmark rows, inspect execution calibration evidence,
@@ -29,7 +30,7 @@ and author narrow plugins.
 | `tradearena-execution-calibration` | Classify stress, calibrated, quote-replay, and fill-replay evidence |
 | `tradearena-claim-boundary-review` | Prevent engineering, benchmark, and scientific claim drift |
 | `tradearena-reproduction-review` | Review reproduction packs, hashes, manifests, and artifacts |
-| `tradearena-plugin-author` | Author or review narrow TradeArena plugins |
+| `tradearena-plugin-author` | Author or review narrow TreLLM plugins |
 
 Run the contract checks:
 

@@ -1,7 +1,7 @@
-# TradeArena Skill Task Suite
+# TreLLM Skill Task Suite
 
 This directory contains small, deterministic tasks for evaluating whether a
-human reviewer or coding agent can use TradeArena skills without turning them
+human reviewer or coding agent can use TreLLM skills without turning them
 into trading prompts.
 
 Each task includes:

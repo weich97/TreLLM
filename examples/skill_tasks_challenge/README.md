@@ -1,4 +1,4 @@
-# TradeArena Challenge Skill Tasks
+# TreLLM Challenge Skill Tasks
 
 This directory contains harder cross-examination tasks for provider-hosted
 models. The tasks are designed to stress claim discipline, public-artifact

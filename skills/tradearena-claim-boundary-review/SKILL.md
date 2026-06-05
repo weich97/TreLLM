@@ -1,4 +1,4 @@
-# TradeArena Claim Boundary Review Skill
+# TreLLM Claim Boundary Review Skill
 
 ## Purpose
 

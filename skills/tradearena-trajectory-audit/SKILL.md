@@ -1,4 +1,4 @@
-# TradeArena Trajectory Audit Skill
+# TreLLM Trajectory Audit Skill
 
 ## Purpose
 

@@ -52,7 +52,7 @@ NEGATION_MARKERS = (
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Validate TradeArena agent skill contracts.")
+    parser = argparse.ArgumentParser(description="Validate TreLLM agent skill contracts.")
     parser.add_argument("skills_dir_positional", nargs="?", help="Directory containing skill folders.")
     parser.add_argument("--skills-dir", dest="skills_dir_option", help="Directory containing skill folders.")
     args = parser.parse_args(argv)

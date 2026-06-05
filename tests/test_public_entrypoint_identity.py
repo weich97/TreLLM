@@ -265,6 +265,83 @@ def test_launch_backlog_uses_trellm_for_future_system_tasks():
             assert _normalized(snippet) in text
 
 
+def test_extension_and_skill_surfaces_use_trellm_system_identity():
+    required_snippets = {
+        "examples/README.md": [
+            "# TreLLM Hands-On Examples",
+            "These examples are designed for the first hour after cloning TreLLM.",
+            "Shows how two leaderboard cases share the same market, risk, execution, and evaluation stack.",
+            "Converts approved TreLLM orders into neutral JSON/CSV rows for Alpaca-style broker review.",
+        ],
+        "docs/plugin_interfaces.md": [
+            "# TreLLM Plugin Interfaces",
+            "The TreLLM system intentionally keeps interfaces narrow.",
+            "A new LLM agent, FinRL policy, broker adapter, or risk model should be able to enter by implementing only the protocol it owns.",
+        ],
+        "skills/README.md": [
+            "# TreLLM Agent Skills",
+            "TreLLM skills are workflow templates for humans, reviewers, and coding agents",
+            "| `tradearena-plugin-author` | Author or review narrow TreLLM plugins |",
+        ],
+        "skills/skill_template/SKILL.md": [
+            "# TreLLM Skill Template",
+        ],
+        "skills/tradearena-claim-boundary-review/SKILL.md": [
+            "# TreLLM Claim Boundary Review Skill",
+        ],
+        "skills/tradearena-execution-calibration/SKILL.md": [
+            "# TreLLM Execution Calibration Skill",
+        ],
+        "skills/tradearena-plugin-author/SKILL.md": [
+            "# TreLLM Plugin Author Skill",
+        ],
+        "skills/tradearena-reproduction-review/SKILL.md": [
+            "# TreLLM Reproduction Review Skill",
+        ],
+        "skills/tradearena-risk-gate-review/SKILL.md": [
+            "# TreLLM Risk Gate Review Skill",
+        ],
+        "skills/tradearena-trajectory-audit/SKILL.md": [
+            "# TreLLM Trajectory Audit Skill",
+        ],
+        "docs/agent_skills_index.md": [
+            "# TreLLM Agent Skills Index",
+            "Skills are TreLLM repository workflows for audit, reproduction, calibration,",
+            "unless recorded in the TradeArena run manifest.",
+        ],
+        "examples/skill_tasks/README.md": [
+            "# TreLLM Skill Task Suite",
+            "human reviewer or coding agent can use TreLLM skills without turning them into trading prompts.",
+        ],
+        "examples/skill_task_answers/README.md": [
+            "# TreLLM Skill Task Answers",
+        ],
+        "examples/skill_tasks_challenge/README.md": [
+            "# TreLLM Challenge Skill Tasks",
+        ],
+        "scripts/build_skill_index.py": [
+            'description="Build the TreLLM agent skill index."',
+            '"# TreLLM Agent Skills Index"',
+        ],
+        "scripts/score_skill_task.py": [
+            'description="Validate or score TreLLM skill task rubrics."',
+        ],
+        "scripts/score_skill_task_report.py": [
+            'description="Build the TreLLM skill task matrix report."',
+        ],
+        "scripts/run_poe_skill_task_matrix.py": [
+            "Run provider-hosted models on TreLLM financial-audit skill tasks.",
+        ],
+        "scripts/validate_skill_contract.py": [
+            'description="Validate TreLLM agent skill contracts."',
+        ],
+    }
+    for path, snippets in required_snippets.items():
+        text = _normalized(_read_text(path))
+        for snippet in snippets:
+            assert _normalized(snippet) in text
+
+
 def test_citation_and_research_report_keep_system_and_leaderboard_identity_separate():
     required_snippets = {
         "CITATION.cff": [

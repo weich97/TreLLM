@@ -112,7 +112,7 @@ class AnswerSetManifest:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Validate or score TradeArena skill task rubrics.")
+    parser = argparse.ArgumentParser(description="Validate or score TreLLM skill task rubrics.")
     parser.add_argument("task", nargs="?", help="Single skill task directory to score or validate.")
     parser.add_argument("--tasks-dir", default=str(DEFAULT_TASKS_DIR), help="Directory containing skill task folders.")
     parser.add_argument("--answer", help="Markdown/text answer for a single task.")

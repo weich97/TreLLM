@@ -1,4 +1,4 @@
-# TradeArena Plugin Interfaces
+# TreLLM Plugin Interfaces
 
 The core interfaces live in `src/tradearena/core/interfaces.py`.
 
@@ -15,7 +15,9 @@ Recommended extension categories:
 
 Risk managers are encouraged to expose `last_report: RiskReport | None`. Execution simulators are encouraged to expose `last_report: ExecutionReport | None`. The runner automatically serializes these reports into trajectories when present.
 
-The framework intentionally keeps interfaces narrow. A new LLM agent, FinRL policy, broker adapter, or risk model should be able to enter the system by implementing only the protocol it owns.
+The TreLLM system intentionally keeps interfaces narrow. A new LLM agent,
+FinRL policy, broker adapter, or risk model should be able to enter by
+implementing only the protocol it owns.
 
 ## Hands-On Extension Path
 

@@ -1,4 +1,4 @@
-# TradeArena Risk Gate Review Skill
+# TreLLM Risk Gate Review Skill
 
 ## Purpose
 

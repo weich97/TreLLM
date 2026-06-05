@@ -1,9 +1,9 @@
-# TradeArena Hands-On Examples
+# TreLLM Hands-On Examples
 
-These examples are designed for the first hour after cloning. They avoid live
-LLM calls by default and write local artifacts under `outputs/examples/`. The
-default examples are deterministic smoke tests and visual demos, not live model
-benchmarks; live or cache-backed LLM runs are opt-in.
+These examples are designed for the first hour after cloning TreLLM. They avoid
+live LLM calls by default and write local artifacts under `outputs/examples/`.
+The default examples are deterministic smoke tests and visual demos, not live
+model benchmarks; live or cache-backed LLM runs are opt-in.
 
 ## Recommended First Run
 
@@ -29,7 +29,7 @@ plus a contributor extension walkthrough and retail planning sandbox.
 python examples/quickstart_core_benchmark.py
 ```
 
-Shows how two benchmark cases share the same market, risk, execution, and
+Shows how two leaderboard cases share the same market, risk, execution, and
 evaluation stack.
 
 Output:
@@ -254,7 +254,7 @@ entry ignored by Git.
 python examples/alpaca_paper_export_demo.py
 ```
 
-Converts approved TradeArena orders into neutral JSON/CSV rows for Alpaca-style
+Converts approved TreLLM orders into neutral JSON/CSV rows for Alpaca-style
 broker review. It marks the adapter mode as `offline_export` and does not
 submit orders.
 

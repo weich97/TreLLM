@@ -1,4 +1,4 @@
-# TradeArena Execution Calibration Skill
+# TreLLM Execution Calibration Skill
 
 ## Purpose
 

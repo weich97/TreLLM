@@ -1,4 +1,4 @@
-# TradeArena Skill Task Answers
+# TreLLM Skill Task Answers
 
 This directory contains answer sets for the skill task suite.
 

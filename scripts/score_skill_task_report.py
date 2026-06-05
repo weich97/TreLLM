@@ -19,7 +19,7 @@ DEFAULT_OUTPUT = ROOT / "docs" / "results" / "skill_task_matrix.md"
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Build the TradeArena skill task matrix report.")
+    parser = argparse.ArgumentParser(description="Build the TreLLM skill task matrix report.")
     parser.add_argument("--tasks-dir", default=str(DEFAULT_TASKS_DIR), help="Directory containing skill task folders.")
     parser.add_argument("--answers-dir", default=str(DEFAULT_ANSWERS_DIR), help="Optional directory of <task_id>.md answers to score.")
     parser.add_argument("--answers-label", default="reference", help="Label for the scored answer set.")

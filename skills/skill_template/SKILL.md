@@ -1,8 +1,8 @@
-# TradeArena Skill Template
+# TreLLM Skill Template
 
 ## Purpose
 
-Use this skill to help a human or coding agent perform one narrow TradeArena
+Use this skill to help a human or coding agent perform one narrow TreLLM
 task: audit a trajectory, review a risk policy, reproduce a benchmark row,
 calibrate execution assumptions, classify a claim, or author a small plugin.
 
@@ -19,7 +19,7 @@ Use this skill when the user asks to:
 - reproduce a deterministic benchmark artifact;
 - compare stress, calibrated, quote-replay, or fill-replay execution
   assumptions;
-- create or review a narrow TradeArena plugin.
+- create or review a narrow TreLLM plugin.
 
 ## Do Not Use This Skill For
 

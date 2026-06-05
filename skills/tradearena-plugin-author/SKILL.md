@@ -1,8 +1,8 @@
-# TradeArena Plugin Author Skill
+# TreLLM Plugin Author Skill
 
 ## Purpose
 
-Help a coding agent author or review one narrow TradeArena plugin without
+Help a coding agent author or review one narrow TreLLM plugin without
 changing runner orchestration.
 
 ## When To Use

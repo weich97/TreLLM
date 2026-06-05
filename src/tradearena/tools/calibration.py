@@ -337,7 +337,7 @@ def write_quote_fill_calibration_markdown(summary: dict[str, Any], path: str | P
     lines = [
         "# Quote/Fill Execution Calibration",
         "",
-        "This report fits TradeArena's compact execution equation from top-of-book quotes and realized fills.",
+        "This report fits TreLLM's compact execution equation from top-of-book quotes and realized fills.",
         "",
         "## Input Coverage",
         "",

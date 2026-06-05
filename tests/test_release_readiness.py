@@ -61,7 +61,11 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         "Create a local TradeArena plugin skeleton.\n"
         "strengthen TradeArena's execution evidence.\n"
         "the TradeArena calibration pipeline was run.\n"
-        "unless recorded in the TradeArena run manifest.\n",
+        "unless recorded in the TradeArena run manifest.\n"
+        "Convert approved TradeArena orders into broker-review files.\n"
+        "TradeArena's compact execution equation.\n"
+        "TradeArena execution-stress equation.\n"
+        "upgrades TradeArena from an OHLCV-only smoke test.\n",
         encoding="utf-8",
     )
     readme.write_text(
@@ -104,6 +108,10 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
     assert "legacy public identity phrase 'strengthen TradeArena's execution evidence' found in docs/schemas.md" in failures
     assert "legacy public identity phrase 'the TradeArena calibration pipeline was run' found in docs/schemas.md" in failures
     assert "legacy public identity phrase 'unless recorded in the TradeArena run manifest.' found in docs/schemas.md" in failures
+    assert "legacy public identity phrase 'Convert approved TradeArena orders into broker-review files.' found in docs/schemas.md" in failures
+    assert "legacy public identity phrase 'TradeArena's compact execution equation' found in docs/schemas.md" in failures
+    assert "legacy public identity phrase 'TradeArena execution-stress equation' found in docs/schemas.md" in failures
+    assert "legacy public identity phrase 'upgrades TradeArena from an OHLCV-only smoke test' found in docs/schemas.md" in failures
 
 
 def test_release_readiness_flags_stale_release_candidate_artifact_hash(tmp_path: Path):

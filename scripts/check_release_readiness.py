@@ -266,6 +266,10 @@ LEGACY_PUBLIC_IDENTITY_PHRASES = [
     "strengthen TradeArena's execution evidence",
     "the TradeArena calibration pipeline was run",
     "unless recorded in the TradeArena run manifest.",
+    "Convert approved TradeArena orders into broker-review files.",
+    "TradeArena's compact execution equation",
+    "TradeArena execution-stress equation",
+    "upgrades TradeArena from an OHLCV-only smoke test",
 ]
 CI_REQUIRED_GATE_COMMANDS = [
     "python -m compileall src scripts examples tests -q",

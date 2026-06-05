@@ -85,7 +85,7 @@ def main() -> int:
             ),
         },
         "claim_boundary": (
-            "This sample upgrades TradeArena from an OHLCV-only smoke test to a public quote/fill replay "
+            "This sample upgrades TreLLM from an OHLCV-only smoke test to a public quote/fill replay "
             "calibration example. It is still a small Binance BTCUSDT perpetual sample, not a venue-wide "
             "transaction-cost model."
         ),

@@ -181,7 +181,7 @@ def _write_markdown(payload: dict[str, Any], path: Path) -> None:
         "# Execution Fill Calibration Comparison",
         "",
         "This report compares side-adjusted realized shortfall from historical fills",
-        "against the current TradeArena execution-stress equation.",
+        "against the current TreLLM execution-stress equation.",
         "",
         "## Model Parameters",
         "",

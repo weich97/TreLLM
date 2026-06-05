@@ -370,9 +370,16 @@ def test_utility_cli_help_uses_trellm_for_system_artifacts():
         ],
         "scripts/compare_execution_to_fills.py": [
             'description="Compare TreLLM execution assumptions against historical order/fill logs."',
+            "against the current TreLLM execution-stress equation.",
         ],
         "scripts/calibrate_quote_fill_model.py": [
             'description="Fit TreLLM execution parameters from top-of-book quotes and realized fills."',
+        ],
+        "scripts/download_binance_microstructure_sample.py": [
+            "This sample upgrades TreLLM from an OHLCV-only smoke test to a public quote/fill replay",
+        ],
+        "data/public/binance_btcusdt_perp_2024_03_01_sample/manifest.json": [
+            "This sample upgrades TreLLM from an OHLCV-only smoke test to a public quote/fill replay",
         ],
         "scripts/download_yahoo_daily.py": [
             'description="Download normalized Yahoo Finance OHLCV CSV files for TreLLM."',
@@ -406,6 +413,16 @@ def test_utility_cli_help_uses_trellm_for_system_artifacts():
         ],
         "src/tradearena/tools/broker_export.py": [
             "Convert TreLLM order intent into broker handoff rows.",
+            "Convert approved TreLLM orders into broker-review files.",
+        ],
+        "src/tradearena/tools/calibration.py": [
+            "This report fits TreLLM's compact execution equation from top-of-book quotes and realized fills.",
+        ],
+        "docs/results/execution_quote_fill_calibration_sample.md": [
+            "This report fits TreLLM's compact execution equation from top-of-book quotes and realized fills.",
+        ],
+        "docs/results/execution_quote_fill_calibration_binance_sample.md": [
+            "This report fits TreLLM's compact execution equation from top-of-book quotes and realized fills.",
         ],
     }
     for path, snippets in required_snippets.items():
@@ -443,6 +460,19 @@ def test_broker_artifact_schemas_use_trellm_system_identity():
 
     broker_export_text = _normalized(_read_text("src/tradearena/tools/broker_export.py"))
     assert "Convert TradeArena orders into broker handoff rows." not in broker_export_text
+    assert "Convert approved TradeArena orders into broker-review files." not in broker_export_text
+    for path in [
+        "src/tradearena/tools/calibration.py",
+        "docs/results/execution_quote_fill_calibration_sample.md",
+        "docs/results/execution_quote_fill_calibration_binance_sample.md",
+    ]:
+        assert "TradeArena's compact execution equation" not in _normalized(_read_text(path))
+    assert "TradeArena execution-stress equation" not in _normalized(_read_text("scripts/compare_execution_to_fills.py"))
+    for path in [
+        "scripts/download_binance_microstructure_sample.py",
+        "data/public/binance_btcusdt_perp_2024_03_01_sample/manifest.json",
+    ]:
+        assert "upgrades TradeArena from an OHLCV-only smoke test" not in _normalized(_read_text(path))
     cli_text = _normalized(_read_text("src/tradearena/cli.py"))
     assert "Validate that a broker approval artifact binds to a handoff artifact." not in cli_text
     for snippet in [

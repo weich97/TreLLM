@@ -243,7 +243,7 @@ class BrokerReconciliationSummary:
 
 
 class AlpacaPaperExportAdapter:
-    """Convert approved TradeArena orders into broker-review files.
+    """Convert approved TreLLM orders into broker-review files.
 
     The adapter deliberately does not call Alpaca or any broker API. It creates
     a neutral JSON/CSV handoff for human review before any external system sees

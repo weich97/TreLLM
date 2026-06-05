@@ -68,6 +68,12 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
         "docs/launch/issue_backlog.md": [
             "How should community leaderboard submissions redact provider prompts/responses?",
         ],
+        "docs/community_tasks.md": [
+            "## Broker And Live-Ready Tracks",
+            "Each task should remain offline export, dry run, or paper sandbox by default.",
+            "Add one approval-binding edge-case test",
+            "Add one paper-sandbox adapter skeleton behind an optional dependency",
+        ],
     }
     for path, snippets in required_snippets.items():
         text = _normalized(_read_text(path))

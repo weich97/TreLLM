@@ -66,6 +66,20 @@ reviewable without asking newcomers to understand the whole codebase.
 | Add an Almgren-Chriss impact stress plugin | `help wanted`, `execution`, `discussion` | compare modeled shortfall on a small fixture |
 | Calibrate liquidity-shock presets against fill logs | `help wanted`, `risk`, `benchmark` | compare tracked shock rows with venue or broker fill data |
 
+## Broker And Live-Ready Tracks
+
+Each task should remain offline export, dry run, or paper sandbox by default.
+Use [`live_trading_readiness.md`](live_trading_readiness.md#external-contribution-tracks)
+and [`broker_adapter_contract.md`](broker_adapter_contract.md) as the review
+boundary. No task in this table should introduce default live submission.
+
+| Task | Suggested labels | Expected validation |
+| --- | --- | --- |
+| Add one approval-binding edge-case test | `good first issue`, `broker`, `risk` | `pytest tests/test_issue_demos.py -q` with a stale approval, mismatched request hash, disallowed symbol, or notional-limit case |
+| Add one broker response status-mapping fixture | `help wanted`, `broker`, `execution` | schema-valid response artifact with accepted, rejected, partial-fill, cancel, or unknown status and recomputed reconciliation counts |
+| Add one paper-sandbox adapter skeleton behind an optional dependency | `help wanted`, `adapter`, `paper-trading` | mocked CI test proving no default network call, `paper_sandbox` account mode, response artifact, and no committed credentials |
+| Add an operator runbook checklist for live-capable paths | `docs`, `discussion`, `risk` | checklist naming kill switch, approval expiry, account mode, rollback, artifact retention, and incident owner |
+
 ## Benchmark Flywheel
 
 | Task | Suggested labels | Expected validation |

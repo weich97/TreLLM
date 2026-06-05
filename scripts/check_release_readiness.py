@@ -379,15 +379,40 @@ def _check_release_candidate_manifest_hashes(root: Path, manifest_rel: str) -> l
             if path.exists():
                 failures.append(f"release candidate artifact unexpectedly exists: {rel}")
             continue
+        artifact_bytes = _release_artifact_bytes(root, rel, path)
         expected_bytes = artifact.get("bytes")
-        actual_bytes = path.stat().st_size
+        actual_bytes = len(artifact_bytes)
         if expected_bytes != actual_bytes:
             failures.append(f"release candidate artifact byte count mismatch for {rel}")
         expected_sha = str(artifact.get("sha256", ""))
-        actual_sha = _sha256_file(path)
+        actual_sha = _sha256_bytes(artifact_bytes)
         if expected_sha != actual_sha:
             failures.append(f"release candidate artifact hash mismatch for {rel}")
     return failures
+
+
+def _release_artifact_bytes(root: Path, rel: str, path: Path) -> bytes:
+    blob = _git_blob_bytes(root, rel)
+    if blob is not None:
+        return blob
+    return path.read_bytes()
+
+
+def _git_blob_bytes(root: Path, rel: str) -> bytes | None:
+    normalized_rel = rel.replace("\\", "/")
+    result = subprocess.run(
+        ["git", "show", f"HEAD:{normalized_rel}"],
+        cwd=root,
+        check=False,
+        capture_output=True,
+    )
+    if result.returncode != 0:
+        return None
+    return result.stdout
+
+
+def _sha256_bytes(content: bytes) -> str:
+    return "sha256:" + hashlib.sha256(content).hexdigest()
 
 
 def _sha256_file(path: Path) -> str:

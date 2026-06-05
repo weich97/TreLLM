@@ -1,5 +1,8 @@
+import hashlib
+import subprocess
 from pathlib import Path
 
+from scripts import build_release_candidate_manifest
 from scripts.check_release_readiness import (
     _check_ci_gate_parity,
     _check_public_identity_boundaries,
@@ -87,3 +90,58 @@ def test_release_readiness_flags_stale_release_candidate_artifact_hash(tmp_path:
 
     assert "release candidate artifact hash mismatch for README.md" in failures
     assert "release candidate artifact byte count mismatch for README.md" in failures
+
+
+def test_release_readiness_uses_git_blob_bytes_for_manifest_artifacts(tmp_path: Path):
+    subprocess.run(["git", "init"], cwd=tmp_path, check=True, capture_output=True, text=True)
+    subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "config", "user.name", "Test User"], cwd=tmp_path, check=True)
+
+    artifact = tmp_path / "README.md"
+    manifest = tmp_path / "docs" / "launch" / "release_candidate_v0.2.1.json"
+    artifact.write_bytes(b"line one\nline two\n")
+    subprocess.run(["git", "add", "README.md"], cwd=tmp_path, check=True, capture_output=True, text=True)
+    subprocess.run(["git", "commit", "-m", "Add artifact"], cwd=tmp_path, check=True, capture_output=True, text=True)
+
+    artifact.write_bytes(b"line one\r\nline two\r\n")
+    digest = "sha256:" + hashlib.sha256(b"line one\nline two\n").hexdigest()
+    manifest.parent.mkdir(parents=True)
+    manifest.write_text(
+        f"""
+{{
+  "artifact_hashes": [
+    {{
+      "bytes": 18,
+      "exists": true,
+      "path": "README.md",
+      "sha256": "{digest}"
+    }}
+  ]
+}}
+""".strip()
+        + "\n",
+        encoding="utf-8",
+    )
+
+    failures = _check_release_candidate_manifest_hashes(root=tmp_path, manifest_rel="docs/launch/release_candidate_v0.2.1.json")
+
+    assert failures == []
+
+
+def test_release_candidate_manifest_builder_uses_git_blob_bytes(tmp_path: Path, monkeypatch):
+    subprocess.run(["git", "init"], cwd=tmp_path, check=True, capture_output=True, text=True)
+    subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "config", "user.name", "Test User"], cwd=tmp_path, check=True)
+
+    artifact = tmp_path / "README.md"
+    artifact.write_bytes(b"line one\nline two\n")
+    subprocess.run(["git", "add", "README.md"], cwd=tmp_path, check=True, capture_output=True, text=True)
+    subprocess.run(["git", "commit", "-m", "Add artifact"], cwd=tmp_path, check=True, capture_output=True, text=True)
+    artifact.write_bytes(b"line one\r\nline two\r\n")
+
+    monkeypatch.setattr(build_release_candidate_manifest, "ROOT", tmp_path)
+
+    artifact_hash = build_release_candidate_manifest._artifact_hash("README.md")
+
+    assert artifact_hash["bytes"] == 18
+    assert artifact_hash["sha256"] == "sha256:" + hashlib.sha256(b"line one\nline two\n").hexdigest()

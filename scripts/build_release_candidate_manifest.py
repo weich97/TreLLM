@@ -117,16 +117,33 @@ def _artifact_hash(rel: str) -> dict[str, Any]:
     path = ROOT / rel
     if not path.exists():
         return {"path": rel, "exists": False}
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
+    content = _artifact_bytes(rel, path)
     return {
         "path": rel,
         "exists": True,
-        "bytes": path.stat().st_size,
-        "sha256": "sha256:" + digest.hexdigest(),
+        "bytes": len(content),
+        "sha256": "sha256:" + hashlib.sha256(content).hexdigest(),
     }
+
+
+def _artifact_bytes(rel: str, path: Path) -> bytes:
+    blob = _git_blob_bytes(rel)
+    if blob is not None:
+        return blob
+    return path.read_bytes()
+
+
+def _git_blob_bytes(rel: str) -> bytes | None:
+    normalized_rel = rel.replace("\\", "/")
+    result = subprocess.run(
+        ["git", "show", f"HEAD:{normalized_rel}"],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+    )
+    if result.returncode != 0:
+        return None
+    return result.stdout
 
 
 def _package_version() -> str:

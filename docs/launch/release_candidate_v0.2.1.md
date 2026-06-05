@@ -6,8 +6,8 @@ This is a local release-candidate manifest. Tagging and PyPI publication are sep
 
 - Target release: `v0.2.1`
 - Current package version: `0.2.0`
-- Commit: `2dbe871b1b71d12f5ae040c8d34509f52b076610`
-- Working tree dirty entries when generated: `4`
+- Commit: `e02bc919c3d7d8ddf61d54e886d9fafdc67f204b`
+- Working tree dirty entries when generated: `3`
 
 ## Pre-Release Commands
 
@@ -20,22 +20,22 @@ This is a local release-candidate manifest. Tagging and PyPI publication are sep
 
 ## Artifact Hashes
 
-- `README.md`: present sha256:16eb7a232b1ef35cbb10c2699b0d08226379e0dde76b9630c44496f728d6e4d8
-- `pyproject.toml`: present sha256:731c9d6a87972559da33f90571255fe2b0a156c3780b2f9ff01f14dd21bd7ae5
-- `benchmarks/v0.2/spec.json`: present sha256:a8cde14d8da398642074c4f4910cda297a60a11636217359e589d43b312922e4
-- `docs/results/benchmark_v0_2.md`: present sha256:19d848c2406adb536546f73b48175cab076b5c9b002ee40919e0ad9657a03cd2
-- `docs/results/execution_replay_calibration_loop.json`: present sha256:f813ec35bf31c5d62cb8adef9385d1e9eba0a52bc352728d1e571b55baf477e2
-- `docs/results/execution_calibration_stability.json`: present sha256:bfd6b635f2bb517912a0b6547e77fda7db562b71a33c4f59a1786d55e4681951
-- `docs/results/market_rules_fixture.json`: present sha256:1ee31e7de199849a7868d6ba90b3e74c3a6364279e0868f0a57023ba4a3dff06
-- `docs/results/external_validation_bundle.md`: present sha256:736789f490b19cb67f1d17070b3a51cb25a936e14db18a8d81c7d55e9cf667ca
-- `docs/results/poe_skill_task_matrix.md`: present sha256:76ac29751e75d3c68f1325b750c608ba447ab3a2ed0c5a97ae0d64071e95a3d7
-- `docs/results/poe_skill_challenge_matrix.md`: present sha256:e788429807baa5323df70613646794dd37e4f552a3e24a65900e62039ef3afec
-- `docs/results/poe_skill_challenge_followup_matrix.md`: present sha256:ffd81bc9b63553d0b88a69ce83b81e35ef7fab1f308346faa7b6039e4bc1283a
-- `docs/results/poe_skill_challenge_followup_claude_adversarial.md`: present sha256:445d87adb7647fd19920dc7c2d926d456c3fbff60ec93792d8257f4e6f97201a
-- `docs/results/skill_task_matrix.md`: present sha256:c936b965c9a18a0ec43850802a7dd8bfffd3401925011d0dcb16c7b33a31f843
-- `docs/results/community_registry.md`: present sha256:ef7f353b1d5c0613e00d32fb78582ac0acb28e6f197e802fc03126307cfd4899
-- `docs/public_artifact_privacy.md`: present sha256:6a58cc596a96b9262cf413deed8fd158f1583010b9cd61b1fff340d82b2b4a9b
-- `docs/launch/release_notes_v0.2.1.md`: present sha256:e5b02df674adf1a8a35b284d674e0df10fa48082a68abb39b41bb354976d6375
+- `README.md`: present sha256:8d54e79937015592cbfe221ae2d5496a6901f13e0122ea70cbe492c1b2f6ddfd
+- `pyproject.toml`: present sha256:eabfcac34e6b562602ccb08945449be4f791952b9bf2e65c5660bbdbf104375a
+- `benchmarks/v0.2/spec.json`: present sha256:8e688190ff17bc0fca691bcd600bc56bb13d1215d2b5d6a8ac611ae70e17b156
+- `docs/results/benchmark_v0_2.md`: present sha256:14c99d80fd64547aae9a6af09e0759c6e152021963a49215cb1c6c40e33e37ce
+- `docs/results/execution_replay_calibration_loop.json`: present sha256:afed5a3dd9940f654b0d28186dca2ca6bdafaf4e3da119308efe397aa47a9705
+- `docs/results/execution_calibration_stability.json`: present sha256:f3c3ea588ca6a0bb7a7e4c9123aac73a7907a5664522dd6da0e2490cbc04006d
+- `docs/results/market_rules_fixture.json`: present sha256:cd79f3c9b0bfe5061a8c835d721973f607b557b1292bc5b0be2e084f0946216f
+- `docs/results/external_validation_bundle.md`: present sha256:a74965a63e46e8cd19849c604311d50ed191daeac5dec8f7e0811fdfbbebe347
+- `docs/results/poe_skill_task_matrix.md`: present sha256:b65ad15ca310f8b3af18e03bd69eaa16301017e12d9f2dfef83731ee175ca3f4
+- `docs/results/poe_skill_challenge_matrix.md`: present sha256:6a15c24a0c355c2ddc21aa7b915854e94796c91a181e11b1ae2897841d88f6d2
+- `docs/results/poe_skill_challenge_followup_matrix.md`: present sha256:be2e3fe9c9186367b59c65110da159047b24909730b11f83abb0362e08394b47
+- `docs/results/poe_skill_challenge_followup_claude_adversarial.md`: present sha256:de116d52697da541083dab9193e79d0a4b931e233b2f26846e4c34b0dbf5e4e9
+- `docs/results/skill_task_matrix.md`: present sha256:560dd7f8427e44af316f90a84765acb80fd931b4862cf32cd6f41a73ecce26ae
+- `docs/results/community_registry.md`: present sha256:3f83f4b1504d6aed94517ab87bc3b27b19495d4ee51cf8b86cdfa2fc4c714bc1
+- `docs/public_artifact_privacy.md`: present sha256:ee84a540533aeb5dfaee551a1055489d9d91c6c4e10a12a20090253fbe2ba6b7
+- `docs/launch/release_notes_v0.2.1.md`: present sha256:cbf04eb605f0dfe92cd68bdd8bcc2aa7a87f7e221a87798ebe7ef255beb89a35
 
 ## Release Notes Draft
 

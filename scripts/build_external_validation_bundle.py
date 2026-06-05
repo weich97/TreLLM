@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import ntpath
 import platform
 import subprocess
 import sys
@@ -212,7 +213,7 @@ def _public_python_info(python_info: dict[str, Any]) -> dict[str, Any]:
     public = dict(python_info)
     executable = public.get("executable")
     if isinstance(executable, str) and executable:
-        public["executable"] = Path(executable).name or executable
+        public["executable"] = ntpath.basename(executable) or Path(executable).name or executable
     return public
 
 

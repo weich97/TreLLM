@@ -208,19 +208,19 @@ is generally better at trading. See
 [`docs/claim_boundaries.md`](docs/claim_boundaries.md) and
 [`docs/evidence_labels.md`](docs/evidence_labels.md).
 
-## Why TradeArena?
+## Why TreLLM?
 
 TreLLM is not a replacement for mature backtesting engines. It is a small
 audit harness for asking what happened between an agent's stated intent, the
 risk-aware action that was allowed, and the paper order that survived execution
 stress.
 
-| Tool | Best fit | TradeArena relationship |
+| Tool | Best fit | TreLLM / TradeArena relationship |
 | --- | --- | --- |
-| Backtrader | Event-driven strategy backtests and broker-style order workflows | Use when the main object is a classical strategy backtest; TradeArena focuses on agent traces, risk edits, and redacted LLM manifests. |
-| vectorbt | Fast vectorized research over many parameter settings | Use when large array sweeps matter most; TradeArena trades speed for step-level audit records and execution/risk reports. |
+| Backtrader | Event-driven strategy backtests and broker-style order workflows | Use when the main object is a classical strategy backtest; TreLLM focuses on agent traces, risk edits, and redacted LLM manifests. |
+| vectorbt | Fast vectorized research over many parameter settings | Use when large array sweeps matter most; TreLLM trades speed for step-level audit records and execution/risk reports. |
 | FinRL | Reinforcement-learning market environments and policy training | Use for RL policy development; TreLLM can wrap learned or deterministic policies as agents and compare their risk/execution behavior. |
-| TradeArena | Live-ready financial-agent audit, risk control, execution calibration, and broker-review handoff | Use when prompts, decisions, risk gates, fills, memory, approvals, and benchmark manifests need to be inspected together. |
+| TreLLM + TradeArena | Live-ready financial-agent audit, risk control, execution calibration, broker-review handoff, and public leaderboard artifacts | Use when prompts, decisions, risk gates, fills, memory, approvals, and benchmark manifests need to be inspected together. |
 
 ## How A Run Works
 
@@ -302,7 +302,7 @@ depth, fee tier, latency, or realized shortfall. Treat the included benchmark
 numbers as stress comparisons under shared assumptions. For execution claims,
 replace the defaults with parameters fitted from quotes and fills.
 
-TradeArena is therefore **not** suitable as a transaction-cost prediction
+The default TradeArena benchmark is therefore **not** suitable as a transaction-cost prediction
 engine in its default configuration. The execution layer is split into
 `tradearena.execution.simple`, `tradearena.execution.stress`,
 `tradearena.execution.fill_replay`, and `tradearena.execution.calibration` so

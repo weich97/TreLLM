@@ -8,8 +8,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "outputs/examples"
-DEMO_VIDEO_ASSET = ROOT / "docs/assets/tradearena_3min_demo.mp4"
-DEMO_VIDEO_POSTER = ROOT / "docs/assets/tradearena_3min_demo_thumbnail.png"
+DEMO_VIDEO_ASSET = ROOT / "docs/assets/trellm_3min_demo.mp4"
+DEMO_VIDEO_POSTER = ROOT / "docs/assets/trellm_3min_demo_thumbnail.png"
 
 
 SECTIONS = [
@@ -202,7 +202,7 @@ def main() -> int:
         path = OUTPUT_DIR / href
         print(f"[{'ok' if path.exists() else 'missing'}] outputs/examples/{href}", flush=True)
     print(f"[{'ok' if (OUTPUT_DIR / 'demo_video.html').exists() else 'missing'}] outputs/examples/demo_video.html", flush=True)
-    print(f"[{'ok' if (OUTPUT_DIR / 'tradearena_3min_demo.mp4').exists() else 'missing'}] outputs/examples/tradearena_3min_demo.mp4", flush=True)
+    print(f"[{'ok' if (OUTPUT_DIR / 'trellm_3min_demo.mp4').exists() else 'missing'}] outputs/examples/trellm_3min_demo.mp4", flush=True)
     print("[ok] outputs/examples/showcase.html", flush=True)
     return 0
 
@@ -263,11 +263,11 @@ def _write_demo_video_page() -> None:
             f"Missing demo video asset: {DEMO_VIDEO_ASSET}. Run python scripts/build_demo_video.py first."
         )
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(DEMO_VIDEO_ASSET, OUTPUT_DIR / "tradearena_3min_demo.mp4")
+    shutil.copy2(DEMO_VIDEO_ASSET, OUTPUT_DIR / "trellm_3min_demo.mp4")
     poster_html = ""
     if DEMO_VIDEO_POSTER.exists():
-        shutil.copy2(DEMO_VIDEO_POSTER, OUTPUT_DIR / "tradearena_3min_demo_thumbnail.png")
-        poster_html = ' poster="tradearena_3min_demo_thumbnail.png"'
+        shutil.copy2(DEMO_VIDEO_POSTER, OUTPUT_DIR / "trellm_3min_demo_thumbnail.png")
+        poster_html = ' poster="trellm_3min_demo_thumbnail.png"'
     html = f"""<!doctype html>
 <html lang="en">
 <meta charset="utf-8">
@@ -289,8 +289,8 @@ video {{ display: block; width: 100%; height: auto; background: #020617; }}
   <p class="lead">A captioned walkthrough of the quickstart command, showcase portal, audit report, execution realism, extension walkthrough, and retail planning sandbox. This static Pages video plays in the browser and does not require downloading a release asset.</p>
   <div class="video-wrap">
     <video controls preload="metadata"{poster_html}>
-      <source src="tradearena_3min_demo.mp4" type="video/mp4">
-      Your browser does not support embedded MP4 video. Open <a href="tradearena_3min_demo.mp4">the MP4 file</a>.
+      <source src="trellm_3min_demo.mp4" type="video/mp4">
+      Your browser does not support embedded MP4 video. Open <a href="trellm_3min_demo.mp4">the MP4 file</a>.
     </video>
   </div>
   <div class="links">
@@ -428,16 +428,16 @@ h1 {{ margin: 0 0 8px; font-size: 36px; letter-spacing: 0; }}
     <span class="pill">Extensible plugins</span>
   </div>
   <section class="video-spotlight" aria-label="TreLLM 3-minute demo video">
-    <video controls preload="metadata" poster="tradearena_3min_demo_thumbnail.png">
-      <source src="tradearena_3min_demo.mp4" type="video/mp4">
-      Your browser does not support embedded MP4 video. Open <a href="tradearena_3min_demo.mp4">the MP4 file</a>.
+    <video controls preload="metadata" poster="trellm_3min_demo_thumbnail.png">
+      <source src="trellm_3min_demo.mp4" type="video/mp4">
+      Your browser does not support embedded MP4 video. Open <a href="trellm_3min_demo.mp4">the MP4 file</a>.
     </video>
     <div class="video-copy">
       <h2>3-Minute Demo Video</h2>
       <p>Watch the quickstart command, showcase portal, audit report, execution realism, extension walkthrough, and retail planning sandbox without leaving this page.</p>
       <div class="video-links">
         <a href="demo_video.html">Open theater view</a>
-        <a href="tradearena_3min_demo.mp4">Open MP4</a>
+        <a href="trellm_3min_demo.mp4">Open MP4</a>
       </div>
     </div>
   </section>

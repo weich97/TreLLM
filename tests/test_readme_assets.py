@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
@@ -126,3 +127,26 @@ def test_system_visual_assets_use_trellm_as_system_name():
             assert snippet in text
         for snippet in banned_snippets:
             assert snippet not in text
+
+
+def test_demo_video_assets_use_trellm_name_and_portable_storyboard():
+    required_assets = [
+        ROOT / "docs/assets/trellm_3min_demo.mp4",
+        ROOT / "docs/assets/trellm_3min_demo_thumbnail.png",
+        ROOT / "docs/assets/trellm_3min_demo_storyboard.json",
+    ]
+    retired_assets = [
+        ROOT / "docs/assets/tradearena_3min_demo.mp4",
+        ROOT / "docs/assets/tradearena_3min_demo_thumbnail.png",
+    ]
+
+    for path in required_assets:
+        assert path.exists(), f"TreLLM demo asset is missing: {path.relative_to(ROOT)}"
+        assert path.stat().st_size > 0, f"TreLLM demo asset is empty: {path.relative_to(ROOT)}"
+    for path in retired_assets:
+        assert not path.exists(), f"retired TradeArena demo asset still exists: {path.relative_to(ROOT)}"
+
+    storyboard = json.loads((ROOT / "docs/assets/trellm_3min_demo_storyboard.json").read_text(encoding="utf-8"))
+    assert storyboard["output"] == "docs/assets/trellm_3min_demo.mp4"
+    assert storyboard["slides"][0]["title"] == "TreLLM in 3 Minutes"
+    assert "D:" not in json.dumps(storyboard)

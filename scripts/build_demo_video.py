@@ -13,7 +13,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLE_DIR = ROOT / "outputs/examples"
 DEFAULT_WORK_DIR = ROOT / "outputs/launch/demo_video"
-DEFAULT_OUTPUT = ROOT / "outputs/launch/tradearena_3min_demo.mp4"
+DEFAULT_OUTPUT = ROOT / "outputs/launch/trellm_3min_demo.mp4"
 WIDTH = 1920
 HEIGHT = 1080
 FPS = 30
@@ -152,7 +152,7 @@ def main() -> int:
 
     screenshots = _capture_sources(browser, screenshot_dir)
     slides = _render_slides(screenshots, slide_dir)
-    video_only = work_dir / "tradearena_3min_demo_video_only.mp4"
+    video_only = work_dir / "trellm_3min_demo_video_only.mp4"
     _render_video(ffmpeg, slides, segment_dir, video_only)
     _add_silent_audio(ffmpeg, video_only, output)
 
@@ -162,7 +162,7 @@ def main() -> int:
     storyboard.write_text(
         json.dumps(
             {
-                "output": str(output),
+                "output": _artifact_path(output),
                 "duration_seconds": sum(int(slide["duration"]) for slide in SLIDES),
                 "fps": FPS,
                 "slides": [
@@ -170,7 +170,7 @@ def main() -> int:
                         "id": slide["id"],
                         "duration": slide["duration"],
                         "title": slide["title"],
-                        "source": str(slide.get("source", "")),
+                        "source": _artifact_path(slide.get("source", "")),
                     }
                     for slide in SLIDES
                 ],
@@ -188,6 +188,16 @@ def main() -> int:
     print(f"Wrote {thumbnail.relative_to(ROOT) if thumbnail.is_relative_to(ROOT) else thumbnail}")
     print(f"Wrote {storyboard.relative_to(ROOT) if storyboard.is_relative_to(ROOT) else storyboard}")
     return 0
+
+
+def _artifact_path(path: object) -> str:
+    if not path:
+        return ""
+    artifact = Path(path)
+    try:
+        return artifact.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        return str(path)
 
 
 def _run_showcase(refresh: bool) -> None:

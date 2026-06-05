@@ -23,9 +23,9 @@ python scripts/build_demo_video.py
 The script writes:
 
 ```text
-outputs/launch/tradearena_3min_demo.mp4
-outputs/launch/tradearena_3min_demo_thumbnail.png
-outputs/launch/tradearena_3min_demo_storyboard.json
+outputs/launch/trellm_3min_demo.mp4
+outputs/launch/trellm_3min_demo_thumbnail.png
+outputs/launch/trellm_3min_demo_storyboard.json
 ```
 
 Requirements: Pillow from the `dev` extra, a local Chrome/Edge/Chromium

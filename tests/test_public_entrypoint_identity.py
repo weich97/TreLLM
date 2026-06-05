@@ -221,3 +221,29 @@ def test_release_notes_use_trellm_for_system_release_positioning():
         text = _normalized(_read_text(path))
         for snippet in snippets:
             assert _normalized(snippet) in text
+
+
+def test_citation_and_research_report_keep_system_and_leaderboard_identity_separate():
+    required_snippets = {
+        "CITATION.cff": [
+            "If you use TreLLM in research, please cite the arXiv technical report.",
+            "If you use TradeArena leaderboard artifacts or a specific software release",
+            "title: \"TreLLM: An LLM-Driven Trading Audit and Control System with TradeArena Leaderboard Artifacts\"",
+            "title: \"Representation Signatures and Risk-Feedback Alignment in LLM Trading Agents\"",
+        ],
+        "docs/research_report.md": [
+            "The public technical report for TreLLM research claims and TradeArena leaderboard artifacts is:",
+            "Use the report for research claims about representation signatures",
+            "Use repository release citations for software-version-specific reproduction.",
+        ],
+        "README.md": [
+            "If you use TreLLM in research or cite TradeArena leaderboard artifacts, please cite the technical report:",
+        ],
+        "pyproject.toml": [
+            'authors = [{ name = "TreLLM Contributors" }]',
+        ],
+    }
+    for path, snippets in required_snippets.items():
+        text = _normalized(_read_text(path))
+        for snippet in snippets:
+            assert _normalized(snippet) in text

@@ -1,6 +1,7 @@
 # Technical Report
 
-The public technical report for TradeArena is:
+The public technical report for TreLLM research claims and TradeArena
+leaderboard artifacts is:
 
 > Weicheng Xue. 2026. Representation Signatures and Risk-Feedback Alignment in
 > LLM Trading Agents. arXiv:2605.28850.

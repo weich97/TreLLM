@@ -1,6 +1,6 @@
 cff-version: 1.2.0
-message: "If you use TradeArena in research, please cite the arXiv technical report. If you use a specific software release, also cite the repository release you used."
-title: "TradeArena: A Modular and Execution-Realistic Framework for Risk-Aware LLM Trading Agents"
+message: "If you use TreLLM in research, please cite the arXiv technical report. If you use TradeArena leaderboard artifacts or a specific software release, also cite the repository release you used."
+title: "TreLLM: An LLM-Driven Trading Audit and Control System with TradeArena Leaderboard Artifacts"
 type: software
 authors:
   - family-names: Xue

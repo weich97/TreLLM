@@ -886,7 +886,7 @@ integrations must follow
 
 ## Cite
 
-If you use TradeArena in research, please cite the technical report:
+If you use TreLLM in research or cite TradeArena leaderboard artifacts, please cite the technical report:
 
 ```bibtex
 @article{xue2026tradearena,

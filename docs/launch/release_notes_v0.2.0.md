@@ -1,10 +1,10 @@
 # v0.2.0: Frozen Benchmark Protocol And Reproduction Pack
 
 TreLLM v0.2.0 is the first protocol-focused release for the TradeArena
-benchmark module. It freezes the v0.2 comparison contract, separates
-engineering, benchmark, and scientific claims, and adds a no-key external
-reproduction path that validates a benchmark row and regenerates dashboard
-artifacts from a fresh checkout.
+leaderboard module and benchmark-card layer. It freezes the v0.2 comparison
+contract, separates engineering, benchmark, and scientific claims, and adds a
+no-key external reproduction path that validates a benchmark row and
+regenerates dashboard artifacts from a fresh checkout.
 
 ## Highlights
 

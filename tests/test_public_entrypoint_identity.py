@@ -234,6 +234,12 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
             "TreLLM's public positioning is:",
             "TreLLM turns every financial-agent decision into a traceable trajectory:",
             "LLM trading audit system with replayable trajectories, risk gates, reproducibility artifacts, and a TradeArena leaderboard.",
+            "llm-trading",
+            "trading-audit",
+            "financial-agents",
+            "agent-audit",
+            "audit-trails",
+            "leaderboard",
         ],
         "docs/launch/pages_demo.md": [
             "TreLLM publishes the project landing page and quickstart showcase",
@@ -326,6 +332,10 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
         text = _normalized(_read_text(path))
         for snippet in snippets:
             assert _normalized(snippet) in text
+
+    launch_metadata = _read_text("docs/launch/README.md")
+    assert "\nagent-benchmark\n" not in launch_metadata
+    assert "\nbenchmark\n" not in launch_metadata
 
     demo_matrix_text = _normalized(_read_text("docs/demo_matrix.md"))
     assert "reusing the rest of the TreLLM stack" in demo_matrix_text

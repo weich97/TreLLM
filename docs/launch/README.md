@@ -31,19 +31,23 @@ Recommended topics:
 
 ```text
 llm-agents
+llm-trading
 trading-agents
+trading-audit
 financial-ai
+financial-agents
 quantitative-finance
-agent-benchmark
+agent-audit
 agent-evaluation
 risk-management
 execution-simulation
 backtesting
 portfolio-optimization
 auditability
+audit-trails
 reproducible-research
 python
-benchmark
+leaderboard
 ai-agents
 ```
 

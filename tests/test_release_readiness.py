@@ -77,6 +77,10 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         "keeping the framework auditable.\n"
         "Extend the framework with small, reviewable plugins.\n"
         "reusing the rest of the framework.\n"
+        "One new plugin, the rest of the framework stays fixed.\n"
+        "core framework experiment axes.\n"
+        "four framework axes.\n"
+        "This makes the framework useful alongside stronger forecasting.\n"
         "The current public repository is strongest at the prototype and early benchmark levels.\n"
         "For the staged path from benchmark research to supervised live execution.\n"
         "These contributions move TreLLM from benchmark research toward human-gated.\n"
@@ -163,6 +167,16 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         in failures
     )
     assert "legacy public identity phrase 'reusing the rest of the framework.' found in docs/schemas.md" in failures
+    assert (
+        "legacy public identity phrase 'One new plugin, the rest of the framework stays fixed' found in docs/schemas.md"
+        in failures
+    )
+    assert "legacy public identity phrase 'core framework experiment axes' found in docs/schemas.md" in failures
+    assert "legacy public identity phrase 'four framework axes' found in docs/schemas.md" in failures
+    assert (
+        "legacy public identity phrase 'This makes the framework useful alongside stronger forecasting' found in docs/schemas.md"
+        in failures
+    )
     assert (
         "legacy public identity phrase 'The current public repository is strongest at the prototype and early benchmark levels' "
         "found in docs/schemas.md"

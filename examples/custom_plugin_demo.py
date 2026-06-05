@@ -100,7 +100,7 @@ def _write_svg(path: Path, summary: dict[str, object]) -> None:
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-label="Custom plugin demo">',
         '<rect width="100%" height="100%" fill="#f8fafc"/>',
-        _text(36, 44, "One new plugin, the rest of the framework stays fixed", 22, "#0f172a", 800),
+        _text(36, 44, "One new plugin, the rest of TreLLM stays fixed", 22, "#0f172a", 800),
         _text(36, 72, "This demo drops in a local analyst class and reuses strategy, risk, execution, memory, and evaluators.", 13, "#64748b", 400),
     ]
     for idx, (title, body) in enumerate(steps):

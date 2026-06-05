@@ -40,6 +40,7 @@ def test_system_docs_use_trellm_identity():
         ],
         "docs/related_work.md": [
             "TreLLM is designed to complement, not replace, existing financial AI and agent frameworks.",
+            "This makes TreLLM useful alongside stronger forecasting, research, and RL systems.",
             "TradeArena leaderboard layer keeps the evaluation traceable.",
         ],
         "docs/technical_report.md": [
@@ -60,6 +61,9 @@ def test_system_docs_use_trellm_identity():
 
     advanced_text = _normalized(_read_doc("docs/advanced_integrations_security.md"))
     assert "For the staged path from benchmark research to supervised live execution" not in advanced_text
+
+    related_text = _normalized(_read_doc("docs/related_work.md"))
+    assert "This makes the framework useful alongside stronger forecasting" not in related_text
 
 
 def test_live_readiness_avoids_benchmark_module_system_framing():

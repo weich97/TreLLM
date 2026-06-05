@@ -162,7 +162,7 @@ without reading the full source tree.
 - Run: `python examples/extension_walkthrough_demo.py`
 - Artifact: `outputs/examples/extension_walkthrough.svg`
 - Shows: a custom analyst, risk manager, and evaluator reusing the rest of the
-  framework.
+  TreLLM stack.
 
 ### Retail Planning Sandbox
 

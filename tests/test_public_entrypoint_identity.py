@@ -241,8 +241,10 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
         ],
         "scripts/run_paper_design_demos.py": [
             'print("TreLLM experiment-design demo suite")',
+            "Offline-friendly demos aligned with core TreLLM experiment axes.",
             "<title>TreLLM Experiment-Design Demos</title>",
             "<h1>TreLLM Experiment-Design Demos</h1>",
+            "These offline-friendly hands-on examples exercise four TreLLM research axes",
         ],
         "examples/akshare_csv_reuse_demo.py": [
             'print("AkShare -> normalized CSV -> TreLLM demo")',
@@ -286,11 +288,18 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
             'aria-label="TreLLM audit report preview"',
             ">TreLLM Audit Report<",
         ],
+        "examples/custom_plugin_demo.py": [
+            "One new plugin, the rest of TreLLM stays fixed",
+        ],
     }
     for path, snippets in required_snippets.items():
         text = _normalized(_read_text(path))
         for snippet in snippets:
             assert _normalized(snippet) in text
+
+    demo_matrix_text = _normalized(_read_text("docs/demo_matrix.md"))
+    assert "reusing the rest of the TreLLM stack" in demo_matrix_text
+    assert "reusing the rest of the framework" not in demo_matrix_text
 
 def test_launch_and_generated_pages_avoid_generic_benchmark_module_framing():
     forbidden_snippets = {

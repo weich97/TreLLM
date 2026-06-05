@@ -101,7 +101,7 @@ TreLLM asks a different question:
 > Can the agent's decision be replayed, audited, risk-checked, and compared
 > under realistic execution assumptions?
 
-This makes the framework useful alongside stronger forecasting, research, and
+This makes TreLLM useful alongside stronger forecasting, research, and
 RL systems. Those systems can plug into TreLLM as analysts, strategies, risk
 modules, or baselines while the TradeArena leaderboard layer keeps the
 evaluation traceable.

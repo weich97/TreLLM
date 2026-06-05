@@ -263,6 +263,9 @@ LEGACY_PUBLIC_IDENTITY_PHRASES = [
     "Export a TradeArena trajectory to a local trace JSON.",
     "Create a local TradeArena plugin skeleton.",
     "serialized TradeArena trajectory",
+    "strengthen TradeArena's execution evidence",
+    "the TradeArena calibration pipeline was run",
+    "unless recorded in the TradeArena run manifest.",
 ]
 CI_REQUIRED_GATE_COMMANDS = [
     "python -m compileall src scripts examples tests -q",

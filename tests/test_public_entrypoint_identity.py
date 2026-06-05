@@ -101,6 +101,10 @@ def test_claim_and_validation_docs_use_trellm_for_system_claims():
             "TreLLM can run auditable offline and paper/sandbox agent loops",
             "TradeArena can compare agents under shared risk and execution assumptions",
         ],
+        "docs/execution_calibration_quickstart.md": [
+            "contributors who want to strengthen TreLLM execution evidence",
+            "the TreLLM calibration pipeline was run on this public BTCUSDT sample",
+        ],
         "docs/demo_matrix.md": [
             "This matrix maps TreLLM capabilities to hands-on repository artifacts.",
             "how TreLLM should progress from paper research to broker-review exports",
@@ -110,6 +114,10 @@ def test_claim_and_validation_docs_use_trellm_for_system_claims():
         text = _normalized(_read_text(path))
         for snippet in snippets:
             assert _normalized(snippet) in text
+
+    calibration_text = _normalized(_read_text("docs/execution_calibration_quickstart.md"))
+    assert "strengthen TradeArena's execution evidence" not in calibration_text
+    assert "the TradeArena calibration pipeline was run" not in calibration_text
 
 
 def test_skill_experiment_docs_assign_audit_research_to_trellm():
@@ -621,7 +629,7 @@ def test_extension_and_skill_surfaces_use_trellm_system_identity():
         "docs/agent_skills_index.md": [
             "# TreLLM Agent Skills Index",
             "Skills are TreLLM repository workflows for audit, reproduction, calibration,",
-            "unless recorded in the TradeArena run manifest.",
+            "unless recorded in the TreLLM run manifest.",
             "Review TreLLM risk-manager behavior without treating return as the primary outcome.",
             "Audit a TreLLM trajectory from agent intent to risk-gated decision",
         ],
@@ -660,6 +668,11 @@ def test_extension_and_skill_surfaces_use_trellm_system_identity():
         text = _normalized(_read_text(path))
         for snippet in snippets:
             assert _normalized(snippet) in text
+
+    skill_index_source = _normalized(_read_text("scripts/build_skill_index.py"))
+    assert "unless recorded in the TreLLM run manifest." in skill_index_source
+    assert "unless recorded in the TradeArena run manifest." not in skill_index_source
+    assert "unless recorded in the TradeArena run manifest." not in _normalized(_read_text("docs/agent_skills_index.md"))
 
 
 def test_citation_and_research_report_keep_system_and_leaderboard_identity_separate():

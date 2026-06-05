@@ -70,7 +70,7 @@ def render_index(skills: list[SkillSummary]) -> str:
         "Skills are TreLLM repository workflows for audit, reproduction, calibration,",
         "claim-boundary review, and plugin authoring. They are not runtime",
         "trading prompts and should not be injected into benchmarked agents",
-        "unless recorded in the TradeArena run manifest.",
+        "unless recorded in the TreLLM run manifest.",
         "",
         "| Skill | Purpose | Resources |",
         "| --- | --- | ---: |",

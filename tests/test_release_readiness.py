@@ -58,7 +58,10 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         "Run TradeArena experiments.\n"
         "Replay one step from a TradeArena trajectory JSON.\n"
         "Export a TradeArena trajectory to a local trace JSON.\n"
-        "Create a local TradeArena plugin skeleton.\n",
+        "Create a local TradeArena plugin skeleton.\n"
+        "strengthen TradeArena's execution evidence.\n"
+        "the TradeArena calibration pipeline was run.\n"
+        "unless recorded in the TradeArena run manifest.\n",
         encoding="utf-8",
     )
     readme.write_text(
@@ -98,6 +101,9 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
     assert "legacy public identity phrase 'Replay one step from a TradeArena trajectory JSON.' found in docs/schemas.md" in failures
     assert "legacy public identity phrase 'Export a TradeArena trajectory to a local trace JSON.' found in docs/schemas.md" in failures
     assert "legacy public identity phrase 'Create a local TradeArena plugin skeleton.' found in docs/schemas.md" in failures
+    assert "legacy public identity phrase 'strengthen TradeArena's execution evidence' found in docs/schemas.md" in failures
+    assert "legacy public identity phrase 'the TradeArena calibration pipeline was run' found in docs/schemas.md" in failures
+    assert "legacy public identity phrase 'unless recorded in the TradeArena run manifest.' found in docs/schemas.md" in failures
 
 
 def test_release_readiness_flags_stale_release_candidate_artifact_hash(tmp_path: Path):

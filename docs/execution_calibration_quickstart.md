@@ -1,6 +1,6 @@
 # Execution Calibration Quickstart
 
-This track is for contributors who want to strengthen TradeArena's execution
+This track is for contributors who want to strengthen TreLLM execution
 evidence. The goal is not to prove that the default simulator predicts a venue
 or broker. The goal is to attach quote, order-book, or fill evidence to a
 paper-execution result so readers can see which claims are stress tests and
@@ -49,7 +49,7 @@ python scripts/calibrate_quote_fill_model.py \
   --commission-bps-default 0
 ```
 
-The resulting row can support a narrow statement: the TradeArena calibration
+The resulting row can support a narrow statement: the TreLLM calibration
 pipeline was run on this public BTCUSDT sample with observed top-of-book quotes
 and public trades. It should not be described as a Binance-wide, broker-grade,
 or all-market transaction-cost model.

@@ -1,11 +1,19 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_examples_readme_section_numbers_are_sequential():
+    text = (ROOT / "examples/README.md").read_text(encoding="utf-8")
+    numbers = [int(match) for match in re.findall(r"^## (\d+)\.", text, flags=re.MULTILINE)]
+
+    assert numbers == list(range(1, len(numbers) + 1))
 
 
 def test_ashare_market_rules_demo_outputs_rule_events():
@@ -123,6 +131,29 @@ def test_retail_planner_demo_builds_paper_planning_report():
     assert (ROOT / "outputs/examples/retail_planning_allocation.svg").exists()
 
 
+def test_operator_runbook_demo_builds_live_ready_checklist():
+    _run_example("examples/operator_runbook_demo.py")
+    summary = _read_json("outputs/examples/operator_runbook/summary.json")
+    runbook = (ROOT / "outputs/examples/operator_runbook/operator_runbook.md").read_text(encoding="utf-8")
+
+    assert summary["schema"] == "trellm_operator_runbook_v0.1"
+    assert summary["live_submission"] is False
+    assert summary["default_mode"] == "offline_export"
+    assert summary["manual_approval_required"] is True
+    assert summary["kill_switch_required"] is True
+    assert summary["approval_expiry_required"] is True
+    assert summary["artifact_retention_required"] is True
+    assert {item["id"] for item in summary["checklist"]} >= {
+        "mode-boundary",
+        "approval-expiry",
+        "kill-switch",
+        "reconciliation",
+        "rollback",
+    }
+    assert "TreLLM Operator Runbook Checklist" in runbook
+    assert "does not authorize live submission" in runbook
+
+
 def test_showcase_index_can_be_built_from_existing_or_missing_artifacts():
     tracked_result_paths = (
         ROOT / "docs/results/benchmark_v0_2.md",
@@ -145,6 +176,7 @@ def test_showcase_index_can_be_built_from_existing_or_missing_artifacts():
     assert "Retail planning sandbox" in html
     assert "Dry-run broker adapter" in html
     assert "Broker approval safety" in html
+    assert "Operator runbook checklist" in html
 
 
 def test_demo_artifact_contract_runs_required_validators(tmp_path: Path):

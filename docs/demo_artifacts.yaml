@@ -88,3 +88,14 @@ artifacts:
     required_validators:
       - python scripts/validate_broker_handoff_artifact.py outputs/examples/broker_response_reconciliation/alpaca_paper_orders.json
       - python scripts/validate_broker_response_artifact.py outputs/examples/broker_response_reconciliation/broker_response_artifact.json
+  - id: operator_runbook
+    command: python examples/operator_runbook_demo.py
+    required_outputs:
+      - outputs/examples/operator_runbook/summary.json
+      - outputs/examples/operator_runbook/operator_runbook.md
+    required_json_fields:
+      - outputs/examples/operator_runbook/summary.json:schema
+      - outputs/examples/operator_runbook/summary.json:live_submission
+      - outputs/examples/operator_runbook/summary.json:manual_approval_required
+      - outputs/examples/operator_runbook/summary.json:kill_switch_required
+      - outputs/examples/operator_runbook/summary.json:checklist.id

@@ -110,6 +110,12 @@ SECTIONS = [
         "python examples/broker_response_reconciliation_demo.py",
     ),
     (
+        "Operator runbook checklist",
+        "Human-gated live-readiness controls are written as an offline checklist artifact.",
+        "operator_runbook/operator_runbook.md",
+        "python examples/operator_runbook_demo.py",
+    ),
+    (
         "Holdings CSV import",
         "A tiny holdings CSV fixture feeds the retail planning sandbox and paper rebalance diagnostics.",
         "holdings_csv_import/summary.json",
@@ -164,6 +170,7 @@ def main() -> int:
         _run([sys.executable, "examples/dry_run_broker_adapter_demo.py"], "Dry-run broker adapter")
         _run([sys.executable, "examples/broker_approval_safety_demo.py"], "Broker approval safety")
         _run([sys.executable, "examples/broker_response_reconciliation_demo.py"], "Broker response reconciliation")
+        _run([sys.executable, "examples/operator_runbook_demo.py"], "Operator runbook checklist")
         _run([sys.executable, "examples/holdings_csv_import_demo.py"], "Holdings CSV import")
         _run([sys.executable, "examples/extension_walkthrough_demo.py"], "Contributor extension walkthrough")
         _run([sys.executable, "examples/retail_planner_demo.py"], "Retail planning sandbox")

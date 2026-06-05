@@ -312,7 +312,22 @@ Output:
 - `outputs/examples/broker_response_reconciliation/broker_response_artifact.json`
 - `outputs/examples/broker_response_reconciliation/alpaca_paper_orders.json`
 
-## 19. Holdings CSV Import
+## 19. Operator Runbook Checklist
+
+```bash
+python examples/operator_runbook_demo.py
+```
+
+Writes an offline operator checklist for live-capable paths. The artifact names
+the default mode, approval expiry, kill switch, reconciliation, rollback, and
+artifact-retention evidence without reading credentials or submitting orders.
+
+Output:
+
+- `outputs/examples/operator_runbook/summary.json`
+- `outputs/examples/operator_runbook/operator_runbook.md`
+
+## 20. Holdings CSV Import
 
 ```bash
 python examples/holdings_csv_import_demo.py
@@ -325,7 +340,7 @@ Output:
 
 - `outputs/examples/holdings_csv_import/summary.json`
 
-## 20. Futures Roll Risk
+## 21. Futures Roll Risk
 
 ```bash
 python examples/futures_roll_risk_demo.py
@@ -339,7 +354,7 @@ Output:
 - `outputs/examples/futures_roll_risk/summary.json`
 - `outputs/examples/futures_roll_risk/futures_roll_risk.svg`
 
-## 21. Crypto Microstructure Stress
+## 22. Crypto Microstructure Stress
 
 ```bash
 python examples/crypto_microstructure_stress_demo.py
@@ -353,7 +368,7 @@ Output:
 - `outputs/examples/crypto_microstructure_stress/summary.json`
 - `outputs/examples/crypto_microstructure_stress/crypto_microstructure_stress.svg`
 
-## 22. Mock Deep-RL Policy Baseline
+## 23. Mock Deep-RL Policy Baseline
 
 ```bash
 python examples/rl_policy_baseline_demo.py

@@ -205,6 +205,13 @@ without reading the full source tree.
 - Shows: paper broker responses matched back to submitted client order IDs,
   including filled, partially filled, rejected, missing, and unmatched rows.
 
+### Operator Runbook Checklist
+
+- Run: `python examples/operator_runbook_demo.py`
+- Artifact: `outputs/examples/operator_runbook/operator_runbook.md`
+- Shows: human-gated live-readiness checks for adapter mode, approval expiry,
+  kill switch, reconciliation, rollback, and artifact retention.
+
 ### Live-Readiness Contract
 
 - Read:

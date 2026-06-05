@@ -45,6 +45,7 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
         "docs/contributor_roadmap.md": [
             "TreLLM grows best when contributions make financial AI agents easier to evaluate, audit, reproduce, control, or extend.",
             "These contributions move TreLLM from offline audit research toward human-gated, live-ready trading infrastructure.",
+            "match one of the external contribution tracks",
             "These contributions strengthen the TradeArena leaderboard module and benchmark-card layer.",
         ],
         "docs/community_participation.md": [

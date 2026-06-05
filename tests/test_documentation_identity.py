@@ -28,6 +28,9 @@ def test_system_docs_use_trellm_identity():
             "TreLLM should grow beyond offline and paper-only research paths",
             "TradeArena remains the public leaderboard module for comparable rows",
             "| Stage | Name | What TreLLM can do | Required evidence before moving on |",
+            "## External Contribution Tracks",
+            "| Track | Good first PR | Evidence that makes it reviewable |",
+            "Paper-sandbox adapters must stay behind optional dependencies and must publish response artifacts with account mode, status, and reconciliation counts.",
         ],
         "docs/narrative_positioning.md": [
             "TreLLM should be described as an early-stage live-ready audit and control system",

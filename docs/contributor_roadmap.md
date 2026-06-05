@@ -48,7 +48,9 @@ live-ready trading infrastructure.
 
 Expected shape: an adapter or contract test, no default live submission, a
 reviewable demo artifact, and compliance with
-[`broker_adapter_contract.md`](broker_adapter_contract.md).
+[`broker_adapter_contract.md`](broker_adapter_contract.md). The PR should also
+match one of the external contribution tracks in
+[`live_trading_readiness.md`](live_trading_readiness.md#external-contribution-tracks).
 
 ## Route C: ML / LLM Evaluation
 

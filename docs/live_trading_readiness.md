@@ -81,3 +81,22 @@ Before a broker-facing contribution is accepted, it should prove:
 The current engineering step is to keep hardening the generic broker adapter
 contract in [`broker_adapter_contract.md`](broker_adapter_contract.md) before
 adding any broker-specific sandbox dependency.
+
+## External Contribution Tracks
+
+The safest way to move TreLLM toward real trading is to land small,
+evidence-backed PRs that make one stage more auditable. A contributor does not
+need to build a full broker integration to help.
+
+| Track | Good first PR | Evidence that makes it reviewable |
+| --- | --- | --- |
+| Broker review export | Add or tighten one handoff field, validator error, or example summary. | Schema-valid handoff artifact, command transcript, no credential or live API path. |
+| Approval binding | Add one edge-case test for stale approvals, mismatched request hashes, symbols, quantities, or order types. | Failing-then-passing test and a redacted approval artifact tied to a reviewed request hash. |
+| Paper-sandbox adapter | Add a broker-specific paper adapter behind an optional dependency. | Paper-only account mode, no default network call, response artifact, reconciliation summary, and mocked CI tests. |
+| Reconciliation | Improve status mapping for rejects, cancels, partial fills, duplicate IDs, or unknown broker states. | Response artifact that validates, recomputed reconciliation counts, and redacted failure reasons. |
+| Operator runbook | Document a human approval or incident-response step for a live-capable path. | Checklist with kill switch, rollback, account mode, approval expiry, and artifact retention rules. |
+
+Paper-sandbox adapters must stay behind optional dependencies and must publish
+response artifacts with account mode, status, and reconciliation counts. Live
+submission remains out of first-run examples and requires the Stage 4 evidence
+in the maturity ladder.

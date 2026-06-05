@@ -19,6 +19,7 @@ live-order path, not an unattended trading bot or profitability leaderboard.
 - Market-rule fixtures exercise A-share T+1 and limit bands, Hong Kong board
   lots, crypto fee/funding estimates, liquidity clipping, and suspension blocks.
 - Release readiness now checks the v0.2.1 candidate artifacts before publication.
+- Release readiness now checks public identity boundaries before publication.
 
 ## Reproduce The New Evidence
 

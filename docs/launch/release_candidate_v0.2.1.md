@@ -6,8 +6,8 @@ This is a local release-candidate manifest. Tagging and PyPI publication are sep
 
 - Target release: `v0.2.1`
 - Current package version: `0.2.0`
-- Commit: `9f0e60222e7d2d175b771eb8cf31cc379c58f7da`
-- Working tree dirty entries when generated: `9`
+- Commit: `2dbe871b1b71d12f5ae040c8d34509f52b076610`
+- Working tree dirty entries when generated: `4`
 
 ## Pre-Release Commands
 
@@ -35,7 +35,7 @@ This is a local release-candidate manifest. Tagging and PyPI publication are sep
 - `docs/results/skill_task_matrix.md`: present sha256:c936b965c9a18a0ec43850802a7dd8bfffd3401925011d0dcb16c7b33a31f843
 - `docs/results/community_registry.md`: present sha256:ef7f353b1d5c0613e00d32fb78582ac0acb28e6f197e802fc03126307cfd4899
 - `docs/public_artifact_privacy.md`: present sha256:6a58cc596a96b9262cf413deed8fd158f1583010b9cd61b1fff340d82b2b4a9b
-- `docs/launch/release_notes_v0.2.1.md`: present sha256:91cb931466f3d73faa35af4f67e0bce2616d18776552ef75d464c0a704f29382
+- `docs/launch/release_notes_v0.2.1.md`: present sha256:e5b02df674adf1a8a35b284d674e0df10fa48082a68abb39b41bb354976d6375
 
 ## Release Notes Draft
 

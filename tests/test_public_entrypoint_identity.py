@@ -397,6 +397,7 @@ def test_release_notes_use_trellm_for_system_release_positioning():
             "TreLLM v0.2.1 is a patch-release candidate focused on evidence quality",
             "TreLLM remains an audit and live-readiness control system.",
             "TradeArena remains the public leaderboard and benchmark module",
+            "Release readiness now checks public identity boundaries before publication.",
         ],
         "docs/launch/release_notes_v0.2.0.md": [
             "TreLLM v0.2.0 is the first protocol-focused release for the TradeArena benchmark module.",

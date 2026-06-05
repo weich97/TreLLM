@@ -91,17 +91,17 @@
       "sha256": "sha256:6a58cc596a96b9262cf413deed8fd158f1583010b9cd61b1fff340d82b2b4a9b"
     },
     {
-      "bytes": 1966,
+      "bytes": 2041,
       "exists": true,
       "path": "docs/launch/release_notes_v0.2.1.md",
-      "sha256": "sha256:91cb931466f3d73faa35af4f67e0bce2616d18776552ef75d464c0a704f29382"
+      "sha256": "sha256:e5b02df674adf1a8a35b284d674e0df10fa48082a68abb39b41bb354976d6375"
     }
   ],
-  "commit": "9f0e60222e7d2d175b771eb8cf31cc379c58f7da",
-  "created_at": "2026-06-05T08:02:57.421076+00:00",
+  "commit": "2dbe871b1b71d12f5ae040c8d34509f52b076610",
+  "created_at": "2026-06-05T08:16:39.536764+00:00",
   "current_package_version": "0.2.0",
-  "dirty_file_count": 9,
-  "git_status_sha256": "sha256:042414202122c7caf8da5e774dbaec59f1045ff056c9cfc2683ae18b4e8457d2",
+  "dirty_file_count": 4,
+  "git_status_sha256": "sha256:3b44260ca58cd93e061c609a0362d623ad38d3a2c47a8644e1f14e86e1a48a0f",
   "pre_release_commands": [
     "python -m compileall src scripts examples tests -q",
     "python -m ruff check src scripts examples tests",

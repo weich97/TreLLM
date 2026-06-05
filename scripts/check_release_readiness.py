@@ -222,6 +222,28 @@ PLACEHOLDER_PHRASES = [
 BANNED_PUBLIC_TERMS = [
     "_".join(("trading", "agent", "os")),
 ]
+REQUIRED_PUBLIC_IDENTITY_PHRASES = {
+    "pyproject.toml": [
+        'description = "TreLLM: LLM-driven trading audit and control system with replayable trajectories, risk gates, and TradeArena leaderboard artifacts."',
+    ],
+    "src/tradearena/__init__.py": [
+        "TreLLM: LLM-driven trading audit and control system with a TradeArena compatibility API.",
+    ],
+    "docs/results/community_registry.md": [
+        "# TradeArena Leaderboard Registry",
+    ],
+}
+LEGACY_PUBLIC_IDENTITY_PHRASES = [
+    "Community Benchmark Registry",
+    "TradeArena Community Benchmark Registry",
+    "TradeArena community registry",
+    "TradeArena: pluggable AI trading agent research framework",
+    "TradeArena currently tracks aggregate public reports",
+    "TradeArena already has synthetic, real-market, execution-shock, classical-baseline, and calibration snapshots.",
+    "The task suite measures TradeArena-specific audit ability rather than trading ability:",
+    "You are evaluating TradeArena as a financial-audit agent, not as a trader.",
+    "TradeArena's public audit, risk, execution-boundary, reproduction, claim-boundary, and plugin-review rubrics",
+]
 CI_REQUIRED_GATE_COMMANDS = [
     "python -m compileall src scripts examples tests -q",
     "python -m ruff check src scripts examples tests",
@@ -267,6 +289,7 @@ def main() -> int:
                 if term in text:
                     failures.append(f"banned legacy namespace '{term}' found in {rel}")
 
+    failures.extend(_check_public_identity_boundaries(ROOT, tracked))
     failures.extend(_check_ci_gate_parity(ROOT / ".github/workflows/ci.yml"))
 
     if failures:
@@ -300,6 +323,41 @@ def _check_ci_gate_parity(ci_path: Path) -> list[str]:
         for command in CI_REQUIRED_GATE_COMMANDS
         if command not in text
     ]
+
+
+def _check_public_identity_boundaries(root: Path, tracked_files: list[str]) -> list[str]:
+    failures: list[str] = []
+    tracked_set = set(tracked_files)
+    for rel, phrases in REQUIRED_PUBLIC_IDENTITY_PHRASES.items():
+        path = root / rel
+        if rel not in tracked_set or not path.exists():
+            failures.append(f"missing public identity file: {rel}")
+            continue
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for phrase in phrases:
+            if phrase not in text:
+                if rel == "pyproject.toml" and phrase.startswith('description = "TreLLM:'):
+                    failures.append("pyproject.toml must brand the project description as TreLLM")
+                else:
+                    failures.append(f"required public identity phrase missing from {rel}: {phrase}")
+
+    for rel in tracked_files:
+        path = root / rel
+        if not path.is_file() or not _is_public_identity_text_file(rel, path):
+            continue
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for phrase in LEGACY_PUBLIC_IDENTITY_PHRASES:
+            if phrase in text:
+                failures.append(f"legacy public identity phrase '{phrase}' found in {rel}")
+    return failures
+
+
+def _is_public_identity_text_file(rel: str, path: Path) -> bool:
+    if rel.startswith("tests/") or rel.startswith("tests\\"):
+        return False
+    if rel == "scripts/check_release_readiness.py":
+        return False
+    return path.suffix.lower() in {".md", ".py", ".toml", ".yml", ".yaml", ".json", ".txt", ".cff"}
 
 
 def _is_public_text_file(path: Path) -> bool:

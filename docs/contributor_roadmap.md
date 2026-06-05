@@ -2,7 +2,7 @@
 
 TreLLM grows best when contributions make financial AI agents easier to
 evaluate, audit, reproduce, control, or extend. TradeArena is the public
-leaderboard and benchmark module inside that system. This roadmap groups good
+leaderboard module and benchmark-card layer inside that system. This roadmap groups good
 issues and research extensions by contributor profile so newcomers do not need
 to infer where they fit.
 
@@ -52,7 +52,7 @@ reviewable demo artifact, and compliance with
 
 ## Route C: ML / LLM Evaluation
 
-These contributions strengthen the TradeArena leaderboard and benchmark module.
+These contributions strengthen the TradeArena leaderboard module and benchmark-card layer.
 
 - Redacted TradeArena leaderboard submissions using `schemas/benchmark_submission.schema.json`.
 - Reasoning-mode ablations, including rationale-free and tool-restricted modes.

@@ -6,8 +6,8 @@ This is a local release-candidate manifest. Tagging and PyPI publication are sep
 
 - Target release: `v0.2.1`
 - Current package version: `0.2.0`
-- Commit: `857e048365d7a70b480edba0f399592242f65d0f`
-- Working tree dirty entries when generated: `11`
+- Commit: `1ac5e95841ede6e86eb3de77b3aa9bae30b338ad`
+- Working tree dirty entries when generated: `14`
 
 ## Pre-Release Commands
 
@@ -23,7 +23,7 @@ This is a local release-candidate manifest. Tagging and PyPI publication are sep
 - `README.md`: present sha256:46be6da77c506b5dae1442c438d083209b4897fd3cc7dd24121bd449caebe013
 - `pyproject.toml`: present sha256:eabfcac34e6b562602ccb08945449be4f791952b9bf2e65c5660bbdbf104375a
 - `benchmarks/v0.2/spec.json`: present sha256:8e688190ff17bc0fca691bcd600bc56bb13d1215d2b5d6a8ac611ae70e17b156
-- `docs/results/benchmark_v0_2.md`: present sha256:38f9468b9aab4e9b35044ba76dd473a3de4fc30d197f861e7ba2972d90437580
+- `docs/results/benchmark_v0_2.md`: present sha256:319a45938b5708862ea06e280b78089bfe5b08f37a69006fe3707d1796126122
 - `docs/results/execution_replay_calibration_loop.json`: present sha256:afed5a3dd9940f654b0d28186dca2ca6bdafaf4e3da119308efe397aa47a9705
 - `docs/results/execution_calibration_stability.json`: present sha256:f3c3ea588ca6a0bb7a7e4c9123aac73a7907a5664522dd6da0e2490cbc04006d
 - `docs/results/market_rules_fixture.json`: present sha256:cd79f3c9b0bfe5061a8c835d721973f607b557b1292bc5b0be2e084f0946216f
@@ -35,7 +35,7 @@ This is a local release-candidate manifest. Tagging and PyPI publication are sep
 - `docs/results/skill_task_matrix.md`: present sha256:560dd7f8427e44af316f90a84765acb80fd931b4862cf32cd6f41a73ecce26ae
 - `docs/results/community_registry.md`: present sha256:3f83f4b1504d6aed94517ab87bc3b27b19495d4ee51cf8b86cdfa2fc4c714bc1
 - `docs/public_artifact_privacy.md`: present sha256:4c52add96868290eab0b2f17aa060aaf94db052dd5a0bc048974e8b240b60d94
-- `docs/launch/release_notes_v0.2.1.md`: present sha256:cbf04eb605f0dfe92cd68bdd8bcc2aa7a87f7e221a87798ebe7ef255beb89a35
+- `docs/launch/release_notes_v0.2.1.md`: present sha256:8a0d326255aacca2f55cb32f0b822ce5ef7501e0d545f1e4a8dabf86a6fd6b60
 
 ## Release Notes Draft
 

@@ -30,7 +30,7 @@ def test_system_docs_use_trellm_identity():
         ],
         "docs/narrative_positioning.md": [
             "TreLLM should be described as an early-stage live-ready audit and control system",
-            "TradeArena should be described as the public leaderboard and benchmark module",
+            "TradeArena should be described as the public leaderboard module and benchmark-card surface",
             "TreLLM is an early-stage live-ready audit and control system for moving autonomous",
         ],
         "docs/research_protocol.md": [
@@ -53,6 +53,9 @@ def test_system_docs_use_trellm_identity():
         text = _normalized(_read_doc(path))
         for snippet in snippets:
             assert _normalized(snippet) in text
+
+    narrative_text = _normalized(_read_doc("docs/narrative_positioning.md"))
+    assert "TradeArena should be described as the public leaderboard and benchmark module" not in narrative_text
 
 
 def test_live_readiness_avoids_benchmark_module_system_framing():

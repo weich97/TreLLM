@@ -30,7 +30,6 @@ def test_github_templates_explain_trellm_and_tradearena_roles():
         for snippet in snippets:
             assert _normalized(snippet) in text
 
-
 def test_package_docstring_uses_trellm_system_identity():
     import tradearena
 
@@ -45,7 +44,7 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
     required_snippets = {
         "docs/contributor_roadmap.md": [
             "TreLLM grows best when contributions make financial AI agents easier to evaluate, audit, reproduce, control, or extend.",
-            "These contributions strengthen the TradeArena leaderboard and benchmark module.",
+            "These contributions strengthen the TradeArena leaderboard module and benchmark-card layer.",
         ],
         "docs/community_participation.md": [
             "TreLLM should not describe itself as community-backed until public, reviewable participation exists.",
@@ -72,6 +71,10 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
         text = _normalized(_read_text(path))
         for snippet in snippets:
             assert _normalized(snippet) in text
+
+    contributor_text = _normalized(_read_text("docs/contributor_roadmap.md"))
+    assert "TradeArena is the public leaderboard and benchmark module inside that system" not in contributor_text
+    assert "These contributions strengthen the TradeArena leaderboard and benchmark module." not in contributor_text
 
 
 def test_claim_and_validation_docs_use_trellm_for_system_claims():
@@ -170,7 +173,7 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
         "docs/blog/why_llm_trading_agents_need_audit_benchmarks.md": [
             "TreLLM takes a different view. It treats a financial AI agent as an auditable decision-making system:",
             "TreLLM renders this as a browser-readable audit report",
-            "TradeArena is its public leaderboard and benchmark module",
+            "TradeArena is its public leaderboard and benchmark-card layer",
         ],
         "docs/launch/README.md": [
             "# TreLLM Project Metadata",
@@ -194,10 +197,12 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
             "<h1>TreLLM Showcase: Quickstart Tour</h1>",
             'aria-label="TreLLM 3-minute demo video"',
             "What TreLLM is not:",
-            "TradeArena is the public leaderboard and benchmark module",
+            "TradeArena is the public leaderboard module",
+            "benchmark cards used only as citable evidence snapshots",
         ],
         "scripts/build_demo_video.py": [
             'draw.text((72, 36), "TreLLM", fill="#ccfbf1", font=fonts["brand"])',
+            "TradeArena is the public leaderboard module.",
         ],
         "scripts/validate_demo_artifacts.py": [
             'description="Validate required TreLLM demo artifacts."',
@@ -240,6 +245,7 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
             "Trajectory JSON written by a TreLLM run.",
             "<title>TreLLM Audit Report: Replayable Decision Trace</title>",
             "<h1>TreLLM Audit Report: Replayable Decision Trace</h1>",
+            "summarized in TradeArena leaderboard artifacts",
         ],
         "scripts/render_agent_autopsy_dashboard.py": [
             "Trajectory JSON written by a TreLLM run.",
@@ -259,6 +265,29 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
         text = _normalized(_read_text(path))
         for snippet in snippets:
             assert _normalized(snippet) in text
+
+def test_launch_and_generated_pages_avoid_generic_benchmark_module_framing():
+    forbidden_snippets = {
+        "scripts/run_showcase.py": [
+            "TradeArena is the public leaderboard and benchmark module",
+        ],
+        "scripts/build_demo_video.py": [
+            "TradeArena is the public leaderboard and benchmark module.",
+        ],
+        "scripts/render_audit_report.py": [
+            "TradeArena benchmark module",
+        ],
+        "scripts/build_benchmark_page.py": [
+            "public leaderboard and benchmark-card module inside that system",
+        ],
+        "docs/results/benchmark_v0_2.md": [
+            "public leaderboard and benchmark-card module inside that system",
+        ],
+    }
+    for path, snippets in forbidden_snippets.items():
+        text = _normalized(_read_text(path))
+        for snippet in snippets:
+            assert _normalized(snippet) not in text
 
 
 def test_developer_docs_use_trellm_for_system_surfaces():
@@ -418,11 +447,11 @@ def test_generated_public_copy_sources_use_trellm_system_identity():
         ],
         "scripts/build_benchmark_page.py": [
             "TreLLM is a financial-agent reliability audit and control system. TradeArena is the",
-            "public leaderboard and benchmark-card module inside that system",
+            "public leaderboard module and benchmark-card layer inside that system",
         ],
         "docs/results/benchmark_v0_2.md": [
             "TreLLM is a financial-agent reliability audit and control system. TradeArena is the public leaderboard",
-            "benchmark-card module inside that system",
+            "module and benchmark-card layer inside that system",
         ],
         "docs/benchmark_submissions.md": [
             "TradeArena accepts redacted leaderboard manifests so users can compare runs",
@@ -470,7 +499,7 @@ def test_release_notes_use_trellm_for_system_release_positioning():
         "docs/launch/release_notes_v0.2.1.md": [
             "TreLLM v0.2.1 is a patch-release candidate focused on evidence quality",
             "TreLLM remains an audit and live-readiness control system.",
-            "TradeArena remains the public leaderboard and benchmark module",
+            "TradeArena remains the public leaderboard module and benchmark-card layer",
             "Release readiness now checks public identity boundaries before publication.",
         ],
         "docs/launch/release_notes_v0.2.0.md": [
@@ -495,6 +524,9 @@ def test_release_notes_use_trellm_for_system_release_positioning():
         text = _normalized(_read_text(path))
         for snippet in snippets:
             assert _normalized(snippet) in text
+
+    current_release_text = _normalized(_read_text("docs/launch/release_notes_v0.2.1.md"))
+    assert "TradeArena remains the public leaderboard and benchmark module" not in current_release_text
 
 
 def test_launch_backlog_uses_trellm_for_future_system_tasks():

@@ -19,10 +19,10 @@
       "sha256": "sha256:8e688190ff17bc0fca691bcd600bc56bb13d1215d2b5d6a8ac611ae70e17b156"
     },
     {
-      "bytes": 12479,
+      "bytes": 12484,
       "exists": true,
       "path": "docs/results/benchmark_v0_2.md",
-      "sha256": "sha256:38f9468b9aab4e9b35044ba76dd473a3de4fc30d197f861e7ba2972d90437580"
+      "sha256": "sha256:319a45938b5708862ea06e280b78089bfe5b08f37a69006fe3707d1796126122"
     },
     {
       "bytes": 6924,
@@ -91,17 +91,17 @@
       "sha256": "sha256:4c52add96868290eab0b2f17aa060aaf94db052dd5a0bc048974e8b240b60d94"
     },
     {
-      "bytes": 2009,
+      "bytes": 2020,
       "exists": true,
       "path": "docs/launch/release_notes_v0.2.1.md",
-      "sha256": "sha256:cbf04eb605f0dfe92cd68bdd8bcc2aa7a87f7e221a87798ebe7ef255beb89a35"
+      "sha256": "sha256:8a0d326255aacca2f55cb32f0b822ce5ef7501e0d545f1e4a8dabf86a6fd6b60"
     }
   ],
-  "commit": "857e048365d7a70b480edba0f399592242f65d0f",
-  "created_at": "2026-06-05T09:48:48.357108+00:00",
+  "commit": "1ac5e95841ede6e86eb3de77b3aa9bae30b338ad",
+  "created_at": "2026-06-05T11:13:33.612180+00:00",
   "current_package_version": "0.2.0",
-  "dirty_file_count": 11,
-  "git_status_sha256": "sha256:f3589d7f2295388d533765bf778ead5b534f705f0da5cc477ed71c053a3c1965",
+  "dirty_file_count": 14,
+  "git_status_sha256": "sha256:04ab99a117436c9eceb5e3a71d0dfe4c15cc561fc5f4fb652db373df8cdd2c9f",
   "pre_release_commands": [
     "python -m compileall src scripts examples tests -q",
     "python -m ruff check src scripts examples tests",

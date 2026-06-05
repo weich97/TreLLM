@@ -111,7 +111,7 @@ SLIDES = [
         "id": "outro",
         "duration": 18,
         "title": "What TreLLM is for",
-        "subtitle": "Not another black-box trading bot: an audit and control system for financial-agent reliability. TradeArena is the public leaderboard and benchmark module.",
+        "subtitle": "Not another black-box trading bot: an audit and control system for financial-agent reliability. TradeArena is the public leaderboard module.",
         "bullets": [
             "Reproduce decisions, not just returns.",
             "Compare agents under the same execution and risk lifecycle.",

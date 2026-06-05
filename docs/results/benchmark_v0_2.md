@@ -1,10 +1,10 @@
 # TradeArena v0.2 Benchmark Card
 
 TreLLM is a financial-agent reliability audit and control system. TradeArena is the
-public leaderboard and benchmark-card module inside that system, not the whole project
-identity and not a profitability claim. This page gives a compact, citable snapshot of
-what the v0.2 artifacts show under execution realism, risk gates, and replayable intent-
-to-execution trajectories.
+public leaderboard module and benchmark-card layer inside that system, not the whole
+project identity and not a profitability claim. This page gives a compact, citable
+snapshot of what the v0.2 artifacts show under execution realism, risk gates, and
+replayable intent-to-execution trajectories.
 
 ## One-Sentence Finding
 

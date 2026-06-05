@@ -6,7 +6,7 @@ intent-to-execution audits in financial decision settings. It studies whether
 LLM-assisted trading agents, AI portfolio-manager prototypes, and multi-agent
 finance systems can be evaluated through replayable trajectories, explicit
 execution assumptions, auditable risk gates, and future broker-review
-handoffs. TradeArena is the public leaderboard and benchmark surface for
+handoffs. TradeArena is the public leaderboard module and benchmark-card surface for
 ranking comparable auditable runs. This white paper documents the current
 engineering model. It is not financial advice, not an unattended live trading
 system, and not a claim that the default parameters are calibrated to a specific

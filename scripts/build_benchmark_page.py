@@ -203,7 +203,7 @@ def _markdown(
         "",
         _wrap(
             "TreLLM is a financial-agent reliability audit and control system. TradeArena is the "
-            "public leaderboard and benchmark-card module inside that system, not the whole "
+            "public leaderboard module and benchmark-card layer inside that system, not the whole "
             "project identity and not a profitability claim. This page gives a compact, "
             "citable snapshot of what the v0.2 artifacts show under execution realism, risk "
             "gates, and replayable intent-to-execution trajectories."
@@ -851,7 +851,7 @@ code {{ background: #e2e8f0; border-radius: 5px; padding: 2px 5px; }}
 <main>
   <div class="hero">
     <h1>{BENCHMARK_TITLE}</h1>
-    <p class="lead">TradeArena is the public leaderboard and benchmark-card module inside TreLLM. This compact result page covers agent reliability and intent-to-execution audit, not profitability claims or financial advice.</p>
+    <p class="lead">TradeArena is the public leaderboard module and benchmark-card layer inside TreLLM. This compact result page covers agent reliability and intent-to-execution audit, not profitability claims or financial advice.</p>
     <div class="links">
       <a href="showcase.html">Showcase</a>
       <a href="audit_report.html">Audit report</a>

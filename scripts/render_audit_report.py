@@ -166,7 +166,7 @@ def _render(data: dict[str, Any], step_index: int, trajectory_path: Path) -> str
     <div class="hero">
       <div>
         <h1>TreLLM Audit Report: Replayable Decision Trace</h1>
-        <p>One replayable trading decision, rendered from the same trajectory JSON used by TreLLM and the TradeArena benchmark module. This report shows what the agent saw, what it proposed, how the risk gate revised it, what the execution simulator did, and which reproducibility fields make the step auditable.</p>
+        <p>One replayable trading decision, rendered from the same trajectory JSON used by TreLLM and summarized in TradeArena leaderboard artifacts. This report shows what the agent saw, what it proposed, how the risk gate revised it, what the execution simulator did, and which reproducibility fields make the step auditable.</p>
       </div>
       <div class="hero-card">
         <strong>Rendered step</strong>

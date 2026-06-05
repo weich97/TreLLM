@@ -57,7 +57,7 @@ A useful benchmark should answer:
 
 TreLLM renders this as a browser-readable audit report and keeps compact result
 snapshots for public reproduction. TradeArena is its public leaderboard and
-benchmark module for comparing reviewed rows.
+benchmark-card layer for comparing reviewed rows.
 
 ## Try It
 

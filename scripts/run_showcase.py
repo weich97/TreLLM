@@ -334,7 +334,7 @@ h1 { margin: 0 0 12px; font-size: 42px; line-height: 1.06; letter-spacing: 0; }
   <section class="hero">
     <div>
       <h1>TreLLM: LLM Trading Audit And Control</h1>
-      <p class="lead">The showcase path validates the deterministic runner, risk gate, execution simulator, and trajectory artifacts without live provider calls. TreLLM also includes opt-in live or cache-backed LLM analyst runs through the same reliability lifecycle: observation -> signal -> intended allocation -> risk gate -> order -> fill/rejection -> portfolio state -> diagnostic report. TradeArena is the public leaderboard and benchmark module for reviewed rows.</p>
+      <p class="lead">The showcase path validates the deterministic runner, risk gate, execution simulator, and trajectory artifacts without live provider calls. TreLLM also includes opt-in live or cache-backed LLM analyst runs through the same reliability lifecycle: observation -> signal -> intended allocation -> risk gate -> order -> fill/rejection -> portfolio state -> diagnostic report. TradeArena is the public leaderboard module for reviewed rows, with benchmark cards used only as citable evidence snapshots.</p>
       <div class="cta">
         <a href="showcase.html">Open showcase</a>
         <a href="benchmark-v0.2.html">Benchmark v0.2</a>
@@ -372,7 +372,7 @@ python scripts/run_showcase.py
     <a class="card" href="crisis_snapshot_gallery.html"><strong>Crisis-scene visual probes</strong><span>Inspect representation trajectories, correlation/intent heatmaps, feedback curves, and exposure waterfalls.</span></a>
     <a class="card" href="extension_walkthrough.svg"><strong>Contributor extension path</strong><span>See how custom analysts, risk managers, and evaluators plug into the fixed protocol stack.</span></a>
   </section>
-  <p class="note"><strong>What TreLLM is not:</strong> it is not financial advice, not a live trading bot, and not a promise of profitable trading. TreLLM is an audit and control system for financial AI agent reliability; TradeArena is the public leaderboard and benchmark module.</p>
+  <p class="note"><strong>What TreLLM is not:</strong> it is not financial advice, not a live trading bot, and not a promise of profitable trading. TreLLM is an audit and control system for financial AI agent reliability; TradeArena is the public leaderboard module.</p>
 </main>
 </html>
 """

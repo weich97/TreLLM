@@ -2,8 +2,8 @@
 
 TreLLM should be described as an early-stage live-ready audit and control system
 for agent reliability in financial decision systems, not only as a trading
-benchmark. TradeArena should be described as the public leaderboard and
-benchmark module. Trading remains the main experimental domain because it
+benchmark. TradeArena should be described as the public leaderboard module and
+benchmark-card surface. Trading remains the main experimental domain because it
 exposes a compact chain from observation to intent, risk control, execution,
 broker handoff, reconciliation, and realized state.
 

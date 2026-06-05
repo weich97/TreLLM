@@ -3,7 +3,7 @@
 TreLLM v0.2.1 is a patch-release candidate focused on evidence quality,
 artifact boundaries, and third-party reproducibility. It does not change the
 public claim boundary: TreLLM remains an audit and live-readiness control system.
-TradeArena remains the public leaderboard and benchmark module with no default
+TradeArena remains the public leaderboard module and benchmark-card layer with no default
 live-order path, not an unattended trading bot or profitability leaderboard.
 
 ## Highlights

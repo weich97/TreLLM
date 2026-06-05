@@ -120,8 +120,9 @@ TradeArena is its public leaderboard for ranking auditable agent runs.
        width="980">
 </p>
 
-The current public benchmark path runs offline and paper/sandbox experiments.
-The project is still an early-stage research prototype, but it is intentionally
+The current public path runs offline and paper/sandbox TreLLM experiments, with
+TradeArena providing the comparable leaderboard and benchmark-card layer. The
+system is still an early-stage research prototype, but it is intentionally
 organized so future broker-facing adapters can inherit the same risk gates,
 execution calibration, human approval records, reconciliation artifacts, and
 audit logs. See [`docs/live_trading_readiness.md`](docs/live_trading_readiness.md).
@@ -134,7 +135,7 @@ comparison surfaces inside that system.
 The `tradearena` command and package remain the compatibility surface for the
 current public release, so existing notebooks, install commands, imports, and
 GitHub Pages links keep working while the system identity moves beyond a
-benchmark-only framing.
+leaderboard-only framing.
 
 ## External Validators Wanted
 
@@ -625,9 +626,9 @@ python -m pip install "git+https://github.com/weich97/TradeArena.git"
 tradearena --benchmark tradearena-core
 ```
 
-## Benchmark Result
+## TradeArena Result
 
-The v0.2 benchmark card makes one limited claim:
+The v0.2 TradeArena benchmark card makes one limited claim:
 
 > Autonomous financial-agent results can change materially once risk gates and
 > paper-execution costs are included.
@@ -710,11 +711,12 @@ classical strategies before any scientific model claim is credible.
 The quality decomposition separates pre-risk alpha quality, risk discipline,
 and execution robustness in a three-axis radar chart.
 
-## Benchmark Maturity
+## System And Leaderboard Maturity
 
-Before calling TradeArena an externally validated community benchmark, three
-pieces still need to exist: a stable academic report, independent validation
-reports, and non-maintainer contributions that are reviewed in public.
+Before calling TreLLM externally validated, or calling TradeArena a
+community-backed leaderboard benchmark, three pieces still need to exist: a
+stable academic report, independent validation reports, and non-maintainer
+contributions that are reviewed in public.
 
 - Maturity track: [`docs/benchmark_maturity.md`](docs/benchmark_maturity.md)
 - Academic report plan: [`docs/academic_report_plan.md`](docs/academic_report_plan.md)

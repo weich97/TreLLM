@@ -17,7 +17,7 @@ current maturity.
 | --- | --- | --- |
 | Academic report | Technical white paper, research protocol, benchmark card, live LLM smoke baseline | A peer-review-style report with frozen claims, external validation appendix, and stable tables/figures |
 | External validation | Redacted benchmark schema, validation scripts, release-readiness checks, fill-comparison protocol | Independent reproduction reports from users who are not maintainers |
-| Community participation | Contribution guide, issue templates, roadmap, benchmark submission format | External issues/PRs/benchmark rows that are reviewed and accepted |
+| Community participation | Contribution guide, issue templates, roadmap, TradeArena submission format | External issues/PRs/leaderboard rows that are reviewed and accepted |
 
 Owner-maintained examples, generated demos, and internal paper artifacts are not
 community adoption signals. They are useful scaffolding, but the project should
@@ -26,14 +26,15 @@ replicable evidence.
 
 ## Evidence Bar
 
-TradeArena can credibly describe its leaderboard as a niche benchmark only
-after the following minimum evidence exists:
+TreLLM can credibly describe itself as externally validated, and TradeArena can
+credibly describe its leaderboard module as a niche benchmark, only after the
+following minimum evidence exists:
 
 | Evidence | Minimum public bar |
 | --- | --- |
 | Academic report | Versioned PDF or preprint tied to a release tag, with experiment commands and limitations |
 | External validation | At least three independent replication or calibration reports, each naming commit, environment, commands, and artifacts |
-| Community participation | At least two non-maintainer merged PRs or accepted benchmark rows, plus one resolved external critique |
+| Community participation | At least two non-maintainer merged PRs or accepted leaderboard rows, plus one resolved external critique |
 | Execution realism | At least one quote/fill-log comparison using `scripts/compare_execution_to_fills.py` |
 | LLM benchmark value | At least one provider-backed baseline and one independently submitted redacted LLM benchmark row |
 

@@ -245,6 +245,8 @@ LEGACY_PUBLIC_IDENTITY_PHRASES = [
     "The task suite measures TradeArena-specific audit ability rather than trading ability:",
     "You are evaluating TradeArena as a financial-audit agent, not as a trader.",
     "TradeArena's public audit, risk, execution-boundary, reproduction, claim-boundary, and plugin-review rubrics",
+    "The current public benchmark path",
+    "Before calling TradeArena an externally validated community benchmark",
 ]
 CI_REQUIRED_GATE_COMMANDS = [
     "python -m compileall src scripts examples tests -q",

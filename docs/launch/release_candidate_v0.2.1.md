@@ -6,8 +6,8 @@ This is a local release-candidate manifest. Tagging and PyPI publication are sep
 
 - Target release: `v0.2.1`
 - Current package version: `0.2.0`
-- Commit: `e02bc919c3d7d8ddf61d54e886d9fafdc67f204b`
-- Working tree dirty entries when generated: `3`
+- Commit: `b58eafecb9272a75522fabb498b6ccba9492737d`
+- Working tree dirty entries when generated: `8`
 
 ## Pre-Release Commands
 

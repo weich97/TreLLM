@@ -1,9 +1,10 @@
 # TradeArena v0.2 Benchmark Card
 
 TreLLM is a financial-agent reliability audit and control system. TradeArena is the
-benchmark card and leaderboard surface, not a profitability claim. This page gives a
-compact, citable snapshot of what the v0.2 artifacts show under execution realism, risk
-gates, and replayable intent-to-execution trajectories.
+public leaderboard and benchmark-card module inside that system, not the whole project
+identity and not a profitability claim. This page gives a compact, citable snapshot of
+what the v0.2 artifacts show under execution realism, risk gates, and replayable intent-
+to-execution trajectories.
 
 ## One-Sentence Finding
 
@@ -66,8 +67,8 @@ reproduction.
 
 | Scenario | Agent / baseline | Return | Max drawdown | Fill rate | Rejection rate | Risk edits | Audit completeness |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| deterministic quickstart | buy_and_hold_realistic | 53.74% | -6.63% | 90.68% | 8.05% | 0 | 100.00% |
-| deterministic quickstart | risk_aware_realistic | 35.08% | -1.26% | 90.91% | 7.39% | 124 | 100.00% |
+| deterministic quickstart | buy_and_hold_realistic | 53.74% | -6.63% | 89.83% | 8.90% | 0 | 100.00% |
+| deterministic quickstart | risk_aware_realistic | 35.08% | -1.26% | 90.34% | 7.95% | 124 | 100.00% |
 
 ## Execution Calibration Evidence
 

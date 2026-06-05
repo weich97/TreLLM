@@ -1,10 +1,10 @@
 # Community Participation
 
 TreLLM should not describe itself as community-backed until public, reviewable
-participation exists. TradeArena names the public leaderboard and benchmark
-module where reviewed rows can be compared. This document defines what counts
-and how to contribute without exposing provider text, credentials, or private
-trading data.
+participation exists. TradeArena names the public leaderboard module where
+reviewed rows and benchmark cards can be compared. This document defines what
+counts and how to contribute without exposing provider text, credentials, or
+private trading data.
 
 ## Current Position
 
@@ -59,6 +59,6 @@ A community contribution should be small enough to audit:
 | First external adapter PR | A non-maintainer contributes a data, model, risk, or execution adapter |
 | First external methodology critique resolved | A reviewer concern leads to a code or documentation change |
 
-Until these milestones exist, public language should say "early-stage research
-prototype with a public TradeArena leaderboard module" rather than "community
-benchmark."
+Until these milestones exist, public language should say "TreLLM is an
+early-stage research prototype with a public TradeArena leaderboard module"
+rather than implying external community validation for the whole system.

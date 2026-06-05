@@ -48,9 +48,9 @@ rejections or invalid memory entries have less influence than fresh evidence.
 Each decision records a weighted `memory_pollution_ratio` for missing equity,
 explicitly polluted memory, rejected orders, or risk violations, and a
 `memory_driven_leverage_amplification` diagnostic comparing the memory-adjusted
-target exposure with the base signal-weighted target. These fields let a
-benchmark separate useful learning from leverage that was amplified by noisy
-memory.
+target exposure with the base signal-weighted target. These fields let the
+TreLLM audit trail and TradeArena leaderboard module separate useful learning
+from leverage that was amplified by noisy memory.
 
 ## 2. Execution Simulation Model
 

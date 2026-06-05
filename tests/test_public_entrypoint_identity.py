@@ -240,6 +240,19 @@ def test_release_notes_use_trellm_for_system_release_positioning():
             assert _normalized(snippet) in text
 
 
+def test_launch_backlog_uses_trellm_for_future_system_tasks():
+    required_snippets = {
+        "docs/launch/issue_backlog.md": [
+            "Build an offline broker-review adapter that converts approved TreLLM orders",
+            "wrapped as a TreLLM strategy or analyst through the `tradearena` package interfaces.",
+        ],
+    }
+    for path, snippets in required_snippets.items():
+        text = _normalized(_read_text(path))
+        for snippet in snippets:
+            assert _normalized(snippet) in text
+
+
 def test_citation_and_research_report_keep_system_and_leaderboard_identity_separate():
     required_snippets = {
         "CITATION.cff": [

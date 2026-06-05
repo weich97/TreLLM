@@ -20,6 +20,8 @@ def test_system_docs_use_trellm_identity():
         "docs/advanced_integrations_security.md": [
             "TreLLM supports optional model, market-data, paper-broker, and future broker-facing integration paths.",
             "TradeArena leaderboard artifacts",
+            "Create review files that a human can inspect outside TreLLM",
+            "Any adapter that can submit live orders is outside the public TradeArena leaderboard path",
         ],
         "docs/live_trading_readiness.md": [
             "TreLLM should grow beyond a paper-only benchmark module",

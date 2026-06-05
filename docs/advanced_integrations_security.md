@@ -14,7 +14,7 @@ stay reproducible from tracked metadata and redacted manifests.
 | Cache replay | No | No | No | Reuse prior model outputs through local caches or redacted manifests |
 | Live LLM analyst | Yes | Provider API key | No | Measure model behavior, risk feedback, and parsing coverage |
 | Market-data download | Yes | Usually no key for Yahoo/AkShare scripts | No | Build normalized OHLCV CSV inputs with source metadata |
-| Broker review export | No broker submission | No broker key required | No | Create review files that a human can inspect outside TradeArena |
+| Broker review export | No broker submission | No broker key required | No | Create review files that a human can inspect outside TreLLM |
 | Paper trading sandbox | Broker paper API only | Paper-account credentials | No | Test broker request/response and reconciliation without live capital |
 | Human-approved live adapter | Broker live API | Broker credentials | Only after explicit approval | Future supervised execution track, outside benchmark claims |
 
@@ -95,7 +95,7 @@ adapter must default to one of these modes:
 - human-approved review;
 - redacted manifest generation.
 
-Any adapter that can submit live orders is outside the public benchmark path,
+Any adapter that can submit live orders is outside the public TradeArena leaderboard path,
 must be separate from default examples, and must satisfy
 [`broker_adapter_contract.md`](broker_adapter_contract.md). At minimum it needs
 explicit mode selection, sandbox configuration, human approval before live

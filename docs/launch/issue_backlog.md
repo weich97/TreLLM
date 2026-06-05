@@ -13,7 +13,7 @@ Labels: `good first issue`, `adapter`, `paper-trading`
 Status: implemented in `examples/alpaca_paper_export_demo.py` and
 `src/tradearena/tools/broker_export.py`.
 
-Build an offline broker-review adapter that converts approved TradeArena orders
+Build an offline broker-review adapter that converts approved TreLLM orders
 into a neutral export format compatible with Alpaca paper-trading review. The
 first version should not submit live orders.
 
@@ -59,8 +59,9 @@ Status: implemented as a deterministic integration baseline in
 `examples/rl_policy_baseline_demo.py` and `src/tradearena/agents/rl.py`.
 
 Add an interface example showing how a trained RL allocation policy can be
-wrapped as a TradeArena strategy or analyst. The goal is integration and audit
-compatibility, not state-of-the-art RL performance.
+wrapped as a TreLLM strategy or analyst through the `tradearena` package
+interfaces. The goal is integration and audit compatibility, not
+state-of-the-art RL performance.
 
 ### Add a multi-window intraday benchmark registry
 

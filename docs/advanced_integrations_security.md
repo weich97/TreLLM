@@ -1,9 +1,10 @@
 # Advanced Integration Safety
 
-TradeArena supports optional model, market-data, paper-broker, and future
+TreLLM supports optional model, market-data, paper-broker, and future
 broker-facing integration paths. These paths are research and control-plane
 utilities, not permission to run unattended live trading. The default repository
-path remains offline and deterministic.
+path remains offline and deterministic. TradeArena leaderboard artifacts should
+stay reproducible from tracked metadata and redacted manifests.
 
 ## Integration Modes
 
@@ -39,8 +40,9 @@ $env:OPENAI_API_KEY = "..."
 ```
 
 - Keep local secret files under ignored paths such as `.env`, `.secrets/`, or
-  `data/private/`. The public benchmark should be reproducible from code,
-  tracked metadata, and redacted manifests, not from private credentials.
+  `data/private/`. Public TradeArena leaderboard artifacts should be
+  reproducible from code, tracked metadata, and redacted manifests, not from
+  private credentials.
 
 ## LLM Provider Rules
 

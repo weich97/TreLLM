@@ -1,10 +1,11 @@
 # Getting Started
 
-TradeArena is easiest to evaluate as a sequence of explicit run modes. Treat it
-as an early-stage reliability lab for financial AI agents: the first run checks
-the runner, trajectory schema, risk gate, execution simulator, and metric stack.
-It is not a live LLM call. LLM agent runs are opt-in once you configure a
-provider key or a local cache.
+TreLLM is easiest to evaluate as a sequence of explicit run modes. Treat it as
+an early-stage reliability lab for financial AI agents: the first run checks the
+runner, trajectory schema, risk gate, execution simulator, and metric stack. It
+is not a live LLM call. LLM agent runs are opt-in once you configure a provider
+key or a local cache. TradeArena remains the public leaderboard and ranking
+surface for comparable benchmark artifacts.
 
 ## Five-Minute Path
 

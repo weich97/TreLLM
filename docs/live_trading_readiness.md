@@ -1,10 +1,10 @@
 # Live Trading Readiness
 
-TradeArena should grow beyond a paper-only benchmark, but it should not jump
-straight from benchmark rows to unattended live orders. The intended direction
-is **live-ready, human-gated trading infrastructure**: every order candidate is
-observable, risk-checked, calibrated, exported, approved, reconciled, and
-auditable before any broker-facing adapter can submit it.
+TreLLM should grow beyond a paper-only benchmark module, but it should not jump
+straight from TradeArena leaderboard rows to unattended live orders. The
+intended direction is **live-ready, human-gated trading infrastructure**: every
+order candidate is observable, risk-checked, calibrated, exported, approved,
+reconciled, and auditable before any broker-facing adapter can submit it.
 
 The default repository path remains safe: first-run commands do not place live
 orders or require broker credentials. The long-term value is that the same
@@ -12,7 +12,7 @@ audit stack can become the control plane around real trading systems.
 
 ## Maturity Ladder
 
-| Stage | Name | What TradeArena can do | Required evidence before moving on |
+| Stage | Name | What TreLLM can do | Required evidence before moving on |
 | --- | --- | --- | --- |
 | 0 | Offline benchmark | Run deterministic agents, risk gates, and stress execution without network calls. | Reproducible trajectory, schema validation, release-readiness checks. |
 | 1 | Calibrated paper research | Fit or replay execution assumptions from quote, order-book, or fill evidence. | Calibration report with source, venue, date range, residuals, and hashes. |

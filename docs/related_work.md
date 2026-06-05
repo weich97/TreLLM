@@ -1,9 +1,10 @@
 # Related Work And Positioning
 
-TradeArena is designed to complement, not replace, existing financial AI and
-agent frameworks. Its niche is auditability, realistic execution, risk gates,
-and replayable benchmark artifacts for financial-agent reliability: LLM trading
-agents, AI portfolio-manager prototypes, and multi-agent finance systems.
+TreLLM is designed to complement, not replace, existing financial AI and agent
+frameworks. Its niche is auditability, realistic execution, risk gates, and
+replayable artifacts for financial-agent reliability: LLM trading agents, AI
+portfolio-manager prototypes, and multi-agent finance systems. TradeArena is
+the leaderboard and benchmark layer inside TreLLM.
 
 ## Trading-Agent Frameworks
 
@@ -11,14 +12,14 @@ agents, AI portfolio-manager prototypes, and multi-agent finance systems.
 
 TradingAgents focuses on multi-agent LLM trading workflows.
 
-TradeArena is complementary: it focuses on replayable trajectories, risk-gate
+TreLLM is complementary: it focuses on replayable trajectories, risk-gate
 intervention logs, execution realism, and benchmark artifacts.
 
 ### FinRobot
 
 FinRobot focuses on financial analysis and equity-research agents.
 
-TradeArena is a simulation, audit, and evaluation layer for decision traces
+TreLLM is a simulation, audit, and evaluation layer for decision traces
 rather than an analyst-only assistant.
 
 ## Financial AI And Quant Platforms
@@ -28,21 +29,21 @@ rather than an analyst-only assistant.
 FinRL and FinRL-Meta focus on financial reinforcement learning environments and
 benchmarks.
 
-TradeArena can host quant or RL-style baselines, but centers LLM decision
+TreLLM can host quant or RL-style baselines, but centers LLM decision
 chains, tool traces, risk reports, and realistic order simulation.
 
 ### FinGPT
 
 FinGPT focuses on financial LLM data and adaptation.
 
-TradeArena evaluates how model-backed agents behave under market constraints,
+TreLLM evaluates how model-backed agents behave under market constraints,
 risk feedback, and execution friction.
 
 ### Qlib
 
 Qlib focuses on quantitative investment research workflows.
 
-TradeArena is lighter-weight and agent-native, with emphasis on reproducible
+TreLLM is lighter-weight and agent-native, with emphasis on reproducible
 audit logs and execution-aware evaluation.
 
 ## Backtesting And Data Tooling
@@ -51,20 +52,20 @@ audit logs and execution-aware evaluation.
 
 Backtrader and Zipline are classic backtesting engines.
 
-TradeArena adds agent traces, risk lifecycle reports, memory state, and
+TreLLM adds agent traces, risk lifecycle reports, memory state, and
 LLM-specific replay metadata.
 
 ### Nautilus Trader / QuantConnect LEAN
 
 Nautilus Trader and QuantConnect LEAN are mature trading and backtesting
 systems with richer execution, brokerage, and venue abstractions than
-TradeArena's current prototype. TradeArena's execution layer should therefore
+TreLLM's current prototype. TreLLM's execution layer should therefore
 be read as an auditable stress model unless its parameters are calibrated
 against quote and fill logs.
 
 ### Execution And Market-Impact Literature
 
-TradeArena's spread, participation, slippage, and impact surfaces are aligned
+TreLLM's spread, participation, slippage, and impact surfaces are aligned
 with standard market-microstructure calibration questions: Kyle-style order-flow
 impact, Almgren-Chriss optimal execution, direct estimation of equity market
 impact from fills, and empirical studies of how markets absorb supply and
@@ -76,8 +77,8 @@ provided.
 
 OpenBB focuses on financial data and research tooling.
 
-TradeArena can consume market data adapters, but its core contribution is the
-benchmark and audit protocol.
+TreLLM can consume market data adapters, but its core contribution is the audit
+protocol. The TradeArena leaderboard layer keeps the evaluation traceable.
 
 ## General Agent Orchestration
 
@@ -85,7 +86,7 @@ benchmark and audit protocol.
 
 These systems focus on general agent orchestration.
 
-TradeArena provides finance-specific schemas, risk gates, execution simulators,
+TreLLM provides finance-specific schemas, risk gates, execution simulators,
 and trading-agent metrics.
 
 ## Why This Distinction Matters
@@ -95,11 +96,12 @@ agents because the result depends on prompt version, retrieved context, tool
 outputs, memory state, model version, market timestamp, risk constraints,
 portfolio state, execution simulator state, and random seed.
 
-TradeArena asks a different question:
+TreLLM asks a different question:
 
 > Can the agent's decision be replayed, audited, risk-checked, and compared
 > under realistic execution assumptions?
 
 This makes the framework useful alongside stronger forecasting, research, and
-RL systems. Those systems can plug into TradeArena as analysts, strategies, risk
-modules, or baselines while the benchmark layer keeps the evaluation traceable.
+RL systems. Those systems can plug into TreLLM as analysts, strategies, risk
+modules, or baselines while the TradeArena leaderboard layer keeps the
+evaluation traceable.

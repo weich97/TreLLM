@@ -1,6 +1,10 @@
-# TradeArena Research Protocol
+# TreLLM Research Protocol
 
-TradeArena is meant to support system-style AI finance papers. A valid experiment should preserve enough evidence to reconstruct what the agent observed, why it acted, which risk constraints were triggered, how execution changed the intended trade, and how the portfolio evolved afterward.
+TreLLM is meant to support system-style AI finance papers. A valid experiment
+should preserve enough evidence to reconstruct what the agent observed, why it
+acted, which risk constraints were triggered, how execution changed the
+intended trade, and how the portfolio evolved afterward. TradeArena names the
+leaderboard and benchmark layer for comparable public artifacts.
 
 ## Required Artifacts
 

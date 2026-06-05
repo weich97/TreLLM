@@ -1,10 +1,11 @@
 # Narrative Positioning
 
-TradeArena should be described as an early-stage live-ready audit framework for
-agent reliability in financial decision systems, not only as a trading
-benchmark. Trading remains the main experimental domain because it exposes a
-compact chain from observation to intent, risk control, execution, broker
-handoff, reconciliation, and realized state.
+TreLLM should be described as an early-stage live-ready audit and control system
+for agent reliability in financial decision systems, not only as a trading
+benchmark. TradeArena should be described as the public leaderboard and
+benchmark module. Trading remains the main experimental domain because it
+exposes a compact chain from observation to intent, risk control, execution,
+broker handoff, reconciliation, and realized state.
 
 ## Core Narrative
 
@@ -23,7 +24,7 @@ Use three phrases consistently:
 
 ## Scope
 
-TradeArena currently implements offline and paper/sandbox financial-agent
+TreLLM currently implements offline and paper/sandbox financial-agent
 experiments, plus an export-only broker review surface. It can support:
 
 - LLM-assisted financial-agent evaluation;
@@ -41,6 +42,7 @@ current integration stage from [`live_trading_readiness.md`](live_trading_readin
 
 ## Preferred One-Liner
 
-TradeArena is an early-stage live-ready audit framework for moving autonomous
+TreLLM is an early-stage live-ready audit framework for moving autonomous
 financial-agent intent through risk controls, execution evidence, broker
-review, and reproducible accountability.
+review, and reproducible accountability. TradeArena is the public leaderboard
+for comparing auditable runs from that system.

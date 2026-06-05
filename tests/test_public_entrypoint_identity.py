@@ -121,6 +121,18 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
         "scripts/validate_demo_artifacts.py": [
             'description="Validate required TreLLM demo artifacts."',
         ],
+        "scripts/run_launch_demo.py": [
+            'description="Run the offline TreLLM launch demo."',
+            'print("TreLLM launch demo", flush=True)',
+        ],
+        "scripts/run_paper_design_demos.py": [
+            'print("TreLLM experiment-design demo suite")',
+            "<title>TreLLM Experiment-Design Demos</title>",
+            "<h1>TreLLM Experiment-Design Demos</h1>",
+        ],
+        "examples/akshare_csv_reuse_demo.py": [
+            'print("AkShare -> normalized CSV -> TreLLM demo")',
+        ],
     }
     for path, snippets in required_snippets.items():
         text = _normalized(_read_text(path))

@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run the offline TradeArena launch demo.")
+    parser = argparse.ArgumentParser(description="Run the offline TreLLM launch demo.")
     parser.add_argument(
         "--skip-paper-figures",
         action="store_true",
@@ -17,8 +17,8 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    print("TradeArena launch demo", flush=True)
-    print("======================", flush=True)
+    print("TreLLM launch demo", flush=True)
+    print("===================", flush=True)
     print("This run requires no keys and stays offline: no DeepSeek, Poe, OpenAI, or market-data calls.", flush=True)
     print(flush=True)
 

@@ -41,7 +41,7 @@ def main() -> int:
     write_json(OUTPUT_DIR / "akshare_csv_reuse_summary.json", summary)
     _write_svg(OUTPUT_DIR / "akshare_csv_reuse.svg", summary)
 
-    print("AkShare -> normalized CSV -> TradeArena demo")
+    print("AkShare -> normalized CSV -> TreLLM demo")
     print(f"  rows={summary['steps']} symbols={', '.join(summary['symbols'])}")
     print(f"  final_equity={summary['final_equity']:.2f} total_return={summary['total_return']:.4f}")
     print(f"  reused={summary['provider_reused']}")

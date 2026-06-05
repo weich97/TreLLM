@@ -36,8 +36,8 @@ DEMOS = [
 
 
 def main() -> int:
-    print("TradeArena experiment-design demo suite")
-    print("=======================================")
+    print("TreLLM experiment-design demo suite")
+    print("===================================")
     print("Offline-friendly demos aligned with core framework experiment axes.")
     for idx, (title, _, script, _) in enumerate(DEMOS, start=1):
         print(f"\n{idx}/{len(DEMOS)} {title}", flush=True)
@@ -66,7 +66,7 @@ def _write_index(path: Path) -> None:
     html = f"""<!doctype html>
 <html lang="en">
 <meta charset="utf-8">
-<title>TradeArena Experiment-Design Demos</title>
+<title>TreLLM Experiment-Design Demos</title>
 <style>
 body {{ margin: 0; font-family: Inter, Arial, sans-serif; background: #f8fafc; color: #0f172a; }}
 main {{ max-width: 1040px; margin: 0 auto; padding: 42px 28px; }}
@@ -79,7 +79,7 @@ h1 {{ margin: 0 0 8px; font-size: 32px; letter-spacing: 0; }}
 .card p {{ margin: 0; color: #64748b; font-size: 13px; line-height: 1.45; }}
 </style>
 <main>
-  <h1>TradeArena Experiment-Design Demos</h1>
+  <h1>TreLLM Experiment-Design Demos</h1>
   <p class="lead">These offline-friendly hands-on examples exercise four framework axes: execution realism, quant baselines, representation diagnostics, and modular extensibility.</p>
   <section class="grid">
     {cards}

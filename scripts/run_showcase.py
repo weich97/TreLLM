@@ -212,7 +212,7 @@ def _preserve_launch_portal() -> None:
     if not source.exists():
         return
     text = source.read_text(encoding="utf-8", errors="ignore")
-    if "TradeArena launch demo" in text or "One offline launch path" in text:
+    if "TreLLM launch demo" in text or "One offline launch path" in text:
         shutil.copy2(source, target)
 
 

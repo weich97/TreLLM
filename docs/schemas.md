@@ -207,6 +207,22 @@ Validate the offline demo runbook with:
 tradearena validate-operator-runbook outputs/examples/operator_runbook/summary.json
 ```
 
+## Live-Readiness Preflight Bundle Schema
+
+Live-readiness preflight bundles can be validated against
+[`../schemas/live_readiness_preflight.schema.json`](../schemas/live_readiness_preflight.schema.json).
+The schema fixes the public `trellm_live_readiness_preflight_v0.1` contract for
+linking a broker capability manifest, handoff artifact, approval artifact,
+response artifact, and operator runbook into one reviewable safety packet.
+Runtime validation then calls the component validators and checks approval
+binding plus capability-mode consistency.
+
+Validate the offline demo preflight bundle with:
+
+```bash
+tradearena validate-live-readiness outputs/examples/live_readiness_preflight/preflight_bundle.json --now 2026-05-31T12:30:00Z
+```
+
 ## Reproduction Report Schema
 
 The external reproduction report schema lives at

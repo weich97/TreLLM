@@ -219,6 +219,13 @@ without reading the full source tree.
 - Shows: human-gated live-readiness checks for adapter mode, approval expiry,
   kill switch, reconciliation, rollback, and artifact retention.
 
+### Live-Readiness Preflight Bundle
+
+- Run: `python examples/live_readiness_preflight_demo.py`
+- Artifact: `outputs/examples/live_readiness_preflight/preflight_summary.json`
+- Shows: capability, handoff, approval binding, response reconciliation, and
+  operator runbook artifacts checked together before a broker-facing review.
+
 ### Live-Readiness Contract
 
 - Read:

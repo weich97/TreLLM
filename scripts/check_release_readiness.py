@@ -102,6 +102,7 @@ REQUIRED_FILES = [
     "schemas/broker_response_artifact.schema.json",
     "schemas/calibration_profile.schema.json",
     "schemas/demo_artifact_contract.schema.json",
+    "schemas/live_readiness_preflight.schema.json",
     "schemas/operator_runbook_artifact.schema.json",
     "schemas/reproduction_report.schema.json",
     "schemas/skill_answer_set.schema.json",
@@ -205,6 +206,7 @@ REQUIRED_FILES = [
     "scripts/compare_execution_to_fills.py",
     "scripts/calibrate_quote_fill_model.py",
     "examples/broker_capability_manifest_demo.py",
+    "examples/live_readiness_preflight_demo.py",
     "scripts/download_binance_microstructure_sample.py",
     "scripts/validate_benchmark_spec.py",
     "scripts/validate_reproduction_report.py",
@@ -212,6 +214,7 @@ REQUIRED_FILES = [
     "scripts/run_failure_autopsy.py",
     "scripts/validate_benchmark_submission.py",
     "scripts/validate_broker_adapter_capability.py",
+    "scripts/validate_live_readiness_preflight.py",
     "scripts/validate_demo_artifacts.py",
     "SECURITY.md",
 ]

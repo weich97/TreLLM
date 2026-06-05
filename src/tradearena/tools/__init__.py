@@ -48,6 +48,7 @@ from tradearena.tools.calibration import (
 )
 from tradearena.tools.features import RollingFeatureStore
 from tradearena.tools.futures import FuturesContractMetadata, FuturesRollRiskEngine
+from tradearena.tools.live_readiness import validate_live_readiness_preflight_bundle_file
 from tradearena.tools.market_rules import (
     MarketRule,
     MarketRuleDecision,
@@ -131,5 +132,6 @@ __all__ = [
     "validate_broker_handoff_artifact_file",
     "validate_broker_response_artifact",
     "validate_broker_response_artifact_file",
+    "validate_live_readiness_preflight_bundle_file",
     "write_broker_response_artifact",
 ]

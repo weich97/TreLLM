@@ -280,7 +280,23 @@ Output:
 - `outputs/examples/dry_run_broker_adapter/dry_run_orders.json`
 - `outputs/examples/dry_run_broker_adapter/dry_run_orders.csv`
 
-## 17. Broker Approval Safety
+## 17. Broker Capability Manifest
+
+```bash
+python examples/broker_capability_manifest_demo.py
+```
+
+Writes the adapter capability declaration reviewers should inspect before a
+broker-facing adapter is accepted. It names supported modes, account modes,
+credential policy, network access, and live-safety controls without reading
+credentials or submitting orders.
+
+Output:
+
+- `outputs/examples/broker_capability_manifest/capability_manifest.json`
+- `outputs/examples/broker_capability_manifest/capability_manifest.md`
+
+## 18. Broker Approval Safety
 
 ```bash
 python examples/broker_approval_safety_demo.py
@@ -296,7 +312,7 @@ Output:
 - `outputs/examples/broker_approval_safety/summary.json`
 - `outputs/examples/broker_approval_safety/broker_approval_artifact.json`
 
-## 18. Broker Response Reconciliation
+## 19. Broker Response Reconciliation
 
 ```bash
 python examples/broker_response_reconciliation_demo.py
@@ -312,7 +328,7 @@ Output:
 - `outputs/examples/broker_response_reconciliation/broker_response_artifact.json`
 - `outputs/examples/broker_response_reconciliation/alpaca_paper_orders.json`
 
-## 19. Operator Runbook Checklist
+## 20. Operator Runbook Checklist
 
 ```bash
 python examples/operator_runbook_demo.py
@@ -327,7 +343,22 @@ Output:
 - `outputs/examples/operator_runbook/summary.json`
 - `outputs/examples/operator_runbook/operator_runbook.md`
 
-## 20. Holdings CSV Import
+## 21. Live-Readiness Preflight Bundle
+
+```bash
+python examples/live_readiness_preflight_demo.py
+```
+
+Links the capability manifest, handoff artifact, approval binding, response
+artifact, and operator runbook into one review packet. It validates the chain
+locally and does not authorize live submission.
+
+Output:
+
+- `outputs/examples/live_readiness_preflight/preflight_bundle.json`
+- `outputs/examples/live_readiness_preflight/preflight_summary.json`
+
+## 22. Holdings CSV Import
 
 ```bash
 python examples/holdings_csv_import_demo.py
@@ -340,7 +371,7 @@ Output:
 
 - `outputs/examples/holdings_csv_import/summary.json`
 
-## 21. Futures Roll Risk
+## 23. Futures Roll Risk
 
 ```bash
 python examples/futures_roll_risk_demo.py
@@ -354,7 +385,7 @@ Output:
 - `outputs/examples/futures_roll_risk/summary.json`
 - `outputs/examples/futures_roll_risk/futures_roll_risk.svg`
 
-## 22. Crypto Microstructure Stress
+## 24. Crypto Microstructure Stress
 
 ```bash
 python examples/crypto_microstructure_stress_demo.py
@@ -368,7 +399,7 @@ Output:
 - `outputs/examples/crypto_microstructure_stress/summary.json`
 - `outputs/examples/crypto_microstructure_stress/crypto_microstructure_stress.svg`
 
-## 23. Mock Deep-RL Policy Baseline
+## 25. Mock Deep-RL Policy Baseline
 
 ```bash
 python examples/rl_policy_baseline_demo.py

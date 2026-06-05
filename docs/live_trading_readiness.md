@@ -51,6 +51,8 @@ Before a broker-facing contribution is accepted, it should prove:
 - default mode is `offline_export`, `dry_run`, or `paper_sandbox`;
 - a schema-valid broker adapter capability manifest declares supported modes,
   account modes, network access, credential policy, and safety controls;
+- a live-readiness preflight bundle validates the capability manifest, handoff,
+  approval binding, response artifact, and operator runbook together;
 - live submission is impossible without an explicit mode switch;
 - credentials are read from environment variables or an OS secret manager;
 - no credentials, account IDs, private holdings, raw fills, or raw provider
@@ -72,7 +74,7 @@ Before a broker-facing contribution is accepted, it should prove:
 
 ## Recommended Contribution Sequence
 
-1. Harden export-only broker capability, handoff, and review manifests.
+1. Harden export-only broker capability, handoff, preflight, and review manifests.
 2. Add one broker-specific sandbox adapter behind an optional dependency.
 3. Add reconciliation reports that compare submitted orders, broker acks, fills,
    cancels, rejects, and portfolio state.
@@ -100,6 +102,7 @@ need to build a full broker integration to help.
 | Paper-sandbox adapter | Add a broker-specific paper adapter behind an optional dependency. | Paper-only account mode, no default network call, response artifact, reconciliation summary, and mocked CI tests. |
 | Reconciliation | Improve status mapping for rejects, cancels, partial fills, duplicate IDs, or unknown broker states. | Response artifact that validates, recomputed reconciliation counts, and redacted failure reasons. |
 | Operator runbook | Document a human approval or incident-response step for a live-capable path. | Checklist with kill switch, rollback, account mode, approval expiry, and artifact retention rules. |
+| Live-readiness preflight | Add one cross-artifact consistency check across capability, handoff, approval, response, or runbook artifacts. | `tradearena validate-live-readiness ...` passes and fails on a targeted broken bundle. |
 
 Paper-sandbox adapters must stay behind optional dependencies and must publish
 response artifacts with account mode, status, and reconciliation counts. Live

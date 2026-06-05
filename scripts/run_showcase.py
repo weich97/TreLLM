@@ -122,6 +122,12 @@ SECTIONS = [
         "python examples/operator_runbook_demo.py",
     ),
     (
+        "Live-readiness preflight bundle",
+        "Capability, handoff, approval binding, response reconciliation, and runbook artifacts are checked together.",
+        "live_readiness_preflight/preflight_summary.json",
+        "python examples/live_readiness_preflight_demo.py",
+    ),
+    (
         "Holdings CSV import",
         "A tiny holdings CSV fixture feeds the retail planning sandbox and paper rebalance diagnostics.",
         "holdings_csv_import/summary.json",
@@ -178,6 +184,7 @@ def main() -> int:
         _run([sys.executable, "examples/broker_approval_safety_demo.py"], "Broker approval safety")
         _run([sys.executable, "examples/broker_response_reconciliation_demo.py"], "Broker response reconciliation")
         _run([sys.executable, "examples/operator_runbook_demo.py"], "Operator runbook checklist")
+        _run([sys.executable, "examples/live_readiness_preflight_demo.py"], "Live-readiness preflight bundle")
         _run([sys.executable, "examples/holdings_csv_import_demo.py"], "Holdings CSV import")
         _run([sys.executable, "examples/extension_walkthrough_demo.py"], "Contributor extension walkthrough")
         _run([sys.executable, "examples/retail_planner_demo.py"], "Retail planning sandbox")

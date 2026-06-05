@@ -87,6 +87,7 @@ def test_schema_titles_keep_trellm_system_and_tradearena_leaderboard_roles_separ
         "broker_adapter_capability.schema.json": "TreLLM Broker Adapter Capability Manifest",
         "calibration_profile.schema.json": "TreLLM execution calibration profile",
         "demo_artifact_contract.schema.json": "TreLLM Demo Artifact Contract",
+        "live_readiness_preflight.schema.json": "TreLLM Live Readiness Preflight Bundle",
         "reproduction_report.schema.json": "TreLLM External Reproduction Report",
         "skill_answer_set.schema.json": "TreLLM skill task answer set",
         "skill_task_rubric.schema.json": "TreLLM skill task rubric",
@@ -135,6 +136,15 @@ def test_broker_adapter_capability_schema_rejects_default_live_submission():
     errors = sorted(_validator("broker_adapter_capability.schema.json").iter_errors(payload), key=lambda err: err.path)
 
     assert any("False was expected" in error.message for error in errors)
+
+
+def test_live_readiness_preflight_schema_validates_demo_output():
+    subprocess.run([sys.executable, "examples/live_readiness_preflight_demo.py"], cwd=ROOT, check=True)
+    payload = json.loads(
+        (ROOT / "outputs/examples/live_readiness_preflight/preflight_bundle.json").read_text(encoding="utf-8")
+    )
+
+    _validator("live_readiness_preflight.schema.json").validate(payload)
 
 
 def test_broker_response_artifact_schema_validates_writer_output(tmp_path: Path):

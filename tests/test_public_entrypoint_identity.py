@@ -27,6 +27,8 @@ def test_github_templates_explain_trellm_and_tradearena_roles():
             "Live-ready contribution track:",
             "Broker capability manifest",
             "Broker adapter capability manifest validates with:",
+            "Live-readiness preflight",
+            "Live-readiness preflight bundle validates with:",
             "Default path cannot submit live orders",
             "Approval binding",
             "Paper-sandbox adapter",
@@ -40,6 +42,7 @@ def test_github_templates_explain_trellm_and_tradearena_roles():
             "Paper-sandbox adapter",
             "Reconciliation",
             "Operator runbook",
+            "Live-readiness preflight",
             "Adapter or account mode",
             "offline_export",
             "paper_sandbox",
@@ -99,17 +102,21 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
             "## Broker And Live-Ready Tracks",
             "Each task should remain offline export, dry run, or paper sandbox by default.",
             "Add one broker adapter capability manifest check",
+            "Add one live-readiness preflight consistency check",
             "Add one approval-binding edge-case test",
             "Add one paper-sandbox adapter skeleton behind an optional dependency",
         ],
         "docs/live_trading_readiness.md": [
             "Capability manifest, `submit_live=false`",
             "a schema-valid broker adapter capability manifest declares supported modes",
+            "a live-readiness preflight bundle validates the capability manifest",
             "Broker capability manifest",
+            "Live-readiness preflight",
         ],
         "docs/broker_adapter_contract.md": [
             "Before a broker-facing adapter is reviewed, it should publish a capability manifest",
             "tradearena validate-broker-capability outputs/examples/broker_capability_manifest/capability_manifest.json",
+            "tradearena validate-live-readiness outputs/examples/live_readiness_preflight/preflight_bundle.json",
             "validate_broker_adapter_capability",
         ],
     }
@@ -477,6 +484,9 @@ def test_utility_cli_help_uses_trellm_for_system_artifacts():
         "scripts/validate_broker_adapter_capability.py": [
             'description="Validate a TreLLM broker adapter capability manifest."',
         ],
+        "scripts/validate_live_readiness_preflight.py": [
+            'description="Validate a TreLLM live-readiness preflight bundle."',
+        ],
         "scripts/validate_operator_runbook_artifact.py": [
             'description="Validate a TreLLM operator runbook artifact."',
         ],
@@ -532,6 +542,7 @@ def test_utility_cli_help_uses_trellm_for_system_artifacts():
             'description="Validate a TreLLM broker approval artifact."',
             'description="Validate that a TreLLM broker approval binds to a handoff artifact."',
             'description="Validate a TreLLM broker adapter capability manifest."',
+            'description="Validate a TreLLM live-readiness preflight bundle."',
             'description="Validate and hash a TreLLM broker handoff artifact."',
             'description="Validate a TreLLM operator runbook artifact."',
         ],
@@ -590,6 +601,9 @@ def test_broker_artifact_schemas_use_trellm_system_identity():
         ],
         "schemas/broker_adapter_capability.schema.json": [
             '"title": "TreLLM Broker Adapter Capability Manifest"',
+        ],
+        "schemas/live_readiness_preflight.schema.json": [
+            '"title": "TreLLM Live Readiness Preflight Bundle"',
         ],
         "schemas/operator_runbook_artifact.schema.json": [
             '"title": "TreLLM Operator Runbook Artifact"',
@@ -678,6 +692,9 @@ def test_generated_public_copy_sources_use_trellm_system_identity():
             "Broker adapter capability manifests can be validated against",
             "The schema fixes the public `trellm_broker_adapter_capability_v0.1` contract",
             "tradearena validate-broker-capability outputs/examples/broker_capability_manifest/capability_manifest.json",
+            "## Live-Readiness Preflight Bundle Schema",
+            "The schema fixes the public `trellm_live_readiness_preflight_v0.1` contract",
+            "tradearena validate-live-readiness outputs/examples/live_readiness_preflight/preflight_bundle.json",
             "The schema fixes the public `trellm_operator_runbook_v0.1` contract",
             "tradearena validate-operator-runbook outputs/examples/operator_runbook/summary.json",
         ],

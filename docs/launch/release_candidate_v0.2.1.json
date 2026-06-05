@@ -1,10 +1,10 @@
 {
   "artifact_hashes": [
     {
-      "bytes": 42940,
+      "bytes": 43235,
       "exists": true,
       "path": "README.md",
-      "sha256": "sha256:a267f28e5c58170edc3960cbe0a4c78ffd0a8788311334c31978865eda3bf12c"
+      "sha256": "sha256:9497b67ec0736040a0c8fecd68e4360ef2f034f7456b5621b63854bec2fbdce5"
     },
     {
       "bytes": 2264,
@@ -97,11 +97,11 @@
       "sha256": "sha256:8a0d326255aacca2f55cb32f0b822ce5ef7501e0d545f1e4a8dabf86a6fd6b60"
     }
   ],
-  "commit": "6d54b7bd596b734d61ca56ca33776e93e5037604",
-  "created_at": "2026-06-05T19:01:25.319743+00:00",
+  "commit": "02a89927c1c8446f2a390a5f76465635c33f6f8b",
+  "created_at": "2026-06-05T19:27:52.481859+00:00",
   "current_package_version": "0.2.0",
-  "dirty_file_count": 21,
-  "git_status_sha256": "sha256:f0c78887ba4ad4822d6f169353964ea89eea58c2547d5571faf4efd37de2c24b",
+  "dirty_file_count": 22,
+  "git_status_sha256": "sha256:83c762c9187df529ce2e2356e88037cff17d99f0f516ab7b14e1dda4e007678c",
   "pre_release_commands": [
     "python -m compileall src scripts examples tests -q",
     "python -m ruff check src scripts examples tests",

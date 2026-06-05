@@ -30,6 +30,13 @@ credential policy, and live-safety controls. Validate that manifest with:
 tradearena validate-broker-capability outputs/examples/broker_capability_manifest/capability_manifest.json
 ```
 
+Once capability, handoff, approval, response, and runbook artifacts exist,
+validate the cross-artifact packet with:
+
+```bash
+tradearena validate-live-readiness outputs/examples/live_readiness_preflight/preflight_bundle.json --now 2026-05-31T12:30:00Z
+```
+
 The current code-level primitives live in `tradearena.tools.broker_export`:
 
 - `validate_broker_adapter_capability`;

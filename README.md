@@ -603,6 +603,7 @@ tradearena validate-broker-approval outputs/examples/broker_approval_safety/brok
 tradearena validate-broker-approval-binding outputs/examples/broker_approval_safety/broker_approval_artifact.json outputs/examples/broker_approval_safety/dry_run_orders.json --now 2026-05-31T12:30:00Z
 tradearena validate-broker-response outputs/examples/broker_response_reconciliation/broker_response_artifact.json
 tradearena validate-operator-runbook outputs/examples/operator_runbook/summary.json
+tradearena validate-live-readiness outputs/examples/live_readiness_preflight/preflight_bundle.json --now 2026-05-31T12:30:00Z
 ```
 
 The approval must contain a redacted operator ID, positive finite notional and
@@ -822,6 +823,8 @@ Useful entry points:
   `tradearena validate-broker-capability outputs/examples/broker_capability_manifest/capability_manifest.json`
 - Broker response validation:
   `tradearena validate-broker-response outputs/examples/broker_response_reconciliation/broker_response_artifact.json`
+- Live-readiness preflight validation:
+  `tradearena validate-live-readiness outputs/examples/live_readiness_preflight/preflight_bundle.json --now 2026-05-31T12:30:00Z`
 - Technical white paper: [`docs/technical_report.md`](docs/technical_report.md)
 - Benchmark maturity:
   [`docs/benchmark_maturity.md`](docs/benchmark_maturity.md)

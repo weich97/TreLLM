@@ -33,8 +33,10 @@ future live-capable path.
   - [ ] Paper-sandbox adapter
   - [ ] Reconciliation
   - [ ] Operator runbook
+  - [ ] Live-readiness preflight
 - [ ] Adapter mode is explicit:
 - [ ] Broker adapter capability manifest validates with:
+- [ ] Live-readiness preflight bundle validates with:
 - [ ] Default path cannot submit live orders
 - [ ] No credentials, account identifiers, private holdings, or raw broker
       payloads are committed

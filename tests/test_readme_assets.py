@@ -41,6 +41,7 @@ def test_readme_surfaces_live_trading_safety_contract():
         "tradearena validate-broker-approval-binding",
         "tradearena validate-broker-response",
         "tradearena validate-operator-runbook",
+        "tradearena validate-live-readiness",
         "live_human_approved",
     ]
 

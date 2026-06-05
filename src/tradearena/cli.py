@@ -28,6 +28,7 @@ from tradearena.tools import (
     validate_broker_approval_request_binding,
     validate_broker_handoff_artifact_file,
     validate_broker_response_artifact_file,
+    validate_live_readiness_preflight_bundle_file,
     validate_operator_runbook_artifact_file,
 )
 
@@ -119,6 +120,7 @@ def main(argv: list[str] | None = None) -> int:
         "validate-broker-approval-binding",
         "validate-broker-capability",
         "validate-broker-response",
+        "validate-live-readiness",
         "validate-operator-runbook",
         "build-registry",
         "hash-broker-handoff",
@@ -385,6 +387,21 @@ def _run_utility_command(argv: list[str]) -> int:
                 print(f"  - {error}")
             return 1
         print(f"Valid broker adapter capability manifest: {args.artifact}")
+        return 0
+
+    if command == "validate-live-readiness":
+        parser = argparse.ArgumentParser(description="Validate a TreLLM live-readiness preflight bundle.")
+        parser.add_argument("bundle")
+        parser.add_argument("--now", default=None, help="Optional ISO timestamp used to reject expired approval artifacts.")
+        args = parser.parse_args(argv[1:])
+        summary, errors = validate_live_readiness_preflight_bundle_file(args.bundle, now=args.now)
+        if errors:
+            print(f"Invalid live-readiness preflight bundle: {args.bundle}")
+            for error in errors:
+                print(f"  - {error}")
+            return 1
+        print(f"Valid live-readiness preflight bundle: {args.bundle}")
+        print(f"  components={len(summary.get('components', {}))}")
         return 0
 
     if command == "validate-operator-runbook":

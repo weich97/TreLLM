@@ -30,6 +30,7 @@ body:
         - Paper-sandbox adapter
         - Reconciliation
         - Operator runbook
+        - Live-readiness preflight
     validations:
       required: true
   - type: dropdown

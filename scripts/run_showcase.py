@@ -265,7 +265,7 @@ def _write_demo_video_page() -> None:
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TradeArena 3-Minute Demo Video</title>
+<title>TreLLM 3-Minute Demo Video</title>
 <style>
 body {{ margin: 0; font-family: Inter, Arial, sans-serif; background: #0f172a; color: #e2e8f0; }}
 main {{ max-width: 1120px; margin: 0 auto; padding: 40px 24px 54px; }}
@@ -278,7 +278,7 @@ video {{ display: block; width: 100%; height: auto; background: #020617; }}
 .links a {{ display: inline-block; padding: 9px 12px; border: 1px solid #334155; border-radius: 8px; background: #111827; text-decoration: none; font-weight: 700; }}
 </style>
 <main>
-  <h1>TradeArena 3-Minute Demo Video</h1>
+  <h1>TreLLM 3-Minute Demo Video</h1>
   <p class="lead">A captioned walkthrough of the quickstart command, showcase portal, audit report, execution realism, extension walkthrough, and retail planning sandbox. This static Pages video plays in the browser and does not require downloading a release asset.</p>
   <div class="video-wrap">
     <video controls preload="metadata"{poster_html}>
@@ -411,7 +411,7 @@ h1 {{ margin: 0 0 8px; font-size: 36px; letter-spacing: 0; }}
 @media (max-width: 820px) {{ .video-spotlight {{ grid-template-columns: 1fr; }} }}
 </style>
 <main>
-  <h1>TradeArena Showcase: Quickstart Tour</h1>
+  <h1>TreLLM Showcase: Quickstart Tour</h1>
   <p class="lead">Run one command, open one page, and inspect the artifacts that demonstrate agent reliability, realistic execution, risk-aware action filters, diagnostic visuals, and extensible plugins. Each card names the artifact and the command that regenerates it; the first-run path uses deterministic agents, tracked snapshots, and no live provider calls.</p>
   <div class="strip">
     <span class="pill">First run: no provider key</span>
@@ -420,7 +420,7 @@ h1 {{ margin: 0 0 8px; font-size: 36px; letter-spacing: 0; }}
     <span class="pill">Replayable trajectories</span>
     <span class="pill">Extensible plugins</span>
   </div>
-  <section class="video-spotlight" aria-label="TradeArena 3-minute demo video">
+  <section class="video-spotlight" aria-label="TreLLM 3-minute demo video">
     <video controls preload="metadata" poster="tradearena_3min_demo_thumbnail.png">
       <source src="tradearena_3min_demo.mp4" type="video/mp4">
       Your browser does not support embedded MP4 video. Open <a href="tradearena_3min_demo.mp4">the MP4 file</a>.

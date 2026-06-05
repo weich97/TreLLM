@@ -136,7 +136,7 @@ def test_showcase_index_can_be_built_from_existing_or_missing_artifacts():
     assert tracked_results_after == tracked_results_before
 
     html = (ROOT / "outputs/examples/showcase.html").read_text(encoding="utf-8")
-    assert "TradeArena Showcase" in html
+    assert "TreLLM Showcase" in html
     assert "Experiment-design demos" in html
     assert "Animated visual tour" in html
     assert "Agent Autopsy Dashboard" in html

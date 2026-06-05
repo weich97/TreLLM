@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Validate required TradeArena demo artifacts.")
+    parser = argparse.ArgumentParser(description="Validate required TreLLM demo artifacts.")
     parser.add_argument("--manifest", default="docs/demo_artifacts.yaml")
     args = parser.parse_args(argv)
 

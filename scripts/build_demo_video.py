@@ -305,7 +305,7 @@ def _draw_header(
     title: str,
     subtitle: str,
 ) -> None:
-    draw.text((72, 36), "TradeArena", fill="#ccfbf1", font=fonts["brand"])
+    draw.text((72, 36), "TreLLM", fill="#ccfbf1", font=fonts["brand"])
     draw.text((72, 82), title, fill="#ffffff", font=fonts["title"])
     draw.text((72, 128), subtitle, fill="#cbd5e1", font=fonts["subtitle"])
     draw.rounded_rectangle((1695, 42, 1848, 92), radius=24, outline="#475569", width=2, fill="#111827")

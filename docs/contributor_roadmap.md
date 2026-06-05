@@ -23,8 +23,8 @@ Expected shape: one example, one small doc update, and one test or smoke check.
 
 ## Route B: Quant / Finance
 
-These contributions add market-specific realism while keeping the framework
-auditable.
+These contributions add market-specific realism while keeping the TreLLM audit
+trail inspectable.
 
 - Futures roll, expiry, and margin-risk demos.
 - Corporate-action calendar sidecars for splits, dividends, and trading halts.

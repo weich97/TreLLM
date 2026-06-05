@@ -123,7 +123,7 @@ SECTIONS = [
     ),
     (
         "Contributor extension walkthrough",
-        "Swap in a custom analyst, risk manager, and evaluator while reusing the rest of the framework.",
+        "Swap in a custom analyst, risk manager, and evaluator while reusing the rest of the TreLLM stack.",
         "extension_walkthrough.svg",
         "python examples/extension_walkthrough_demo.py",
     ),

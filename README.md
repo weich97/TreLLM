@@ -177,7 +177,7 @@ The current narrative has three pillars:
 - Intent-to-Execution Audit: where does performance change between proposed
   weights, risk-approved weights, orders, fills, and final portfolio state?
 
-This makes the framework relevant to LLM trading agents, AI portfolio managers,
+This makes the system relevant to LLM trading agents, AI portfolio managers,
 multi-agent finance systems, and broader autonomous-agent evaluation. The
 included tasks are research-oriented and default to offline, paper, sandbox, or
 human-review workflows; they are not live trading recommendations.

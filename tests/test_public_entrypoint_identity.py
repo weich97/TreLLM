@@ -111,6 +111,7 @@ def test_claim_and_validation_docs_use_trellm_for_system_claims():
         ],
         "docs/demo_matrix.md": [
             "This matrix maps TreLLM capabilities to hands-on repository artifacts.",
+            "one runnable example for each TreLLM system surface",
             "how TreLLM should progress from paper research to broker-review exports",
         ],
     }
@@ -126,6 +127,13 @@ def test_claim_and_validation_docs_use_trellm_for_system_claims():
     academic_text = _normalized(_read_text("docs/academic_report_plan.md"))
     assert "The framework is the experimental substrate" not in academic_text
     assert "The current public repository is strongest at the prototype and early benchmark levels." not in academic_text
+
+    readme_text = _normalized(_read_text("README.md"))
+    assert "This makes the system relevant to LLM trading agents" in readme_text
+    assert "This makes the framework relevant to LLM trading agents" not in readme_text
+
+    demo_matrix_text = _normalized(_read_text("docs/demo_matrix.md"))
+    assert "one runnable example for each framework surface" not in demo_matrix_text
 
 
 def test_skill_experiment_docs_assign_audit_research_to_trellm():
@@ -206,6 +214,7 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
         "scripts/run_showcase.py": [
             'description="Build the public-facing TreLLM showcase."',
             "print(\"TreLLM showcase\", flush=True)",
+            "while reusing the rest of the TreLLM stack.",
             "<title>TreLLM - Trading Audit And Control Showcase</title>",
             "<h1>TreLLM: LLM Trading Audit And Control</h1>",
             "<title>TreLLM 3-Minute Demo Video</title>",
@@ -219,6 +228,7 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
         "scripts/build_demo_video.py": [
             'draw.text((72, 36), "TreLLM", fill="#ccfbf1", font=fonts["brand"])',
             "TradeArena is the public leaderboard module.",
+            "Extend TreLLM with small, reviewable plugins.",
         ],
         "scripts/validate_demo_artifacts.py": [
             'description="Validate required TreLLM demo artifacts."',

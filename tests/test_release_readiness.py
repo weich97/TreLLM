@@ -72,6 +72,11 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         "claiming that TradeArena explains realized transaction costs.\n"
         "TradeArena strategy interface and downstream risk/execution/evaluation stack.\n"
         "The framework is the experimental substrate.\n"
+        "This makes the framework relevant to LLM trading agents.\n"
+        "one runnable example for each framework surface.\n"
+        "keeping the framework auditable.\n"
+        "Extend the framework with small, reviewable plugins.\n"
+        "reusing the rest of the framework.\n"
         "The current public repository is strongest at the prototype and early benchmark levels.\n"
         "For the staged path from benchmark research to supervised live execution.\n"
         "These contributions move TreLLM from benchmark research toward human-gated.\n"
@@ -144,6 +149,20 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         "found in docs/schemas.md"
     ) in failures
     assert "legacy public identity phrase 'The framework is the experimental substrate' found in docs/schemas.md" in failures
+    assert (
+        "legacy public identity phrase 'This makes the framework relevant to LLM trading agents' found in docs/schemas.md"
+        in failures
+    )
+    assert (
+        "legacy public identity phrase 'one runnable example for each framework surface' found in docs/schemas.md"
+        in failures
+    )
+    assert "legacy public identity phrase 'keeping the framework auditable' found in docs/schemas.md" in failures
+    assert (
+        "legacy public identity phrase 'Extend the framework with small, reviewable plugins.' found in docs/schemas.md"
+        in failures
+    )
+    assert "legacy public identity phrase 'reusing the rest of the framework.' found in docs/schemas.md" in failures
     assert (
         "legacy public identity phrase 'The current public repository is strongest at the prototype and early benchmark levels' "
         "found in docs/schemas.md"

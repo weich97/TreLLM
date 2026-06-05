@@ -1,7 +1,7 @@
 # Demo Matrix
 
 This matrix maps TreLLM capabilities to hands-on repository artifacts. The
-goal is to help a new user find one runnable example for each framework surface
+goal is to help a new user find one runnable example for each TreLLM system surface
 without reading the full source tree.
 
 ## First-Run Surfaces

@@ -115,7 +115,7 @@ SLIDES = [
         "bullets": [
             "Reproduce decisions, not just returns.",
             "Compare agents under the same execution and risk lifecycle.",
-            "Extend the framework with small, reviewable plugins.",
+            "Extend TreLLM with small, reviewable plugins.",
         ],
     },
 ]

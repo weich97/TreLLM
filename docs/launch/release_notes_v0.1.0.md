@@ -1,8 +1,8 @@
-# v0.1.0: Auditable Benchmark Release For LLM Trading Agents
+# v0.1.0: TreLLM Audit And Control Release With TradeArena Benchmark Module
 
-TreLLM v0.1.0 is the first public benchmark release for evaluating LLM
+TreLLM v0.1.0 is the first public TreLLM release for evaluating LLM
 trading agents as auditable decision-making systems under realistic market
-constraints.
+constraints. It introduces the TradeArena benchmark module for comparable rows.
 
 ## Highlights
 
@@ -44,12 +44,12 @@ outputs/examples/showcase.html
 ## What This Release Is Not
 
 TreLLM is not a live trading bot and does not promise profitable trading.
-It is an audit framework with the TradeArena benchmark module for studying
+It is an audit and control system with the TradeArena benchmark module for studying
 whether LLM trading agents can be reproduced, inspected, risk-gated, and
 evaluated under realistic constraints.
 
 ## Suggested GitHub Release Title
 
 ```text
-v0.1.0: Auditable benchmark release for LLM trading agents
+v0.1.0: TreLLM audit and control release with TradeArena benchmark module
 ```

@@ -354,8 +354,12 @@ def test_release_notes_use_trellm_for_system_release_positioning():
             "TreLLM v0.2.0 is the first protocol-focused release for the TradeArena benchmark module.",
         ],
         "docs/launch/release_notes_v0.1.0.md": [
-            "TreLLM v0.1.0 is the first public benchmark release for evaluating LLM",
+            "# v0.1.0: TreLLM Audit And Control Release With TradeArena Benchmark Module",
+            "TreLLM v0.1.0 is the first public TreLLM release for evaluating LLM",
+            "TradeArena benchmark module for comparable rows.",
             "TreLLM is not a live trading bot and does not promise profitable trading.",
+            "It is an audit and control system with the TradeArena benchmark module",
+            "v0.1.0: TreLLM audit and control release with TradeArena benchmark module",
         ],
         "docs/launch/release_notes_v0.1.1.md": [
             "TreLLM v0.1.1 is a small maintenance release focused on making execution",

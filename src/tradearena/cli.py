@@ -31,7 +31,7 @@ from tradearena.tools import (
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Run TradeArena experiments.")
+    parser = argparse.ArgumentParser(description="Run TreLLM experiments and TradeArena leaderboard benchmark cases.")
     parser.add_argument(
         "--benchmark",
         default="tradearena-core",
@@ -449,7 +449,7 @@ def _run_utility_command(argv: list[str]) -> int:
         return 0
 
     if command == "hash-run":
-        parser = argparse.ArgumentParser(description="Compute a reproducibility hash for a trajectory JSON.")
+        parser = argparse.ArgumentParser(description="Compute a reproducibility hash for a TreLLM trajectory JSON.")
         parser.add_argument("trajectory")
         args = parser.parse_args(argv[1:])
         try:
@@ -460,7 +460,7 @@ def _run_utility_command(argv: list[str]) -> int:
         return 0
 
     if command == "replay":
-        parser = argparse.ArgumentParser(description="Replay one step from a TradeArena trajectory JSON.")
+        parser = argparse.ArgumentParser(description="Replay one step from a TreLLM trajectory JSON.")
         parser.add_argument("trajectory", help="Trajectory JSON, or a multi-case JSON written by --output.")
         parser.add_argument("--step", type=int, default=1, help="1-based trajectory step to render.")
         parser.add_argument("--case", default="", help="Case name when replaying a multi-case --output file.")
@@ -481,7 +481,7 @@ def _run_utility_command(argv: list[str]) -> int:
         return 0
 
     if command == "export-trace":
-        parser = argparse.ArgumentParser(description="Export a TradeArena trajectory to a local trace JSON.")
+        parser = argparse.ArgumentParser(description="Export a TreLLM trajectory to a local trace JSON.")
         parser.add_argument("trajectory", help="Trajectory JSON, or a multi-case JSON written by --output.")
         parser.add_argument("--case", default="", help="Case name when exporting a multi-case --output file.")
         parser.add_argument("--format", default="opentelemetry-json", choices=["opentelemetry-json"])
@@ -492,7 +492,7 @@ def _run_utility_command(argv: list[str]) -> int:
         return 0
 
     if command == "new-plugin":
-        parser = argparse.ArgumentParser(description="Create a local TradeArena plugin skeleton.")
+        parser = argparse.ArgumentParser(description="Create a local TreLLM plugin skeleton.")
         parser.add_argument("--type", required=True, choices=["data", "analyst", "strategy", "risk", "execution", "simulator", "memory", "evaluator"])
         parser.add_argument("--name", required=True, help="Human-readable plugin name, for example max-drawdown-guard.")
         parser.add_argument("--output", default="plugins/local", help="Directory where the plugin folder should be created.")

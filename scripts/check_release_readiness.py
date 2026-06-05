@@ -258,6 +258,11 @@ LEGACY_PUBLIC_IDENTITY_PHRASES = [
     "Convert TradeArena orders into broker handoff rows.",
     "TradeArena is the public leaderboard and benchmark module",
     "Validate that a broker approval artifact binds to a handoff artifact.",
+    "Run TradeArena experiments.",
+    "Replay one step from a TradeArena trajectory JSON.",
+    "Export a TradeArena trajectory to a local trace JSON.",
+    "Create a local TradeArena plugin skeleton.",
+    "serialized TradeArena trajectory",
 ]
 CI_REQUIRED_GATE_COMMANDS = [
     "python -m compileall src scripts examples tests -q",

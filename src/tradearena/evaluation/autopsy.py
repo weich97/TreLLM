@@ -16,7 +16,7 @@ FAILURE_MODES = (
 
 
 def autopsy_trajectory(trajectory: dict[str, Any]) -> dict[str, Any]:
-    """Summarize failure modes from a serialized TradeArena trajectory."""
+    """Summarize failure modes from a serialized TreLLM trajectory."""
 
     steps = []
     counts: Counter[str] = Counter()

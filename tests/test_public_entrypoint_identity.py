@@ -379,11 +379,22 @@ def test_utility_cli_help_uses_trellm_for_system_artifacts():
             'description="Validate a TreLLM external reproduction report."',
         ],
         "src/tradearena/cli.py": [
+            'description="Run TreLLM experiments and TradeArena leaderboard benchmark cases."',
+            'description="Compute a reproducibility hash for a TreLLM trajectory JSON."',
+            'description="Replay one step from a TreLLM trajectory JSON."',
+            'description="Export a TreLLM trajectory to a local trace JSON."',
+            'description="Create a local TreLLM plugin skeleton."',
             'description="Validate a TreLLM broker response artifact."',
             'description="Validate a TreLLM broker handoff artifact."',
             'description="Validate a TreLLM broker approval artifact."',
             'description="Validate that a TreLLM broker approval binds to a handoff artifact."',
             'description="Validate and hash a TreLLM broker handoff artifact."',
+        ],
+        "src/tradearena/evaluation/autopsy.py": [
+            "Summarize failure modes from a serialized TreLLM trajectory.",
+        ],
+        "src/tradearena/evaluation/trace_export.py": [
+            "Export a TreLLM trajectory to an OpenTelemetry-style local trace JSON.",
         ],
         "src/tradearena/tools/broker_export.py": [
             "Convert TreLLM order intent into broker handoff rows.",
@@ -426,6 +437,17 @@ def test_broker_artifact_schemas_use_trellm_system_identity():
     assert "Convert TradeArena orders into broker handoff rows." not in broker_export_text
     cli_text = _normalized(_read_text("src/tradearena/cli.py"))
     assert "Validate that a broker approval artifact binds to a handoff artifact." not in cli_text
+    for snippet in [
+        "Run TradeArena experiments.",
+        "Replay one step from a TradeArena trajectory JSON.",
+        "Export a TradeArena trajectory to a local trace JSON.",
+        "Create a local TradeArena plugin skeleton.",
+    ]:
+        assert snippet not in cli_text
+    assert "serialized TradeArena trajectory" not in _normalized(_read_text("src/tradearena/evaluation/autopsy.py"))
+    assert "Export a TradeArena trajectory to an OpenTelemetry-style local trace JSON." not in _normalized(
+        _read_text("src/tradearena/evaluation/trace_export.py")
+    )
 
 
 def test_generated_public_copy_sources_use_trellm_system_identity():

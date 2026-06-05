@@ -54,7 +54,11 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         '"title": "TradeArena Broker Handoff Artifact"\n'
         "Convert TradeArena orders into broker handoff rows.\n"
         "TradeArena is the public leaderboard and benchmark module.\n"
-        "Validate that a broker approval artifact binds to a handoff artifact.\n",
+        "Validate that a broker approval artifact binds to a handoff artifact.\n"
+        "Run TradeArena experiments.\n"
+        "Replay one step from a TradeArena trajectory JSON.\n"
+        "Export a TradeArena trajectory to a local trace JSON.\n"
+        "Create a local TradeArena plugin skeleton.\n",
         encoding="utf-8",
     )
     readme.write_text(
@@ -90,6 +94,10 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
     assert "legacy public identity phrase 'Convert TradeArena orders into broker handoff rows.' found in docs/schemas.md" in failures
     assert "legacy public identity phrase 'TradeArena is the public leaderboard and benchmark module' found in docs/schemas.md" in failures
     assert "legacy public identity phrase 'Validate that a broker approval artifact binds to a handoff artifact.' found in docs/schemas.md" in failures
+    assert "legacy public identity phrase 'Run TradeArena experiments.' found in docs/schemas.md" in failures
+    assert "legacy public identity phrase 'Replay one step from a TradeArena trajectory JSON.' found in docs/schemas.md" in failures
+    assert "legacy public identity phrase 'Export a TradeArena trajectory to a local trace JSON.' found in docs/schemas.md" in failures
+    assert "legacy public identity phrase 'Create a local TradeArena plugin skeleton.' found in docs/schemas.md" in failures
 
 
 def test_release_readiness_flags_stale_release_candidate_artifact_hash(tmp_path: Path):

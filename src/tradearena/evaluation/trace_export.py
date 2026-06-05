@@ -13,7 +13,7 @@ def export_trajectory_to_trace_json(
     *,
     case_name: str = "",
 ) -> dict[str, Any]:
-    """Export a TradeArena trajectory to an OpenTelemetry-style local trace JSON.
+    """Export a TreLLM trajectory to an OpenTelemetry-style local trace JSON.
 
     The exporter reads an existing artifact and never reruns an experiment. It
     intentionally emits counts, hashes, scores, and structured risk/execution

@@ -178,6 +178,21 @@ Validate a broker response artifact with:
 tradearena validate-broker-response outputs/examples/broker_response_reconciliation/broker_response_artifact.json
 ```
 
+## Operator Runbook Artifact Schema
+
+Operator runbook artifacts can be validated against
+[`../schemas/operator_runbook_artifact.schema.json`](../schemas/operator_runbook_artifact.schema.json).
+The schema fixes the public `trellm_operator_runbook_v0.1` contract for
+human-gated live-readiness evidence: default mode, live-submission boundary,
+manual approval, approval expiry, kill switch, reconciliation, rollback, and
+artifact-retention checks.
+
+Validate the offline demo runbook with:
+
+```bash
+python scripts/validate_operator_runbook_artifact.py outputs/examples/operator_runbook/summary.json
+```
+
 ## Reproduction Report Schema
 
 The external reproduction report schema lives at

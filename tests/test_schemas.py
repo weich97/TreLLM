@@ -89,12 +89,30 @@ def test_schema_titles_keep_trellm_system_and_tradearena_leaderboard_roles_separ
         "reproduction_report.schema.json": "TreLLM External Reproduction Report",
         "skill_answer_set.schema.json": "TreLLM skill task answer set",
         "skill_task_rubric.schema.json": "TreLLM skill task rubric",
+        "operator_runbook_artifact.schema.json": "TreLLM Operator Runbook Artifact",
         "trajectory.schema.json": "TreLLM trajectory",
     }
 
     for schema_name, expected_title in expected_titles.items():
         schema = _load_schema(schema_name)
         assert schema["title"] == expected_title
+
+
+def test_operator_runbook_artifact_schema_validates_demo_output():
+    subprocess.run([sys.executable, "examples/operator_runbook_demo.py"], cwd=ROOT, check=True)
+    payload = json.loads((ROOT / "outputs/examples/operator_runbook/summary.json").read_text(encoding="utf-8"))
+
+    _validator("operator_runbook_artifact.schema.json").validate(payload)
+
+
+def test_operator_runbook_artifact_schema_rejects_live_submission():
+    subprocess.run([sys.executable, "examples/operator_runbook_demo.py"], cwd=ROOT, check=True)
+    payload = json.loads((ROOT / "outputs/examples/operator_runbook/summary.json").read_text(encoding="utf-8"))
+    payload["live_submission"] = True
+
+    errors = sorted(_validator("operator_runbook_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+
+    assert any("False was expected" in error.message for error in errors)
 
 
 def test_broker_response_artifact_schema_validates_writer_output(tmp_path: Path):

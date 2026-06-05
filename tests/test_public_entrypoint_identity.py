@@ -554,6 +554,9 @@ def test_broker_artifact_schemas_use_trellm_system_identity():
         "schemas/broker_response_artifact.schema.json": [
             '"title": "TreLLM Broker Response Artifact"',
         ],
+        "schemas/operator_runbook_artifact.schema.json": [
+            '"title": "TreLLM Operator Runbook Artifact"',
+        ],
     }
     forbidden_snippets = {
         path: [snippet.replace("TreLLM", "TradeArena") for snippet in snippets]
@@ -634,6 +637,9 @@ def test_generated_public_copy_sources_use_trellm_system_identity():
         "docs/schemas.md": [
             "## Redacted Leaderboard Submission Schema",
             "External TradeArena rows can be shared without exposing raw provider prompts or responses.",
+            "## Operator Runbook Artifact Schema",
+            "The schema fixes the public `trellm_operator_runbook_v0.1` contract",
+            "python scripts/validate_operator_runbook_artifact.py outputs/examples/operator_runbook/summary.json",
         ],
         "docs/launch/discussion_seeds.md": [
             "TreLLM currently records observation, signals, proposed decisions, approved",

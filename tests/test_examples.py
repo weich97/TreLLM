@@ -154,6 +154,25 @@ def test_operator_runbook_demo_builds_live_ready_checklist():
     assert "does not authorize live submission" in runbook
 
 
+def test_operator_runbook_validator_rejects_live_submission(tmp_path: Path):
+    _run_example("examples/operator_runbook_demo.py")
+    payload = _read_json("outputs/examples/operator_runbook/summary.json")
+    artifact = tmp_path / "operator_runbook.json"
+    payload["live_submission"] = True
+    artifact.write_text(json.dumps(payload), encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_operator_runbook_artifact.py", str(artifact)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid operator runbook artifact" in result.stdout
+    assert "False was expected" in result.stdout
+
+
 def test_showcase_index_can_be_built_from_existing_or_missing_artifacts():
     tracked_result_paths = (
         ROOT / "docs/results/benchmark_v0_2.md",

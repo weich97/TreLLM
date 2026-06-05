@@ -100,6 +100,7 @@ REQUIRED_FILES = [
     "schemas/broker_response_artifact.schema.json",
     "schemas/calibration_profile.schema.json",
     "schemas/demo_artifact_contract.schema.json",
+    "schemas/operator_runbook_artifact.schema.json",
     "schemas/reproduction_report.schema.json",
     "schemas/skill_answer_set.schema.json",
     "schemas/skill_task_rubric.schema.json",

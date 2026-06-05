@@ -99,3 +99,5 @@ artifacts:
       - outputs/examples/operator_runbook/summary.json:manual_approval_required
       - outputs/examples/operator_runbook/summary.json:kill_switch_required
       - outputs/examples/operator_runbook/summary.json:checklist.id
+    required_validators:
+      - python scripts/validate_operator_runbook_artifact.py outputs/examples/operator_runbook/summary.json

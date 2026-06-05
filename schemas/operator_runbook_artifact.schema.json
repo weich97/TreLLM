@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/weich97/TradeArena/schemas/operator_runbook_artifact.schema.json",
+  "title": "TreLLM Operator Runbook Artifact",
+  "type": "object",
+  "required": [
+    "schema",
+    "live_submission",
+    "default_mode",
+    "allowed_modes",
+    "manual_approval_required",
+    "kill_switch_required",
+    "approval_expiry_required",
+    "artifact_retention_required",
+    "incident_owner_required",
+    "checklist",
+    "verification_commands",
+    "safety_note"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "trellm_operator_runbook_v0.1" },
+    "live_submission": { "const": false },
+    "default_mode": { "enum": ["offline_export", "dry_run"] },
+    "allowed_modes": {
+      "type": "array",
+      "minItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["offline_export", "dry_run", "paper_sandbox", "live_human_approved"]
+      },
+      "contains": { "const": "live_human_approved" }
+    },
+    "manual_approval_required": { "const": true },
+    "kill_switch_required": { "const": true },
+    "approval_expiry_required": { "const": true },
+    "artifact_retention_required": { "const": true },
+    "incident_owner_required": { "const": true },
+    "checklist": {
+      "type": "array",
+      "minItems": 5,
+      "items": { "$ref": "#/$defs/checklist_item" }
+    },
+    "verification_commands": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "pattern": "\\S" }
+    },
+    "safety_note": { "type": "string", "pattern": "\\S" }
+  },
+  "$defs": {
+    "checklist_item": {
+      "type": "object",
+      "required": ["id", "owner", "evidence", "pass_condition"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "enum": ["mode-boundary", "approval-expiry", "kill-switch", "reconciliation", "rollback"]
+        },
+        "owner": { "type": "string", "pattern": "\\S" },
+        "evidence": { "type": "string", "pattern": "\\S" },
+        "pass_condition": { "type": "string", "pattern": "\\S" }
+      }
+    }
+  }
+}

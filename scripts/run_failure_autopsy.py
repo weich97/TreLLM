@@ -9,7 +9,7 @@ from tradearena.evaluation.autopsy import autopsy_trajectory
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Classify TradeArena trajectory failure modes.")
+    parser = argparse.ArgumentParser(description="Classify TreLLM trajectory failure modes.")
     parser.add_argument("--trajectory", default="outputs/examples/audit_walkthrough_trajectory.json")
     parser.add_argument("--output-json", default="outputs/examples/failure_autopsy.json")
     parser.add_argument("--output-md", default="outputs/examples/failure_autopsy.md")

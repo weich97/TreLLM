@@ -85,7 +85,7 @@ def _write_html(path: Path, rows: list[dict[str, Any]], summary: dict[str, Any])
     html = f"""<!doctype html>
 <html lang="en">
 <meta charset="utf-8">
-<title>TradeArena Crisis Snapshot Gallery</title>
+<title>TreLLM Crisis Snapshot Gallery</title>
 <style>
 body {{ margin: 0; font-family: Inter, Arial, sans-serif; background: #f8fafc; color: #0f172a; }}
 main {{ max-width: 1180px; margin: 0 auto; padding: 34px; }}
@@ -100,7 +100,7 @@ th, td {{ padding: 9px 10px; border-bottom: 1px solid #e2e8f0; text-align: left;
 th {{ background: #eef2f7; }}
 </style>
 <main>
-  <h1>TradeArena Crisis Snapshot Gallery</h1>
+  <h1>TreLLM Crisis Snapshot Gallery</h1>
   <p>{summary['rows']} crisis rows across {len(summary['models'])} models and {len(summary['feedback_modes'])} feedback modes. This page makes no live provider calls and reads tracked table/image snapshots.</p>
   <section class="grid">{cards}</section>
   <h2>Top Calibration Rows</h2>

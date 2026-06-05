@@ -92,7 +92,7 @@ def test_render_audit_report_from_minimal_trajectory(tmp_path: Path):
     )
 
     html = output_path.read_text(encoding="utf-8")
-    assert "TradeArena Audit Report" in html
+    assert "TreLLM Audit Report" in html
     assert "Proposed vs Risk-Approved Decisions" in html
     assert "unit decision" in html
     assert "abc123" in html

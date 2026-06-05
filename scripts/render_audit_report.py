@@ -12,8 +12,8 @@ DEFAULT_OUTPUT = "outputs/examples/audit_report.html"
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Render a TradeArena trajectory as a compact HTML audit report.")
-    parser.add_argument("--trajectory", default=DEFAULT_INPUT, help="Trajectory JSON written by a TradeArena run.")
+    parser = argparse.ArgumentParser(description="Render a TreLLM trajectory as a compact HTML audit report.")
+    parser.add_argument("--trajectory", default=DEFAULT_INPUT, help="Trajectory JSON written by a TreLLM run.")
     parser.add_argument("--output", default=DEFAULT_OUTPUT, help="HTML report path.")
     parser.add_argument("--step", type=int, default=-1, help="Step index to render. Defaults to the first risk/execution event.")
     args = parser.parse_args()
@@ -56,7 +56,7 @@ def _render(data: dict[str, Any], step_index: int, trajectory_path: Path) -> str
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>TradeArena Audit Report: Replayable Decision Trace</title>
+  <title>TreLLM Audit Report: Replayable Decision Trace</title>
   <style>
     :root {{
       color-scheme: light;
@@ -165,8 +165,8 @@ def _render(data: dict[str, Any], step_index: int, trajectory_path: Path) -> str
   <header>
     <div class="hero">
       <div>
-        <h1>TradeArena Audit Report: Replayable Decision Trace</h1>
-        <p>One replayable trading decision, rendered from the same trajectory JSON used by the benchmark. This report shows what the agent saw, what it proposed, how the risk gate revised it, what the execution simulator did, and which reproducibility fields make the step auditable.</p>
+        <h1>TreLLM Audit Report: Replayable Decision Trace</h1>
+        <p>One replayable trading decision, rendered from the same trajectory JSON used by TreLLM and the TradeArena benchmark module. This report shows what the agent saw, what it proposed, how the risk gate revised it, what the execution simulator did, and which reproducibility fields make the step auditable.</p>
       </div>
       <div class="hero-card">
         <strong>Rendered step</strong>

@@ -197,7 +197,7 @@ def _write_html(path: Path, reports: dict[str, Any]) -> None:
     html_text = f"""<!doctype html>
 <html lang="en">
 <meta charset="utf-8">
-<title>TradeArena Retail Planning Demo</title>
+<title>TreLLM Retail Planning Demo</title>
 <style>
 body {{ margin: 0; font-family: Inter, Arial, sans-serif; background: #f8fafc; color: #0f172a; }}
 main {{ max-width: 1120px; margin: 0 auto; padding: 38px 28px 52px; }}
@@ -214,7 +214,7 @@ th {{ background: #f1f5f9; color: #334155; }}
 code {{ background: #eef2ff; padding: 2px 5px; border-radius: 4px; }}
 </style>
 <main>
-  <h1>TradeArena Retail Planning Demo</h1>
+  <h1>TreLLM Retail Planning Demo</h1>
   <p>This report demonstrates an auditable planning workflow: investor profile, suitability gate, target allocation, paper rebalance instructions, and futures margin estimates. It makes no live API calls and does not place live trades.</p>
   <div class="notice"><strong>Important:</strong> Educational and research artifact only. Recommendations require human review and are not investment, tax, legal, or futures trading advice.</div>
   <img src="retail_planning_allocation.svg" alt="Retail planning allocation chart" style="width:100%;max-width:1040px">

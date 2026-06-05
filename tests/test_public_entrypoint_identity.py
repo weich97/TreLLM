@@ -124,6 +124,8 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
         "scripts/run_launch_demo.py": [
             'description="Run the offline TreLLM launch demo."',
             'print("TreLLM launch demo", flush=True)',
+            "<title>TreLLM Demo Portal</title>",
+            "<h1>TreLLM Demo Portal</h1>",
         ],
         "scripts/run_paper_design_demos.py": [
             'print("TreLLM experiment-design demo suite")',
@@ -132,6 +134,39 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
         ],
         "examples/akshare_csv_reuse_demo.py": [
             'print("AkShare -> normalized CSV -> TreLLM demo")',
+        ],
+        "examples/visual_tour_demo.py": [
+            'description="Generate animated offline TreLLM visual-tour artifacts."',
+            "TreLLM turns trajectories into mechanism probes",
+            "<title>TreLLM Visual Tour: Audit, Execution, Diagnostics</title>",
+            "<h1>TreLLM Visual Tour: Audit, Execution, Diagnostics</h1>",
+        ],
+        "examples/retail_planner_demo.py": [
+            "<title>TreLLM Retail Planning Demo</title>",
+            "<h1>TreLLM Retail Planning Demo</h1>",
+        ],
+        "examples/crisis_snapshot_demo.py": [
+            "<title>TreLLM Crisis Snapshot Gallery</title>",
+            "<h1>TreLLM Crisis Snapshot Gallery</h1>",
+        ],
+        "scripts/render_audit_report.py": [
+            'description="Render a TreLLM trajectory as a compact HTML audit report."',
+            "Trajectory JSON written by a TreLLM run.",
+            "<title>TreLLM Audit Report: Replayable Decision Trace</title>",
+            "<h1>TreLLM Audit Report: Replayable Decision Trace</h1>",
+        ],
+        "scripts/render_agent_autopsy_dashboard.py": [
+            "Trajectory JSON written by a TreLLM run.",
+        ],
+        "scripts/run_failure_autopsy.py": [
+            'description="Classify TreLLM trajectory failure modes."',
+        ],
+        "scripts/run_bge_m3_probe.py": [
+            'description="Validate TreLLM representation signatures with local BGE-family Transformer embeddings."',
+        ],
+        "docs/assets/audit_report_preview.svg": [
+            'aria-label="TreLLM audit report preview"',
+            ">TreLLM Audit Report<",
         ],
     }
     for path, snippets in required_snippets.items():

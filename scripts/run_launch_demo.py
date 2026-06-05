@@ -109,7 +109,7 @@ def _write_demo_index(path: Path) -> None:
         ),
         (
             "AkShare CSV bridge",
-            "See how A-share history is normalized into the same OHLCV CSV boundary used by every other TradeArena data provider.",
+            "See how A-share history is normalized into the same OHLCV CSV boundary used by every other TreLLM data provider.",
             "akshare_csv_reuse.svg",
         ),
         (
@@ -139,7 +139,7 @@ def _write_demo_index(path: Path) -> None:
     html = f"""<!doctype html>
 <html lang="en">
 <meta charset="utf-8">
-<title>TradeArena Demo Portal</title>
+<title>TreLLM Demo Portal</title>
 <style>
 body {{ margin: 0; font-family: Inter, Arial, sans-serif; background: #f8fafc; color: #0f172a; }}
 main {{ max-width: 1040px; margin: 0 auto; padding: 42px 28px; }}
@@ -153,7 +153,7 @@ h1 {{ margin: 0 0 8px; font-size: 34px; letter-spacing: 0; }}
 .footer {{ margin-top: 26px; color: #64748b; font-size: 13px; }}
 </style>
 <main>
-  <h1>TradeArena Demo Portal</h1>
+  <h1>TreLLM Demo Portal</h1>
   <p class="lead">One offline launch path for financial-agent reliability: lifecycle traces, execution realism, hard market rules, crisis-scene visuals, and cached model replay metadata.</p>
   <section class="grid">
     {card_html}

@@ -16,7 +16,7 @@ from tradearena.experiments.paper import _embed_text, _mean, _plan_text, _rollin
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Validate TradeArena representation signatures with local BGE-family Transformer embeddings.")
+    parser = argparse.ArgumentParser(description="Validate TreLLM representation signatures with local BGE-family Transformer embeddings.")
     parser.add_argument(
         "--trajectory",
         nargs="+",

@@ -1,9 +1,10 @@
 # Poe And Direct-DeepSeek Skill-Task Experiments
 
 The highest-value use of additional Poe tokens is not another trading-profit
-leaderboard. TradeArena already has synthetic, real-market, execution-shock,
-classical-baseline, and calibration snapshots. The more distinctive research
-question is whether frontier models can act as financial-audit agents:
+leaderboard. TreLLM already has synthetic, real-market, execution-shock,
+classical-baseline, and calibration snapshots, with TradeArena providing the
+comparable leaderboard surface. The more distinctive research question is
+whether frontier models can act as financial-audit agents:
 
 > Can an LLM reliably inspect trajectories, understand risk feedback, identify
 > execution frictions, reproduce artifacts, and avoid claim overreach?

@@ -98,8 +98,8 @@ The challenge suite under `examples/skill_tasks_challenge/` intentionally
 stresses adversarial claim wording, public-artifact redaction, reproduction
 honesty, and execution-calibration boundaries.
 
-The task suite measures TradeArena-specific audit ability rather than trading
-ability:
+The task suite measures TreLLM-specific financial-audit ability rather than
+trading ability:
 
 | Ability | Measurable task | Scoring |
 | --- | --- | --- |

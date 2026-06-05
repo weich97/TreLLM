@@ -23,7 +23,7 @@ The public artifact contains aggregate scores only; raw prompts and raw model an
 | `poe` | `glm-5` | 6 | `adversarial_claim_boundary,skeptical_reviewer,standard` | 6.2/8 | 31.0/40 | 77.5% | 7 |
 | `poe` | `kimi-k2.5` | 6 | `adversarial_claim_boundary,skeptical_reviewer,standard` | 5.7/8 | 29.5/40 | 73.8% | 8 |
 
-Interpretation: these are audit-skill scores, not trading-performance scores. A higher row means the model more reliably followed TradeArena's public audit, risk, execution-boundary, reproduction, claim-boundary, and plugin-review rubrics.
+Interpretation: these are audit-skill scores, not trading-performance scores. A higher row means the model more reliably followed TreLLM's public audit, risk, execution-boundary, reproduction, claim-boundary, and plugin-review rubrics.
 
 ## Repeat-Level Scorecard
 

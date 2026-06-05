@@ -232,7 +232,7 @@ def _build_prompt(task_path: Path, skills_dir: Path, prompt_variant: str = "stan
     skill_dir = skills_dir / skill_name
     sections = [
         "# Role",
-        "You are evaluating TradeArena as a financial-audit agent, not as a trader.",
+        "You are evaluating TreLLM audit skills, not TradeArena trading performance.",
         "Use only the provided public task input, skill text, and public artifacts.",
         "Do not give buy/sell recommendations, profitability promises, live-order advice, API-key requests, or broker instructions.",
         "When evidence is missing, say so before making a claim.",
@@ -478,7 +478,7 @@ def _write_public_report(markdown_path: Path, csv_path: Path, summaries: list[di
     lines.extend(
         [
             "",
-            "Interpretation: these are audit-skill scores, not trading-performance scores. A higher row means the model more reliably followed TradeArena's public audit, risk, execution-boundary, reproduction, claim-boundary, and plugin-review rubrics.",
+            "Interpretation: these are audit-skill scores, not trading-performance scores. A higher row means the model more reliably followed TreLLM's public audit, risk, execution-boundary, reproduction, claim-boundary, and plugin-review rubrics.",
             "",
         ]
     )

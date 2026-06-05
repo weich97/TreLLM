@@ -60,6 +60,60 @@ def test_challenge_prompt_includes_variant_and_claim_boundary_language():
     assert "Required Answer Format" in prompt
 
 
+def test_skill_matrix_prompt_and_report_assign_audit_evaluation_to_trellm(tmp_path: Path):
+    runner = _load_runner()
+    prompt = runner._build_prompt(
+        ROOT / "examples" / "skill_tasks_challenge" / "stress_calibration_overclaim_001",
+        ROOT / "skills",
+    )
+    output = tmp_path / "report.md"
+    csv_output = tmp_path / "report.csv"
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/run_poe_skill_task_matrix.py",
+            "--tasks-dir",
+            "examples/skill_tasks_challenge",
+            "--models",
+            "poe:gpt-5.5",
+            "--limit-tasks",
+            "leaderboard_misread_001",
+            "--repeats",
+            "1",
+            "--public-output",
+            str(output),
+            "--public-csv",
+            str(csv_output),
+            "--dry-run",
+        ],
+        cwd=ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    report = output.read_text(encoding="utf-8")
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "You are evaluating TreLLM audit skills, not TradeArena trading performance." in prompt
+    assert "evaluating TradeArena as a financial-audit agent" not in prompt
+    assert "TreLLM's public audit, risk, execution-boundary, reproduction, claim-boundary, and plugin-review rubrics" in report
+    assert "TradeArena's public audit, risk, execution-boundary, reproduction, claim-boundary, and plugin-review rubrics" not in report
+
+
+def test_tracked_skill_matrix_results_assign_audit_rubrics_to_trellm():
+    result_paths = [
+        ROOT / "docs" / "results" / "poe_skill_task_matrix.md",
+        ROOT / "docs" / "results" / "poe_skill_challenge_matrix.md",
+        ROOT / "docs" / "results" / "poe_skill_challenge_followup_matrix.md",
+        ROOT / "docs" / "results" / "poe_skill_challenge_followup_claude_adversarial.md",
+    ]
+
+    for path in result_paths:
+        text = path.read_text(encoding="utf-8")
+        assert "TreLLM's public audit, risk, execution-boundary, reproduction, claim-boundary, and plugin-review rubrics" in text
+        assert "TradeArena's public audit, risk, execution-boundary, reproduction, claim-boundary, and plugin-review rubrics" not in text
+
+
 def test_challenge_skill_task_rubrics_validate():
     result = subprocess.run(
         [

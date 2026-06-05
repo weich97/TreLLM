@@ -20,7 +20,7 @@ The public artifact contains aggregate scores only; raw prompts and raw model an
 | --- | --- | ---: | --- | ---: | ---: | ---: | ---: |
 | `poe` | `claude-opus-4.7` | 1 | `adversarial_claim_boundary` | 8.0/8 | 38.0/40 | 95.0% | 0 |
 
-Interpretation: these are audit-skill scores, not trading-performance scores. A higher row means the model more reliably followed TradeArena's public audit, risk, execution-boundary, reproduction, claim-boundary, and plugin-review rubrics.
+Interpretation: these are audit-skill scores, not trading-performance scores. A higher row means the model more reliably followed TreLLM's public audit, risk, execution-boundary, reproduction, claim-boundary, and plugin-review rubrics.
 
 ## Repeat-Level Scorecard
 

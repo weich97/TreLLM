@@ -92,6 +92,35 @@ def test_claim_and_validation_docs_use_trellm_for_system_claims():
             assert _normalized(snippet) in text
 
 
+def test_skill_experiment_docs_assign_audit_research_to_trellm():
+    required_snippets = {
+        "docs/agent_skills.md": [
+            "The task suite measures TreLLM-specific financial-audit ability rather than trading ability:",
+        ],
+        "docs/poe_skill_task_experiments.md": [
+            "TreLLM already has synthetic, real-market, execution-shock, classical-baseline, and calibration snapshots, with TradeArena providing the comparable leaderboard surface.",
+        ],
+    }
+    forbidden_snippets = {
+        "docs/agent_skills.md": [
+            "The task suite measures TradeArena-specific audit ability rather than trading ability:",
+        ],
+        "docs/poe_skill_task_experiments.md": [
+            "TradeArena already has synthetic, real-market, execution-shock, classical-baseline, and calibration snapshots.",
+        ],
+    }
+
+    for path, snippets in required_snippets.items():
+        text = _normalized(_read_text(path))
+        for snippet in snippets:
+            assert _normalized(snippet) in text
+
+    for path, snippets in forbidden_snippets.items():
+        text = _normalized(_read_text(path))
+        for snippet in snippets:
+            assert _normalized(snippet) not in text
+
+
 def test_claim_review_examples_assign_recording_claims_to_trellm():
     required_snippets = {
         "docs/claim_boundary_review_quickstart.md": [

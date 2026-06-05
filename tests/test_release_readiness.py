@@ -1,6 +1,10 @@
 from pathlib import Path
 
-from scripts.check_release_readiness import _check_ci_gate_parity, _check_public_identity_boundaries
+from scripts.check_release_readiness import (
+    _check_ci_gate_parity,
+    _check_public_identity_boundaries,
+    _check_release_candidate_manifest_hashes,
+)
 
 
 def test_release_readiness_flags_missing_ci_gate(tmp_path: Path):
@@ -55,3 +59,31 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         "legacy public identity phrase 'The task suite measures TradeArena-specific audit ability rather than trading ability:' "
         "found in docs/agent_skills.md"
     ) in failures
+
+
+def test_release_readiness_flags_stale_release_candidate_artifact_hash(tmp_path: Path):
+    artifact = tmp_path / "README.md"
+    manifest = tmp_path / "docs" / "launch" / "release_candidate_v0.2.1.json"
+    artifact.write_text("current artifact text\n", encoding="utf-8")
+    manifest.parent.mkdir(parents=True)
+    manifest.write_text(
+        """
+{
+  "artifact_hashes": [
+    {
+      "bytes": 1,
+      "exists": true,
+      "path": "README.md",
+      "sha256": "sha256:stale"
+    }
+  ]
+}
+""".strip()
+        + "\n",
+        encoding="utf-8",
+    )
+
+    failures = _check_release_candidate_manifest_hashes(root=tmp_path, manifest_rel="docs/launch/release_candidate_v0.2.1.json")
+
+    assert "release candidate artifact hash mismatch for README.md" in failures
+    assert "release candidate artifact byte count mismatch for README.md" in failures

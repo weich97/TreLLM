@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import subprocess
 from pathlib import Path
 
@@ -290,6 +292,7 @@ def main() -> int:
                     failures.append(f"banned legacy namespace '{term}' found in {rel}")
 
     failures.extend(_check_public_identity_boundaries(ROOT, tracked))
+    failures.extend(_check_release_candidate_manifest_hashes(ROOT, "docs/launch/release_candidate_v0.2.1.json"))
     failures.extend(_check_ci_gate_parity(ROOT / ".github/workflows/ci.yml"))
 
     if failures:
@@ -350,6 +353,49 @@ def _check_public_identity_boundaries(root: Path, tracked_files: list[str]) -> l
             if phrase in text:
                 failures.append(f"legacy public identity phrase '{phrase}' found in {rel}")
     return failures
+
+
+def _check_release_candidate_manifest_hashes(root: Path, manifest_rel: str) -> list[str]:
+    manifest_path = root / manifest_rel
+    if not manifest_path.exists():
+        return [f"missing release candidate manifest: {manifest_rel}"]
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return [f"release candidate manifest is not valid JSON: {manifest_rel}"]
+
+    failures: list[str] = []
+    for artifact in manifest.get("artifact_hashes", []):
+        rel = str(artifact.get("path", ""))
+        if not rel:
+            failures.append(f"release candidate manifest contains artifact without path: {manifest_rel}")
+            continue
+        path = root / rel
+        expected_exists = bool(artifact.get("exists"))
+        if expected_exists and not path.exists():
+            failures.append(f"release candidate artifact is missing: {rel}")
+            continue
+        if not expected_exists:
+            if path.exists():
+                failures.append(f"release candidate artifact unexpectedly exists: {rel}")
+            continue
+        expected_bytes = artifact.get("bytes")
+        actual_bytes = path.stat().st_size
+        if expected_bytes != actual_bytes:
+            failures.append(f"release candidate artifact byte count mismatch for {rel}")
+        expected_sha = str(artifact.get("sha256", ""))
+        actual_sha = _sha256_file(path)
+        if expected_sha != actual_sha:
+            failures.append(f"release candidate artifact hash mismatch for {rel}")
+    return failures
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return "sha256:" + digest.hexdigest()
 
 
 def _is_public_identity_text_file(rel: str, path: Path) -> bool:

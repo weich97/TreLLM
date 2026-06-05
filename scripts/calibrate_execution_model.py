@@ -13,7 +13,7 @@ from tradearena.tools.calibration import (
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Generate OHLCV-based diagnostics for the TradeArena execution simulator."
+        description="Generate OHLCV-based diagnostics for the TreLLM execution simulator."
     )
     parser.add_argument("--data-dir", default="data/real/yahoo_intraday_1h_50")
     parser.add_argument("--glob", default="*.csv", help="CSV filename glob under --data-dir.")

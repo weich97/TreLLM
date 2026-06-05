@@ -7,7 +7,7 @@ from tradearena.core.reproducibility import hash_trajectory_file
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Compute a reproducibility hash for a TradeArena trajectory JSON.")
+    parser = argparse.ArgumentParser(description="Compute a reproducibility hash for a TreLLM trajectory JSON.")
     parser.add_argument("trajectory", help="Path to a trajectory JSON file.")
     args = parser.parse_args(argv)
 

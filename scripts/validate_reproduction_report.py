@@ -15,7 +15,7 @@ SCHEMA_PATH = ROOT / "schemas" / "reproduction_report.schema.json"
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Validate a TradeArena external reproduction report.")
+    parser = argparse.ArgumentParser(description="Validate a TreLLM external reproduction report.")
     parser.add_argument("report", help="Path to an external reproduction manifest JSON.")
     parser.add_argument(
         "--allow-command-failures",

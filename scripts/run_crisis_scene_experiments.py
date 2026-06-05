@@ -111,7 +111,7 @@ SCENES = {
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run real-market crisis-scene experiments for TradeArena.")
+    parser = argparse.ArgumentParser(description="Run real-market crisis-scene experiments for TreLLM.")
     parser.add_argument("--output-dir", default="outputs/tradearena_crisis")
     parser.add_argument("--data-dir", default="data/real/yahoo_daily_2021_2026_51")
     parser.add_argument("--cache", default="data/llm_cache/deepseek_analyst.jsonl")

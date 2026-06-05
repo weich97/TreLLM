@@ -10,7 +10,7 @@ from urllib.request import Request, urlopen
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Download normalized Yahoo Finance OHLCV CSV files for TradeArena.")
+    parser = argparse.ArgumentParser(description="Download normalized Yahoo Finance OHLCV CSV files for TreLLM.")
     parser.add_argument("--start", default="2021-05-01")
     parser.add_argument("--end", default="2026-05-14")
     parser.add_argument("--output-dir", default="data/real/yahoo_daily_2021_2026")

@@ -13,7 +13,7 @@ REQUIRED_COLUMNS = {"symbol", "side", "quantity", "reference_price", "fill_price
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Compare TradeArena execution assumptions against historical order/fill logs."
+        description="Compare TreLLM execution assumptions against historical order/fill logs."
     )
     parser.add_argument("--fills", required=True, help="CSV file containing historical fills.")
     parser.add_argument("--output", default="docs/results/execution_fill_comparison.json")

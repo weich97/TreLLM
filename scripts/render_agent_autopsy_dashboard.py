@@ -14,7 +14,7 @@ DEFAULT_OUTPUT = "outputs/examples/agent_autopsy_dashboard.html"
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Render an Agent Autopsy Dashboard from a TradeArena trajectory.")
+    parser = argparse.ArgumentParser(description="Render an Agent Autopsy Dashboard from a TreLLM trajectory.")
     parser.add_argument("--trajectory", default=DEFAULT_INPUT, help="Trajectory JSON written by a TreLLM run.")
     parser.add_argument("--output", default=DEFAULT_OUTPUT, help="HTML dashboard path.")
     args = parser.parse_args()

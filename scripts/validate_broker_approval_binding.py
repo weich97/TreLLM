@@ -13,7 +13,7 @@ from tradearena.tools import validate_broker_approval_artifact_file, validate_br
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Validate that a TradeArena broker approval binds to a handoff artifact.")
+    parser = argparse.ArgumentParser(description="Validate that a TreLLM broker approval binds to a handoff artifact.")
     parser.add_argument("approval_artifact", help="Path to a broker approval artifact JSON file.")
     parser.add_argument("request_artifact", help="Path to a broker handoff request artifact JSON file.")
     parser.add_argument("--now", default=None, help="Optional ISO timestamp used to reject expired approval artifacts.")

@@ -19,7 +19,7 @@ from tradearena.tools.calibration import (
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Fit TradeArena execution parameters from top-of-book quotes and realized fills."
+        description="Fit TreLLM execution parameters from top-of-book quotes and realized fills."
     )
     parser.add_argument("--quotes", default="data/public/microstructure_sample/quotes.csv")
     parser.add_argument("--fills", default="data/public/microstructure_sample/fills.csv")

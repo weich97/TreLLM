@@ -219,6 +219,57 @@ def test_developer_docs_use_trellm_for_system_surfaces():
             assert _normalized(snippet) in text
 
 
+def test_utility_cli_help_uses_trellm_for_system_artifacts():
+    required_snippets = {
+        "scripts/render_agent_autopsy_dashboard.py": [
+            'description="Render an Agent Autopsy Dashboard from a TreLLM trajectory."',
+        ],
+        "scripts/hash_run.py": [
+            'description="Compute a reproducibility hash for a TreLLM trajectory JSON."',
+        ],
+        "scripts/validate_broker_approval_artifact.py": [
+            'description="Validate a TreLLM broker approval artifact."',
+        ],
+        "scripts/validate_broker_handoff_artifact.py": [
+            'description="Validate a TreLLM broker handoff artifact."',
+        ],
+        "scripts/validate_broker_response_artifact.py": [
+            'description="Validate a TreLLM broker response artifact."',
+        ],
+        "scripts/validate_broker_approval_binding.py": [
+            'description="Validate that a TreLLM broker approval binds to a handoff artifact."',
+        ],
+        "scripts/hash_broker_handoff_artifact.py": [
+            'description="Validate and hash a TreLLM broker handoff artifact."',
+        ],
+        "scripts/calibrate_execution_model.py": [
+            'description="Generate OHLCV-based diagnostics for the TreLLM execution simulator."',
+        ],
+        "scripts/compare_execution_to_fills.py": [
+            'description="Compare TreLLM execution assumptions against historical order/fill logs."',
+        ],
+        "scripts/calibrate_quote_fill_model.py": [
+            'description="Fit TreLLM execution parameters from top-of-book quotes and realized fills."',
+        ],
+        "scripts/download_yahoo_daily.py": [
+            'description="Download normalized Yahoo Finance OHLCV CSV files for TreLLM."',
+        ],
+        "scripts/run_crisis_scene_experiments.py": [
+            'description="Run real-market crisis-scene experiments for TreLLM."',
+        ],
+        "scripts/run_embedding_provider_probe.py": [
+            'description="Run a 10-step embedding-provider robustness probe for TreLLM."',
+        ],
+        "scripts/validate_reproduction_report.py": [
+            'description="Validate a TreLLM external reproduction report."',
+        ],
+    }
+    for path, snippets in required_snippets.items():
+        text = _normalized(_read_text(path))
+        for snippet in snippets:
+            assert _normalized(snippet) in text
+
+
 def test_generated_public_copy_sources_use_trellm_system_identity():
     required_snippets = {
         "docs/agent_skills.md": [

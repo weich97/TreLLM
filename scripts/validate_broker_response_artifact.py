@@ -13,7 +13,7 @@ from tradearena.tools import validate_broker_response_artifact_file
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Validate a TradeArena broker response artifact.")
+    parser = argparse.ArgumentParser(description="Validate a TreLLM broker response artifact.")
     parser.add_argument("artifact", help="Path to a broker response artifact JSON file.")
     args = parser.parse_args(argv)
 

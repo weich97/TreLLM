@@ -13,7 +13,7 @@ from tradearena.tools import broker_handoff_artifact_hash, validate_broker_hando
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Validate and hash a TradeArena broker handoff artifact.")
+    parser = argparse.ArgumentParser(description="Validate and hash a TreLLM broker handoff artifact.")
     parser.add_argument("artifact", help="Path to a broker handoff request artifact JSON file.")
     args = parser.parse_args(argv)
 

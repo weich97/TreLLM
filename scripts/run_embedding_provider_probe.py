@@ -20,7 +20,7 @@ from tradearena.experiments.paper import _centroid, _cosine_distance, _effective
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run a 10-step embedding-provider robustness probe for TradeArena.")
+    parser = argparse.ArgumentParser(description="Run a 10-step embedding-provider robustness probe for TreLLM.")
     parser.add_argument(
         "--trajectory",
         default="outputs/tradearena_paper/raw/llm_matrix_feedback_glm_5_true_trajectory.json",

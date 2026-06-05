@@ -138,7 +138,7 @@ benchmark-only framing.
 
 ## External Validators Wanted
 
-TradeArena is looking for independent validation reports, calibration
+TreLLM is looking for independent validation reports, calibration
 mini-reports, and claim-boundary critiques. The most useful first contribution
 is not a new model row; it is a small public artifact that another reader can
 audit.
@@ -161,7 +161,7 @@ do not count as validation unless the command and artifact trail is public.
 
 ## Research Framing
 
-TradeArena is best read as an agent-reliability substrate, not only as a trading
+TreLLM is best read as an agent-reliability substrate, not only as a trading
 benchmark. Finance supplies a high-stakes testbed where autonomous agents must
 turn uncertain observations into portfolio intent, survive explicit risk
 constraints, and face execution frictions before their actions become realized
@@ -198,7 +198,7 @@ The repo distinguishes three claims:
 
 | Claim class | What the project can say | Evidence required |
 | --- | --- | --- |
-| Engineering | TradeArena records replayable trajectories, risk reports, fills, manifests, and hashes. | Runnable artifact, schema validation, and reproduction command. |
+| Engineering | TreLLM records replayable trajectories, risk reports, fills, manifests, and hashes. | Runnable artifact, schema validation, and reproduction command. |
 | Benchmark | Risk gates and paper-execution frictions change measured outcomes under a frozen protocol. | Shared scenarios, seeds or rolling windows, fixed baselines, confidence intervals, and execution assumptions. |
 | Scientific | A model or agent class is more reliable for financial decisions. | Stable provider/version records, repeated runs, non-LLM baseline wins, failure autopsy, and independent replication. |
 
@@ -210,7 +210,7 @@ is generally better at trading. See
 
 ## Why TradeArena?
 
-TradeArena is not a replacement for mature backtesting engines. It is a small
+TreLLM is not a replacement for mature backtesting engines. It is a small
 audit harness for asking what happened between an agent's stated intent, the
 risk-aware action that was allowed, and the paper order that survived execution
 stress.
@@ -219,7 +219,7 @@ stress.
 | --- | --- | --- |
 | Backtrader | Event-driven strategy backtests and broker-style order workflows | Use when the main object is a classical strategy backtest; TradeArena focuses on agent traces, risk edits, and redacted LLM manifests. |
 | vectorbt | Fast vectorized research over many parameter settings | Use when large array sweeps matter most; TradeArena trades speed for step-level audit records and execution/risk reports. |
-| FinRL | Reinforcement-learning market environments and policy training | Use for RL policy development; TradeArena can wrap learned or deterministic policies as agents and compare their risk/execution behavior. |
+| FinRL | Reinforcement-learning market environments and policy training | Use for RL policy development; TreLLM can wrap learned or deterministic policies as agents and compare their risk/execution behavior. |
 | TradeArena | Live-ready financial-agent audit, risk control, execution calibration, and broker-review handoff | Use when prompts, decisions, risk gates, fills, memory, approvals, and benchmark manifests need to be inspected together. |
 
 ## How A Run Works
@@ -722,9 +722,9 @@ reports, and non-maintainer contributions that are reviewed in public.
 - Community participation rules:
   [`docs/community_participation.md`](docs/community_participation.md)
 
-## Validate A Redacted Benchmark Row
+## Validate A Redacted Leaderboard Row
 
-TradeArena can validate redacted benchmark manifests. A manifest shares the
+TradeArena can validate redacted leaderboard manifests. A manifest shares the
 scenario, execution settings, risk settings, metrics, and reproducibility hash.
 It should not expose raw provider prompts, raw responses, credentials, or
 private portfolios. The format is for research exchange; one maintainer-authored
@@ -875,7 +875,7 @@ validation, and JSON validation.
 
 ## Safety Boundary
 
-TradeArena does not promise profitable trading, does not provide financial
+TreLLM does not promise profitable trading, does not provide financial
 advice, and does not execute live trades by default. Public examples are
 offline, paper/sandbox, dry-run, or human-review oriented. Broker and provider
 integrations must follow

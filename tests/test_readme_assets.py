@@ -57,3 +57,21 @@ def test_readme_surfaces_trellm_identity_split():
 
     for snippet in required_snippets:
         assert snippet in readme
+
+
+def test_readme_uses_trellm_for_system_level_claims():
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+
+    required_snippets = [
+        "TreLLM is looking for independent validation reports",
+        "TreLLM is best read as an agent-reliability substrate",
+        "| Engineering | TreLLM records replayable trajectories",
+        "TreLLM is not a replacement for mature backtesting engines.",
+        "TreLLM can wrap learned or deterministic policies as agents",
+        "## Validate A Redacted Leaderboard Row",
+        "TradeArena can validate redacted leaderboard manifests.",
+        "TreLLM does not promise profitable trading",
+    ]
+
+    for snippet in required_snippets:
+        assert snippet in readme

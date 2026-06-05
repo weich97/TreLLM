@@ -1,7 +1,9 @@
 # Reference Answer
 
-Claim 2 is an engineering claim: TradeArena records intent, risk edits,
+Claim 2 is an engineering claim: TreLLM records intent, risk edits,
 simulated fills, and replay hashes for paper-only benchmark runs.
+TradeArena can summarize that evidence as a leaderboard row, but the recording
+capability belongs to TreLLM.
 
 Claims 1 and 3 are scientific claims or model-superiority claims and should be
 weakened. The evidence labels are cached-provider, redacted-prompt,

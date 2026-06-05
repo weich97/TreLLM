@@ -84,6 +84,28 @@ def test_claim_and_validation_docs_use_trellm_for_system_claims():
             assert _normalized(snippet) in text
 
 
+def test_claim_review_examples_assign_recording_claims_to_trellm():
+    required_snippets = {
+        "docs/claim_boundary_review_quickstart.md": [
+            '"TreLLM records replayable trajectory artifacts with hashes; TradeArena can publish the resulting leaderboard evidence."',
+        ],
+        "examples/skill_tasks/claim_boundary_001/candidate_claims.md": [
+            "TreLLM records every agent decision as a replayable intent-to-execution trajectory.",
+        ],
+        "examples/skill_tasks/claim_boundary_provider_drift_001/candidate_claims.md": [
+            '"TreLLM records model intent, risk edits, simulated fills, and replay hashes for paper-only benchmark runs summarized in TradeArena rows."',
+        ],
+        "examples/skill_task_answers/reference/claim_boundary_provider_drift_001.md": [
+            "Claim 2 is an engineering claim: TreLLM records intent, risk edits, simulated fills, and replay hashes for paper-only benchmark runs.",
+            "TradeArena can summarize that evidence as a leaderboard row, but the recording capability belongs to TreLLM.",
+        ],
+    }
+    for path, snippets in required_snippets.items():
+        text = _normalized(_read_text(path))
+        for snippet in snippets:
+            assert _normalized(snippet) in text
+
+
 def test_launch_and_pages_sources_use_trellm_for_public_positioning():
     required_snippets = {
         "docs/blog/why_llm_trading_agents_need_audit_benchmarks.md": [

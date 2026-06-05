@@ -31,7 +31,7 @@ Use the weakest class that still says something useful:
 
 | Class | Supported when | Example wording |
 | --- | --- | --- |
-| Engineering | A command, artifact, schema, or hash proves the system can record or replay something. | "TradeArena records replayable trajectory artifacts with hashes." |
+| Engineering | A command, artifact, schema, or hash proves the system can record or replay something. | "TreLLM records replayable trajectory artifacts with hashes; TradeArena can publish the resulting leaderboard evidence." |
 | Benchmark | A frozen scenario, seeds or windows, baselines, risk settings, and execution assumptions support a comparison. | "Under the v0.2 stress protocol, risk gates and execution frictions change measured outcomes." |
 | Scientific | Repeated runs, stable provider/version records, non-LLM baselines, confidence intervals, failure analysis, and independent replication support a model or agent-class conclusion. | "This model class is more reliable under financial decision stress." |
 

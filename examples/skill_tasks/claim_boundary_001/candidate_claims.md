@@ -1,6 +1,6 @@
 # Candidate Claims
 
-1. TradeArena records every agent decision as a replayable intent-to-execution
+1. TreLLM records every agent decision as a replayable intent-to-execution
    trajectory.
 2. Under the v0.2 benchmark snapshot, risk-aware rows can be compared under a
    shared stress simulator.

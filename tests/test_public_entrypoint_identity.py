@@ -42,6 +42,11 @@ def test_github_templates_explain_trellm_and_tradearena_roles():
             "live_human_approved",
             "No default live orders",
         ],
+        ".github/ISSUE_TEMPLATE/config.yml": [
+            "Live-ready broker safety boundary",
+            "docs/live_trading_readiness.md",
+            "Check broker-review, paper-sandbox, and future live-approved contribution boundaries.",
+        ],
     }
     for path, snippets in required_snippets.items():
         text = _normalized(_read_text(path))

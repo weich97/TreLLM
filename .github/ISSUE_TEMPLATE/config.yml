@@ -6,3 +6,6 @@ contact_links:
   - name: Contributor task backlog
     url: https://github.com/weich97/TradeArena/blob/main/docs/community_tasks.md
     about: Browse small issue-sized tasks and suggested labels.
+  - name: Live-ready broker safety boundary
+    url: https://github.com/weich97/TradeArena/blob/main/docs/live_trading_readiness.md
+    about: Check broker-review, paper-sandbox, and future live-approved contribution boundaries.

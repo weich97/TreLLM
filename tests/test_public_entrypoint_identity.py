@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -855,6 +856,11 @@ def test_citation_and_research_report_keep_system_and_leaderboard_identity_separ
         ],
         "pyproject.toml": [
             'description = "TreLLM: LLM trading audit system with replayable trajectories, risk gates, reproducibility artifacts, and a TradeArena leaderboard."',
+            '"trellm"',
+            '"llm-trading"',
+            '"trading-audit"',
+            '"agent-audit"',
+            '"leaderboard"',
             'authors = [{ name = "TreLLM Contributors" }]',
         ],
     }
@@ -862,3 +868,18 @@ def test_citation_and_research_report_keep_system_and_leaderboard_identity_separ
         text = _normalized(_read_text(path))
         for snippet in snippets:
             assert _normalized(snippet) in text
+
+    pyproject = _read_text("pyproject.toml")
+    keywords_match = re.search(r"keywords = \[(?P<keywords>.*?)\]", pyproject, flags=re.S)
+    assert keywords_match is not None
+    keywords = set(re.findall(r'"([^"]+)"', keywords_match.group("keywords")))
+    assert 'name = "tradearena-benchmark"' in pyproject
+    assert 'description = "TreLLM: LLM trading audit system' in pyproject
+    assert keywords >= {
+        "trellm",
+        "llm-trading",
+        "trading-audit",
+        "financial-agents",
+        "agent-audit",
+        "leaderboard",
+    }

@@ -10,6 +10,17 @@ readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "TreLLM Contributors" }]
 license = "MIT"
+keywords = [
+    "trellm",
+    "llm-trading",
+    "trading-audit",
+    "financial-agents",
+    "agent-audit",
+    "risk-management",
+    "execution-simulation",
+    "reproducible-research",
+    "leaderboard",
+]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",

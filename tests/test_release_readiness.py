@@ -84,7 +84,8 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         '"title": "TradeArena skill task rubric"\n'
         '"User-Agent": "TradeArena-calibration-sample"\n'
         '"User-Agent": "TradeArena mirror downloader"\n'
-        "Volume is normalized to TradeArena units\n",
+        "Volume is normalized to TradeArena units\n"
+        "# TradeArena v0.2 External Reproduction Pack\n",
         encoding="utf-8",
     )
     readme.write_text(
@@ -168,6 +169,7 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
     assert 'legacy public identity phrase \'"User-Agent": "TradeArena-calibration-sample"\' found in docs/schemas.md' in failures
     assert 'legacy public identity phrase \'"User-Agent": "TradeArena mirror downloader"\' found in docs/schemas.md' in failures
     assert "legacy public identity phrase 'Volume is normalized to TradeArena units' found in docs/schemas.md" in failures
+    assert "legacy public identity phrase '# TradeArena v0.2 External Reproduction Pack' found in docs/schemas.md" in failures
 
 
 def test_release_readiness_flags_stale_release_candidate_artifact_hash(tmp_path: Path):

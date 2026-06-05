@@ -129,3 +129,6 @@ def test_external_reproduction_pack_writes_manifest(tmp_path: Path):
     assert manifest["private_fills_used"] is False
     assert manifest["trajectory_hash"]["reproducibility_hash"].startswith("sha256:")
     assert any(artifact["path"].endswith("agent_autopsy_dashboard.html") for artifact in manifest["artifacts"])
+    readme = (output_dir / "README.md").read_text(encoding="utf-8")
+    assert readme.startswith("# TreLLM v0.2 External Reproduction Pack")
+    assert "# TradeArena v0.2 External Reproduction Pack" not in readme

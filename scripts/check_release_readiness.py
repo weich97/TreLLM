@@ -286,6 +286,7 @@ LEGACY_PUBLIC_IDENTITY_PHRASES = [
     '"title": "TradeArena External Reproduction Report"',
     '"title": "TradeArena skill task answer set"',
     '"title": "TradeArena skill task rubric"',
+    "# TradeArena v0.2 External Reproduction Pack",
     '"User-Agent": "TradeArena-calibration-sample"',
     '"User-Agent": "TradeArena mirror downloader"',
     "Volume is normalized to TradeArena units",

@@ -1,6 +1,6 @@
 <p align="center">
-  <img src="docs/assets/tradearena_wordmark.svg"
-       alt="TradeArena leaderboard wordmark"
+  <img src="docs/assets/trellm_wordmark.svg"
+       alt="TreLLM trading audit system wordmark"
        width="780">
 </p>
 

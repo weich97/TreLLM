@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/weich97/TradeArena/schemas/calibration_profile.schema.json",
-  "title": "TradeArena execution calibration profile",
+  "title": "TreLLM execution calibration profile",
   "oneOf": [
     {
       "type": "object",

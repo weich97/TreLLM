@@ -280,6 +280,12 @@ LEGACY_PUBLIC_IDENTITY_PHRASES = [
     "For the staged path from benchmark research to supervised live execution",
     "These contributions move TreLLM from benchmark research toward human-gated",
     'framework: str = "TradeArena"',
+    '"title": "TradeArena trajectory"',
+    '"title": "TradeArena execution calibration profile"',
+    '"title": "TradeArena Demo Artifact Contract"',
+    '"title": "TradeArena External Reproduction Report"',
+    '"title": "TradeArena skill task answer set"',
+    '"title": "TradeArena skill task rubric"',
 ]
 CI_REQUIRED_GATE_COMMANDS = [
     "python -m compileall src scripts examples tests -q",

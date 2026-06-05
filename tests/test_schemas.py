@@ -81,6 +81,22 @@ def test_benchmark_submission_schema_has_explicit_version_contract():
     Draft202012Validator.check_schema(schema)
 
 
+def test_schema_titles_keep_trellm_system_and_tradearena_leaderboard_roles_separate():
+    expected_titles = {
+        "benchmark_submission.schema.json": "TradeArena Benchmark Submission",
+        "calibration_profile.schema.json": "TreLLM execution calibration profile",
+        "demo_artifact_contract.schema.json": "TreLLM Demo Artifact Contract",
+        "reproduction_report.schema.json": "TreLLM External Reproduction Report",
+        "skill_answer_set.schema.json": "TreLLM skill task answer set",
+        "skill_task_rubric.schema.json": "TreLLM skill task rubric",
+        "trajectory.schema.json": "TreLLM trajectory",
+    }
+
+    for schema_name, expected_title in expected_titles.items():
+        schema = _load_schema(schema_name)
+        assert schema["title"] == expected_title
+
+
 def test_broker_response_artifact_schema_validates_writer_output(tmp_path: Path):
     adapter = AlpacaPaperExportAdapter(client_prefix="schema-recon")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])

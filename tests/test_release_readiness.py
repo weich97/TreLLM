@@ -75,7 +75,13 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         "The current public repository is strongest at the prototype and early benchmark levels.\n"
         "For the staged path from benchmark research to supervised live execution.\n"
         "These contributions move TreLLM from benchmark research toward human-gated.\n"
-        'framework: str = "TradeArena"\n',
+        'framework: str = "TradeArena"\n'
+        '"title": "TradeArena trajectory"\n'
+        '"title": "TradeArena execution calibration profile"\n'
+        '"title": "TradeArena Demo Artifact Contract"\n'
+        '"title": "TradeArena External Reproduction Report"\n'
+        '"title": "TradeArena skill task answer set"\n'
+        '"title": "TradeArena skill task rubric"\n',
         encoding="utf-8",
     )
     readme.write_text(
@@ -147,6 +153,15 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         "found in docs/schemas.md"
     ) in failures
     assert 'legacy public identity phrase \'framework: str = "TradeArena"\' found in docs/schemas.md' in failures
+    for title in [
+        "TradeArena trajectory",
+        "TradeArena execution calibration profile",
+        "TradeArena Demo Artifact Contract",
+        "TradeArena External Reproduction Report",
+        "TradeArena skill task answer set",
+        "TradeArena skill task rubric",
+    ]:
+        assert f"legacy public identity phrase '\"title\": \"{title}\"' found in docs/schemas.md" in failures
 
 
 def test_release_readiness_flags_stale_release_candidate_artifact_hash(tmp_path: Path):

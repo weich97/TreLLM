@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://tradearena.dev/schemas/skill_task_rubric.schema.json",
-  "title": "TradeArena skill task rubric",
+  "title": "TreLLM skill task rubric",
   "type": "object",
   "required": ["task_id", "skill", "ability", "metric", "criteria", "pass_threshold"],
   "additionalProperties": false,

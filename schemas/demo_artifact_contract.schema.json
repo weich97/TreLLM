@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/weich97/TradeArena/schemas/demo_artifact_contract.schema.json",
-  "title": "TradeArena Demo Artifact Contract",
+  "title": "TreLLM Demo Artifact Contract",
   "type": "object",
   "required": ["version", "artifacts"],
   "properties": {

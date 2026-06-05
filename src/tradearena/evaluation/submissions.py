@@ -215,9 +215,9 @@ def write_registry_markdown(rows: list[dict[str, Any]], output_path: str | Path)
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     lines = [
-        "# Community Benchmark Registry",
+        "# TradeArena Leaderboard Registry",
         "",
-        "This registry is generated from redacted benchmark submission manifests.",
+        "This registry is generated from redacted leaderboard submission manifests.",
         "It is designed to compare audit-ready runs without exposing raw provider",
         "prompts, responses, private portfolios, or credentials.",
         "",
@@ -282,7 +282,7 @@ def write_registry_html(rows: list[dict[str, Any]], output_path: str | Path) -> 
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TradeArena Community Benchmark Registry</title>
+<title>TradeArena Leaderboard Registry</title>
 <style>
 body { margin: 0; font-family: Inter, Arial, sans-serif; background: #f8fafc; color: #0f172a; }
 main { max-width: 1240px; margin: 0 auto; padding: 38px 24px 52px; }
@@ -304,8 +304,8 @@ summary { color: #1d4ed8; cursor: pointer; }
 .muted { color: #64748b; }
 </style>
 <main>
-  <h1>TradeArena Community Benchmark Registry</h1>
-  <p>Generated from redacted benchmark submission manifests. Raw provider
+  <h1>TradeArena Leaderboard Registry</h1>
+  <p>Generated from redacted leaderboard submission manifests. Raw provider
   prompts, responses, credentials, and private portfolio data are not included.</p>
   <div class="controls">
     <input id="search" type="search" placeholder="Search scenario, agent, data source, or hash">

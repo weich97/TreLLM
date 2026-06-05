@@ -183,7 +183,8 @@ def test_cli_submission_registry_and_hash_run(tmp_path: Path):
     assert "stress-benchmark" in registry.read_text(encoding="utf-8")
     assert "evidence_tags" in csv_path.read_text(encoding="utf-8")
     assert "evidence_tier" in csv_path.read_text(encoding="utf-8")
-    assert "Community Benchmark Registry" in html_path.read_text(encoding="utf-8")
+    assert "TradeArena Leaderboard Registry" in html_path.read_text(encoding="utf-8")
+    assert "Community Benchmark Registry" not in html_path.read_text(encoding="utf-8")
     assert "stress-only" in html_path.read_text(encoding="utf-8")
     assert "deterministic-baseline" in html_path.read_text(encoding="utf-8")
     assert "Reproducible" in html_path.read_text(encoding="utf-8")
@@ -224,7 +225,8 @@ def test_script_submission_registry_entries_work_without_installed_package(tmp_p
 
     assert "`stress-only`" in registry.read_text(encoding="utf-8")
     assert "evidence_tags" in csv_path.read_text(encoding="utf-8")
-    assert "Community Benchmark Registry" in html_path.read_text(encoding="utf-8")
+    assert "TradeArena Leaderboard Registry" in html_path.read_text(encoding="utf-8")
+    assert "Community Benchmark Registry" not in html_path.read_text(encoding="utf-8")
 
 
 def test_registry_entry_ids_and_empty_html_are_stable(tmp_path: Path):
@@ -242,7 +244,8 @@ def test_registry_entry_ids_and_empty_html_are_stable(tmp_path: Path):
     html = html_path.read_text(encoding="utf-8")
 
     assert "No accepted submissions yet." in html
-    assert "Community Benchmark Registry" in html
+    assert "TradeArena Leaderboard Registry" in html
+    assert "Community Benchmark Registry" not in html
 
 
 def test_hash_run_produces_stable_trajectory_fingerprint():

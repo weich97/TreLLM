@@ -6,8 +6,8 @@ This is a local release-candidate manifest. Tagging and PyPI publication are sep
 
 - Target release: `v0.2.1`
 - Current package version: `0.2.0`
-- Commit: `675de04b2ebd39705945432f23a3c4a37b4cd216`
-- Working tree dirty entries when generated: `2`
+- Commit: `9f0e60222e7d2d175b771eb8cf31cc379c58f7da`
+- Working tree dirty entries when generated: `9`
 
 ## Pre-Release Commands
 
@@ -33,7 +33,7 @@ This is a local release-candidate manifest. Tagging and PyPI publication are sep
 - `docs/results/poe_skill_challenge_followup_matrix.md`: present sha256:ffd81bc9b63553d0b88a69ce83b81e35ef7fab1f308346faa7b6039e4bc1283a
 - `docs/results/poe_skill_challenge_followup_claude_adversarial.md`: present sha256:445d87adb7647fd19920dc7c2d926d456c3fbff60ec93792d8257f4e6f97201a
 - `docs/results/skill_task_matrix.md`: present sha256:c936b965c9a18a0ec43850802a7dd8bfffd3401925011d0dcb16c7b33a31f843
-- `docs/results/community_registry.md`: present sha256:130bd0974cdc2d7094c3bacd5a46445f882983087b9fb3010809a077151f9c4e
+- `docs/results/community_registry.md`: present sha256:ef7f353b1d5c0613e00d32fb78582ac0acb28e6f197e802fc03126307cfd4899
 - `docs/public_artifact_privacy.md`: present sha256:6a58cc596a96b9262cf413deed8fd158f1583010b9cd61b1fff340d82b2b4a9b
 - `docs/launch/release_notes_v0.2.1.md`: present sha256:91cb931466f3d73faa35af4f67e0bce2616d18776552ef75d464c0a704f29382
 

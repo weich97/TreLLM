@@ -59,7 +59,7 @@ jobs:
           python scripts/score_skill_task_report.py --tasks-dir examples/skill_tasks --output docs/results/skill_task_matrix.md --check
       - name: Validate example benchmark submission
         run: python scripts/validate_benchmark_submission.py examples/benchmark_submissions/example_redacted_submission.json
-      - name: Build community benchmark registry
+      - name: Build TradeArena leaderboard registry
         run: python scripts/build_benchmark_registry.py examples/benchmark_submissions
       - name: Release readiness smoke test
         run: python scripts/check_release_readiness.py

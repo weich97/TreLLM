@@ -427,7 +427,7 @@ def _run_utility_command(argv: list[str]) -> int:
         return 0
 
     if command == "build-registry":
-        parser = argparse.ArgumentParser(description="Build a community benchmark registry from redacted submissions.")
+        parser = argparse.ArgumentParser(description="Build the TradeArena leaderboard registry from redacted submissions.")
         parser.add_argument("input")
         parser.add_argument("--output", default="docs/results/community_registry.md")
         parser.add_argument("--csv-output", default="docs/results/community_registry.csv")

@@ -16,7 +16,7 @@ and review while keeping TradeArena benchmark rows comparable.
 - Smoke-check the Colab and Codespaces paths.
 - Keep release-readiness checks in CI.
 
-## v0.2.0: Community Benchmark Registry
+## v0.2.0: TradeArena Leaderboard Registry
 
 Goal: let external users submit comparable, redacted benchmark rows.
 

@@ -14,7 +14,7 @@ from tradearena.evaluation.submissions import build_registry_rows, write_registr
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Build a TradeArena community benchmark registry.")
+    parser = argparse.ArgumentParser(description="Build the TradeArena leaderboard registry.")
     parser.add_argument("input", help="Submission JSON file or directory containing JSON submissions.")
     parser.add_argument("--output", default="docs/results/community_registry.md")
     parser.add_argument("--csv-output", default="docs/results/community_registry.csv")

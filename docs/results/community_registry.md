@@ -1,6 +1,6 @@
-# Community Benchmark Registry
+# TradeArena Leaderboard Registry
 
-This registry is generated from redacted benchmark submission manifests.
+This registry is generated from redacted leaderboard submission manifests.
 It is designed to compare audit-ready runs without exposing raw provider
 prompts, responses, private portfolios, or credentials.
 

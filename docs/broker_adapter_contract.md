@@ -37,6 +37,10 @@ validate the cross-artifact packet with:
 tradearena validate-live-readiness outputs/examples/live_readiness_preflight/preflight_bundle.json --now 2026-05-31T12:30:00Z
 ```
 
+The preflight validator rejects safety packets whose handoff and response
+artifacts disagree about `account_mode` or `live_submission`; publish separate
+packets rather than mixing paper, live, and non-submission evidence.
+
 The current code-level primitives live in `tradearena.tools.broker_export`:
 
 - `validate_broker_adapter_capability`;

@@ -215,7 +215,8 @@ The schema fixes the public `trellm_live_readiness_preflight_v0.1` contract for
 linking a broker capability manifest, handoff artifact, approval artifact,
 response artifact, and operator runbook into one reviewable safety packet.
 Runtime validation then calls the component validators and checks approval
-binding plus capability-mode consistency.
+binding, capability-mode consistency, and handoff/response account-mode plus
+live-submission consistency.
 
 Validate the offline demo preflight bundle with:
 

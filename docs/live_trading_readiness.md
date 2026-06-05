@@ -52,7 +52,8 @@ Before a broker-facing contribution is accepted, it should prove:
 - a schema-valid broker adapter capability manifest declares supported modes,
   account modes, network access, credential policy, and safety controls;
 - a live-readiness preflight bundle validates the capability manifest, handoff,
-  approval binding, response artifact, and operator runbook together;
+  approval binding, response artifact, and operator runbook together, including
+  matching handoff/response account modes and live-submission boundaries;
 - live submission is impossible without an explicit mode switch;
 - credentials are read from environment variables or an OS secret manager;
 - no credentials, account IDs, private holdings, raw fills, or raw provider

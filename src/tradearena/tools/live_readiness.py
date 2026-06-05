@@ -122,6 +122,8 @@ def _validate_components(
 
     if not capability_errors:
         errors.extend(_capability_boundary_errors(capability, handoff, response))
+    if not handoff_errors and not response_errors:
+        errors.extend(_handoff_response_linkage_errors(handoff, response))
     return errors
 
 
@@ -140,6 +142,19 @@ def _capability_boundary_errors(
             errors.append(f"{label}.account_mode {account_mode} is not declared in capability_manifest.account_modes")
         if capability.get("supports_live_submission") is not True and payload.get("live_submission") is True:
             errors.append(f"{label} uses live_submission but capability_manifest does not support live submission")
+    return errors
+
+
+def _handoff_response_linkage_errors(handoff: dict[str, Any], response: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    for field in ("account_mode", "live_submission"):
+        handoff_value = handoff.get(field)
+        response_value = response.get(field)
+        if handoff_value != response_value:
+            errors.append(
+                f"response_artifact.{field} {response_value} does not match "
+                f"handoff_artifact.{field} {handoff_value}"
+            )
     return errors
 
 

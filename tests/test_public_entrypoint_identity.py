@@ -60,6 +60,13 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
             "We maintain TreLLM, an early-stage live-ready audit and control system for auditing",
             "TradeArena can package comparable benchmark manifests and leaderboard evidence",
         ],
+        "docs/launch/discussion_seeds.md": [
+            "We want community leaderboard submissions without exposing raw provider prompts or",
+            "Reply with the fields you would be comfortable sharing in a public leaderboard row.",
+        ],
+        "docs/launch/issue_backlog.md": [
+            "How should community leaderboard submissions redact provider prompts/responses?",
+        ],
     }
     for path, snippets in required_snippets.items():
         text = _normalized(_read_text(path))
@@ -380,6 +387,10 @@ def test_generated_public_copy_sources_use_trellm_system_identity():
         "docs/benchmark_submissions.md": [
             "TradeArena accepts redacted leaderboard manifests so users can compare runs",
         ],
+        "docs/schemas.md": [
+            "## Redacted Leaderboard Submission Schema",
+            "External TradeArena rows can be shared without exposing raw provider prompts or responses.",
+        ],
         "docs/launch/discussion_seeds.md": [
             "TreLLM currently records observation, signals, proposed decisions, approved",
             "If you use TreLLM in a class, project, or internal evaluation",
@@ -389,6 +400,29 @@ def test_generated_public_copy_sources_use_trellm_system_identity():
         text = _normalized(_read_text(path))
         for snippet in snippets:
             assert _normalized(snippet) in text
+
+
+def test_public_copy_avoids_community_benchmark_submission_framing():
+    forbidden_snippets = {
+        "docs/schemas.md": [
+            "Community Benchmark Submission Schema",
+            "External benchmark rows can be shared",
+        ],
+        "docs/launch/discussion_seeds.md": [
+            "community benchmark submissions",
+            "public benchmark submission",
+        ],
+        "docs/launch/issue_backlog.md": [
+            "community benchmark submissions",
+        ],
+        "docs/launch/release_notes_v0.2.0.md": [
+            "Redacted benchmark submissions",
+        ],
+    }
+    for path, snippets in forbidden_snippets.items():
+        text = _normalized(_read_text(path)).lower()
+        for snippet in snippets:
+            assert _normalized(snippet).lower() not in text
 
 
 def test_release_notes_use_trellm_for_system_release_positioning():

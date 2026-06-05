@@ -54,7 +54,7 @@ reviewable demo artifact, and compliance with
 
 These contributions strengthen the TradeArena leaderboard and benchmark module.
 
-- Redacted trajectory benchmark submissions using `schemas/benchmark_submission.schema.json`.
+- Redacted TradeArena leaderboard submissions using `schemas/benchmark_submission.schema.json`.
 - Reasoning-mode ablations, including rationale-free and tool-restricted modes.
 - False-audit and placebo-feedback trust-calibration probes.
 - Additional representation diagnostics that do not require raw provider text.

@@ -1,4 +1,4 @@
-# Benchmark Submissions
+# Redacted Leaderboard Submissions
 
 TradeArena accepts redacted leaderboard manifests so users can compare runs
 without sharing raw provider prompts, responses, credentials, or private

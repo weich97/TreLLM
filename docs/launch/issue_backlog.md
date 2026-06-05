@@ -97,5 +97,5 @@ These can become GitHub Discussions after Discussions are enabled:
 
 - What should count as a reproducible financial-agent trajectory?
 - Which execution realism assumptions matter most for LLM agents?
-- How should community benchmark submissions redact provider prompts/responses?
+- How should community leaderboard submissions redact provider prompts/responses?
 - What is the safest boundary between planning, paper trading, and live trading?

@@ -15,7 +15,7 @@ What fields would you add before trusting a financial-agent reliability benchmar
 
 Call to action:
 
-Reply with one field you would require in a public benchmark submission.
+Reply with one field you would require in a public leaderboard submission.
 ```
 
 ## Ideas: Execution Realism Presets
@@ -33,17 +33,17 @@ If you work on execution simulation, comment with the assumption you think
 most often changes the conclusion of a backtest.
 ```
 
-## Q&A: Redacted Benchmark Submissions
+## Q&A: Redacted Leaderboard Submissions
 
 Prompt:
 
 ```text
-We want community benchmark submissions without exposing raw provider prompts or
+We want community leaderboard submissions without exposing raw provider prompts or
 responses. What should a redacted manifest include to be useful but safe?
 
 Call to action:
 
-Reply with the fields you would be comfortable sharing in a public benchmark
+Reply with the fields you would be comfortable sharing in a public leaderboard
 row.
 ```
 

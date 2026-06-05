@@ -79,9 +79,9 @@ Each step records:
 - reproducibility: prompt/model/data/memory/tool/risk/portfolio/execution state coverage
 - reasoning consistency: action side and target weight agreement
 
-## Community Benchmark Submission Schema
+## Redacted Leaderboard Submission Schema
 
-External benchmark rows can be shared without exposing raw provider prompts or
+External TradeArena rows can be shared without exposing raw provider prompts or
 responses. The minimal public submission contract lives at
 [`../schemas/benchmark_submission.schema.json`](../schemas/benchmark_submission.schema.json).
 It records the scenario, redacted agent metadata, data source, execution

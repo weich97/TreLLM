@@ -247,6 +247,10 @@ LEGACY_PUBLIC_IDENTITY_PHRASES = [
     "TradeArena's public audit, risk, execution-boundary, reproduction, claim-boundary, and plugin-review rubrics",
     "The current public benchmark path",
     "Before calling TradeArena an externally validated community benchmark",
+    "Community Benchmark Submission Schema",
+    "community benchmark submissions",
+    "public benchmark submission",
+    "Redacted benchmark submissions",
 ]
 CI_REQUIRED_GATE_COMMANDS = [
     "python -m compileall src scripts examples tests -q",

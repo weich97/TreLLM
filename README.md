@@ -845,7 +845,7 @@ Useful entry points:
 - Execution model: [`docs/execution_model_boundaries.md`](docs/execution_model_boundaries.md)
 - Execution calibration quickstart:
   [`docs/execution_calibration_quickstart.md`](docs/execution_calibration_quickstart.md)
-- Benchmark submissions: [`docs/benchmark_submissions.md`](docs/benchmark_submissions.md)
+- Redacted leaderboard submissions: [`docs/benchmark_submissions.md`](docs/benchmark_submissions.md)
 - Deterministic baseline row quickstart:
   [`docs/deterministic_baseline_submission_quickstart.md`](docs/deterministic_baseline_submission_quickstart.md)
 - Evaluation rigor: [`docs/evaluation_rigor.md`](docs/evaluation_rigor.md)

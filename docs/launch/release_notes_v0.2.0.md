@@ -49,7 +49,7 @@ flags for live APIs, downloaded market data, and private fills.
   prompts, rate limits, cache provenance, and model-version drift.
 - The default execution simulator is a stress-test simulator, not a calibrated
   substitute for venue-level quote, order-book, or fill replay.
-- Redacted benchmark submissions are useful for participation but cannot by
+- Redacted leaderboard submissions are useful for participation but cannot by
   themselves support strong model-ranking claims.
 - Scientific claims require repeated seeds or rolling windows, classical
   baselines, statistical intervals, failure autopsy, and independent

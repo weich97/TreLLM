@@ -35,6 +35,7 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
     pyproject = tmp_path / "pyproject.toml"
     registry = tmp_path / "docs" / "results" / "community_registry.md"
     skill_doc = tmp_path / "docs" / "agent_skills.md"
+    schema_doc = tmp_path / "docs" / "schemas.md"
     readme = tmp_path / "README.md"
     pyproject.write_text(
         'description = "LLM-driven trading audit and control system with TradeArena leaderboard artifacts."\n',
@@ -47,6 +48,7 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         "The task suite measures TradeArena-specific audit ability rather than trading ability:\n",
         encoding="utf-8",
     )
+    schema_doc.write_text("# Schemas\n\n## Community Benchmark Submission Schema\n", encoding="utf-8")
     readme.write_text(
         "The current public benchmark path runs offline and paper/sandbox experiments.\n"
         "Before calling TradeArena an externally validated community benchmark, more evidence is required.\n",
@@ -59,6 +61,7 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
             "pyproject.toml",
             "docs/results/community_registry.md",
             "docs/agent_skills.md",
+            "docs/schemas.md",
             "README.md",
         ],
     )
@@ -74,6 +77,7 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         "legacy public identity phrase 'Before calling TradeArena an externally validated community benchmark' "
         "found in README.md"
     ) in failures
+    assert "legacy public identity phrase 'Community Benchmark Submission Schema' found in docs/schemas.md" in failures
 
 
 def test_release_readiness_flags_stale_release_candidate_artifact_hash(tmp_path: Path):

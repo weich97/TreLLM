@@ -7,7 +7,7 @@ convention.
 | Mode | Intended location | Behavior |
 | --- | --- | --- |
 | `private_debug` | ignored local caches such as `data/llm_cache/*.jsonl` | May retain raw prompts, raw provider responses, provider metadata, and local debugging context. |
-| `public_artifact` | trajectories, manifests, dashboards, reports, and benchmark submissions | Keeps prompt and response hashes, provider/model/version fields, structured signals or weights, and redacted rationale text. Raw prompts, raw responses, credentials, emails, and account-like fields are not allowed. |
+| `public_artifact` | trajectories, manifests, dashboards, reports, and redacted leaderboard submissions | Keeps prompt and response hashes, provider/model/version fields, structured signals or weights, and redacted rationale text. Raw prompts, raw responses, credentials, emails, and account-like fields are not allowed. |
 
 `Trajectory.to_dict()` and `write_json()` default to `public_artifact`. Code that
 needs raw provider text should keep it in ignored local cache files and publish a

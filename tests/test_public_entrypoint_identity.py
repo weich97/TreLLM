@@ -547,6 +547,7 @@ def test_citation_and_research_report_keep_system_and_leaderboard_identity_separ
             "If you use TreLLM in research or cite TradeArena leaderboard artifacts, please cite the technical report:",
         ],
         "pyproject.toml": [
+            'description = "TreLLM: LLM-driven trading audit and control system with replayable trajectories, risk gates, and TradeArena leaderboard artifacts."',
             'authors = [{ name = "TreLLM Contributors" }]',
         ],
     }

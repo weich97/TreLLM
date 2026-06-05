@@ -275,6 +275,10 @@ LEGACY_PUBLIC_IDENTITY_PHRASES = [
     "TradeArena's default `market_impact` coefficient",
     "claiming that TradeArena explains realized transaction costs",
     "TradeArena strategy interface and downstream risk/execution/evaluation stack.",
+    "The framework is the experimental substrate",
+    "The current public repository is strongest at the prototype and early benchmark levels",
+    "For the staged path from benchmark research to supervised live execution",
+    "These contributions move TreLLM from benchmark research toward human-gated",
 ]
 CI_REQUIRED_GATE_COMMANDS = [
     "python -m compileall src scripts examples tests -q",

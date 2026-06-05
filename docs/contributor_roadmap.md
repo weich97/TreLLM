@@ -36,7 +36,7 @@ result artifact under `outputs/examples/`.
 
 ## Route B2: Broker / Trading Operations
 
-These contributions move TreLLM from benchmark research toward human-gated,
+These contributions move TreLLM from offline audit research toward human-gated,
 live-ready trading infrastructure.
 
 - Harden broker-review exports with approval fields and reconciliation IDs.

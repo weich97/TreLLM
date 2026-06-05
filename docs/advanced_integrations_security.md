@@ -127,5 +127,5 @@ python scripts/check_release_readiness.py
 python -m pytest -q
 ```
 
-For the staged path from benchmark research to supervised live execution, see
+For the staged path from TreLLM audit research to supervised live execution, see
 [`live_trading_readiness.md`](live_trading_readiness.md).

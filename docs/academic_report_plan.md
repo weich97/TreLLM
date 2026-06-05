@@ -26,9 +26,9 @@ domain, but the research object is how autonomous financial agents transform
 intent into constrained, executable actions.
 
 Avoid framing the paper as "we built a tool" unless the venue is explicitly an
-artifact, systems, or benchmark track. The framework is the experimental
-substrate; the paper should emphasize measurable behavior, failure modes,
-calibration limits, and reproducibility.
+artifact, systems, or benchmark track. TreLLM is the experimental substrate;
+the paper should emphasize measurable behavior, failure modes, calibration
+limits, and reproducibility.
 
 ## Minimum Report Contents
 
@@ -53,9 +53,9 @@ Use this ladder to avoid overclaiming:
 | Scientific | Structured risk feedback changes LLM decision behavior | Multiple models, ablations, confidence intervals, external validation |
 | Execution realism | The simulator approximates realized trading costs | Quote/fill-log calibration against private or licensed fills |
 
-The current public repository is strongest at the prototype and early benchmark
-levels. Scientific and execution-realism claims need the external validation
-track before they should be stated strongly.
+The current public repository is strongest at the TreLLM prototype and
+TradeArena early leaderboard-benchmark levels. Scientific and execution-realism
+claims need the external validation track before they should be stated strongly.
 
 ## Result Artifacts
 

@@ -70,7 +70,11 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         "| TradeArena record | OpenTelemetry-style span | Evals or trace-style field |\n"
         "TradeArena's default `market_impact` coefficient.\n"
         "claiming that TradeArena explains realized transaction costs.\n"
-        "TradeArena strategy interface and downstream risk/execution/evaluation stack.\n",
+        "TradeArena strategy interface and downstream risk/execution/evaluation stack.\n"
+        "The framework is the experimental substrate.\n"
+        "The current public repository is strongest at the prototype and early benchmark levels.\n"
+        "For the staged path from benchmark research to supervised live execution.\n"
+        "These contributions move TreLLM from benchmark research toward human-gated.\n",
         encoding="utf-8",
     )
     readme.write_text(
@@ -126,6 +130,19 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
     assert "legacy public identity phrase 'claiming that TradeArena explains realized transaction costs' found in docs/schemas.md" in failures
     assert (
         "legacy public identity phrase 'TradeArena strategy interface and downstream risk/execution/evaluation stack.' "
+        "found in docs/schemas.md"
+    ) in failures
+    assert "legacy public identity phrase 'The framework is the experimental substrate' found in docs/schemas.md" in failures
+    assert (
+        "legacy public identity phrase 'The current public repository is strongest at the prototype and early benchmark levels' "
+        "found in docs/schemas.md"
+    ) in failures
+    assert (
+        "legacy public identity phrase 'For the staged path from benchmark research to supervised live execution' "
+        "found in docs/schemas.md"
+    ) in failures
+    assert (
+        "legacy public identity phrase 'These contributions move TreLLM from benchmark research toward human-gated' "
         "found in docs/schemas.md"
     ) in failures
 

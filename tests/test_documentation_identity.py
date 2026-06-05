@@ -22,6 +22,7 @@ def test_system_docs_use_trellm_identity():
             "TradeArena leaderboard artifacts",
             "Create review files that a human can inspect outside TreLLM",
             "Any adapter that can submit live orders is outside the public TradeArena leaderboard path",
+            "For the staged path from TreLLM audit research to supervised live execution",
         ],
         "docs/live_trading_readiness.md": [
             "TreLLM should grow beyond offline and paper-only research paths",
@@ -56,6 +57,9 @@ def test_system_docs_use_trellm_identity():
 
     narrative_text = _normalized(_read_doc("docs/narrative_positioning.md"))
     assert "TradeArena should be described as the public leaderboard and benchmark module" not in narrative_text
+
+    advanced_text = _normalized(_read_doc("docs/advanced_integrations_security.md"))
+    assert "For the staged path from benchmark research to supervised live execution" not in advanced_text
 
 
 def test_live_readiness_avoids_benchmark_module_system_framing():

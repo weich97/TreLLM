@@ -44,6 +44,7 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
     required_snippets = {
         "docs/contributor_roadmap.md": [
             "TreLLM grows best when contributions make financial AI agents easier to evaluate, audit, reproduce, control, or extend.",
+            "These contributions move TreLLM from offline audit research toward human-gated, live-ready trading infrastructure.",
             "These contributions strengthen the TradeArena leaderboard module and benchmark-card layer.",
         ],
         "docs/community_participation.md": [
@@ -75,6 +76,7 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
     contributor_text = _normalized(_read_text("docs/contributor_roadmap.md"))
     assert "TradeArena is the public leaderboard and benchmark module inside that system" not in contributor_text
     assert "These contributions strengthen the TradeArena leaderboard and benchmark module." not in contributor_text
+    assert "These contributions move TreLLM from benchmark research toward human-gated" not in contributor_text
 
 
 def test_claim_and_validation_docs_use_trellm_for_system_claims():
@@ -98,6 +100,8 @@ def test_claim_and_validation_docs_use_trellm_for_system_claims():
         ],
         "docs/academic_report_plan.md": [
             "TreLLM currently has technical documentation and TradeArena leaderboard artifacts.",
+            "TreLLM is the experimental substrate",
+            "The current public repository is strongest at the TreLLM prototype and TradeArena early leaderboard-benchmark levels.",
             "TreLLM can run auditable offline and paper/sandbox agent loops",
             "TradeArena can compare agents under shared risk and execution assumptions",
         ],
@@ -118,6 +122,10 @@ def test_claim_and_validation_docs_use_trellm_for_system_claims():
     calibration_text = _normalized(_read_text("docs/execution_calibration_quickstart.md"))
     assert "strengthen TradeArena's execution evidence" not in calibration_text
     assert "the TradeArena calibration pipeline was run" not in calibration_text
+
+    academic_text = _normalized(_read_text("docs/academic_report_plan.md"))
+    assert "The framework is the experimental substrate" not in academic_text
+    assert "The current public repository is strongest at the prototype and early benchmark levels." not in academic_text
 
 
 def test_skill_experiment_docs_assign_audit_research_to_trellm():

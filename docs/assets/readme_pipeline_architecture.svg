@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="560" viewBox="0 0 1280 560" role="img" aria-labelledby="title desc">
-  <title id="title">TradeArena runtime architecture</title>
+  <title id="title">TreLLM runtime architecture</title>
   <desc id="desc">A runtime architecture diagram showing market inputs, agent observation and planning, risk gating, execution simulation, portfolio state updates, memory feedback, and audit artifacts.</desc>
   <defs>
     <marker id="arrow" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto">
@@ -31,7 +31,7 @@
   </defs>
 
   <rect class="bg" width="1280" height="560"/>
-  <text class="title" x="640" y="45" text-anchor="middle">TradeArena Runtime Architecture</text>
+  <text class="title" x="640" y="45" text-anchor="middle">TreLLM Runtime Architecture</text>
   <text class="subtitle" x="640" y="72" text-anchor="middle">Every decision becomes an auditable trajectory: intent, risk intervention, execution friction, state update, and replay artifact.</text>
 
   <rect class="lane" x="42" y="96" width="1196" height="312"/>

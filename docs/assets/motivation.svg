@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
-  <title id="title">TradeArena motivation</title>
-  <desc id="desc">A paper-style motivation diagram contrasting narrow return-only evaluation with TradeArena's agent reliability and intent-to-execution audit framing.</desc>
+  <title id="title">TreLLM motivation</title>
+  <desc id="desc">A paper-style motivation diagram contrasting narrow return-only evaluation with TreLLM's agent reliability and intent-to-execution audit framing.</desc>
   <defs>
     <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
       <path d="M2,2 L10,6 L2,10 Z" fill="#24415f"/>
@@ -59,7 +59,7 @@
   <path class="arrow" d="M668 285 H710"/>
 
   <rect class="panel" x="710" y="120" width="435" height="330" fill="url(#rightPanel)"/>
-  <text class="label" x="740" y="160">TradeArena framing</text>
+  <text class="label" x="740" y="160">TreLLM framing</text>
   <text class="small" x="740" y="188">Evaluate the full decision-making system</text>
 
   <rect class="pill strong" x="750" y="225" width="320" height="48"/>

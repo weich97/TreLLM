@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
-  <title id="title">TradeArena system architecture</title>
+  <title id="title">TreLLM system architecture</title>
   <desc id="desc">A system architecture diagram showing data, agent lifecycle, risk layer, execution simulator, memory, logging, and evaluation outputs.</desc>
   <defs>
     <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
@@ -26,7 +26,7 @@
   </defs>
 
   <rect class="bg" width="1200" height="720"/>
-  <text class="title" x="600" y="48" text-anchor="middle">TradeArena: Auditable Agent Benchmark Architecture</text>
+  <text class="title" x="600" y="48" text-anchor="middle">TreLLM: Trading Audit and Control Architecture</text>
 
   <rect class="frame" x="42" y="82" width="1116" height="560"/>
 
@@ -100,5 +100,5 @@
   <path class="dash" d="M173 252 C173 410, 260 570, 116 570"/>
   <path class="dash" d="M705 414 H760"/>
 
-  <text class="tiny" x="600" y="672" text-anchor="middle">The same run produces benchmark metrics and a replayable evidence trail for every trading decision.</text>
+  <text class="tiny" x="600" y="672" text-anchor="middle">The same TreLLM run produces TradeArena leaderboard metrics and a replayable evidence trail for every trading decision.</text>
 </svg>

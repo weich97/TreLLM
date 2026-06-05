@@ -82,3 +82,47 @@ def test_readme_uses_trellm_for_system_level_claims():
 
     for snippet in required_snippets:
         assert snippet in readme
+
+
+def test_system_visual_assets_use_trellm_as_system_name():
+    asset_expectations = {
+        "docs/assets/trellm_wordmark.svg": [
+            "TreLLM logo",
+            "LLM Trading Audit and Control System",
+            "TradeArena leaderboard",
+        ],
+        "docs/assets/readme_pipeline_architecture.svg": [
+            "TreLLM runtime architecture",
+            "TreLLM Runtime Architecture",
+        ],
+        "docs/assets/system_architecture.svg": [
+            "TreLLM system architecture",
+            "TreLLM: Trading Audit and Control Architecture",
+            "TradeArena leaderboard metrics",
+        ],
+        "docs/assets/motivation.svg": [
+            "TreLLM motivation",
+            "TreLLM framing",
+        ],
+        "docs/assets/demo_video_thumbnail.svg": [
+            "TreLLM 3-minute demo video thumbnail",
+            "TreLLM quickstart demo",
+        ],
+    }
+
+    banned_snippets = [
+        "TradeArena Runtime Architecture",
+        "TradeArena system architecture",
+        "TradeArena: Auditable Agent Benchmark Architecture",
+        "TradeArena motivation",
+        "TradeArena framing",
+        "TradeArena 3-minute demo video thumbnail",
+        "TradeArena quickstart demo",
+    ]
+
+    for relative, required_snippets in asset_expectations.items():
+        text = (ROOT / relative).read_text(encoding="utf-8")
+        for snippet in required_snippets:
+            assert snippet in text
+        for snippet in banned_snippets:
+            assert snippet not in text

@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
-  <title id="title">TradeArena 3-minute demo video thumbnail</title>
-  <desc id="desc">A video thumbnail for the TradeArena quickstart demo.</desc>
+  <title id="title">TreLLM 3-minute demo video thumbnail</title>
+  <desc id="desc">A video thumbnail for the TreLLM quickstart demo.</desc>
   <rect width="960" height="540" rx="28" fill="#0f172a"/>
   <rect x="32" y="32" width="896" height="476" rx="22" fill="#f8fafc"/>
   <rect x="32" y="32" width="896" height="86" rx="22" fill="#111827"/>
   <rect x="32" y="98" width="896" height="6" fill="#14b8a6"/>
-  <text x="70" y="72" fill="#ccfbf1" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">TradeArena</text>
+  <text x="70" y="72" fill="#ccfbf1" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">TreLLM</text>
   <text x="70" y="158" fill="#0f172a" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="44" font-weight="800">3-Minute Demo Video</text>
   <text x="70" y="202" fill="#475569" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="22">Audit report, execution realism, extension walkthrough, and retail planning.</text>
   <g transform="translate(70 248)">

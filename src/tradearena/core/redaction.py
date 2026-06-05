@@ -61,6 +61,11 @@ _SECRET_VALUE_PATTERNS = (
     re.compile(r"(?i)\b(account|acct)[-_ ]?(id|number|no)?\b\s*[:=]\s*[\"']?[A-Za-z0-9._\-]{6,}"),
 )
 
+_LOCAL_PATH_PATTERNS = (
+    re.compile(r"(?i)\b[A-Z]:[\\/](?:Users|TradeArena|TreadeArena|outputs)[\\/][^\s`\"'<>)]+"),
+    re.compile(r"(?i)\b/(?:Users|home)/[^\s`\"'<>)]+"),
+)
+
 
 @dataclass(frozen=True)
 class RedactionPolicy:
@@ -162,6 +167,9 @@ def scan_public_artifact_paths(paths: list[str | Path]) -> list[str]:
 def _scan_file(path: Path) -> list[str]:
     text = path.read_text(encoding="utf-8-sig", errors="ignore")
     findings = [f"{path}: sensitive text pattern: {pattern.pattern}" for pattern in _SECRET_VALUE_PATTERNS if pattern.search(text)]
+    findings.extend(
+        f"{path}: local filesystem path pattern: {pattern.pattern}" for pattern in _LOCAL_PATH_PATTERNS if pattern.search(text)
+    )
     if path.suffix.lower() == ".json":
         try:
             payload = json.loads(text)

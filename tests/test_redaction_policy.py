@@ -136,6 +136,21 @@ def test_public_artifact_scan_reports_missing_paths(tmp_path):
     assert findings == [f"{missing}: path does not exist"]
 
 
+def test_public_artifact_scan_flags_local_filesystem_paths(tmp_path):
+    public_report = tmp_path / "report.md"
+    public_report.write_text(
+        "Manifest: C:\\Users\\Example\\TradeArena\\outputs\\reproduction\\v0_2\\manifest.json\n",
+        encoding="utf-8",
+    )
+    portable_report = tmp_path / "portable.md"
+    portable_report.write_text("Manifest: outputs/reproduction/v0_2/manifest.json\n", encoding="utf-8")
+
+    findings = scan_public_artifact_paths([tmp_path])
+
+    assert any("local filesystem path pattern" in finding for finding in findings)
+    assert not any("portable.md" in finding for finding in findings)
+
+
 def test_public_artifact_scan_cli_fails_on_missing_paths(tmp_path):
     missing = tmp_path / "missing-public-artifacts"
 

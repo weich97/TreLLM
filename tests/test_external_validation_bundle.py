@@ -16,7 +16,7 @@ def test_external_validation_bundle_summarizes_manifest(tmp_path: Path):
         "python": {
             "version": "3.11.0",
             "implementation": "CPython",
-            "executable": "python",
+            "executable": r"C:\Users\Example\AppData\Local\Programs\Python\Python311\python.exe",
             "platform": "Linux-test",
         },
         "commands": [{"id": "release_readiness", "argv": ["python"], "returncode": 0}],
@@ -53,6 +53,9 @@ def test_external_validation_bundle_summarizes_manifest(tmp_path: Path):
 
     assert bundle["issue_ready"] is True
     assert bundle["environment_label"] == "unit-test"
+    assert bundle["manifest_path"] == str(manifest_path.as_posix())
+    assert bundle["python"]["executable"] == "python.exe"
+    assert "C:\\Users\\Example" not in output.read_text(encoding="utf-8")
     assert bundle["trajectory_reproducibility_hash"] == "sha256:def"
     assert "Suggested Issue Text" in markdown.read_text(encoding="utf-8")
 
@@ -86,3 +89,16 @@ def test_external_validation_bundle_reports_malformed_manifest_json(tmp_path: Pa
     assert "Traceback" not in result.stderr
     assert not output.exists()
     assert not markdown.exists()
+
+
+def test_tracked_external_validation_bundle_is_portable():
+    bundle_text = (ROOT / "docs/results/external_validation_bundle.json").read_text(encoding="utf-8")
+    markdown_text = (ROOT / "docs/results/external_validation_bundle.md").read_text(encoding="utf-8")
+    bundle = json.loads(bundle_text)
+
+    assert bundle["manifest_path"] == "outputs/reproduction/v0_2/manifest.json"
+    assert bundle["python"]["executable"] == "python.exe"
+    assert "D:/TradeArena" not in bundle_text
+    assert "C:\\Users\\" not in bundle_text
+    assert "D:/TradeArena" not in markdown_text
+    assert "C:\\Users\\" not in markdown_text

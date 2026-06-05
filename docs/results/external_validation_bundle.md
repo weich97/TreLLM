@@ -10,7 +10,7 @@ This bundle summarizes a reproduction run. It is evidence for reproducibility of
 - Commit/tag: `88ce4e4f389ce77d784975b2e65fc6b4135d23ae`
 - Python: `3.12.10`
 - Platform: `Windows-11-10.0.26200-SP0`
-- Manifest: `D:/TradeArena/outputs/reproduction/v0_2/manifest.json`
+- Manifest: `outputs/reproduction/v0_2/manifest.json`
 - Working tree dirty entries: `30`
 
 ## Reproduction Checks
@@ -43,7 +43,7 @@ This bundle summarizes a reproduction run. It is evidence for reproducibility of
 Environment: maintainer-local-windows-python-3.12
 Commit/tag: 88ce4e4f389ce77d784975b2e65fc6b4135d23ae
 Trajectory hash: sha256:fdc5f28e304a82ae813cd00f3b77177cce74113fd96fbb9f1e97ffb694ad6e6e
-Manifest: D:/TradeArena/outputs/reproduction/v0_2/manifest.json
+Manifest: outputs/reproduction/v0_2/manifest.json
 Working-tree dirty entries: 30
 Commands failed: 0
 Missing artifacts: 0

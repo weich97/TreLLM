@@ -6,8 +6,8 @@ This is a local release-candidate manifest. Tagging and PyPI publication are sep
 
 - Target release: `v0.2.1`
 - Current package version: `0.2.0`
-- Commit: `c3833f26e3cece1479488d093ed2b4a8f20df4c6`
-- Working tree dirty entries when generated: `3`
+- Commit: `d6a6705dd38908c6e3d65df285fa1b34132ee279`
+- Working tree dirty entries when generated: `6`
 
 ## Pre-Release Commands
 
@@ -27,7 +27,7 @@ This is a local release-candidate manifest. Tagging and PyPI publication are sep
 - `docs/results/execution_replay_calibration_loop.json`: present sha256:afed5a3dd9940f654b0d28186dca2ca6bdafaf4e3da119308efe397aa47a9705
 - `docs/results/execution_calibration_stability.json`: present sha256:f3c3ea588ca6a0bb7a7e4c9123aac73a7907a5664522dd6da0e2490cbc04006d
 - `docs/results/market_rules_fixture.json`: present sha256:cd79f3c9b0bfe5061a8c835d721973f607b557b1292bc5b0be2e084f0946216f
-- `docs/results/external_validation_bundle.md`: present sha256:a74965a63e46e8cd19849c604311d50ed191daeac5dec8f7e0811fdfbbebe347
+- `docs/results/external_validation_bundle.md`: present sha256:73827281f52acc3dbc87e45ef0a98459fa52299242fc77fa1cde6040282af9db
 - `docs/results/poe_skill_task_matrix.md`: present sha256:b65ad15ca310f8b3af18e03bd69eaa16301017e12d9f2dfef83731ee175ca3f4
 - `docs/results/poe_skill_challenge_matrix.md`: present sha256:6a15c24a0c355c2ddc21aa7b915854e94796c91a181e11b1ae2897841d88f6d2
 - `docs/results/poe_skill_challenge_followup_matrix.md`: present sha256:be2e3fe9c9186367b59c65110da159047b24909730b11f83abb0362e08394b47

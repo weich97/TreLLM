@@ -83,11 +83,11 @@ def build_bundle(
         "schema": "tradearena_external_validation_bundle_v0.1",
         "created_at": datetime.now(tz=timezone.utc).isoformat(),
         "environment_label": environment_label or platform.platform(),
-        "manifest_path": Path(manifest_path).as_posix(),
+        "manifest_path": _portable_path(manifest_path),
         "commit_or_tag": manifest.get("commit_or_tag", ""),
         "git_dirty_entry_count": _dirty_entry_count(manifest.get("git_status_short", "")),
         "git_status_sha256": _status_digest(manifest.get("git_status_short", "")),
-        "python": python_info,
+        "python": _public_python_info(python_info),
         "command_count": len(commands),
         "failed_command_count": len(failed),
         "failed_commands": [
@@ -206,6 +206,22 @@ def _status_digest(status: Any) -> str:
     if not text:
         return ""
     return "sha256:" + hashlib.sha256(text.encode()).hexdigest()
+
+
+def _public_python_info(python_info: dict[str, Any]) -> dict[str, Any]:
+    public = dict(python_info)
+    executable = public.get("executable")
+    if isinstance(executable, str) and executable:
+        public["executable"] = Path(executable).name or executable
+    return public
+
+
+def _portable_path(path: str | Path) -> str:
+    resolved = Path(path)
+    try:
+        return resolved.resolve().relative_to(ROOT).as_posix()
+    except (OSError, ValueError):
+        return resolved.as_posix()
 
 
 def _display_path(path: Path) -> str:

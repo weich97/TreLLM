@@ -78,6 +78,19 @@ def test_challenge_skill_task_rubrics_validate():
     assert result.returncode == 0, result.stdout + result.stderr
 
 
+def test_provider_cache_privacy_task_uses_trellm_for_public_artifact_policy():
+    task_input = (
+        ROOT
+        / "examples"
+        / "skill_tasks_challenge"
+        / "provider_cache_privacy_001"
+        / "input.md"
+    ).read_text(encoding="utf-8")
+
+    assert "TreLLM currently publishes aggregate public reports and TradeArena redacted manifests" in task_input
+    assert "TradeArena currently tracks aggregate public reports" not in task_input
+
+
 def test_dry_run_records_sample_start_index(tmp_path: Path):
     output = tmp_path / "report.md"
     csv_output = tmp_path / "report.csv"

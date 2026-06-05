@@ -382,6 +382,7 @@ def test_utility_cli_help_uses_trellm_for_system_artifacts():
             'description="Validate a TreLLM broker response artifact."',
             'description="Validate a TreLLM broker handoff artifact."',
             'description="Validate a TreLLM broker approval artifact."',
+            'description="Validate that a TreLLM broker approval binds to a handoff artifact."',
             'description="Validate and hash a TreLLM broker handoff artifact."',
         ],
         "src/tradearena/tools/broker_export.py": [
@@ -423,6 +424,8 @@ def test_broker_artifact_schemas_use_trellm_system_identity():
 
     broker_export_text = _normalized(_read_text("src/tradearena/tools/broker_export.py"))
     assert "Convert TradeArena orders into broker handoff rows." not in broker_export_text
+    cli_text = _normalized(_read_text("src/tradearena/cli.py"))
+    assert "Validate that a broker approval artifact binds to a handoff artifact." not in cli_text
 
 
 def test_generated_public_copy_sources_use_trellm_system_identity():

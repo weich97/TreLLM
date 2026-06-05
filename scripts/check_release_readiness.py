@@ -257,6 +257,7 @@ LEGACY_PUBLIC_IDENTITY_PHRASES = [
     "TradeArena Broker Response Artifact",
     "Convert TradeArena orders into broker handoff rows.",
     "TradeArena is the public leaderboard and benchmark module",
+    "Validate that a broker approval artifact binds to a handoff artifact.",
 ]
 CI_REQUIRED_GATE_COMMANDS = [
     "python -m compileall src scripts examples tests -q",

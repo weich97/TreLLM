@@ -53,7 +53,8 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         "## Community Benchmark Submission Schema\n"
         '"title": "TradeArena Broker Handoff Artifact"\n'
         "Convert TradeArena orders into broker handoff rows.\n"
-        "TradeArena is the public leaderboard and benchmark module.\n",
+        "TradeArena is the public leaderboard and benchmark module.\n"
+        "Validate that a broker approval artifact binds to a handoff artifact.\n",
         encoding="utf-8",
     )
     readme.write_text(
@@ -88,6 +89,7 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
     assert "legacy public identity phrase 'TradeArena Broker Handoff Artifact' found in docs/schemas.md" in failures
     assert "legacy public identity phrase 'Convert TradeArena orders into broker handoff rows.' found in docs/schemas.md" in failures
     assert "legacy public identity phrase 'TradeArena is the public leaderboard and benchmark module' found in docs/schemas.md" in failures
+    assert "legacy public identity phrase 'Validate that a broker approval artifact binds to a handoff artifact.' found in docs/schemas.md" in failures
 
 
 def test_release_readiness_flags_stale_release_candidate_artifact_hash(tmp_path: Path):

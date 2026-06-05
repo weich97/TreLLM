@@ -398,7 +398,7 @@ def _run_utility_command(argv: list[str]) -> int:
         return 0
 
     if command == "validate-broker-approval-binding":
-        parser = argparse.ArgumentParser(description="Validate that a broker approval artifact binds to a handoff artifact.")
+        parser = argparse.ArgumentParser(description="Validate that a TreLLM broker approval binds to a handoff artifact.")
         parser.add_argument("approval_artifact")
         parser.add_argument("request_artifact")
         parser.add_argument("--now", default=None, help="Optional ISO timestamp used to reject expired approval artifacts.")

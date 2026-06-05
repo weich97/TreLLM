@@ -27,12 +27,14 @@ future live-capable path.
 
 - [ ] Not broker-facing / no live-safety impact
 - Live-ready contribution track:
+  - [ ] Broker capability manifest
   - [ ] Broker review export
   - [ ] Approval binding
   - [ ] Paper-sandbox adapter
   - [ ] Reconciliation
   - [ ] Operator runbook
 - [ ] Adapter mode is explicit:
+- [ ] Broker adapter capability manifest validates with:
 - [ ] Default path cannot submit live orders
 - [ ] No credentials, account identifiers, private holdings, or raw broker
       payloads are committed

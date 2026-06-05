@@ -84,6 +84,7 @@ def test_benchmark_submission_schema_has_explicit_version_contract():
 def test_schema_titles_keep_trellm_system_and_tradearena_leaderboard_roles_separate():
     expected_titles = {
         "benchmark_submission.schema.json": "TradeArena Benchmark Submission",
+        "broker_adapter_capability.schema.json": "TreLLM Broker Adapter Capability Manifest",
         "calibration_profile.schema.json": "TreLLM execution calibration profile",
         "demo_artifact_contract.schema.json": "TreLLM Demo Artifact Contract",
         "reproduction_report.schema.json": "TreLLM External Reproduction Report",
@@ -111,6 +112,27 @@ def test_operator_runbook_artifact_schema_rejects_live_submission():
     payload["live_submission"] = True
 
     errors = sorted(_validator("operator_runbook_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+
+    assert any("False was expected" in error.message for error in errors)
+
+
+def test_broker_adapter_capability_schema_validates_demo_output():
+    subprocess.run([sys.executable, "examples/broker_capability_manifest_demo.py"], cwd=ROOT, check=True)
+    payload = json.loads(
+        (ROOT / "outputs/examples/broker_capability_manifest/capability_manifest.json").read_text(encoding="utf-8")
+    )
+
+    _validator("broker_adapter_capability.schema.json").validate(payload)
+
+
+def test_broker_adapter_capability_schema_rejects_default_live_submission():
+    subprocess.run([sys.executable, "examples/broker_capability_manifest_demo.py"], cwd=ROOT, check=True)
+    payload = json.loads(
+        (ROOT / "outputs/examples/broker_capability_manifest/capability_manifest.json").read_text(encoding="utf-8")
+    )
+    payload["live_submission_default"] = True
+
+    errors = sorted(_validator("broker_adapter_capability.schema.json").iter_errors(payload), key=lambda err: err.path)
 
     assert any("False was expected" in error.message for error in errors)
 

@@ -24,6 +24,7 @@ body:
       description: Choose the closest broker/live-ready track when relevant.
       options:
         - Not broker-facing
+        - Broker capability manifest
         - Broker review export
         - Approval binding
         - Paper-sandbox adapter

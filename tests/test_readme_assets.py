@@ -35,6 +35,7 @@ def test_readme_surfaces_live_trading_safety_contract():
         "## Live Trading Safety Contract",
         "pre-live broker-review request hash",
         "tradearena validate-broker-handoff",
+        "tradearena validate-broker-capability",
         "tradearena hash-broker-handoff",
         "tradearena validate-broker-approval",
         "tradearena validate-broker-approval-binding",

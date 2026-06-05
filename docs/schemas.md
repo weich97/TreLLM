@@ -126,6 +126,20 @@ Validate a broker handoff artifact with:
 tradearena validate-broker-handoff outputs/examples/alpaca_paper_export/alpaca_paper_orders.json
 ```
 
+Broker adapter capability manifests can be validated against
+[`../schemas/broker_adapter_capability.schema.json`](../schemas/broker_adapter_capability.schema.json).
+The schema fixes the public `trellm_broker_adapter_capability_v0.1`
+contract for adapter mode, account mode, credential policy, network access,
+default-live prohibition, and live-safety controls. A future paper or live
+adapter should publish this manifest before its handoff, approval, response,
+or runbook artifacts are reviewed.
+
+Validate the offline demo capability manifest with:
+
+```bash
+tradearena validate-broker-capability outputs/examples/broker_capability_manifest/capability_manifest.json
+```
+
 Compute the canonical hash to place in a reviewed approval artifact with:
 
 ```bash

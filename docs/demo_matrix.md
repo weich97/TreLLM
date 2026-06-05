@@ -191,6 +191,13 @@ without reading the full source tree.
 - Shows: request-shape validation through the generic broker adapter contract
   without broker credentials, network calls, or live submission.
 
+### Broker Capability Manifest
+
+- Run: `python examples/broker_capability_manifest_demo.py`
+- Artifact: `outputs/examples/broker_capability_manifest/capability_manifest.json`
+- Shows: adapter permissions, account modes, credential policy, network access,
+  and live-safety controls before any broker-facing adapter is reviewed.
+
 ### Broker Approval Safety
 
 - Run: `python examples/broker_approval_safety_demo.py`

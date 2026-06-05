@@ -596,6 +596,7 @@ approved, bound to that exact request, and revalidated before submission.
 Before sharing a broker-facing PR, run the relevant checks:
 
 ```bash
+tradearena validate-broker-capability outputs/examples/broker_capability_manifest/capability_manifest.json
 tradearena validate-broker-handoff outputs/examples/broker_approval_safety/dry_run_orders.json
 tradearena hash-broker-handoff outputs/examples/broker_approval_safety/dry_run_orders.json
 tradearena validate-broker-approval outputs/examples/broker_approval_safety/broker_approval_artifact.json --now 2026-05-31T12:30:00Z
@@ -817,6 +818,8 @@ Useful entry points:
   [`docs/broker_adapter_contract.md`](docs/broker_adapter_contract.md)
 - Broker handoff validation:
   `tradearena validate-broker-handoff outputs/examples/alpaca_paper_export/alpaca_paper_orders.json`
+- Broker adapter capability validation:
+  `tradearena validate-broker-capability outputs/examples/broker_capability_manifest/capability_manifest.json`
 - Broker response validation:
   `tradearena validate-broker-response outputs/examples/broker_response_reconciliation/broker_response_artifact.json`
 - Technical white paper: [`docs/technical_report.md`](docs/technical_report.md)

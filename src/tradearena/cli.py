@@ -23,6 +23,7 @@ from tradearena.experiments import PaperExperimentConfig, run_paper_experiment
 from tradearena.factory import build_default_system, default_registry
 from tradearena.tools import (
     broker_handoff_artifact_hash,
+    validate_broker_adapter_capability_file,
     validate_broker_approval_artifact_file,
     validate_broker_approval_request_binding,
     validate_broker_handoff_artifact_file,
@@ -116,6 +117,7 @@ def main(argv: list[str] | None = None) -> int:
         "validate-broker-handoff",
         "validate-broker-approval",
         "validate-broker-approval-binding",
+        "validate-broker-capability",
         "validate-broker-response",
         "validate-operator-runbook",
         "build-registry",
@@ -370,6 +372,19 @@ def _run_utility_command(argv: list[str]) -> int:
                 print(f"  - {error}")
             return 1
         print(f"Valid broker response artifact: {args.artifact}")
+        return 0
+
+    if command == "validate-broker-capability":
+        parser = argparse.ArgumentParser(description="Validate a TreLLM broker adapter capability manifest.")
+        parser.add_argument("artifact")
+        args = parser.parse_args(argv[1:])
+        _, errors = validate_broker_adapter_capability_file(args.artifact)
+        if errors:
+            print(f"Invalid broker adapter capability manifest: {args.artifact}")
+            for error in errors:
+                print(f"  - {error}")
+            return 1
+        print(f"Valid broker adapter capability manifest: {args.artifact}")
         return 0
 
     if command == "validate-operator-runbook":

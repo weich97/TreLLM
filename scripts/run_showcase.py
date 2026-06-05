@@ -98,6 +98,12 @@ SECTIONS = [
         "python examples/dry_run_broker_adapter_demo.py",
     ),
     (
+        "Broker capability manifest",
+        "Adapter permissions, account modes, credential policy, and live-safety controls are declared before review.",
+        "broker_capability_manifest/capability_manifest.json",
+        "python examples/broker_capability_manifest_demo.py",
+    ),
+    (
         "Broker approval safety",
         "A redacted approval artifact becomes a live-mode safety gate that allows bounded orders and blocks oversized ones.",
         "broker_approval_safety/broker_approval_artifact.json",
@@ -168,6 +174,7 @@ def main() -> int:
         _run([sys.executable, "examples/rl_policy_baseline_demo.py"], "Mock deep-RL policy baseline")
         _run([sys.executable, "examples/alpaca_paper_export_demo.py"], "Alpaca paper export")
         _run([sys.executable, "examples/dry_run_broker_adapter_demo.py"], "Dry-run broker adapter")
+        _run([sys.executable, "examples/broker_capability_manifest_demo.py"], "Broker capability manifest")
         _run([sys.executable, "examples/broker_approval_safety_demo.py"], "Broker approval safety")
         _run([sys.executable, "examples/broker_response_reconciliation_demo.py"], "Broker response reconciliation")
         _run([sys.executable, "examples/operator_runbook_demo.py"], "Operator runbook checklist")

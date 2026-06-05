@@ -22,8 +22,18 @@ Every broker adapter must declare exactly one mode at runtime:
 The default mode must be `offline_export` or `dry_run`. `live_human_approved`
 must never be the default.
 
+Before a broker-facing adapter is reviewed, it should publish a capability
+manifest that names its supported modes, account modes, network access,
+credential policy, and live-safety controls. Validate that manifest with:
+
+```bash
+tradearena validate-broker-capability outputs/examples/broker_capability_manifest/capability_manifest.json
+```
+
 The current code-level primitives live in `tradearena.tools.broker_export`:
 
+- `validate_broker_adapter_capability`;
+- `validate_broker_adapter_capability_file`;
 - `BrokerAdapter`, the minimal interface future broker adapters should satisfy;
 - `BrokerAdapterMode`;
 - `BrokerSafetyConfig`;

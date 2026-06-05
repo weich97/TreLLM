@@ -18,8 +18,8 @@ audit stack can become the control plane around real trading systems.
 | --- | --- | --- | --- |
 | 0 | Offline benchmark | Run deterministic agents, risk gates, and stress execution without network calls. | Reproducible trajectory, schema validation, release-readiness checks. |
 | 1 | Calibrated paper research | Fit or replay execution assumptions from quote, order-book, or fill evidence. | Calibration report with source, venue, date range, residuals, and hashes. |
-| 2 | Broker-review export | Convert approved paper orders into broker-compatible review files. | `submit_live=false`, human approval fields, redacted artifacts, no broker API call. |
-| 3 | Paper trading sandbox | Submit to a broker sandbox or paper account only. | Sandbox credentials, account isolation, order limits, dry-run test, audit manifest. |
+| 2 | Broker-review export | Convert approved paper orders into broker-compatible review files. | Capability manifest, `submit_live=false`, human approval fields, redacted artifacts, no broker API call. |
+| 3 | Paper trading sandbox | Submit to a broker sandbox or paper account only. | Capability manifest, sandbox credentials, account isolation, order limits, dry-run test, audit manifest. |
 | 4 | Human-approved live adapter | Submit live orders only after explicit operator approval. | Broker adapter contract, manual approval record, kill switch, reconciliation, incident runbook. |
 | 5 | Supervised automation | Allow tightly scoped automation after repeated paper/live shadow validation. | External review, capital limits, monitoring, rollback, compliance and jurisdiction review. |
 
@@ -49,6 +49,8 @@ response artifact.
 Before a broker-facing contribution is accepted, it should prove:
 
 - default mode is `offline_export`, `dry_run`, or `paper_sandbox`;
+- a schema-valid broker adapter capability manifest declares supported modes,
+  account modes, network access, credential policy, and safety controls;
 - live submission is impossible without an explicit mode switch;
 - credentials are read from environment variables or an OS secret manager;
 - no credentials, account IDs, private holdings, raw fills, or raw provider
@@ -70,7 +72,7 @@ Before a broker-facing contribution is accepted, it should prove:
 
 ## Recommended Contribution Sequence
 
-1. Harden export-only broker handoff files and review manifests.
+1. Harden export-only broker capability, handoff, and review manifests.
 2. Add one broker-specific sandbox adapter behind an optional dependency.
 3. Add reconciliation reports that compare submitted orders, broker acks, fills,
    cancels, rejects, and portfolio state.
@@ -79,8 +81,10 @@ Before a broker-facing contribution is accepted, it should prove:
    examples.
 
 The current engineering step is to keep hardening the generic broker adapter
-contract in [`broker_adapter_contract.md`](broker_adapter_contract.md) before
-adding any broker-specific sandbox dependency.
+contract in [`broker_adapter_contract.md`](broker_adapter_contract.md) and the
+capability manifest in
+[`schemas/broker_adapter_capability.schema.json`](../schemas/broker_adapter_capability.schema.json)
+before adding any broker-specific sandbox dependency.
 
 ## External Contribution Tracks
 
@@ -90,6 +94,7 @@ need to build a full broker integration to help.
 
 | Track | Good first PR | Evidence that makes it reviewable |
 | --- | --- | --- |
+| Broker capability manifest | Add or tighten one supported-mode, credential, network-access, or safety-control field. | Schema-valid capability manifest, command transcript, no default live path. |
 | Broker review export | Add or tighten one handoff field, validator error, or example summary. | Schema-valid handoff artifact, command transcript, no credential or live API path. |
 | Approval binding | Add one edge-case test for stale approvals, mismatched request hashes, symbols, quantities, or order types. | Failing-then-passing test and a redacted approval artifact tied to a reviewed request hash. |
 | Paper-sandbox adapter | Add a broker-specific paper adapter behind an optional dependency. | Paper-only account mode, no default network call, response artifact, reconciliation summary, and mocked CI tests. |

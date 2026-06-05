@@ -9,6 +9,10 @@ from tradearena.execution import (
     load_replay_fills_csv,
 )
 from tradearena.tools.backtester import Backtester, BacktestResult
+from tradearena.tools.broker_capability import (
+    validate_broker_adapter_capability,
+    validate_broker_adapter_capability_file,
+)
 from tradearena.tools.broker_export import (
     AlpacaPaperExportAdapter,
     AlpacaPaperOrder,
@@ -121,6 +125,8 @@ __all__ = [
     "validate_broker_approval_artifact",
     "validate_broker_approval_artifact_file",
     "validate_broker_approval_request_binding",
+    "validate_broker_adapter_capability",
+    "validate_broker_adapter_capability_file",
     "validate_broker_handoff_artifact",
     "validate_broker_handoff_artifact_file",
     "validate_broker_response_artifact",

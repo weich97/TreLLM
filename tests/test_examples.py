@@ -193,6 +193,64 @@ def test_operator_runbook_cli_validates_demo_artifact():
     assert "Valid operator runbook artifact" in result.stdout
 
 
+def test_broker_capability_manifest_demo_builds_review_boundary():
+    _run_example("examples/broker_capability_manifest_demo.py")
+    payload = _read_json("outputs/examples/broker_capability_manifest/capability_manifest.json")
+    report = (ROOT / "outputs/examples/broker_capability_manifest/capability_manifest.md").read_text(encoding="utf-8")
+
+    assert payload["schema"] == "trellm_broker_adapter_capability_v0.1"
+    assert payload["default_mode"] == "offline_export"
+    assert payload["supports_live_submission"] is False
+    assert payload["live_submission_default"] is False
+    assert payload["credential_policy"]["no_credentials_in_repo"] is True
+    assert payload["safety_controls"]["kill_switch_required"] is True
+    assert "TreLLM Broker Adapter Capability Manifest" in report
+    assert "not permission to submit live orders" in report
+
+
+def test_broker_capability_validator_rejects_live_without_required_controls(tmp_path: Path):
+    _run_example("examples/broker_capability_manifest_demo.py")
+    payload = _read_json("outputs/examples/broker_capability_manifest/capability_manifest.json")
+    payload["supports_live_submission"] = True
+    payload["supported_modes"].append("live_human_approved")
+    payload["account_modes"].append("live")
+    payload["requires_credentials"] = True
+    payload["safety_controls"]["kill_switch_required"] = False
+    artifact = tmp_path / "broker_capability.json"
+    artifact.write_text(json.dumps(payload), encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_broker_adapter_capability.py", str(artifact)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid broker adapter capability manifest" in result.stdout
+    assert "live-capable adapters must set safety_controls.kill_switch_required to true" in result.stdout
+
+
+def test_broker_capability_cli_validates_demo_artifact():
+    _run_example("examples/broker_capability_manifest_demo.py")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "tradearena.cli",
+            "validate-broker-capability",
+            "outputs/examples/broker_capability_manifest/capability_manifest.json",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0
+    assert "Valid broker adapter capability manifest" in result.stdout
+
+
 def test_showcase_index_can_be_built_from_existing_or_missing_artifacts():
     tracked_result_paths = (
         ROOT / "docs/results/benchmark_v0_2.md",
@@ -214,6 +272,7 @@ def test_showcase_index_can_be_built_from_existing_or_missing_artifacts():
     assert "Contributor extension walkthrough" in html
     assert "Retail planning sandbox" in html
     assert "Dry-run broker adapter" in html
+    assert "Broker capability manifest" in html
     assert "Broker approval safety" in html
     assert "Operator runbook checklist" in html
 

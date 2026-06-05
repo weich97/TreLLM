@@ -118,7 +118,7 @@ def _download(source: SourceFile, cache_dir: Path) -> Path:
     path = cache_dir / source.cache_name
     if path.exists():
         return path
-    request = urllib.request.Request(source.url, headers={"User-Agent": "TradeArena-calibration-sample"})
+    request = urllib.request.Request(source.url, headers={"User-Agent": "TreLLM-calibration-sample"})
     with urllib.request.urlopen(request, timeout=60) as response, path.open("wb") as handle:
         while True:
             chunk = response.read(1024 * 1024)

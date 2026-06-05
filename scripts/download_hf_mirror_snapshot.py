@@ -68,7 +68,7 @@ def download(url: str, destination: Path, *, force: bool) -> None:
         partial.unlink()
         resume_from = 0
 
-    headers = {"User-Agent": "TradeArena mirror downloader"}
+    headers = {"User-Agent": "TreLLM mirror downloader"}
     if resume_from:
         headers["Range"] = f"bytes={resume_from}-"
 

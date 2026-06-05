@@ -411,6 +411,13 @@ def test_utility_cli_help_uses_trellm_for_system_artifacts():
         ],
         "scripts/download_binance_microstructure_sample.py": [
             "This sample upgrades TreLLM from an OHLCV-only smoke test to a public quote/fill replay",
+            '"User-Agent": "TreLLM-calibration-sample"',
+        ],
+        "scripts/download_hf_mirror_snapshot.py": [
+            '"User-Agent": "TreLLM mirror downloader"',
+        ],
+        "scripts/download_akshare_ashare_daily.py": [
+            "Volume is normalized to TreLLM-compatible CSV units",
         ],
         "data/public/binance_btcusdt_perp_2024_03_01_sample/manifest.json": [
             "This sample upgrades TreLLM from an OHLCV-only smoke test to a public quote/fill replay",
@@ -463,6 +470,22 @@ def test_utility_cli_help_uses_trellm_for_system_artifacts():
         text = _normalized(_read_text(path))
         for snippet in snippets:
             assert _normalized(snippet) in text
+
+    forbidden_snippets = {
+        "scripts/download_binance_microstructure_sample.py": [
+            '"User-Agent": "TradeArena-calibration-sample"',
+        ],
+        "scripts/download_hf_mirror_snapshot.py": [
+            '"User-Agent": "TradeArena mirror downloader"',
+        ],
+        "scripts/download_akshare_ashare_daily.py": [
+            "Volume is normalized to TradeArena units",
+        ],
+    }
+    for path, snippets in forbidden_snippets.items():
+        text = _normalized(_read_text(path))
+        for snippet in snippets:
+            assert _normalized(snippet) not in text
 
 
 def test_broker_artifact_schemas_use_trellm_system_identity():

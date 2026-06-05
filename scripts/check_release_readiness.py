@@ -286,6 +286,9 @@ LEGACY_PUBLIC_IDENTITY_PHRASES = [
     '"title": "TradeArena External Reproduction Report"',
     '"title": "TradeArena skill task answer set"',
     '"title": "TradeArena skill task rubric"',
+    '"User-Agent": "TradeArena-calibration-sample"',
+    '"User-Agent": "TradeArena mirror downloader"',
+    "Volume is normalized to TradeArena units",
 ]
 CI_REQUIRED_GATE_COMMANDS = [
     "python -m compileall src scripts examples tests -q",

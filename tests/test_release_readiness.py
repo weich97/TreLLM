@@ -81,7 +81,10 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         '"title": "TradeArena Demo Artifact Contract"\n'
         '"title": "TradeArena External Reproduction Report"\n'
         '"title": "TradeArena skill task answer set"\n'
-        '"title": "TradeArena skill task rubric"\n',
+        '"title": "TradeArena skill task rubric"\n'
+        '"User-Agent": "TradeArena-calibration-sample"\n'
+        '"User-Agent": "TradeArena mirror downloader"\n'
+        "Volume is normalized to TradeArena units\n",
         encoding="utf-8",
     )
     readme.write_text(
@@ -162,6 +165,9 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         "TradeArena skill task rubric",
     ]:
         assert f"legacy public identity phrase '\"title\": \"{title}\"' found in docs/schemas.md" in failures
+    assert 'legacy public identity phrase \'"User-Agent": "TradeArena-calibration-sample"\' found in docs/schemas.md' in failures
+    assert 'legacy public identity phrase \'"User-Agent": "TradeArena mirror downloader"\' found in docs/schemas.md' in failures
+    assert "legacy public identity phrase 'Volume is normalized to TradeArena units' found in docs/schemas.md" in failures
 
 
 def test_release_readiness_flags_stale_release_candidate_artifact_hash(tmp_path: Path):

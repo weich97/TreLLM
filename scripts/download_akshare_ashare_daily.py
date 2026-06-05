@@ -47,7 +47,7 @@ def main() -> int:
         "frequency": "daily",
         "adjust": "" if args.adjust == "none" else args.adjust,
         "volume_multiplier": args.volume_multiplier,
-        "volume_note": "Volume is normalized to TradeArena units by multiplying AkShare 成交量 by volume_multiplier.",
+        "volume_note": "Volume is normalized to TreLLM-compatible CSV units by multiplying AkShare 成交量 by volume_multiplier.",
         "downloaded_at_utc": datetime.now(timezone.utc).isoformat(),
         "symbols": [],
     }

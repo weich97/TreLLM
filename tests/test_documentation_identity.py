@@ -24,7 +24,8 @@ def test_system_docs_use_trellm_identity():
             "Any adapter that can submit live orders is outside the public TradeArena leaderboard path",
         ],
         "docs/live_trading_readiness.md": [
-            "TreLLM should grow beyond a paper-only benchmark module",
+            "TreLLM should grow beyond offline and paper-only research paths",
+            "TradeArena remains the public leaderboard module for comparable rows",
             "| Stage | Name | What TreLLM can do | Required evidence before moving on |",
         ],
         "docs/narrative_positioning.md": [
@@ -52,3 +53,9 @@ def test_system_docs_use_trellm_identity():
         text = _normalized(_read_doc(path))
         for snippet in snippets:
             assert _normalized(snippet) in text
+
+
+def test_live_readiness_avoids_benchmark_module_system_framing():
+    text = _normalized(_read_doc("docs/live_trading_readiness.md")).lower()
+
+    assert "trellm should grow beyond a paper-only benchmark module" not in text

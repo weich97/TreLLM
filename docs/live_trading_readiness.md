@@ -1,10 +1,12 @@
 # Live Trading Readiness
 
-TreLLM should grow beyond a paper-only benchmark module, but it should not jump
-straight from TradeArena leaderboard rows to unattended live orders. The
-intended direction is **live-ready, human-gated trading infrastructure**: every
-order candidate is observable, risk-checked, calibrated, exported, approved,
-reconciled, and auditable before any broker-facing adapter can submit it.
+TreLLM should grow beyond offline and paper-only research paths, but it should
+not jump straight from TradeArena leaderboard rows to unattended live orders.
+TradeArena remains the public leaderboard module for comparable rows. The
+intended direction for TreLLM is **live-ready, human-gated trading
+infrastructure**: every order candidate is observable, risk-checked,
+calibrated, exported, approved, reconciled, and auditable before any
+broker-facing adapter can submit it.
 
 The default repository path remains safe: first-run commands do not place live
 orders or require broker credentials. The long-term value is that the same

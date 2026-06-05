@@ -251,6 +251,7 @@ LEGACY_PUBLIC_IDENTITY_PHRASES = [
     "community benchmark submissions",
     "public benchmark submission",
     "Redacted benchmark submissions",
+    "TreLLM should grow beyond a paper-only benchmark module",
 ]
 CI_REQUIRED_GATE_COMMANDS = [
     "python -m compileall src scripts examples tests -q",

@@ -1,4 +1,4 @@
-"""TradeArena: pluggable AI trading agent research framework."""
+"""TreLLM: LLM-driven trading audit and control system with a TradeArena compatibility API."""
 
 from tradearena.core.domain import (
     AgentProtocolTrace,

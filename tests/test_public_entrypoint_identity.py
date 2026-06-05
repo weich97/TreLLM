@@ -31,6 +31,16 @@ def test_github_templates_explain_trellm_and_tradearena_roles():
             assert _normalized(snippet) in text
 
 
+def test_package_docstring_uses_trellm_system_identity():
+    import tradearena
+
+    docstring = tradearena.__doc__ or ""
+
+    assert "TreLLM: LLM-driven trading audit and control system" in docstring
+    assert "TradeArena compatibility API" in docstring
+    assert "TradeArena: pluggable AI trading agent research framework" not in docstring
+
+
 def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
     required_snippets = {
         "docs/contributor_roadmap.md": [

@@ -252,6 +252,10 @@ LEGACY_PUBLIC_IDENTITY_PHRASES = [
     "public benchmark submission",
     "Redacted benchmark submissions",
     "TreLLM should grow beyond a paper-only benchmark module",
+    "TradeArena Broker Handoff Artifact",
+    "TradeArena Broker Approval Artifact",
+    "TradeArena Broker Response Artifact",
+    "Convert TradeArena orders into broker handoff rows.",
 ]
 CI_REQUIRED_GATE_COMMANDS = [
     "python -m compileall src scripts examples tests -q",

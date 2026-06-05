@@ -358,7 +358,7 @@ def _run_utility_command(argv: list[str]) -> int:
         return 0
 
     if command == "validate-broker-response":
-        parser = argparse.ArgumentParser(description="Validate a TradeArena broker response artifact.")
+        parser = argparse.ArgumentParser(description="Validate a TreLLM broker response artifact.")
         parser.add_argument("artifact")
         args = parser.parse_args(argv[1:])
         _, errors = validate_broker_response_artifact_file(args.artifact)
@@ -371,7 +371,7 @@ def _run_utility_command(argv: list[str]) -> int:
         return 0
 
     if command == "validate-broker-handoff":
-        parser = argparse.ArgumentParser(description="Validate a TradeArena broker handoff artifact.")
+        parser = argparse.ArgumentParser(description="Validate a TreLLM broker handoff artifact.")
         parser.add_argument("artifact")
         args = parser.parse_args(argv[1:])
         _, errors = validate_broker_handoff_artifact_file(args.artifact)
@@ -384,7 +384,7 @@ def _run_utility_command(argv: list[str]) -> int:
         return 0
 
     if command == "validate-broker-approval":
-        parser = argparse.ArgumentParser(description="Validate a TradeArena broker approval artifact.")
+        parser = argparse.ArgumentParser(description="Validate a TreLLM broker approval artifact.")
         parser.add_argument("artifact")
         parser.add_argument("--now", default=None, help="Optional ISO timestamp used to reject expired approval artifacts.")
         args = parser.parse_args(argv[1:])
@@ -414,7 +414,7 @@ def _run_utility_command(argv: list[str]) -> int:
         return 0
 
     if command == "hash-broker-handoff":
-        parser = argparse.ArgumentParser(description="Validate and hash a TradeArena broker handoff artifact.")
+        parser = argparse.ArgumentParser(description="Validate and hash a TreLLM broker handoff artifact.")
         parser.add_argument("artifact")
         args = parser.parse_args(argv[1:])
         _, errors = validate_broker_handoff_artifact_file(args.artifact)

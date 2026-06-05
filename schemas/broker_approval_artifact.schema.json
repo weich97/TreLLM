@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/weich97/TradeArena/schemas/broker_approval_artifact.schema.json",
-  "title": "TradeArena Broker Approval Artifact",
+  "title": "TreLLM Broker Approval Artifact",
   "type": "object",
   "additionalProperties": false,
   "required": [

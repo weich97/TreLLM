@@ -44,7 +44,7 @@ class BrokerAdapter(Protocol):
     safety: BrokerSafetyConfig
 
     def convert(self, orders: list[Order] | tuple[Order, ...]) -> list[AlpacaPaperOrder]:
-        """Convert TradeArena orders into broker handoff rows."""
+        """Convert TreLLM order intent into broker handoff rows."""
 
     def write(self, orders: list[Order] | tuple[Order, ...], output_dir: str | Path) -> dict[str, str | int | bool]:
         """Write a broker handoff artifact and return a small summary."""

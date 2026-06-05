@@ -349,11 +349,51 @@ def test_utility_cli_help_uses_trellm_for_system_artifacts():
         "scripts/validate_reproduction_report.py": [
             'description="Validate a TreLLM external reproduction report."',
         ],
+        "src/tradearena/cli.py": [
+            'description="Validate a TreLLM broker response artifact."',
+            'description="Validate a TreLLM broker handoff artifact."',
+            'description="Validate a TreLLM broker approval artifact."',
+            'description="Validate and hash a TreLLM broker handoff artifact."',
+        ],
+        "src/tradearena/tools/broker_export.py": [
+            "Convert TreLLM order intent into broker handoff rows.",
+        ],
     }
     for path, snippets in required_snippets.items():
         text = _normalized(_read_text(path))
         for snippet in snippets:
             assert _normalized(snippet) in text
+
+
+def test_broker_artifact_schemas_use_trellm_system_identity():
+    required_snippets = {
+        "schemas/broker_handoff_artifact.schema.json": [
+            '"title": "TreLLM Broker Handoff Artifact"',
+        ],
+        "schemas/broker_approval_artifact.schema.json": [
+            '"title": "TreLLM Broker Approval Artifact"',
+        ],
+        "schemas/broker_response_artifact.schema.json": [
+            '"title": "TreLLM Broker Response Artifact"',
+        ],
+    }
+    forbidden_snippets = {
+        path: [snippet.replace("TreLLM", "TradeArena") for snippet in snippets]
+        for path, snippets in required_snippets.items()
+    }
+
+    for path, snippets in required_snippets.items():
+        text = _normalized(_read_text(path))
+        for snippet in snippets:
+            assert _normalized(snippet) in text
+
+    for path, snippets in forbidden_snippets.items():
+        text = _normalized(_read_text(path))
+        for snippet in snippets:
+            assert _normalized(snippet) not in text
+
+    broker_export_text = _normalized(_read_text("src/tradearena/tools/broker_export.py"))
+    assert "Convert TradeArena orders into broker handoff rows." not in broker_export_text
 
 
 def test_generated_public_copy_sources_use_trellm_system_identity():

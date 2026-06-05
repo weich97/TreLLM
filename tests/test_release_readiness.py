@@ -48,7 +48,13 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         "The task suite measures TradeArena-specific audit ability rather than trading ability:\n",
         encoding="utf-8",
     )
-    schema_doc.write_text("# Schemas\n\n## Community Benchmark Submission Schema\n", encoding="utf-8")
+    schema_doc.write_text(
+        "# Schemas\n\n"
+        "## Community Benchmark Submission Schema\n"
+        '"title": "TradeArena Broker Handoff Artifact"\n'
+        "Convert TradeArena orders into broker handoff rows.\n",
+        encoding="utf-8",
+    )
     readme.write_text(
         "The current public benchmark path runs offline and paper/sandbox experiments.\n"
         "Before calling TradeArena an externally validated community benchmark, more evidence is required.\n",
@@ -78,6 +84,8 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         "found in README.md"
     ) in failures
     assert "legacy public identity phrase 'Community Benchmark Submission Schema' found in docs/schemas.md" in failures
+    assert "legacy public identity phrase 'TradeArena Broker Handoff Artifact' found in docs/schemas.md" in failures
+    assert "legacy public identity phrase 'Convert TradeArena orders into broker handoff rows.' found in docs/schemas.md" in failures
 
 
 def test_release_readiness_flags_stale_release_candidate_artifact_hash(tmp_path: Path):

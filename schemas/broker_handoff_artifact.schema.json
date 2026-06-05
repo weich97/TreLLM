@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/weich97/TradeArena/schemas/broker_handoff_artifact.schema.json",
-  "title": "TradeArena Broker Handoff Artifact",
+  "title": "TreLLM Broker Handoff Artifact",
   "type": "object",
   "required": [
     "schema",

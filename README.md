@@ -110,13 +110,13 @@ TradeArena is its public leaderboard for ranking auditable agent runs.
 
 <p align="center">
   <img src="docs/assets/readme_audit_lifecycle.gif"
-       alt="Animated TradeArena audit trace showing observation, plan, risk review, execution, and reflection records."
+       alt="Animated TreLLM audit trace showing observation, plan, risk review, execution, and reflection records."
        width="920">
 </p>
 
 <p align="center">
   <img src="docs/assets/readme_pipeline_architecture.svg"
-       alt="TradeArena runtime architecture: market inputs feed an agent observe-plan loop, a risk gate, an execution simulator, portfolio state, memory feedback, and replayable audit artifacts."
+       alt="TreLLM runtime architecture: market inputs feed an agent observe-plan loop, a risk gate, an execution simulator, portfolio state, memory feedback, and replayable audit artifacts."
        width="980">
 </p>
 

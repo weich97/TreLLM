@@ -57,7 +57,7 @@ def _write_svg(path: Path, summary: dict[str, object]) -> None:
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-label="RL policy baseline demo">',
         '<rect width="100%" height="100%" fill="#f8fafc"/>',
         _text(36, 52, "Mock deep-RL policy wrapper", 24, "#0f172a", 800),
-        _text(36, 82, "A deterministic CI-safe strategy emits normal TradeArena decisions and reuses risk, execution, and evaluation.", 13, "#64748b", 500),
+        _text(36, 82, "A deterministic CI-safe strategy emits normal TreLLM decisions and reuses risk, execution, and evaluation.", 13, "#64748b", 500),
     ]
     y = 126
     for idx, decision in enumerate(decisions[:6]):

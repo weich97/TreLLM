@@ -83,12 +83,12 @@ def _write_svg(path: Path, summary: dict[str, object]) -> None:
         ("AkShare", "stock_zh_a_hist"),
         ("Normalize", "Date, Open, High, Low, Close, Volume"),
         ("CSV Provider", "same Data Layer"),
-        ("TradeArena", "risk + execution + trajectory"),
+        ("TreLLM", "risk + execution + trajectory"),
     ]
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-label="AkShare CSV reuse pipeline">',
         '<rect width="100%" height="100%" fill="#f8fafc"/>',
-        _text(36, 42, "A-share data path: AkShare -> normalized CSV -> existing TradeArena runner", 22, "#0f172a", 800),
+        _text(36, 42, "A-share data path: AkShare -> normalized CSV -> existing TreLLM runner", 22, "#0f172a", 800),
         _text(36, 70, "No realtime adapter is required; the stable boundary is the same OHLCV CSV schema used by Yahoo data.", 13, "#64748b", 400),
     ]
     for idx, (title, body) in enumerate(boxes):

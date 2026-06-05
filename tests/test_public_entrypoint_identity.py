@@ -134,6 +134,11 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
         ],
         "examples/akshare_csv_reuse_demo.py": [
             'print("AkShare -> normalized CSV -> TreLLM demo")',
+            '("TreLLM", "risk + execution + trajectory")',
+            "A-share data path: AkShare -> normalized CSV -> existing TreLLM runner",
+        ],
+        "examples/rl_policy_baseline_demo.py": [
+            "A deterministic CI-safe strategy emits normal TreLLM decisions and reuses risk, execution, and evaluation.",
         ],
         "examples/visual_tour_demo.py": [
             'description="Generate animated offline TreLLM visual-tour artifacts."',

@@ -72,6 +72,8 @@ def test_readme_uses_trellm_for_system_level_claims():
         "| TreLLM + TradeArena | Live-ready financial-agent audit, risk control, execution calibration, broker-review handoff, and public leaderboard artifacts |",
         "TreLLM can wrap learned or deterministic policies as agents",
         "The default TradeArena benchmark is therefore **not** suitable as a transaction-cost prediction",
+        "Animated TreLLM audit trace showing observation, plan, risk review, execution, and reflection records.",
+        "TreLLM runtime architecture: market inputs feed an agent observe-plan loop, a risk gate, an execution simulator, portfolio state, memory feedback, and replayable audit artifacts.",
         "## Validate A Redacted Leaderboard Row",
         "TradeArena can validate redacted leaderboard manifests.",
         "TreLLM does not promise profitable trading",

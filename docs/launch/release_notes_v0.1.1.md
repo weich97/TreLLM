@@ -1,6 +1,6 @@
 # v0.1.1: High-Spread Execution Stress Preset
 
-TradeArena v0.1.1 is a small maintenance release focused on making execution
+TreLLM v0.1.1 is a small maintenance release focused on making execution
 realism easier to inspect and reproduce.
 
 ## Highlights

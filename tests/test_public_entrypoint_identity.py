@@ -195,3 +195,29 @@ def test_generated_public_copy_sources_use_trellm_system_identity():
         text = _normalized(_read_text(path))
         for snippet in snippets:
             assert _normalized(snippet) in text
+
+
+def test_release_notes_use_trellm_for_system_release_positioning():
+    required_snippets = {
+        "docs/launch/release_notes_v0.2.1.md": [
+            "TreLLM v0.2.1 is a patch-release candidate focused on evidence quality",
+            "TradeArena remains the public leaderboard and benchmark module",
+        ],
+        "docs/launch/release_notes_v0.2.0.md": [
+            "TreLLM v0.2.0 is the first protocol-focused release for the TradeArena benchmark module.",
+        ],
+        "docs/launch/release_notes_v0.1.0.md": [
+            "TreLLM v0.1.0 is the first public benchmark release for evaluating LLM",
+            "TreLLM is not a live trading bot and does not promise profitable trading.",
+        ],
+        "docs/launch/release_notes_v0.1.1.md": [
+            "TreLLM v0.1.1 is a small maintenance release focused on making execution",
+        ],
+        "docs/launch/release_notes_v0.1.2.md": [
+            "TreLLM v0.1.2 is the first PyPI-ready release under the",
+        ],
+    }
+    for path, snippets in required_snippets.items():
+        text = _normalized(_read_text(path))
+        for snippet in snippets:
+            assert _normalized(snippet) in text

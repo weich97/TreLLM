@@ -1,6 +1,6 @@
 # v0.1.2: PyPI-Ready Benchmark Registry Release
 
-TradeArena v0.1.2 is the first PyPI-ready release under the
+TreLLM v0.1.2 is the first PyPI-ready release under the
 `tradearena-benchmark` distribution name. The import namespace and CLI remain
 `tradearena`.
 

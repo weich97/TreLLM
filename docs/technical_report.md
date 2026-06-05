@@ -54,7 +54,7 @@ memory.
 
 ## 2. Execution Simulation Model
 
-TradeArena has two execution simulators.
+TreLLM has two execution simulators.
 
 `SimpleOrderSimulator` is an idealized baseline. It fills eligible market orders
 immediately at close plus fixed slippage and commission, subject to cash and
@@ -443,7 +443,7 @@ broker execution claims. In particular:
   and cache state;
 - paper broker exports do not prove suitability for live trading.
 
-TradeArena now exposes separate execution assumption classes:
+TreLLM now exposes separate execution assumption classes:
 `RealisticOrderSimulator` for stress tests, `CalibratedOrderSimulator` for
 externally fitted parameter profiles, `QuoteReplayOrderSimulator` for
 top-of-book or Level-2 quote replay, and `FillReplayOrderSimulator` for

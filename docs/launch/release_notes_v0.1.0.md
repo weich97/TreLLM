@@ -1,6 +1,6 @@
 # v0.1.0: Auditable Benchmark Release For LLM Trading Agents
 
-TradeArena v0.1.0 is the first public benchmark release for evaluating LLM
+TreLLM v0.1.0 is the first public benchmark release for evaluating LLM
 trading agents as auditable decision-making systems under realistic market
 constraints.
 
@@ -43,10 +43,10 @@ outputs/examples/showcase.html
 
 ## What This Release Is Not
 
-TradeArena is not a live trading bot and does not promise profitable trading.
-It is a benchmark, simulation, and audit framework for studying whether LLM
-trading agents can be reproduced, inspected, risk-gated, and evaluated under
-realistic constraints.
+TreLLM is not a live trading bot and does not promise profitable trading.
+It is an audit framework with the TradeArena benchmark module for studying
+whether LLM trading agents can be reproduced, inspected, risk-gated, and
+evaluated under realistic constraints.
 
 ## Suggested GitHub Release Title
 

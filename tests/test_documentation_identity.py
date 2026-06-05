@@ -40,6 +40,8 @@ def test_system_docs_use_trellm_identity():
         "docs/technical_report.md": [
             "# TreLLM Technical White Paper",
             "TreLLM is an early-stage research prototype and live-readiness audit framework",
+            "TreLLM has two execution simulators.",
+            "TreLLM now exposes separate execution assumption classes:",
         ],
     }
 

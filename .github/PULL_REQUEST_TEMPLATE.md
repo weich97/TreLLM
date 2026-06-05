@@ -26,6 +26,12 @@ paper-sandbox adapters, approval artifacts, response reconciliation, or any
 future live-capable path.
 
 - [ ] Not broker-facing / no live-safety impact
+- Live-ready contribution track:
+  - [ ] Broker review export
+  - [ ] Approval binding
+  - [ ] Paper-sandbox adapter
+  - [ ] Reconciliation
+  - [ ] Operator runbook
 - [ ] Adapter mode is explicit:
 - [ ] Default path cannot submit live orders
 - [ ] No credentials, account identifiers, private holdings, or raw broker

@@ -17,6 +17,33 @@ body:
         - Visualization or demo
     validations:
       required: true
+  - type: dropdown
+    id: live_ready_track
+    attributes:
+      label: Live-ready contribution track
+      description: Choose the closest broker/live-ready track when relevant.
+      options:
+        - Not broker-facing
+        - Broker review export
+        - Approval binding
+        - Paper-sandbox adapter
+        - Reconciliation
+        - Operator runbook
+    validations:
+      required: true
+  - type: dropdown
+    id: adapter_mode
+    attributes:
+      label: Adapter or account mode
+      description: Broker-facing work must name the safest intended mode.
+      options:
+        - Not applicable
+        - offline_export
+        - dry_run
+        - paper_sandbox
+        - live_human_approved
+    validations:
+      required: true
   - type: textarea
     id: motivation
     attributes:

@@ -23,6 +23,24 @@ def test_github_templates_explain_trellm_and_tradearena_roles():
         ".github/PULL_REQUEST_TEMPLATE.md": [
             "TreLLM system change",
             "TradeArena leaderboard or registry artifact update",
+            "Live-ready contribution track:",
+            "Default path cannot submit live orders",
+            "Approval binding",
+            "Paper-sandbox adapter",
+            "Operator runbook",
+        ],
+        ".github/ISSUE_TEMPLATE/demo_or_adapter.yml": [
+            "Live-ready contribution track",
+            "Broker review export",
+            "Approval binding",
+            "Paper-sandbox adapter",
+            "Reconciliation",
+            "Operator runbook",
+            "Adapter or account mode",
+            "offline_export",
+            "paper_sandbox",
+            "live_human_approved",
+            "No default live orders",
         ],
     }
     for path, snippets in required_snippets.items():

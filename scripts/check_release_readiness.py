@@ -279,6 +279,7 @@ LEGACY_PUBLIC_IDENTITY_PHRASES = [
     "The current public repository is strongest at the prototype and early benchmark levels",
     "For the staged path from benchmark research to supervised live execution",
     "These contributions move TreLLM from benchmark research toward human-gated",
+    'framework: str = "TradeArena"',
 ]
 CI_REQUIRED_GATE_COMMANDS = [
     "python -m compileall src scripts examples tests -q",

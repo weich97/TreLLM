@@ -10,7 +10,8 @@ from tradearena.core.trajectory import Trajectory
 
 @dataclass(frozen=True)
 class AuditManifest:
-    framework: str = "TradeArena"
+    framework: str = "TreLLM"
+    leaderboard_module: str = "TradeArena"
     claim: str = (
         "Financial AI agents should be studied as auditable decision-making systems "
         "whose intent must survive risk and execution constraints."

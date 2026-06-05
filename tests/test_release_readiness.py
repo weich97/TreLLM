@@ -74,7 +74,8 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         "The framework is the experimental substrate.\n"
         "The current public repository is strongest at the prototype and early benchmark levels.\n"
         "For the staged path from benchmark research to supervised live execution.\n"
-        "These contributions move TreLLM from benchmark research toward human-gated.\n",
+        "These contributions move TreLLM from benchmark research toward human-gated.\n"
+        'framework: str = "TradeArena"\n',
         encoding="utf-8",
     )
     readme.write_text(
@@ -145,6 +146,7 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
         "legacy public identity phrase 'These contributions move TreLLM from benchmark research toward human-gated' "
         "found in docs/schemas.md"
     ) in failures
+    assert 'legacy public identity phrase \'framework: str = "TradeArena"\' found in docs/schemas.md' in failures
 
 
 def test_release_readiness_flags_stale_release_candidate_artifact_hash(tmp_path: Path):

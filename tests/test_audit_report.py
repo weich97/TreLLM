@@ -3,7 +3,21 @@ import subprocess
 import sys
 from pathlib import Path
 
+from tradearena.core.trajectory import Trajectory
+from tradearena.evaluation.audit import export_audit_bundle
+
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_audit_bundle_manifest_uses_trellm_system_identity(tmp_path: Path):
+    trajectory = Trajectory(experiment_name="identity_bundle", seed=7)
+
+    export_audit_bundle(tmp_path, trajectory=trajectory, metrics={"return": 0.0})
+
+    manifest = json.loads((tmp_path / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["framework"] == "TreLLM"
+    assert manifest["leaderboard_module"] == "TradeArena"
+    assert "auditable decision-making systems" in manifest["claim"]
 
 
 def test_render_audit_report_from_minimal_trajectory(tmp_path: Path):

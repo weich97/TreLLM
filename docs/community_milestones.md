@@ -6,7 +6,8 @@ contributor is reading the source tree rather than the GitHub Issues UI.
 
 ## v0.1.1: Reproducibility Polish
 
-Goal: make the first public benchmark easier to cite, reproduce, and review.
+Goal: make the first public TreLLM audit release easier to cite, reproduce,
+and review while keeping TradeArena benchmark rows comparable.
 
 - Add a high-spread execution stress preset with CSV, JSON, and SVG artifacts.
 - Reflow public Markdown files for readable diffs.
@@ -42,7 +43,7 @@ Initial implementation paths:
 - Redacted benchmarks: comment with fields you would be comfortable sharing.
 - Teaching or project use: post the scenario you want students or teammates to
   reproduce.
-- New adapters: link the data, broker, or model interface you want TradeArena
-  to support.
+- New adapters: link the data, broker, or model interface you want TreLLM to
+  support.
 - External validation: reproduce a documented command and file the validation
   report template with commit, environment, commands, and artifacts.

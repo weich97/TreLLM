@@ -42,6 +42,10 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
             "TradeArena leaderboard row",
             'early-stage research prototype with a public TradeArena leaderboard module',
         ],
+        "docs/community_milestones.md": [
+            "Goal: make the first public TreLLM audit release easier to cite, reproduce, and review while keeping TradeArena benchmark rows comparable.",
+            "New adapters: link the data, broker, or model interface you want TreLLM to support.",
+        ],
     }
     for path, snippets in required_snippets.items():
         text = _normalized(_read_text(path))

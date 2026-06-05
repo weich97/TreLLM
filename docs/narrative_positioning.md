@@ -42,7 +42,7 @@ current integration stage from [`live_trading_readiness.md`](live_trading_readin
 
 ## Preferred One-Liner
 
-TreLLM is an early-stage live-ready audit framework for moving autonomous
+TreLLM is an early-stage live-ready audit and control system for moving autonomous
 financial-agent intent through risk controls, execution evidence, broker
 review, and reproducible accountability. TradeArena is the public leaderboard
 for comparing auditable runs from that system.

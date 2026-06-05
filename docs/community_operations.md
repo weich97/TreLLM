@@ -61,12 +61,13 @@ Discussions.
 For LLM agents or financial AI labs, use a reproducibility-first pitch:
 
 ```text
-We maintain TradeArena, an early-stage live-ready audit framework for auditing
+We maintain TreLLM, an early-stage live-ready audit and control system for auditing
 financial-agent intent under risk gates, execution evidence, broker-review
 handoffs, and reproducibility checks.
 If your group has an agent or prompt policy, we can help package a redacted
 benchmark manifest and reproducibility report without exposing raw prompts,
-responses, credentials, or private holdings.
+responses, credentials, or private holdings. TradeArena can package comparable
+benchmark manifests and leaderboard evidence from that TreLLM audit trail.
 ```
 
 The useful outcome is not a star count. It is an external validation report,

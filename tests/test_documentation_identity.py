@@ -30,6 +30,7 @@ def test_system_docs_use_trellm_identity():
         "docs/narrative_positioning.md": [
             "TreLLM should be described as an early-stage live-ready audit and control system",
             "TradeArena should be described as the public leaderboard and benchmark module",
+            "TreLLM is an early-stage live-ready audit and control system for moving autonomous",
         ],
         "docs/research_protocol.md": [
             "# TreLLM Research Protocol",
@@ -41,7 +42,7 @@ def test_system_docs_use_trellm_identity():
         ],
         "docs/technical_report.md": [
             "# TreLLM Technical White Paper",
-            "TreLLM is an early-stage research prototype and live-readiness audit framework",
+            "TreLLM is an early-stage research prototype and live-readiness audit and control system",
             "TreLLM has two execution simulators.",
             "TreLLM now exposes separate execution assumption classes:",
         ],

@@ -1,7 +1,7 @@
 # TreLLM Technical White Paper
 
-TreLLM is an early-stage research prototype and live-readiness audit
-framework for agent reliability, risk-aware AI systems, and
+TreLLM is an early-stage research prototype and live-readiness audit and
+control system for agent reliability, risk-aware AI systems, and
 intent-to-execution audits in financial decision settings. It studies whether
 LLM-assisted trading agents, AI portfolio-manager prototypes, and multi-agent
 finance systems can be evaluated through replayable trajectories, explicit

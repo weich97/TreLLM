@@ -46,6 +46,10 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
             "Goal: make the first public TreLLM audit release easier to cite, reproduce, and review while keeping TradeArena benchmark rows comparable.",
             "New adapters: link the data, broker, or model interface you want TreLLM to support.",
         ],
+        "docs/community_operations.md": [
+            "We maintain TreLLM, an early-stage live-ready audit and control system for auditing",
+            "TradeArena can package comparable benchmark manifests and leaderboard evidence",
+        ],
     }
     for path, snippets in required_snippets.items():
         text = _normalized(_read_text(path))
@@ -327,11 +331,11 @@ def test_generated_public_copy_sources_use_trellm_system_identity():
             "Scan public TreLLM artifacts for raw prompt/response or secret leakage.",
         ],
         "scripts/build_benchmark_page.py": [
-            "TreLLM is a financial-agent reliability audit framework. TradeArena is the",
+            "TreLLM is a financial-agent reliability audit and control system. TradeArena is the",
             "benchmark card and leaderboard surface, not a profitability claim.",
         ],
         "docs/results/benchmark_v0_2.md": [
-            "TreLLM is a financial-agent reliability audit framework. TradeArena is the benchmark",
+            "TreLLM is a financial-agent reliability audit and control system. TradeArena is the benchmark",
             "card and leaderboard surface, not a profitability claim.",
         ],
         "docs/benchmark_submissions.md": [
@@ -352,6 +356,7 @@ def test_release_notes_use_trellm_for_system_release_positioning():
     required_snippets = {
         "docs/launch/release_notes_v0.2.1.md": [
             "TreLLM v0.2.1 is a patch-release candidate focused on evidence quality",
+            "TreLLM remains an audit and live-readiness control system.",
             "TradeArena remains the public leaderboard and benchmark module",
         ],
         "docs/launch/release_notes_v0.2.0.md": [

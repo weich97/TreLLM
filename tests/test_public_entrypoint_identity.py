@@ -233,7 +233,7 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
             "# TreLLM Project Metadata",
             "TreLLM's public positioning is:",
             "TreLLM turns every financial-agent decision into a traceable trajectory:",
-            "LLM-driven trading audit and control system with replayable trajectories, risk gates, paper execution, and TradeArena leaderboard artifacts.",
+            "LLM trading audit system with replayable trajectories, risk gates, reproducibility artifacts, and a TradeArena leaderboard.",
         ],
         "docs/launch/pages_demo.md": [
             "TreLLM publishes the project landing page and quickstart showcase",
@@ -448,6 +448,9 @@ def test_utility_cli_help_uses_trellm_for_system_artifacts():
         "scripts/validate_broker_response_artifact.py": [
             'description="Validate a TreLLM broker response artifact."',
         ],
+        "scripts/validate_operator_runbook_artifact.py": [
+            'description="Validate a TreLLM operator runbook artifact."',
+        ],
         "scripts/validate_broker_approval_binding.py": [
             'description="Validate that a TreLLM broker approval binds to a handoff artifact."',
         ],
@@ -500,6 +503,7 @@ def test_utility_cli_help_uses_trellm_for_system_artifacts():
             'description="Validate a TreLLM broker approval artifact."',
             'description="Validate that a TreLLM broker approval binds to a handoff artifact."',
             'description="Validate and hash a TreLLM broker handoff artifact."',
+            'description="Validate a TreLLM operator runbook artifact."',
         ],
         "src/tradearena/evaluation/autopsy.py": [
             "Summarize failure modes from a serialized TreLLM trajectory.",
@@ -639,7 +643,7 @@ def test_generated_public_copy_sources_use_trellm_system_identity():
             "External TradeArena rows can be shared without exposing raw provider prompts or responses.",
             "## Operator Runbook Artifact Schema",
             "The schema fixes the public `trellm_operator_runbook_v0.1` contract",
-            "python scripts/validate_operator_runbook_artifact.py outputs/examples/operator_runbook/summary.json",
+            "tradearena validate-operator-runbook outputs/examples/operator_runbook/summary.json",
         ],
         "docs/launch/discussion_seeds.md": [
             "TreLLM currently records observation, signals, proposed decisions, approved",
@@ -840,7 +844,7 @@ def test_citation_and_research_report_keep_system_and_leaderboard_identity_separ
             "If you use TreLLM in research or cite TradeArena leaderboard artifacts, please cite the technical report:",
         ],
         "pyproject.toml": [
-            'description = "TreLLM: LLM-driven trading audit and control system with replayable trajectories, risk gates, and TradeArena leaderboard artifacts."',
+            'description = "TreLLM: LLM trading audit system with replayable trajectories, risk gates, reproducibility artifacts, and a TradeArena leaderboard."',
             'authors = [{ name = "TreLLM Contributors" }]',
         ],
     }

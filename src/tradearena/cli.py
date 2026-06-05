@@ -27,6 +27,7 @@ from tradearena.tools import (
     validate_broker_approval_request_binding,
     validate_broker_handoff_artifact_file,
     validate_broker_response_artifact_file,
+    validate_operator_runbook_artifact_file,
 )
 
 
@@ -116,6 +117,7 @@ def main(argv: list[str] | None = None) -> int:
         "validate-broker-approval",
         "validate-broker-approval-binding",
         "validate-broker-response",
+        "validate-operator-runbook",
         "build-registry",
         "hash-broker-handoff",
         "hash-run",
@@ -368,6 +370,19 @@ def _run_utility_command(argv: list[str]) -> int:
                 print(f"  - {error}")
             return 1
         print(f"Valid broker response artifact: {args.artifact}")
+        return 0
+
+    if command == "validate-operator-runbook":
+        parser = argparse.ArgumentParser(description="Validate a TreLLM operator runbook artifact.")
+        parser.add_argument("artifact")
+        args = parser.parse_args(argv[1:])
+        _, errors = validate_operator_runbook_artifact_file(args.artifact)
+        if errors:
+            print(f"Invalid operator runbook artifact: {args.artifact}")
+            for error in errors:
+                print(f"  - {error}")
+            return 1
+        print(f"Valid operator runbook artifact: {args.artifact}")
         return 0
 
     if command == "validate-broker-handoff":

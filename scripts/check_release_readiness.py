@@ -227,7 +227,7 @@ BANNED_PUBLIC_TERMS = [
 ]
 REQUIRED_PUBLIC_IDENTITY_PHRASES = {
     "pyproject.toml": [
-        'description = "TreLLM: LLM-driven trading audit and control system with replayable trajectories, risk gates, and TradeArena leaderboard artifacts."',
+        'description = "TreLLM: LLM trading audit system with replayable trajectories, risk gates, reproducibility artifacts, and a TradeArena leaderboard."',
     ],
     "src/tradearena/__init__.py": [
         "TreLLM: LLM-driven trading audit and control system with a TradeArena compatibility API.",

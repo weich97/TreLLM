@@ -173,6 +173,26 @@ def test_operator_runbook_validator_rejects_live_submission(tmp_path: Path):
     assert "False was expected" in result.stdout
 
 
+def test_operator_runbook_cli_validates_demo_artifact():
+    _run_example("examples/operator_runbook_demo.py")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "tradearena.cli",
+            "validate-operator-runbook",
+            "outputs/examples/operator_runbook/summary.json",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 0
+    assert "Valid operator runbook artifact" in result.stdout
+
+
 def test_showcase_index_can_be_built_from_existing_or_missing_artifacts():
     tracked_result_paths = (
         ROOT / "docs/results/benchmark_v0_2.md",

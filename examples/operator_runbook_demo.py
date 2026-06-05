@@ -62,6 +62,7 @@ def main() -> int:
         "checklist": checklist,
         "verification_commands": [
             "python examples/operator_runbook_demo.py",
+            "tradearena validate-operator-runbook outputs/examples/operator_runbook/summary.json",
             "python scripts/validate_demo_artifacts.py",
         ],
         "safety_note": (

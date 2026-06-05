@@ -100,4 +100,4 @@ artifacts:
       - outputs/examples/operator_runbook/summary.json:kill_switch_required
       - outputs/examples/operator_runbook/summary.json:checklist.id
     required_validators:
-      - python scripts/validate_operator_runbook_artifact.py outputs/examples/operator_runbook/summary.json
+      - python -m tradearena.cli validate-operator-runbook outputs/examples/operator_runbook/summary.json

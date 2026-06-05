@@ -60,6 +60,10 @@ from tradearena.tools.market_rules import (
     review_market_rule_order,
     validate_market_rule_plugin,
 )
+from tradearena.tools.operator_runbook import (
+    validate_operator_runbook_artifact,
+    validate_operator_runbook_artifact_file,
+)
 from tradearena.tools.optimizer import EqualRiskBudgetOptimizer
 from tradearena.tools.risk import RiskCalculator
 
@@ -107,6 +111,8 @@ __all__ = [
     "market_rule_from_package",
     "review_market_rule_order",
     "validate_market_rule_plugin",
+    "validate_operator_runbook_artifact",
+    "validate_operator_runbook_artifact_file",
     "build_broker_approval_artifact",
     "broker_approval_from_artifact",
     "broker_handoff_artifact_hash",

@@ -6,7 +6,7 @@ This is a local release-candidate manifest. Tagging and PyPI publication are sep
 
 - Target release: `v0.2.1`
 - Current package version: `0.2.0`
-- Commit: `1ac5e95841ede6e86eb3de77b3aa9bae30b338ad`
+- Commit: `ff5df13176121521cf8c90d83f233501c44ba221`
 - Working tree dirty entries when generated: `14`
 
 ## Pre-Release Commands
@@ -20,8 +20,8 @@ This is a local release-candidate manifest. Tagging and PyPI publication are sep
 
 ## Artifact Hashes
 
-- `README.md`: present sha256:46be6da77c506b5dae1442c438d083209b4897fd3cc7dd24121bd449caebe013
-- `pyproject.toml`: present sha256:eabfcac34e6b562602ccb08945449be4f791952b9bf2e65c5660bbdbf104375a
+- `README.md`: present sha256:ccb931b274564734f93aa6adf6787f9247d151d4fdc7a9bcfb79c85938bedefb
+- `pyproject.toml`: present sha256:c8358194995653c5a932216bff9deaa1f97280fa6ffc1630715b73ad3ba05fe3
 - `benchmarks/v0.2/spec.json`: present sha256:8e688190ff17bc0fca691bcd600bc56bb13d1215d2b5d6a8ac611ae70e17b156
 - `docs/results/benchmark_v0_2.md`: present sha256:319a45938b5708862ea06e280b78089bfe5b08f37a69006fe3707d1796126122
 - `docs/results/execution_replay_calibration_loop.json`: present sha256:afed5a3dd9940f654b0d28186dca2ca6bdafaf4e3da119308efe397aa47a9705

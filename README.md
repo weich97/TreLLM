@@ -601,6 +601,7 @@ tradearena hash-broker-handoff outputs/examples/broker_approval_safety/dry_run_o
 tradearena validate-broker-approval outputs/examples/broker_approval_safety/broker_approval_artifact.json --now 2026-05-31T12:30:00Z
 tradearena validate-broker-approval-binding outputs/examples/broker_approval_safety/broker_approval_artifact.json outputs/examples/broker_approval_safety/dry_run_orders.json --now 2026-05-31T12:30:00Z
 tradearena validate-broker-response outputs/examples/broker_response_reconciliation/broker_response_artifact.json
+tradearena validate-operator-runbook outputs/examples/operator_runbook/summary.json
 ```
 
 The approval must contain a redacted operator ID, positive finite notional and

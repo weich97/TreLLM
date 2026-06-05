@@ -190,7 +190,7 @@ artifact-retention checks.
 Validate the offline demo runbook with:
 
 ```bash
-python scripts/validate_operator_runbook_artifact.py outputs/examples/operator_runbook/summary.json
+tradearena validate-operator-runbook outputs/examples/operator_runbook/summary.json
 ```
 
 ## Reproduction Report Schema

@@ -21,8 +21,8 @@ tradearena replay outputs/examples/quickstart_trajectory.json --case risk_aware_
 For the full local demo portal:
 
 ```bash
-git clone https://github.com/weich97/TradeArena.git
-cd TradeArena
+git clone https://github.com/weich97/TreLLM.git
+cd TreLLM
 python -m pip install -e ".[dev]"
 python scripts/run_showcase.py
 ```
@@ -176,6 +176,6 @@ python scripts/run_showcase.py --reuse-existing
 python scripts/check_release_readiness.py
 ```
 
-[codespaces-quickstart]: https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=weich97/TradeArena
-[binder-quickstart]: https://mybinder.org/v2/gh/weich97/TradeArena/main?filepath=notebooks%2Ftradearena_5min_colab.ipynb
-[nbviewer-quickstart]: https://nbviewer.org/github/weich97/TradeArena/blob/main/notebooks/tradearena_5min_colab.ipynb
+[codespaces-quickstart]: https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=weich97/TreLLM
+[binder-quickstart]: https://mybinder.org/v2/gh/weich97/TreLLM/main?filepath=notebooks%2Ftradearena_5min_colab.ipynb
+[nbviewer-quickstart]: https://nbviewer.org/github/weich97/TreLLM/blob/main/notebooks/tradearena_5min_colab.ipynb

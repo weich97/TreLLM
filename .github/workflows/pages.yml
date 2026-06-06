@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   build:
-    if: github.repository == 'weich97/TradeArena'
+    if: github.repository == 'weich97/TreLLM'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -48,7 +48,7 @@ jobs:
           path: outputs/examples
 
   deploy:
-    if: github.repository == 'weich97/TradeArena'
+    if: github.repository == 'weich97/TreLLM'
     needs: build
     runs-on: ubuntu-latest
     environment:

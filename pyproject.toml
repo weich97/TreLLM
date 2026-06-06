@@ -33,10 +33,10 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Homepage = "https://github.com/weich97/TradeArena"
-Repository = "https://github.com/weich97/TradeArena"
-Documentation = "https://github.com/weich97/TradeArena/blob/main/docs/getting_started.md"
-Issues = "https://github.com/weich97/TradeArena/issues"
+Homepage = "https://github.com/weich97/TreLLM"
+Repository = "https://github.com/weich97/TreLLM"
+Documentation = "https://github.com/weich97/TreLLM/blob/main/docs/getting_started.md"
+Issues = "https://github.com/weich97/TreLLM/issues"
 
 [project.optional-dependencies]
 data = ["pandas>=2.0", "yfinance>=0.2"]

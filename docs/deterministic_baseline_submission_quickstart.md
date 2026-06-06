@@ -24,8 +24,8 @@ Do not submit live-trading results, private holdings, or broker credentials.
 From a fresh clone:
 
 ```bash
-git clone https://github.com/weich97/TradeArena.git
-cd TradeArena
+git clone https://github.com/weich97/TreLLM.git
+cd TreLLM
 python -m pip install -e ".[dev]"
 python scripts/validate_benchmark_submission.py examples/benchmark_submissions/example_redacted_submission.json
 ```
@@ -97,7 +97,7 @@ Use [`evidence_labels.md`](evidence_labels.md) to keep `claim_scope`,
 
 Open the deterministic baseline issue:
 
-<https://github.com/weich97/TradeArena/issues/46>
+<https://github.com/weich97/TreLLM/issues/46>
 
 Attach:
 

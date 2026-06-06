@@ -360,7 +360,7 @@ h1 { margin: 0 0 12px; font-size: 42px; line-height: 1.06; letter-spacing: 0; }
         <a href="showcase.html">Open showcase</a>
         <a href="benchmark-v0.2.html">Benchmark v0.2</a>
         <a href="demo_video.html">Watch demo</a>
-        <a href="https://github.com/weich97/TradeArena">GitHub</a>
+        <a href="https://github.com/weich97/TreLLM">GitHub</a>
       </div>
     </div>
     <pre class="terminal">python -m pip install -e ".[dev]"

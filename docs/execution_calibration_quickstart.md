@@ -97,7 +97,7 @@ A useful calibration mini-report includes:
 Open an external validation issue and choose **Quote/fill calibration
 mini-report** or **Execution fill calibration**:
 
-<https://github.com/weich97/TradeArena/issues/new?template=external_validation.yml>
+<https://github.com/weich97/TreLLM/issues/new?template=external_validation.yml>
 
 Attach the generated Markdown report, the generated JSON summary when it can be
 shared, and a short note mapping the row to one of these labels:

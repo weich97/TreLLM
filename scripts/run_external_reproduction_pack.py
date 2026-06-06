@@ -81,7 +81,7 @@ def main() -> int:
     manifest = {
         "schema": "tradearena_external_reproduction_pack_v1",
         "created_at": datetime.now(timezone.utc).isoformat(),
-        "repository": "https://github.com/weich97/TradeArena",
+        "repository": "https://github.com/weich97/TreLLM",
         "commit_or_tag": _git(["rev-parse", "HEAD"]),
         "git_status_short": _git(["status", "--short"]),
         "python": {
@@ -157,10 +157,14 @@ def _display_path(path: Path) -> str:
 
 def _git(args: list[str]) -> str:
     try:
-        result = subprocess.run(["git", *args], cwd=ROOT, check=True, capture_output=True, text=True)
+        result = subprocess.run(_git_command(args), cwd=ROOT, check=True, capture_output=True, text=True)
         return result.stdout.strip()
     except Exception:
         return ""
+
+
+def _git_command(args: list[str]) -> list[str]:
+    return ["git", "-c", f"safe.directory={ROOT.as_posix()}", *args]
 
 
 def _render_readme(manifest: dict[str, Any]) -> str:

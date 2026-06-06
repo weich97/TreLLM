@@ -378,7 +378,7 @@ def _tracked_files() -> list[str]:
 
 
 def _git_ls_files(pattern: str | None = None) -> list[str]:
-    command = ["git", "ls-files"]
+    command = _git_command(ROOT, ["ls-files"])
     if pattern:
         command.append(pattern)
     result = subprocess.run(command, cwd=ROOT, check=True, capture_output=True, text=True)
@@ -470,7 +470,7 @@ def _release_artifact_bytes(root: Path, rel: str, path: Path) -> bytes:
 
 def _git_path_has_worktree_changes(root: Path, rel: str) -> bool:
     result = subprocess.run(
-        ["git", "status", "--short", "--", rel],
+        _git_command(root, ["status", "--short", "--", rel]),
         cwd=root,
         check=False,
         capture_output=True,
@@ -489,7 +489,7 @@ def _canonical_worktree_bytes(path: Path) -> bytes:
 def _git_blob_bytes(root: Path, rel: str) -> bytes | None:
     normalized_rel = rel.replace("\\", "/")
     result = subprocess.run(
-        ["git", "show", f"HEAD:{normalized_rel}"],
+        _git_command(root, ["show", f"HEAD:{normalized_rel}"]),
         cwd=root,
         check=False,
         capture_output=True,
@@ -497,6 +497,10 @@ def _git_blob_bytes(root: Path, rel: str) -> bytes | None:
     if result.returncode != 0:
         return None
     return result.stdout
+
+
+def _git_command(root: Path, args: list[str]) -> list[str]:
+    return ["git", "-c", f"safe.directory={root.as_posix()}", *args]
 
 
 def _sha256_bytes(content: bytes) -> str:

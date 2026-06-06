@@ -137,7 +137,7 @@ def _artifact_bytes(rel: str, path: Path) -> bytes:
 
 def _git_path_has_worktree_changes(rel: str) -> bool:
     result = subprocess.run(
-        ["git", "status", "--short", "--", rel],
+        _git_command(["status", "--short", "--", rel]),
         cwd=ROOT,
         check=False,
         capture_output=True,
@@ -156,7 +156,7 @@ def _canonical_worktree_bytes(path: Path) -> bytes:
 def _git_blob_bytes(rel: str) -> bytes | None:
     normalized_rel = rel.replace("\\", "/")
     result = subprocess.run(
-        ["git", "show", f"HEAD:{normalized_rel}"],
+        _git_command(["show", f"HEAD:{normalized_rel}"]),
         cwd=ROOT,
         check=False,
         capture_output=True,
@@ -176,10 +176,14 @@ def _package_version() -> str:
 
 def _git(args: list[str]) -> str:
     try:
-        result = subprocess.run(["git", *args], cwd=ROOT, check=True, capture_output=True, text=True)
+        result = subprocess.run(_git_command(args), cwd=ROOT, check=True, capture_output=True, text=True)
         return result.stdout.strip()
     except Exception:
         return ""
+
+
+def _git_command(args: list[str]) -> list[str]:
+    return ["git", "-c", f"safe.directory={ROOT.as_posix()}", *args]
 
 
 def _dirty_file_count(status: str) -> int:

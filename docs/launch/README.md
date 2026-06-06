@@ -58,7 +58,7 @@ ai-agents
   [`release_candidate_v0.2.1.md`](release_candidate_v0.2.1.md) after CI passes.
 - Add the topics above.
 - Enable GitHub Discussions.
-- Verify the GitHub Pages site at `https://weich97.github.io/TradeArena/`.
+- Verify the GitHub Pages site at `https://weich97.github.io/TreLLM/`.
 - Create the issue backlog in `docs/launch/issue_backlog.md`.
 - Verify the browser-playable 3-minute demo and link it from the README.
 - Verify the v0.2 external reproduction pack with at least three independent
@@ -82,7 +82,7 @@ outputs/examples/index.html
 Watch in the browser:
 
 ```text
-https://weich97.github.io/TradeArena/demo_video.html
+https://weich97.github.io/TreLLM/demo_video.html
 ```
 
 ## Suggested Repository Description

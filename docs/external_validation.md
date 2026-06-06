@@ -27,8 +27,8 @@ validation.
 Run the no-key path first:
 
 ```bash
-git clone https://github.com/weich97/TradeArena.git
-cd TradeArena
+git clone https://github.com/weich97/TreLLM.git
+cd TreLLM
 python -m pip install -e ".[dev]"
 tradearena --benchmark tradearena-core
 python scripts/check_release_readiness.py
@@ -80,11 +80,11 @@ leaderboard context.
 
 | Task | Target time | Submit |
 | --- | ---: | --- |
-| [Run v0.2 reproduction pack on macOS](https://github.com/weich97/TradeArena/issues/43) | 1 hour | manifest, shell log, Python version, deviations |
-| [Run v0.2 reproduction pack on Ubuntu](https://github.com/weich97/TradeArena/issues/44) | 1 hour | manifest, distro/Python/install notes, deviations |
-| [Submit one deterministic baseline row](https://github.com/weich97/TradeArena/issues/46) | 1-2 hours | schema-valid manifest, registry diff, reproducibility hash |
-| [Submit one quote/fill calibration mini-report](https://github.com/weich97/TradeArena/issues/47) | 2-3 hours | calibration JSON/Markdown, data source, venue, sample size, replay error |
-| [Review one benchmark claim boundary](https://github.com/weich97/TradeArena/issues/48) | 1 hour | issue or PR mapping one claim to engineering, benchmark, or scientific evidence |
+| [Run v0.2 reproduction pack on macOS](https://github.com/weich97/TreLLM/issues/43) | 1 hour | manifest, shell log, Python version, deviations |
+| [Run v0.2 reproduction pack on Ubuntu](https://github.com/weich97/TreLLM/issues/44) | 1 hour | manifest, distro/Python/install notes, deviations |
+| [Submit one deterministic baseline row](https://github.com/weich97/TreLLM/issues/46) | 1-2 hours | schema-valid manifest, registry diff, reproducibility hash |
+| [Submit one quote/fill calibration mini-report](https://github.com/weich97/TreLLM/issues/47) | 2-3 hours | calibration JSON/Markdown, data source, venue, sample size, replay error |
+| [Review one benchmark claim boundary](https://github.com/weich97/TreLLM/issues/48) | 1 hour | issue or PR mapping one claim to engineering, benchmark, or scientific evidence |
 
 Do not summarize these as "community interest." They count only when the
 commands, artifacts, and deviations are public enough for another reader to

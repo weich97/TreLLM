@@ -88,7 +88,7 @@ tradearena validate-submission examples/benchmark_submissions/example_redacted_s
 Open an external validation issue and choose **Benchmark claim-boundary
 review**:
 
-<https://github.com/weich97/TradeArena/issues/new?template=external_validation.yml>
+<https://github.com/weich97/TreLLM/issues/new?template=external_validation.yml>
 
 Use this compact format:
 

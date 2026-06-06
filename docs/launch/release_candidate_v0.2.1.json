@@ -1,16 +1,16 @@
 {
   "artifact_hashes": [
     {
-      "bytes": 43247,
+      "bytes": 43123,
       "exists": true,
       "path": "README.md",
-      "sha256": "sha256:588bb3d7e658793b6c920cf896c16079bb87e6ee5d8aefcb15ddb901f535c413"
+      "sha256": "sha256:021d72ba5c0d5ad6fa1fe81a889b3dc9aa1a809e6f100b952015c74a6102a86e"
     },
     {
-      "bytes": 2264,
+      "bytes": 2248,
       "exists": true,
       "path": "pyproject.toml",
-      "sha256": "sha256:6cde28f31f7dbe325100d910b5e2fafd8c531f37109d2d6cf49964ec47ac188f"
+      "sha256": "sha256:5d5c8e07c0d98284c6ec3353e9e063049365fdbfbf36ec9ed2ef4a02b1c5c7f6"
     },
     {
       "bytes": 6086,
@@ -97,11 +97,11 @@
       "sha256": "sha256:8a0d326255aacca2f55cb32f0b822ce5ef7501e0d545f1e4a8dabf86a6fd6b60"
     }
   ],
-  "commit": "02a89927c1c8446f2a390a5f76465635c33f6f8b",
-  "created_at": "2026-06-05T19:27:52.481859+00:00",
+  "commit": "43c0bf90867b1098c7201e13ae2df65aa5f4f752",
+  "created_at": "2026-06-06T02:18:25.690704+00:00",
   "current_package_version": "0.2.0",
-  "dirty_file_count": 22,
-  "git_status_sha256": "sha256:83c762c9187df529ce2e2356e88037cff17d99f0f516ab7b14e1dda4e007678c",
+  "dirty_file_count": 27,
+  "git_status_sha256": "sha256:ae67f9cf260efd3b87d0959f6686112d6635e23afcc692f36e2ccbaf5cff4b6e",
   "pre_release_commands": [
     "python -m compileall src scripts examples tests -q",
     "python -m ruff check src scripts examples tests",

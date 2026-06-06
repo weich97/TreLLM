@@ -12,8 +12,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/weich97/TradeArena/actions/workflows/ci.yml">
-    <img alt="CI status" src="https://github.com/weich97/TradeArena/actions/workflows/ci.yml/badge.svg">
+  <a href="https://github.com/weich97/TreLLM/actions/workflows/ci.yml">
+    <img alt="CI status" src="https://github.com/weich97/TreLLM/actions/workflows/ci.yml/badge.svg">
   </a>
   <a href="https://pypi.org/project/tradearena-benchmark/">
     <img alt="PyPI version" src="https://img.shields.io/pypi/v/tradearena-benchmark">
@@ -24,10 +24,10 @@
   <a href="https://arxiv.org/abs/2605.28850">
     <img alt="arXiv:2605.28850" src="https://img.shields.io/badge/arXiv-2605.28850-b31b1b.svg">
   </a>
-  <a href="https://github.com/weich97/TradeArena/blob/main/LICENSE">
+  <a href="https://github.com/weich97/TreLLM/blob/main/LICENSE">
     <img alt="License" src="https://img.shields.io/github/license/weich97/TradeArena">
   </a>
-  <a href="https://github.com/weich97/TradeArena/actions/workflows/ci.yml">
+  <a href="https://github.com/weich97/TreLLM/actions/workflows/ci.yml">
     <img alt="Coverage generated in CI" src="https://img.shields.io/badge/coverage-CI%20XML-64748b">
   </a>
   <a href="docs/claim_boundaries.md">
@@ -38,10 +38,10 @@
 <p align="center">
   <a href="docs/getting_started.md">Getting started</a> |
   <a href="https://pypi.org/project/tradearena-benchmark/">PyPI</a> |
-  <a href="https://weich97.github.io/TradeArena/">Project site</a> |
-  <a href="https://weich97.github.io/TradeArena/agent_autopsy_dashboard.html">Agent Autopsy</a> |
-  <a href="https://weich97.github.io/TradeArena/benchmark-v0.2.html">Benchmark card</a> |
-  <a href="https://weich97.github.io/TradeArena/community_registry.html">Leaderboard</a> |
+  <a href="https://weich97.github.io/TreLLM/">Project site</a> |
+  <a href="https://weich97.github.io/TreLLM/agent_autopsy_dashboard.html">Agent Autopsy</a> |
+  <a href="https://weich97.github.io/TreLLM/benchmark-v0.2.html">Benchmark card</a> |
+  <a href="https://weich97.github.io/TreLLM/community_registry.html">Leaderboard</a> |
   <a href="docs/benchmark_submissions.md">Redacted manifests</a> |
   <a href="docs/public_artifact_privacy.md">Artifact privacy</a> |
   <a href="docs/research_report.md">Technical report</a> |
@@ -67,7 +67,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=weich97/TradeArena">
+  <a href="https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=weich97/TreLLM">
     <img alt="Open in GitHub Codespaces"
          src="https://img.shields.io/badge/Open%20in-Codespaces-181717?logo=github">
   </a>
@@ -75,11 +75,11 @@
     <img alt="Open in Colab"
          src="https://colab.research.google.com/assets/colab-badge.svg">
   </a>
-  <a href="https://mybinder.org/v2/gh/weich97/TradeArena/main?filepath=notebooks%2Ftradearena_5min_colab.ipynb">
+  <a href="https://mybinder.org/v2/gh/weich97/TreLLM/main?filepath=notebooks%2Ftradearena_5min_colab.ipynb">
     <img alt="Launch Binder"
          src="https://mybinder.org/badge_logo.svg">
   </a>
-  <a href="https://nbviewer.org/github/weich97/TradeArena/blob/main/notebooks/tradearena_5min_colab.ipynb">
+  <a href="https://nbviewer.org/github/weich97/TreLLM/blob/main/notebooks/tradearena_5min_colab.ipynb">
     <img alt="View notebook"
          src="https://img.shields.io/badge/View-nbviewer-f37626">
   </a>
@@ -150,10 +150,10 @@ Good first validation paths:
 
 | Time | Contribution | Where to submit |
 | ---: | --- | --- |
-| 1 hour | Run the no-key reproduction pack on macOS, Ubuntu, Colab, or Binder | Issues [#43](https://github.com/weich97/TradeArena/issues/43), [#44](https://github.com/weich97/TradeArena/issues/44), [#45](https://github.com/weich97/TradeArena/issues/45) |
-| 1-2 hours | Submit one deterministic baseline manifest row | [Baseline row quickstart](docs/deterministic_baseline_submission_quickstart.md), Issue [#46](https://github.com/weich97/TradeArena/issues/46) |
-| 2-3 hours | Submit one quote/fill calibration mini-report | [Execution calibration quickstart](docs/execution_calibration_quickstart.md), Issue [#47](https://github.com/weich97/TradeArena/issues/47) |
-| 1 hour | Review one benchmark or README claim boundary | [Claim review quickstart](docs/claim_boundary_review_quickstart.md), Issue [#48](https://github.com/weich97/TradeArena/issues/48) |
+| 1 hour | Run the no-key reproduction pack on macOS, Ubuntu, Colab, or Binder | Issues [#43](https://github.com/weich97/TreLLM/issues/43), [#44](https://github.com/weich97/TreLLM/issues/44), [#45](https://github.com/weich97/TreLLM/issues/45) |
+| 1-2 hours | Submit one deterministic baseline manifest row | [Baseline row quickstart](docs/deterministic_baseline_submission_quickstart.md), Issue [#46](https://github.com/weich97/TreLLM/issues/46) |
+| 2-3 hours | Submit one quote/fill calibration mini-report | [Execution calibration quickstart](docs/execution_calibration_quickstart.md), Issue [#47](https://github.com/weich97/TreLLM/issues/47) |
+| 1 hour | Review one benchmark or README claim boundary | [Claim review quickstart](docs/claim_boundary_review_quickstart.md), Issue [#48](https://github.com/weich97/TreLLM/issues/48) |
 
 Accepted validation reports should name the commit, environment, commands,
 artifact paths, hashes, deviations, and whether any live APIs or private data
@@ -452,8 +452,8 @@ case. For browser reports, run the local showcase below.
 To run the local demo portal:
 
 ```bash
-git clone https://github.com/weich97/TradeArena.git
-cd TradeArena
+git clone https://github.com/weich97/TreLLM.git
+cd TreLLM
 python -m pip install -e ".[dev]"
 python scripts/run_showcase.py
 ```
@@ -481,11 +481,11 @@ submit benchmark evidence:
 
 | Task | Time | Evidence to submit |
 | --- | ---: | --- |
-| [Run the v0.2 reproduction pack on macOS](https://github.com/weich97/TradeArena/issues/43) | 1 hour | `outputs/reproduction/v0_2/manifest.json`, Python version, command log, deviations |
-| [Run the v0.2 reproduction pack on Ubuntu](https://github.com/weich97/TradeArena/issues/44) | 1 hour | same manifest plus OS/package-manager notes |
-| [Submit one deterministic baseline row](https://github.com/weich97/TradeArena/issues/46) | 1-2 hours | one schema-valid manifest and rebuilt registry output |
-| [Submit one quote/fill calibration mini-report](https://github.com/weich97/TradeArena/issues/47) | 2-3 hours | calibration JSON/Markdown with source, venue, date range, and replay error |
-| [Review one benchmark claim boundary](https://github.com/weich97/TradeArena/issues/48) | 1 hour | one issue or PR mapping a README/result claim to engineering, benchmark, or scientific evidence |
+| [Run the v0.2 reproduction pack on macOS](https://github.com/weich97/TreLLM/issues/43) | 1 hour | `outputs/reproduction/v0_2/manifest.json`, Python version, command log, deviations |
+| [Run the v0.2 reproduction pack on Ubuntu](https://github.com/weich97/TreLLM/issues/44) | 1 hour | same manifest plus OS/package-manager notes |
+| [Submit one deterministic baseline row](https://github.com/weich97/TreLLM/issues/46) | 1-2 hours | one schema-valid manifest and rebuilt registry output |
+| [Submit one quote/fill calibration mini-report](https://github.com/weich97/TreLLM/issues/47) | 2-3 hours | calibration JSON/Markdown with source, venue, date range, and replay error |
+| [Review one benchmark claim boundary](https://github.com/weich97/TreLLM/issues/48) | 1 hour | one issue or PR mapping a README/result claim to engineering, benchmark, or scientific evidence |
 
 The concrete commands, acceptance criteria, and issue labels are in
 [`docs/community_tasks.md`](docs/community_tasks.md). For plugin work, use
@@ -625,7 +625,7 @@ python -m tradearena.cli --benchmark tradearena-core
 From GitHub without cloning first:
 
 ```bash
-python -m pip install "git+https://github.com/weich97/TradeArena.git"
+python -m pip install "git+https://github.com/weich97/TreLLM.git"
 tradearena --benchmark tradearena-core
 ```
 
@@ -682,9 +682,9 @@ python scripts/validate_benchmark_spec.py benchmarks/v0.2/spec.json
 Open:
 
 - Static page:
-  [`weich97.github.io/TradeArena/benchmark-v0.2.html`](https://weich97.github.io/TradeArena/benchmark-v0.2.html)
+  [`weich97.github.io/TreLLM/benchmark-v0.2.html`](https://weich97.github.io/TreLLM/benchmark-v0.2.html)
 - Leaderboard:
-  [`weich97.github.io/TradeArena/community_registry.html`](https://weich97.github.io/TradeArena/community_registry.html)
+  [`weich97.github.io/TreLLM/community_registry.html`](https://weich97.github.io/TreLLM/community_registry.html)
 - Markdown artifact:
   [`docs/results/benchmark_v0_2.md`](docs/results/benchmark_v0_2.md)
 - Model matrix:
@@ -771,7 +771,7 @@ See [`docs/benchmark_submissions.md`](docs/benchmark_submissions.md).
 </table>
 
 The browser-playable demo video is here:
-[`weich97.github.io/TradeArena/demo_video.html`](https://weich97.github.io/TradeArena/demo_video.html).
+[`weich97.github.io/TreLLM/demo_video.html`](https://weich97.github.io/TreLLM/demo_video.html).
 
 ## What Is In The Repo
 

@@ -856,7 +856,7 @@ code {{ background: #e2e8f0; border-radius: 5px; padding: 2px 5px; }}
       <a href="showcase.html">Showcase</a>
       <a href="audit_report.html">Audit report</a>
       <a href="crisis_snapshot_gallery.html">Crisis gallery</a>
-      <a href="https://github.com/weich97/TradeArena">GitHub</a>
+      <a href="https://github.com/weich97/TreLLM">GitHub</a>
     </div>
     <div class="claim-banner">Execution mode: <code>realistic-stress</code>, not calibrated transaction-cost prediction. Default results use shared stress assumptions; calibrated claims require quote/order-book/fill provenance.</div>
   </div>

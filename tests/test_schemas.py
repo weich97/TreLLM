@@ -1460,7 +1460,7 @@ def _minimal_reproduction_report() -> dict[str, Any]:
     return {
         "schema": "tradearena_external_reproduction_pack_v1",
         "created_at": "2026-05-23T00:00:00+00:00",
-        "repository": "https://github.com/weich97/TradeArena",
+        "repository": "https://github.com/weich97/TreLLM",
         "commit_or_tag": "v0.2.0",
         "git_status_short": "",
         "python": {

@@ -172,10 +172,43 @@ def test_broker_response_artifact_schema_validates_writer_output(tmp_path: Path)
         adapter=adapter.name,
         adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
         account_mode="paper",
+        request_artifact_hash="sha256:" + "1" * 64,
     )
 
     payload = json.loads(output.read_text(encoding="utf-8"))
+    assert payload["request_artifact_hash"] == "sha256:" + "1" * 64
     _validator("broker_response_artifact.schema.json").validate(payload)
+
+
+def test_broker_response_artifact_schema_rejects_malformed_request_hash(tmp_path: Path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-recon-request-hash")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])
+    output = tmp_path / "broker_response_artifact.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.REJECTED,
+                submitted_quantity=1.0,
+                rejection_reason="paper account symbol permission mismatch",
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=output,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+        request_artifact_hash="sha256:" + "2" * 64,
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    payload["request_artifact_hash"] = "sha256:not-a-real-hash"
+
+    errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+
+    assert ("request_artifact_hash",) in {tuple(error.path) for error in errors}
 
 
 def test_broker_response_artifact_schema_rejects_malformed_timestamps(tmp_path: Path):

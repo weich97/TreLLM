@@ -123,6 +123,7 @@ artifacts:
     required_json_fields:
       - outputs/examples/live_readiness_preflight/preflight_bundle.json:schema
       - outputs/examples/live_readiness_preflight/preflight_bundle.json:capability_manifest
+      - outputs/examples/live_readiness_preflight/preflight_response_artifact.json:request_artifact_hash
       - outputs/examples/live_readiness_preflight/preflight_response_artifact.json:responses.client_order_id
       - outputs/examples/live_readiness_preflight/preflight_summary.json:ready
       - outputs/examples/live_readiness_preflight/preflight_summary.json:components.capability_manifest.valid

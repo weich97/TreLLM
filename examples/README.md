@@ -350,9 +350,9 @@ python examples/live_readiness_preflight_demo.py
 ```
 
 Links the capability manifest, handoff artifact, approval binding, a response
-artifact bound to the reviewed handoff `client_order_id`, and operator runbook
-into one review packet. It validates the chain locally and does not authorize
-live submission.
+artifact bound to the reviewed handoff hash and `client_order_id`, and operator
+runbook into one review packet. It validates the chain locally and does not
+authorize live submission.
 
 Output:
 

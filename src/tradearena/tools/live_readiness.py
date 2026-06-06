@@ -11,6 +11,7 @@ except ModuleNotFoundError:  # pragma: no cover - public package installs may om
 
 from tradearena.tools.broker_capability import validate_broker_adapter_capability_file
 from tradearena.tools.broker_export import (
+    broker_handoff_artifact_hash,
     validate_broker_approval_artifact_file,
     validate_broker_approval_request_binding,
     validate_broker_handoff_artifact_file,
@@ -147,6 +148,11 @@ def _capability_boundary_errors(
 
 def _handoff_response_linkage_errors(handoff: dict[str, Any], response: dict[str, Any]) -> list[str]:
     errors: list[str] = []
+    response_request_hash = response.get("request_artifact_hash")
+    if not isinstance(response_request_hash, str) or not response_request_hash.strip():
+        errors.append("response_artifact.request_artifact_hash is required for live-readiness preflight")
+    elif response_request_hash != broker_handoff_artifact_hash(handoff):
+        errors.append("response_artifact.request_artifact_hash does not match handoff_artifact hash")
     for field in ("account_mode", "live_submission"):
         handoff_value = handoff.get(field)
         response_value = response.get(field)

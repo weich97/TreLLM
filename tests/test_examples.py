@@ -361,6 +361,66 @@ def test_live_readiness_preflight_rejects_unreviewed_response_client_order_id(tm
     ) in result.stdout
 
 
+def test_live_readiness_preflight_requires_response_request_hash(tmp_path: Path):
+    _run_example("examples/live_readiness_preflight_demo.py")
+    bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")
+    response = _read_json(bundle["response_artifact"])
+    response.pop("request_artifact_hash", None)
+    response_path = tmp_path / "broker_response.json"
+    response_path.write_text(json.dumps(response), encoding="utf-8")
+
+    bundle["response_artifact"] = str(response_path)
+    bundle_path = tmp_path / "preflight_bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/validate_live_readiness_preflight.py",
+            str(bundle_path),
+            "--now",
+            "2026-05-31T12:30:00Z",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid live-readiness preflight bundle" in result.stdout
+    assert "response_artifact.request_artifact_hash is required for live-readiness preflight" in result.stdout
+
+
+def test_live_readiness_preflight_rejects_response_request_hash_mismatch(tmp_path: Path):
+    _run_example("examples/live_readiness_preflight_demo.py")
+    bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")
+    response = _read_json(bundle["response_artifact"])
+    response["request_artifact_hash"] = "sha256:" + "0" * 64
+    response_path = tmp_path / "broker_response.json"
+    response_path.write_text(json.dumps(response), encoding="utf-8")
+
+    bundle["response_artifact"] = str(response_path)
+    bundle_path = tmp_path / "preflight_bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/validate_live_readiness_preflight.py",
+            str(bundle_path),
+            "--now",
+            "2026-05-31T12:30:00Z",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid live-readiness preflight bundle" in result.stdout
+    assert "response_artifact.request_artifact_hash does not match handoff_artifact hash" in result.stdout
+
+
 def test_live_readiness_preflight_cli_validates_demo_bundle():
     _run_example("examples/live_readiness_preflight_demo.py")
 

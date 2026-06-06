@@ -436,6 +436,7 @@ def write_broker_response_artifact(
     adapter: str,
     adapter_mode: BrokerAdapterMode,
     account_mode: str,
+    request_artifact_hash: str | None = None,
 ) -> dict[str, str | int | bool]:
     path = Path(output)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -444,6 +445,8 @@ def write_broker_response_artifact(
         artifact_errors.append("adapter must be non-empty")
     if not _has_text(account_mode):
         artifact_errors.append("account_mode must be non-empty")
+    if request_artifact_hash is not None and not _SHA256_ARTIFACT_HASH_RE.fullmatch(request_artifact_hash):
+        artifact_errors.append("request_artifact_hash must be sha256:<64 lowercase hex chars>")
     binding_errors = _validate_response_request_bindings(
         requests,
         responses,
@@ -466,6 +469,8 @@ def write_broker_response_artifact(
         "reconciliation": asdict(summary),
         "responses": [_response_dict(response, default_timestamp=written_at) for response in responses],
     }
+    if request_artifact_hash is not None:
+        payload["request_artifact_hash"] = request_artifact_hash
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return {
         "path": str(path),
@@ -779,12 +784,18 @@ def validate_broker_response_artifact(payload: dict[str, object]) -> list[str]:
         "reconciliation",
         "responses",
     }
+    optional = {"request_artifact_hash"}
     missing = sorted(required - set(payload))
     if missing:
         errors.append(f"missing required fields: {', '.join(missing)}")
-    extra = sorted(set(payload) - required)
+    extra = sorted(set(payload) - required - optional)
     if extra:
         errors.append(f"unexpected fields: {', '.join(extra)}")
+    request_hash = payload.get("request_artifact_hash")
+    if request_hash is not None and (
+        not isinstance(request_hash, str) or not _SHA256_ARTIFACT_HASH_RE.fullmatch(request_hash)
+    ):
+        errors.append("request_artifact_hash must be sha256:<64 lowercase hex chars>")
     if payload.get("schema") != "tradearena_broker_response_artifact_v0.1":
         errors.append("schema must be 'tradearena_broker_response_artifact_v0.1'")
     if not _has_text(payload.get("adapter")):

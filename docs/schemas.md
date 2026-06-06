@@ -183,8 +183,9 @@ safety creation.
 Broker response artifacts can be validated against
 [`../schemas/broker_response_artifact.schema.json`](../schemas/broker_response_artifact.schema.json).
 The schema fixes the public `tradearena_broker_response_artifact_v0.1`
-contract for adapter mode, account mode, normalized broker statuses,
-reconciliation counts, and redacted response rows.
+contract for adapter mode, account mode, optional handoff
+`request_artifact_hash`, normalized broker statuses, reconciliation counts, and
+redacted response rows.
 
 Validate a broker response artifact with:
 
@@ -216,8 +217,9 @@ linking a broker capability manifest, handoff artifact, approval artifact,
 response artifact, and operator runbook into one reviewable safety packet.
 Runtime validation then calls the component validators and checks approval
 binding, capability-mode consistency, and handoff/response account-mode plus
-live-submission consistency. Response rows in a preflight packet must also use
-`client_order_id` values from the reviewed handoff artifact.
+live-submission consistency. Response artifacts in a preflight packet must name
+the reviewed handoff `request_artifact_hash`, and response rows must use
+`client_order_id` values from that handoff artifact.
 
 Validate the offline demo preflight bundle with:
 

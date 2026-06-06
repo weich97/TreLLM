@@ -16,6 +16,7 @@ from tradearena.tools import (
     BrokerAdapterMode,
     BrokerOrderStatus,
     BrokerResponse,
+    broker_handoff_artifact_hash,
     validate_live_readiness_preflight_bundle_file,
     write_broker_response_artifact,
 )
@@ -63,6 +64,7 @@ def main() -> int:
 def _write_bound_response_artifact() -> None:
     handoff_path = ROOT / "outputs/examples/broker_approval_safety/dry_run_orders.json"
     handoff = json.loads(handoff_path.read_text(encoding="utf-8"))
+    request_hash = broker_handoff_artifact_hash(handoff)
     requests = [_handoff_order_to_request(row) for row in handoff["orders"]]
     responses = [
         BrokerResponse(
@@ -83,6 +85,7 @@ def _write_bound_response_artifact() -> None:
         adapter=str(handoff["adapter"]),
         adapter_mode=BrokerAdapterMode.DRY_RUN,
         account_mode=str(handoff["account_mode"]),
+        request_artifact_hash=request_hash,
     )
 
 

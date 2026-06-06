@@ -54,7 +54,7 @@ Before a broker-facing contribution is accepted, it should prove:
 - a live-readiness preflight bundle validates the capability manifest, handoff,
   approval binding, response artifact, and operator runbook together, including
   matching handoff/response account modes, live-submission boundaries, and
-  reviewed `client_order_id` values;
+  reviewed handoff hash plus `client_order_id` values;
 - live submission is impossible without an explicit mode switch;
 - credentials are read from environment variables or an OS secret manager;
 - no credentials, account IDs, private holdings, raw fills, or raw provider

@@ -55,6 +55,10 @@
     "responses": {
       "type": "array",
       "items": { "$ref": "#/$defs/broker_response" }
+    },
+    "request_artifact_hash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
     }
   },
   "allOf": [

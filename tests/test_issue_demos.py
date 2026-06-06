@@ -845,6 +845,58 @@ def test_broker_response_artifact_writer_emits_validator_clean_defaults(tmp_path
     assert validate_broker_response_artifact(payload) == []
 
 
+def test_broker_response_artifact_writer_records_request_artifact_hash(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-request-hash")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.REJECTED,
+                submitted_quantity=1.0,
+                rejection_reason="paper sandbox rejected order",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+        request_artifact_hash="sha256:" + "1" * 64,
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+
+    assert payload["request_artifact_hash"] == "sha256:" + "1" * 64
+    assert validate_broker_response_artifact(payload) == []
+
+
+def test_broker_response_artifact_writer_rejects_malformed_request_artifact_hash(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-bad-request-hash")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    with pytest.raises(BrokerAdapterContractError, match="request_artifact_hash must be sha256"):
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.REJECTED,
+                    submitted_quantity=1.0,
+                    rejection_reason="paper sandbox rejected order",
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+            request_artifact_hash="sha256:not-a-real-hash",
+        )
+
+
 def test_broker_response_artifact_writer_rejects_submitted_quantity_mismatch(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="response-request-quantity")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])

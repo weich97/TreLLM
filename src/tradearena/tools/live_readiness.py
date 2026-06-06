@@ -117,12 +117,14 @@ def _validate_components(
     components["response_artifact"] = _component_result(response_path, response_errors)
     errors.extend(_prefix_errors("response_artifact", response_errors))
 
-    _, runbook_errors = validate_operator_runbook_artifact_file(runbook_path)
+    runbook, runbook_errors = validate_operator_runbook_artifact_file(runbook_path)
     components["operator_runbook_artifact"] = _component_result(runbook_path, runbook_errors)
     errors.extend(_prefix_errors("operator_runbook_artifact", runbook_errors))
 
     if not capability_errors:
         errors.extend(_capability_boundary_errors(capability, handoff, response))
+    if not capability_errors and not runbook_errors:
+        errors.extend(_runbook_capability_errors(capability, runbook))
     if not handoff_errors and not response_errors:
         errors.extend(_handoff_response_linkage_errors(handoff, response))
     return errors
@@ -144,6 +146,17 @@ def _capability_boundary_errors(
         if capability.get("supports_live_submission") is not True and payload.get("live_submission") is True:
             errors.append(f"{label} uses live_submission but capability_manifest does not support live submission")
     return errors
+
+
+def _runbook_capability_errors(capability: dict[str, Any], runbook: dict[str, Any]) -> list[str]:
+    capability_default = capability.get("default_mode")
+    runbook_default = runbook.get("default_mode")
+    if isinstance(capability_default, str) and isinstance(runbook_default, str) and capability_default != runbook_default:
+        return [
+            f"operator_runbook_artifact.default_mode {runbook_default} does not match "
+            f"capability_manifest.default_mode {capability_default}"
+        ]
+    return []
 
 
 def _handoff_response_linkage_errors(handoff: dict[str, Any], response: dict[str, Any]) -> list[str]:

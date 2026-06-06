@@ -216,7 +216,8 @@ linking a broker capability manifest, handoff artifact, approval artifact,
 response artifact, and operator runbook into one reviewable safety packet.
 Runtime validation then calls the component validators and checks approval
 binding, capability-mode consistency, and handoff/response account-mode plus
-live-submission consistency.
+live-submission consistency. Response rows in a preflight packet must also use
+`client_order_id` values from the reviewed handoff artifact.
 
 Validate the offline demo preflight bundle with:
 

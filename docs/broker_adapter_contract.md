@@ -38,8 +38,10 @@ tradearena validate-live-readiness outputs/examples/live_readiness_preflight/pre
 ```
 
 The preflight validator rejects safety packets whose handoff and response
-artifacts disagree about `account_mode` or `live_submission`; publish separate
-packets rather than mixing paper, live, and non-submission evidence.
+artifacts disagree about `account_mode` or `live_submission`, or whose response
+rows reference `client_order_id` values that are absent from the reviewed
+handoff artifact. Publish separate packets rather than mixing paper, live,
+non-submission, or unrelated response evidence.
 
 The current code-level primitives live in `tradearena.tools.broker_export`:
 

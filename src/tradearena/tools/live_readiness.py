@@ -155,7 +155,29 @@ def _handoff_response_linkage_errors(handoff: dict[str, Any], response: dict[str
                 f"response_artifact.{field} {response_value} does not match "
                 f"handoff_artifact.{field} {handoff_value}"
             )
+    handoff_ids = _client_order_ids(handoff.get("orders"))
+    for idx, row in enumerate(_object_rows(response.get("responses"))):
+        client_order_id = row.get("client_order_id")
+        if isinstance(client_order_id, str) and client_order_id not in handoff_ids:
+            errors.append(
+                f"response_artifact.responses[{idx}].client_order_id {client_order_id} "
+                "is not present in handoff_artifact.orders"
+            )
     return errors
+
+
+def _client_order_ids(value: object) -> set[str]:
+    return {
+        str(row["client_order_id"])
+        for row in _object_rows(value)
+        if isinstance(row.get("client_order_id"), str) and str(row["client_order_id"]).strip()
+    }
+
+
+def _object_rows(value: object) -> list[dict[str, Any]]:
+    if not isinstance(value, list):
+        return []
+    return [row for row in value if isinstance(row, dict)]
 
 
 def _component_result(path: Path, errors: list[str]) -> dict[str, Any]:

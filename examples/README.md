@@ -349,13 +349,15 @@ Output:
 python examples/live_readiness_preflight_demo.py
 ```
 
-Links the capability manifest, handoff artifact, approval binding, response
-artifact, and operator runbook into one review packet. It validates the chain
-locally and does not authorize live submission.
+Links the capability manifest, handoff artifact, approval binding, a response
+artifact bound to the reviewed handoff `client_order_id`, and operator runbook
+into one review packet. It validates the chain locally and does not authorize
+live submission.
 
 Output:
 
 - `outputs/examples/live_readiness_preflight/preflight_bundle.json`
+- `outputs/examples/live_readiness_preflight/preflight_response_artifact.json`
 - `outputs/examples/live_readiness_preflight/preflight_summary.json`
 
 ## 22. Holdings CSV Import

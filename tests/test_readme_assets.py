@@ -89,8 +89,8 @@ def test_readme_uses_trellm_for_system_level_claims():
 
 def test_system_visual_assets_use_trellm_as_system_name():
     asset_expectations = {
-        "docs/assets/trellm_system_wordmark.svg": [
-            "TreLLM system wordmark",
+        "docs/assets/trellm_readme_system_banner.svg": [
+            "TreLLM README system banner",
             "LLM Trading Audit and Control System",
             "TradeArena leaderboard",
         ],

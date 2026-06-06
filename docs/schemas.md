@@ -200,7 +200,9 @@ Operator runbook artifacts can be validated against
 The schema fixes the public `trellm_operator_runbook_v0.1` contract for
 human-gated live-readiness evidence: default mode, live-submission boundary,
 manual approval, approval expiry, kill switch, reconciliation, rollback, and
-artifact-retention checks.
+artifact-retention checks. Runtime validation also requires a
+`validate-live-readiness` command so the runbook names the final packet-level
+gate.
 
 Validate the offline demo runbook with:
 

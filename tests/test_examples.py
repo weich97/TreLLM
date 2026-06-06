@@ -150,6 +150,7 @@ def test_operator_runbook_demo_builds_live_ready_checklist():
         "reconciliation",
         "rollback",
     }
+    assert any("validate-live-readiness" in command for command in summary["verification_commands"])
     assert "TreLLM Operator Runbook Checklist" in runbook
     assert "does not authorize live submission" in runbook
 
@@ -171,6 +172,27 @@ def test_operator_runbook_validator_rejects_live_submission(tmp_path: Path):
     assert result.returncode == 1
     assert "Invalid operator runbook artifact" in result.stdout
     assert "False was expected" in result.stdout
+
+
+def test_operator_runbook_validator_requires_live_readiness_preflight_command(tmp_path: Path):
+    _run_example("examples/operator_runbook_demo.py")
+    payload = _read_json("outputs/examples/operator_runbook/summary.json")
+    payload["verification_commands"] = [
+        command for command in payload["verification_commands"] if "validate-live-readiness" not in command
+    ]
+    artifact = tmp_path / "operator_runbook.json"
+    artifact.write_text(json.dumps(payload), encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_operator_runbook_artifact.py", str(artifact)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid operator runbook artifact" in result.stdout
+    assert "verification_commands must include validate-live-readiness" in result.stdout
 
 
 def test_operator_runbook_cli_validates_demo_artifact():

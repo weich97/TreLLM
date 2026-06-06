@@ -17,7 +17,8 @@ def validate_operator_runbook_artifact(payload: dict[str, Any]) -> list[str]:
     if Draft202012Validator is not None and SCHEMA_PATH.exists():
         schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
         validator = Draft202012Validator(schema)
-        return sorted((error.message for error in validator.iter_errors(payload)), key=str)
+        schema_errors = [error.message for error in validator.iter_errors(payload)]
+        return sorted([*schema_errors, *_verification_command_errors(payload)], key=str)
     return _fallback_schema_errors(payload)
 
 
@@ -82,4 +83,14 @@ def _fallback_schema_errors(payload: dict[str, Any]) -> list[str]:
     checklist = payload.get("checklist")
     if not isinstance(checklist, list) or len(checklist) < 5:
         errors.append("checklist must contain at least five items")
+    errors.extend(_verification_command_errors(payload))
     return errors
+
+
+def _verification_command_errors(payload: dict[str, Any]) -> list[str]:
+    verification_commands = payload.get("verification_commands")
+    if isinstance(verification_commands, list) and any(
+        isinstance(command, str) and "validate-live-readiness" in command for command in verification_commands
+    ):
+        return []
+    return ["verification_commands must include validate-live-readiness"]

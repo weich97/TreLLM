@@ -63,6 +63,11 @@ def main() -> int:
         "verification_commands": [
             "python examples/operator_runbook_demo.py",
             "tradearena validate-operator-runbook outputs/examples/operator_runbook/summary.json",
+            (
+                "tradearena validate-live-readiness "
+                "outputs/examples/live_readiness_preflight/preflight_bundle.json "
+                "--now 2026-05-31T12:30:00Z"
+            ),
             "python scripts/validate_demo_artifacts.py",
         ],
         "safety_note": (

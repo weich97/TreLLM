@@ -117,6 +117,18 @@ def test_operator_runbook_artifact_schema_rejects_live_submission():
     assert any("False was expected" in error.message for error in errors)
 
 
+def test_operator_runbook_artifact_schema_requires_live_readiness_command():
+    subprocess.run([sys.executable, "examples/operator_runbook_demo.py"], cwd=ROOT, check=True)
+    payload = json.loads((ROOT / "outputs/examples/operator_runbook/summary.json").read_text(encoding="utf-8"))
+    payload["verification_commands"] = [
+        command for command in payload["verification_commands"] if "validate-live-readiness" not in command
+    ]
+
+    errors = sorted(_validator("operator_runbook_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+
+    assert any("does not contain items matching the given schema" in error.message for error in errors)
+
+
 def test_broker_adapter_capability_schema_validates_demo_output():
     subprocess.run([sys.executable, "examples/broker_capability_manifest_demo.py"], cwd=ROOT, check=True)
     payload = json.loads(

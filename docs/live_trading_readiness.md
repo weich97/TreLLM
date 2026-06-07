@@ -53,11 +53,11 @@ Before a broker-facing contribution is accepted, it should prove:
   account modes, network access, credential policy, and safety controls;
 - a live-readiness preflight bundle validates the capability manifest, handoff,
   approval binding, response artifact, and operator runbook together, including
-  component references without parent traversal, matching capability/runbook
-  default modes, handoff/response account modes, live-submission boundaries,
-  and reviewed handoff hash plus `client_order_id` values, with one response
-  row for every reviewed handoff order and matching response reconciliation
-  missing/unmatched counts;
+  relative component references without parent traversal, matching
+  capability/runbook default modes, handoff/response account modes,
+  live-submission boundaries, and reviewed handoff hash plus `client_order_id`
+  values, with one response row for every reviewed handoff order and matching
+  response reconciliation missing/unmatched counts;
 - the operator runbook names exactly one supported, runnable final
   `validate-live-readiness` command with no shell chaining (`;`, `&`, `&&`,
   `||`, or `|`), exactly the preflight bundle path, `--now`, and an ISO

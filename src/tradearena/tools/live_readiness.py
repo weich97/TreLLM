@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import Any
 
 try:
@@ -288,11 +288,17 @@ def _component_path_reference_errors(bundle: dict[str, Any]) -> list[str]:
         value = bundle.get(field)
         if isinstance(value, str) and _has_parent_traversal(value):
             errors.append(f"{field} path must not contain parent traversal")
+        if isinstance(value, str) and _is_absolute_component_path(value):
+            errors.append(f"{field} path must be relative")
     return errors
 
 
 def _has_parent_traversal(value: str) -> bool:
     return any(part == ".." for part in Path(value).parts)
+
+
+def _is_absolute_component_path(value: str) -> bool:
+    return Path(value).is_absolute() or PureWindowsPath(value).is_absolute()
 
 
 def _display_path(path: Path) -> str:

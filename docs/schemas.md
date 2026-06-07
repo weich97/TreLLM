@@ -220,7 +220,7 @@ Live-readiness preflight bundles can be validated against
 The schema fixes the public `trellm_live_readiness_preflight_v0.1` contract for
 linking a broker capability manifest, handoff artifact, approval artifact,
 response artifact, and operator runbook into one reviewable safety packet.
-Runtime validation rejects component references that use parent traversal
+Runtime validation rejects absolute component references and parent traversal
 (`..`), then calls the component validators and checks approval binding,
 capability-mode consistency, runbook/capability default-mode consistency, and
 handoff/response adapter, adapter-mode, account-mode, and live-submission

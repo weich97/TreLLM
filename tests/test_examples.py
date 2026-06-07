@@ -530,6 +530,33 @@ def test_live_readiness_preflight_rejects_parent_traversal_component_path(tmp_pa
     assert "capability_manifest path must not contain parent traversal" in result.stdout
 
 
+def test_live_readiness_preflight_rejects_absolute_component_path(tmp_path: Path):
+    _run_example("examples/live_readiness_preflight_demo.py")
+    bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")
+    capability_path = tmp_path / "capability_manifest.json"
+    capability_path.write_text(json.dumps(_read_json(bundle["capability_manifest"])), encoding="utf-8")
+    bundle["capability_manifest"] = str(capability_path)
+    bundle_path = tmp_path / "preflight_bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/validate_live_readiness_preflight.py",
+            str(bundle_path),
+            "--now",
+            "2026-05-31T12:30:00Z",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid live-readiness preflight bundle" in result.stdout
+    assert "capability_manifest path must be relative" in result.stdout
+
+
 def test_live_readiness_preflight_validator_rejects_mode_not_declared_by_capability(tmp_path: Path):
     _run_example("examples/live_readiness_preflight_demo.py")
     capability = _read_json("outputs/examples/broker_capability_manifest/capability_manifest.json")
@@ -538,7 +565,7 @@ def test_live_readiness_preflight_validator_rejects_mode_not_declared_by_capabil
     capability_path.write_text(json.dumps(capability), encoding="utf-8")
 
     bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")
-    bundle["capability_manifest"] = str(capability_path)
+    bundle["capability_manifest"] = capability_path.name
     bundle_path = tmp_path / "preflight_bundle.json"
     bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
 
@@ -569,7 +596,7 @@ def test_live_readiness_preflight_rejects_runbook_default_mode_mismatch(tmp_path
     runbook_path = tmp_path / "operator_runbook.json"
     runbook_path.write_text(json.dumps(runbook), encoding="utf-8")
 
-    bundle["operator_runbook_artifact"] = str(runbook_path)
+    bundle["operator_runbook_artifact"] = runbook_path.name
     bundle_path = tmp_path / "preflight_bundle.json"
     bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
 
@@ -604,7 +631,7 @@ def test_live_readiness_preflight_rejects_response_account_mode_mismatch(tmp_pat
     response_path = tmp_path / "broker_response.json"
     response_path.write_text(json.dumps(response), encoding="utf-8")
 
-    bundle["response_artifact"] = str(response_path)
+    bundle["response_artifact"] = response_path.name
     bundle_path = tmp_path / "preflight_bundle.json"
     bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
 
@@ -635,7 +662,7 @@ def test_live_readiness_preflight_rejects_response_adapter_mismatch(tmp_path: Pa
     response_path = tmp_path / "broker_response.json"
     response_path.write_text(json.dumps(response), encoding="utf-8")
 
-    bundle["response_artifact"] = str(response_path)
+    bundle["response_artifact"] = response_path.name
     bundle_path = tmp_path / "preflight_bundle.json"
     bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
 
@@ -672,7 +699,7 @@ def test_live_readiness_preflight_rejects_unreviewed_response_client_order_id(tm
     response_path = tmp_path / "broker_response.json"
     response_path.write_text(json.dumps(response), encoding="utf-8")
 
-    bundle["response_artifact"] = str(response_path)
+    bundle["response_artifact"] = response_path.name
     bundle_path = tmp_path / "preflight_bundle.json"
     bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
 
@@ -718,7 +745,7 @@ def test_live_readiness_preflight_requires_response_for_each_handoff_order(tmp_p
     response_path = tmp_path / "broker_response.json"
     response_path.write_text(json.dumps(response), encoding="utf-8")
 
-    bundle["response_artifact"] = str(response_path)
+    bundle["response_artifact"] = response_path.name
     bundle_path = tmp_path / "preflight_bundle.json"
     bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
 
@@ -752,7 +779,7 @@ def test_live_readiness_preflight_rejects_stale_response_reconciliation_counts(t
     response_path = tmp_path / "broker_response.json"
     response_path.write_text(json.dumps(response), encoding="utf-8")
 
-    bundle["response_artifact"] = str(response_path)
+    bundle["response_artifact"] = response_path.name
     bundle_path = tmp_path / "preflight_bundle.json"
     bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
 
@@ -789,7 +816,7 @@ def test_live_readiness_preflight_requires_response_request_hash(tmp_path: Path)
     response_path = tmp_path / "broker_response.json"
     response_path.write_text(json.dumps(response), encoding="utf-8")
 
-    bundle["response_artifact"] = str(response_path)
+    bundle["response_artifact"] = response_path.name
     bundle_path = tmp_path / "preflight_bundle.json"
     bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
 
@@ -819,7 +846,7 @@ def test_live_readiness_preflight_rejects_response_request_hash_mismatch(tmp_pat
     response_path = tmp_path / "broker_response.json"
     response_path.write_text(json.dumps(response), encoding="utf-8")
 
-    bundle["response_artifact"] = str(response_path)
+    bundle["response_artifact"] = response_path.name
     bundle_path = tmp_path / "preflight_bundle.json"
     bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
 

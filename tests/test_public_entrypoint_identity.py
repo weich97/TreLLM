@@ -202,6 +202,12 @@ def test_community_task_tables_link_current_open_issues():
         "https://github.com/weich97/TreLLM/issues/39",
         "https://github.com/weich97/TreLLM/issues/40",
         "https://github.com/weich97/TreLLM/issues/41",
+        "https://github.com/weich97/TreLLM/issues/57",
+        "https://github.com/weich97/TreLLM/issues/58",
+        "https://github.com/weich97/TreLLM/issues/59",
+        "https://github.com/weich97/TreLLM/issues/60",
+        "https://github.com/weich97/TreLLM/issues/61",
+        "https://github.com/weich97/TreLLM/issues/62",
     ]
     for issue_link in required_issue_links:
         assert issue_link in text

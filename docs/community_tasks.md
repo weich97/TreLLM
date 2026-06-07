@@ -77,12 +77,12 @@ boundary. No task in this table should introduce default live submission.
 
 | Task | Suggested labels | Expected validation |
 | --- | --- | --- |
-| Add one broker adapter capability manifest check | `good first issue`, `broker`, `safety` | `tradearena validate-broker-capability outputs/examples/broker_capability_manifest/capability_manifest.json`; no default live submission |
-| Add one live-readiness preflight consistency check | `good first issue`, `broker`, `safety` | `tradearena validate-live-readiness outputs/examples/live_readiness_preflight/preflight_bundle.json --now 2026-05-31T12:30:00Z`; targeted broken bundle fails |
-| Add one approval-binding edge-case test | `good first issue`, `broker`, `risk` | `pytest tests/test_issue_demos.py -q` with a stale approval, mismatched request hash, disallowed symbol, or notional-limit case |
-| Add one broker response status-mapping fixture | `help wanted`, `broker`, `execution` | schema-valid response artifact with accepted, rejected, partial-fill, cancel, or unknown status and recomputed reconciliation counts |
-| Add one paper-sandbox adapter skeleton behind an optional dependency | `help wanted`, `adapter`, `paper-trading` | mocked CI test proving no default network call, `paper_sandbox` account mode, response artifact, and no committed credentials |
-| Add an operator runbook checklist for live-capable paths | `docs`, `discussion`, `risk` | checklist naming kill switch, approval expiry, account mode, rollback, artifact retention, and incident owner |
+| [Add one broker adapter capability manifest check](https://github.com/weich97/TreLLM/issues/57) | `good first issue`, `broker`, `safety` | `tradearena validate-broker-capability outputs/examples/broker_capability_manifest/capability_manifest.json`; no default live submission |
+| [Add one live-readiness preflight consistency check](https://github.com/weich97/TreLLM/issues/58) | `good first issue`, `broker`, `safety` | `tradearena validate-live-readiness outputs/examples/live_readiness_preflight/preflight_bundle.json --now 2026-05-31T12:30:00Z`; targeted broken bundle fails |
+| [Add one approval-binding edge-case test](https://github.com/weich97/TreLLM/issues/59) | `good first issue`, `broker`, `risk` | `pytest tests/test_issue_demos.py -q` with a stale approval, mismatched request hash, disallowed symbol, or notional-limit case |
+| [Add one broker response status-mapping fixture](https://github.com/weich97/TreLLM/issues/60) | `help wanted`, `broker`, `execution` | schema-valid response artifact with accepted, rejected, partial-fill, cancel, or unknown status and recomputed reconciliation counts |
+| [Add one paper-sandbox adapter skeleton behind an optional dependency](https://github.com/weich97/TreLLM/issues/61) | `help wanted`, `adapter`, `paper-trading` | mocked CI test proving no default network call, `paper_sandbox` account mode, response artifact, and no committed credentials |
+| [Add an operator runbook checklist for live-capable paths](https://github.com/weich97/TreLLM/issues/62) | `docs`, `discussion`, `risk` | checklist naming kill switch, approval expiry, account mode, rollback, artifact retention, and incident owner |
 
 ## Benchmark Flywheel
 

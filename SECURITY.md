@@ -1,8 +1,9 @@
 # Security Policy
 
-TradeArena is an audit, benchmark, and live-readiness framework. It does not
-execute live trades by default, and public examples are offline, paper/sandbox,
-dry-run, or human-review oriented.
+TreLLM is an LLM-driven trading audit and live-readiness control system.
+TradeArena is the public leaderboard and benchmark-card surface inside TreLLM.
+It does not execute live trades by default, and public examples are offline,
+paper/sandbox, dry-run, or human-review oriented.
 
 ## Please Do Not Submit
 

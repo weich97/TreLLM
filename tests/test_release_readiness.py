@@ -293,7 +293,7 @@ Auditable benchmark framework for LLM trading agents.
 
     assert (
         "required public identity phrase missing from README.md: "
-        "docs/assets/trellm_readme_audit_system_banner.svg"
+        "docs/assets/trellm_readme_audit_system_banner_v2.svg"
     ) in failures
     assert (
         "required public identity phrase missing from README.md: "
@@ -442,3 +442,7 @@ def test_release_candidate_manifest_builder_uses_canonical_worktree_bytes_when_d
 
     assert artifact_hash["bytes"] == len(b"new line\n")
     assert artifact_hash["sha256"] == "sha256:" + hashlib.sha256(b"new line\n").hexdigest()
+
+
+def test_release_candidate_manifest_builder_does_not_pin_packaging_metadata():
+    assert "pyproject.toml" not in build_release_candidate_manifest.DEFAULT_ARTIFACTS

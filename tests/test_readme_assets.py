@@ -54,7 +54,7 @@ def test_readme_surfaces_trellm_identity_split():
 
     required_snippets = [
         "# TreLLM",
-        "docs/assets/trellm_readme_audit_system_banner.svg",
+        "docs/assets/trellm_readme_audit_system_banner_v2.svg",
         "TreLLM is an LLM-driven trading audit and control system.",
         "TradeArena is its public leaderboard for ranking auditable agent runs.",
         "The `tradearena` command and package remain the compatibility surface",
@@ -90,7 +90,7 @@ def test_readme_uses_trellm_for_system_level_claims():
 
 def test_system_visual_assets_use_trellm_as_system_name():
     asset_expectations = {
-        "docs/assets/trellm_readme_audit_system_banner.svg": [
+        "docs/assets/trellm_readme_audit_system_banner_v2.svg": [
             "TreLLM README system banner",
             "LLM Trading Audit and Control System",
             "TradeArena leaderboard",

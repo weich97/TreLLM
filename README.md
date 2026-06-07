@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/trellm_readme_audit_system_banner.svg"
+  <img src="docs/assets/trellm_readme_audit_system_banner_v2.svg"
        alt="TreLLM trading audit system wordmark"
        width="780">
 </p>

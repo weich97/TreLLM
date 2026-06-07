@@ -12,7 +12,6 @@ ROOT = Path(__file__).resolve().parents[1]
 
 DEFAULT_ARTIFACTS = [
     "README.md",
-    "pyproject.toml",
     "benchmarks/v0.2/spec.json",
     "docs/results/benchmark_v0_2.md",
     "docs/results/execution_replay_calibration_loop.json",

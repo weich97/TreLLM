@@ -74,3 +74,38 @@ The issue-level validation path is:
 ```bash
 python -m pytest tests/test_observability_export.py -q
 ```
+
+## Evals And LangSmith-Style Mapping
+
+TreLLM also exposes a local compatibility schema for adjacent agent-evaluation
+tools:
+
+```python
+from tradearena.evaluation import export_trajectory_to_trace_schema_json
+
+export_trajectory_to_trace_schema_json(
+    "outputs/examples/audit_walkthrough_trajectory.json",
+    "outputs/examples/audit_walkthrough_eval_trace_schema.json",
+)
+```
+
+The schema example lives at `schemas/eval_trace_style.schema.json`. Each
+trajectory step becomes one record with compact `inputs`, `outputs`, `events`,
+and `scores` fields. Risk reports map to `guardrail` events so blocked or
+clipped decisions can be reviewed like grader results. Simulated execution
+reports map to `tool_result` events so fills, partial fills, pending orders,
+and rejections remain visible without treating them as model text.
+
+Compatibility limits:
+
+- The artifact is a local JSON style mapping, not a direct OpenAI Evals or
+  LangSmith API request body.
+- Raw prompts, provider responses, and rationales remain excluded by default.
+- Execution events describe simulated or replayed fills unless a separate
+  broker or fill-replay artifact proves live-market provenance.
+
+Validation:
+
+```bash
+python -m pytest tests/test_trace_schema_export.py -q
+```

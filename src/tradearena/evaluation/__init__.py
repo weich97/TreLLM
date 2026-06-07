@@ -20,6 +20,10 @@ from tradearena.evaluation.submissions import (
 )
 from tradearena.evaluation.tasks import TRADEARENA_CORE_TASKS, BenchmarkTask, DataLeakagePolicy
 from tradearena.evaluation.trace_export import export_trajectory_to_trace_json, trajectory_to_trace
+from tradearena.evaluation.trace_schema_export import (
+    export_trajectory_to_trace_schema_json,
+    trajectory_to_eval_trace_schema,
+)
 
 __all__ = [
     "AuditManifest",
@@ -40,7 +44,9 @@ __all__ = [
     "classify_step_failure_modes",
     "export_audit_bundle",
     "export_trajectory_to_trace_json",
+    "export_trajectory_to_trace_schema_json",
     "trajectory_to_trace",
+    "trajectory_to_eval_trace_schema",
     "validate_submission",
     "validate_submission_file",
     "write_registry_html",

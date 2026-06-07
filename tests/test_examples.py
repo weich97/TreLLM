@@ -8,6 +8,8 @@ from pathlib import Path
 
 import pytest
 
+from tradearena.tools.live_readiness import validate_live_readiness_preflight_bundle_file
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -870,25 +872,13 @@ def test_live_readiness_preflight_rejects_response_quantity_mismatch(tmp_path: P
     bundle_path = tmp_path / "preflight_bundle.json"
     bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
 
-    result = subprocess.run(
-        [
-            sys.executable,
-            "scripts/validate_live_readiness_preflight.py",
-            str(bundle_path),
-            "--now",
-            "2026-05-31T12:30:00Z",
-        ],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-    )
+    summary, errors = validate_live_readiness_preflight_bundle_file(bundle_path, now="2026-05-31T12:30:00Z")
 
-    assert result.returncode == 1
-    assert "Invalid live-readiness preflight bundle" in result.stdout
+    assert summary["ready"] is False
     assert (
         "response_artifact.responses[0].submitted_quantity 3.0 does not match "
         "handoff_artifact.orders quantity 2.0 for client_order_id approval-demo-0001-aapl"
-    ) in result.stdout
+    ) in errors
 
 
 def test_live_readiness_preflight_rejects_stale_response_reconciliation_counts(tmp_path: Path):

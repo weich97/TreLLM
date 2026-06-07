@@ -245,6 +245,31 @@ def test_operator_runbook_validator_rejects_invalid_live_readiness_now_timestamp
     ) in result.stdout
 
 
+def test_operator_runbook_validator_rejects_chained_live_readiness_command(tmp_path: Path):
+    _run_example("examples/operator_runbook_demo.py")
+    payload = _read_json("outputs/examples/operator_runbook/summary.json")
+    payload["verification_commands"] = [
+        (
+            "tradearena validate-live-readiness "
+            "outputs/examples/live_readiness_preflight/preflight_bundle.json "
+            "--now 2026-05-31T12:30:00Z ; echo ok"
+        )
+    ]
+    artifact = tmp_path / "operator_runbook.json"
+    artifact.write_text(json.dumps(payload), encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_operator_runbook_artifact.py", str(artifact)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid operator runbook artifact" in result.stdout
+    assert "verification_commands validate-live-readiness command must not contain shell chaining" in result.stdout
+
+
 def test_operator_runbook_cli_validates_demo_artifact():
     _run_example("examples/operator_runbook_demo.py")
 

@@ -16,6 +16,7 @@ SCHEMA_PATH = ROOT / "schemas" / "operator_runbook_artifact.schema.json"
 _ISO_TIMESTAMP_WITH_TZ_RE = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$"
 )
+_SHELL_CHAINING_TOKENS = {";", "&&", "||", "|"}
 
 
 def validate_operator_runbook_artifact(payload: dict[str, Any]) -> list[str]:
@@ -97,6 +98,8 @@ def _verification_command_errors(payload: dict[str, Any]) -> list[str]:
     if not isinstance(verification_commands, list):
         return ["verification_commands must include validate-live-readiness"]
     commands = [command for command in verification_commands if isinstance(command, str)]
+    if any(_has_live_readiness_command_with_shell_chaining(command) for command in commands):
+        return ["verification_commands validate-live-readiness command must not contain shell chaining"]
     if any(_is_runnable_live_readiness_command(command) for command in commands):
         return []
     if any(_has_live_readiness_command_with_invalid_now(command) for command in commands):
@@ -111,6 +114,8 @@ def _verification_command_errors(payload: dict[str, Any]) -> list[str]:
 
 def _is_runnable_live_readiness_command(command: str) -> bool:
     tokens = _command_tokens(command)
+    if any(token in _SHELL_CHAINING_TOKENS for token in tokens):
+        return False
     if "validate-live-readiness" not in tokens:
         return False
     command_index = tokens.index("validate-live-readiness")
@@ -137,6 +142,11 @@ def _has_live_readiness_command_with_invalid_now(command: str) -> bool:
     args = tokens[tokens.index("validate-live-readiness") + 1 :]
     now_index = args.index("--now")
     return now_index + 1 < len(args) and not _is_iso_timestamp_with_timezone(args[now_index + 1])
+
+
+def _has_live_readiness_command_with_shell_chaining(command: str) -> bool:
+    tokens = _command_tokens(command)
+    return "validate-live-readiness" in tokens and any(token in _SHELL_CHAINING_TOKENS for token in tokens)
 
 
 def _command_tokens(command: str) -> list[str]:

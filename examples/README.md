@@ -123,6 +123,21 @@ Output:
 - `outputs/examples/ashare_market_rules_orders.csv`
 - `outputs/examples/ashare_market_rules.svg`
 
+Hong Kong board-lot conversion uses the same market-rule boundary:
+
+```bash
+python examples/hk_market_rules_demo.py
+```
+
+It converts target weights into raw share quantities, clips them to tradable
+board lots, and records regular-session plus stamp-duty assumptions.
+
+Output:
+
+- `outputs/examples/hk_market_rules_summary.json`
+- `outputs/examples/hk_market_rules_orders.csv`
+- `outputs/examples/hk_market_rules.svg`
+
 ## 7. Execution Realism Sweep
 
 ```bash

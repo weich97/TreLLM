@@ -53,6 +53,19 @@ quantity, fee/funding estimates, margin requirement, and market-impact
 estimate. This makes market infeasibility auditable instead of hiding it inside
 portfolio PnL.
 
+For Hong Kong equities, target weights must first be converted into share
+quantities before board-lot rounding and stamp-duty estimates can be reviewed.
+The deterministic paper-only demo states its regular-session assumptions and
+does not download exchange calendars or market data:
+
+```bash
+python examples/hk_market_rules_demo.py
+```
+
+It writes `outputs/examples/hk_market_rules_summary.json`,
+`outputs/examples/hk_market_rules_orders.csv`, and
+`outputs/examples/hk_market_rules.svg`.
+
 ## Plugin Boundary
 
 Market rules are exchange-level feasibility plugins. They sit after a strategy

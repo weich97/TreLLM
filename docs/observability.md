@@ -59,3 +59,18 @@ emits `market.observe`, `agent.analyze`, `agent.decide`, `risk.approve`, and
 `execution.simulate` spans with stable parent IDs. Raw prompts, raw responses,
 and raw rationales are excluded; model and memory identifiers are represented
 as hashes or structured counts.
+
+The trace artifact records the default redaction boundary explicitly:
+
+- `prompt_payloads_exported: false`
+- `provider_outputs_exported: false`
+- `rationale_payloads_exported: false`
+- `raw_provider_text_policy: excluded_by_default`
+- `excluded_field_categories`: prompt payloads, message payloads, provider
+  outputs, and rationales
+
+The issue-level validation path is:
+
+```bash
+python -m pytest tests/test_observability_export.py -q
+```

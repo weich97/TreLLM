@@ -6,6 +6,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+_RAW_PROVIDER_FIELDS = ("prompt", "messages", "response_text", "raw_response", "rationale")
+_REDACTION_FIELD_CATEGORIES = (
+    "prompt_payloads",
+    "message_payloads",
+    "provider_outputs",
+    "rationales",
+)
+
 
 def export_trajectory_to_trace_json(
     trajectory_path: str | Path,
@@ -79,6 +87,8 @@ def trajectory_to_trace(trajectory: dict[str, Any], *, source_path: str | Path =
             "prompt_payloads_exported": False,
             "provider_outputs_exported": False,
             "rationale_payloads_exported": False,
+            "raw_provider_text_policy": "excluded_by_default",
+            "excluded_field_categories": list(_REDACTION_FIELD_CATEGORIES),
         },
         "resource": {
             "service.name": "tradearena",
@@ -205,11 +215,10 @@ def _span(
 
 
 def _redacted_attributes(attributes: dict[str, Any]) -> dict[str, Any]:
-    blocked = {"prompt", "messages", "response", "response_text", "raw_response", "rationale"}
     clean = {}
     for key, value in attributes.items():
         lowered = key.lower()
-        if any(token in lowered for token in blocked):
+        if any(token in lowered for token in _RAW_PROVIDER_FIELDS):
             clean[f"{key}_hash"] = _short_hash(value)
         else:
             clean[key] = value

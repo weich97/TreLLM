@@ -38,7 +38,7 @@
     "incident_owner_required": { "const": true },
     "checklist": {
       "type": "array",
-      "minItems": 5,
+      "minItems": 7,
       "items": { "$ref": "#/$defs/checklist_item" }
     },
     "verification_commands": {
@@ -56,7 +56,15 @@
       "additionalProperties": false,
       "properties": {
         "id": {
-          "enum": ["mode-boundary", "approval-expiry", "kill-switch", "reconciliation", "rollback"]
+          "enum": [
+            "mode-boundary",
+            "approval-expiry",
+            "kill-switch",
+            "reconciliation",
+            "rollback",
+            "artifact-retention",
+            "incident-owner"
+          ]
         },
         "owner": { "type": "string", "pattern": "\\S" },
         "evidence": { "type": "string", "pattern": "\\S" },

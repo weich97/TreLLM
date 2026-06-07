@@ -45,8 +45,20 @@ def main() -> int:
         {
             "id": "rollback",
             "owner": "operator",
-            "evidence": "rollback owner, account mode, affected symbols, and artifact retention path are named",
-            "pass_condition": "operator can disable submission and preserve the audit bundle",
+            "evidence": "rollback owner, account mode, affected symbols, and disable-submission decision are named",
+            "pass_condition": "operator can disable submission before any retry",
+        },
+        {
+            "id": "artifact-retention",
+            "owner": "reviewer",
+            "evidence": "reviewed handoff, approval artifact, response artifact, command transcript, and retention path are named",
+            "pass_condition": "audit bundle can be preserved without raw credentials or private holdings",
+        },
+        {
+            "id": "incident-owner",
+            "owner": "incident-owner",
+            "evidence": "one redacted incident owner is named for escalation, rollback approval, and final signoff",
+            "pass_condition": "ownership is explicit before the path is considered live-capable",
         },
     ]
     summary = {

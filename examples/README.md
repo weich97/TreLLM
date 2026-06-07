@@ -353,8 +353,8 @@ python examples/operator_runbook_demo.py
 
 Writes an offline operator checklist for live-capable paths. The artifact names
 the default mode, approval expiry, kill switch, reconciliation, rollback, and
-artifact-retention evidence, plus the final live-readiness preflight validation
-command, without reading credentials or submitting orders.
+artifact-retention evidence, plus the incident owner and final live-readiness
+preflight validation command, without reading credentials or submitting orders.
 
 Output:
 

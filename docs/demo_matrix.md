@@ -225,7 +225,8 @@ without reading the full source tree.
 - Run: `python examples/operator_runbook_demo.py`
 - Artifact: `outputs/examples/operator_runbook/operator_runbook.md`
 - Shows: human-gated live-readiness checks for adapter mode, approval expiry,
-  kill switch, reconciliation, rollback, and artifact retention.
+  kill switch, reconciliation, rollback, artifact retention, and incident
+  ownership.
 
 ### Live-Readiness Preflight Bundle
 

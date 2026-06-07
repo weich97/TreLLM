@@ -112,7 +112,7 @@ need to build a full broker integration to help.
 | Approval binding | Add one edge-case test for stale approvals, mismatched request hashes, symbols, quantities, or order types. | Failing-then-passing test and a redacted approval artifact tied to a reviewed request hash. |
 | Paper-sandbox adapter | Add a broker-specific paper adapter behind an optional dependency. | Paper-only account mode, no default network call, response artifact, reconciliation summary, and mocked CI tests. |
 | Reconciliation | Improve status mapping for rejects, cancels, partial fills, duplicate IDs, or unknown broker states. | Response artifact that validates, recomputed reconciliation counts, and redacted failure reasons. |
-| Operator runbook | Document a human approval or incident-response step for a live-capable path. | Checklist with kill switch, rollback, account mode, approval expiry, and artifact retention rules. |
+| Operator runbook | Document a human approval or incident-response step for a live-capable path. | Checklist with kill switch, rollback, account mode, approval expiry, artifact retention rules, and an incident owner. |
 | Live-readiness preflight | Add one cross-artifact consistency check across capability, handoff, approval, response, or runbook artifacts. | `tradearena validate-live-readiness ...` passes and fails on a targeted broken bundle. |
 
 Paper-sandbox adapters must stay behind optional dependencies and must publish

@@ -147,16 +147,20 @@ def test_operator_runbook_demo_builds_live_ready_checklist():
     assert summary["kill_switch_required"] is True
     assert summary["approval_expiry_required"] is True
     assert summary["artifact_retention_required"] is True
+    assert summary["incident_owner_required"] is True
     assert {item["id"] for item in summary["checklist"]} >= {
         "mode-boundary",
         "approval-expiry",
         "kill-switch",
         "reconciliation",
         "rollback",
+        "artifact-retention",
+        "incident-owner",
     }
     assert any("validate-live-readiness" in command for command in summary["verification_commands"])
     assert "TreLLM Operator Runbook Checklist" in runbook
     assert "does not authorize live submission" in runbook
+    assert "incident owner" in runbook
 
 
 def test_operator_runbook_validator_rejects_live_submission(tmp_path: Path):

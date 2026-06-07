@@ -87,8 +87,8 @@ def _fallback_schema_errors(payload: dict[str, Any]) -> list[str]:
         if payload.get(field) is not True:
             errors.append(f"{field} must be true")
     checklist = payload.get("checklist")
-    if not isinstance(checklist, list) or len(checklist) < 5:
-        errors.append("checklist must contain at least five items")
+    if not isinstance(checklist, list) or len(checklist) < 7:
+        errors.append("checklist must contain at least seven items")
     errors.extend(_verification_command_errors(payload))
     return errors
 

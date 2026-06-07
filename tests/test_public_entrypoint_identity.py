@@ -409,6 +409,7 @@ def test_public_entrypoints_follow_current_trellm_repository_location():
         "schemas/operator_runbook_artifact.schema.json",
         "schemas/reproduction_report.schema.json",
         "schemas/skill_answer_set.schema.json",
+        "schemas/skill_task_rubric.schema.json",
         "schemas/trajectory.schema.json",
     ]
     for path in public_entrypoints:

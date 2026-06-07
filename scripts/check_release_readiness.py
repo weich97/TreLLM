@@ -248,6 +248,22 @@ REQUIRED_PUBLIC_IDENTITY_PHRASES = {
         "# TradeArena Leaderboard Registry",
     ],
 }
+REQUIRED_PUBLIC_REPOSITORY_LOCATIONS = {
+    "CITATION.cff": [
+        'repository-code: "https://github.com/weich97/TreLLM"',
+        'url: "https://github.com/weich97/TreLLM"',
+    ],
+    "README.md": [
+        "https://github.com/weich97/TreLLM/actions/workflows/ci.yml",
+        "https://img.shields.io/github/license/weich97/TreLLM",
+        "https://colab.research.google.com/github/weich97/TreLLM/blob/main/notebooks/tradearena_5min_colab.ipynb",
+    ],
+    "notebooks/tradearena_5min_colab.ipynb": [
+        "git clone https://github.com/weich97/TreLLM.git",
+        'Path(\\"TreLLM\\")',
+        'os.chdir(\\"TreLLM\\")',
+    ],
+}
 LEGACY_PUBLIC_IDENTITY_PHRASES = [
     "Community Benchmark Registry",
     "TradeArena Community Benchmark Registry",
@@ -426,11 +442,25 @@ def _check_public_identity_boundaries(root: Path, tracked_files: list[str]) -> l
                 else:
                     failures.append(f"required public identity phrase missing from {rel}: {phrase}")
 
+    for rel, locations in REQUIRED_PUBLIC_REPOSITORY_LOCATIONS.items():
+        path = root / rel
+        if rel not in tracked_set or not path.exists():
+            failures.append(f"missing public repository location file: {rel}")
+            continue
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for location in locations:
+            if location not in text:
+                failures.append(f"required public repository location missing from {rel}: {location}")
+
     for rel in tracked_files:
         path = root / rel
         if not path.is_file() or not _is_public_identity_text_file(rel, path):
             continue
         text = path.read_text(encoding="utf-8", errors="ignore")
+        if rel.startswith("schemas/") and rel.endswith(".schema.json"):
+            schema_location = "https://github.com/weich97/TreLLM/schemas/"
+            if schema_location not in text:
+                failures.append(f"required public repository location missing from {rel}: {schema_location}")
         for location in STALE_PUBLIC_REPOSITORY_LOCATIONS:
             if location in text:
                 failures.append(f"stale public repository location '{location}' found in {rel}")

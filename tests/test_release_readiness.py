@@ -229,6 +229,48 @@ def test_release_readiness_flags_stale_public_repository_locations(tmp_path: Pat
     assert "stale public repository location 'cd TradeArena' found in README.md" in failures
 
 
+def test_release_readiness_requires_current_trellm_repository_locations(tmp_path: Path):
+    citation = tmp_path / "CITATION.cff"
+    schema = tmp_path / "schemas" / "trajectory.schema.json"
+    notebook = tmp_path / "notebooks" / "tradearena_5min_colab.ipynb"
+    citation.write_text(
+        'repository-code: "https://github.com/weich97/TreLLM-archive"\nurl: "https://github.com/weich97/TreLLM-archive"\n',
+        encoding="utf-8",
+    )
+    schema.parent.mkdir(parents=True)
+    schema.write_text(
+        '{"$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://example.com/schemas/trajectory.schema.json"}\n',
+        encoding="utf-8",
+    )
+    notebook.parent.mkdir(parents=True)
+    notebook.write_text(
+        '{"cells": [{"source": ["!git clone https://github.com/weich97/TreLLM-archive.git\\n", "os.chdir(\\"TreLLM-archive\\")\\n"]}]}\n',
+        encoding="utf-8",
+    )
+
+    failures = _check_public_identity_boundaries(
+        root=tmp_path,
+        tracked_files=[
+            "CITATION.cff",
+            "schemas/trajectory.schema.json",
+            "notebooks/tradearena_5min_colab.ipynb",
+        ],
+    )
+
+    assert (
+        "required public repository location missing from CITATION.cff: "
+        'repository-code: "https://github.com/weich97/TreLLM"'
+    ) in failures
+    assert (
+        "required public repository location missing from schemas/trajectory.schema.json: "
+        "https://github.com/weich97/TreLLM/schemas/"
+    ) in failures
+    assert (
+        "required public repository location missing from notebooks/tradearena_5min_colab.ipynb: "
+        "git clone https://github.com/weich97/TreLLM.git"
+    ) in failures
+
+
 def test_release_readiness_flags_stale_release_candidate_artifact_hash(tmp_path: Path):
     artifact = tmp_path / "README.md"
     manifest = tmp_path / "docs" / "launch" / "release_candidate_v0.2.1.json"

@@ -217,6 +217,34 @@ def test_operator_runbook_validator_rejects_placeholder_live_readiness_command(t
     ) in result.stdout
 
 
+def test_operator_runbook_validator_rejects_invalid_live_readiness_now_timestamp(tmp_path: Path):
+    _run_example("examples/operator_runbook_demo.py")
+    payload = _read_json("outputs/examples/operator_runbook/summary.json")
+    payload["verification_commands"] = [
+        (
+            "tradearena validate-live-readiness "
+            "outputs/examples/live_readiness_preflight/preflight_bundle.json "
+            "--now not-a-time"
+        )
+    ]
+    artifact = tmp_path / "operator_runbook.json"
+    artifact.write_text(json.dumps(payload), encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_operator_runbook_artifact.py", str(artifact)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid operator runbook artifact" in result.stdout
+    assert (
+        "verification_commands validate-live-readiness --now value must be an ISO timestamp "
+        "with timezone"
+    ) in result.stdout
+
+
 def test_operator_runbook_cli_validates_demo_artifact():
     _run_example("examples/operator_runbook_demo.py")
 

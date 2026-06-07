@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import shlex
 from pathlib import Path
 from typing import Any
@@ -12,6 +13,9 @@ except ModuleNotFoundError:  # pragma: no cover - public package installs may om
 
 ROOT = Path(__file__).resolve().parents[3]
 SCHEMA_PATH = ROOT / "schemas" / "operator_runbook_artifact.schema.json"
+_ISO_TIMESTAMP_WITH_TZ_RE = re.compile(
+    r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$"
+)
 
 
 def validate_operator_runbook_artifact(payload: dict[str, Any]) -> list[str]:
@@ -95,6 +99,8 @@ def _verification_command_errors(payload: dict[str, Any]) -> list[str]:
     commands = [command for command in verification_commands if isinstance(command, str)]
     if any(_is_runnable_live_readiness_command(command) for command in commands):
         return []
+    if any(_has_live_readiness_command_with_invalid_now(command) for command in commands):
+        return ["verification_commands validate-live-readiness --now value must be an ISO timestamp with timezone"]
     if any("validate-live-readiness" in command for command in commands):
         return [
             "verification_commands must include a runnable validate-live-readiness command "
@@ -104,10 +110,7 @@ def _verification_command_errors(payload: dict[str, Any]) -> list[str]:
 
 
 def _is_runnable_live_readiness_command(command: str) -> bool:
-    try:
-        tokens = shlex.split(command)
-    except ValueError:
-        tokens = command.split()
+    tokens = _command_tokens(command)
     if "validate-live-readiness" not in tokens:
         return False
     command_index = tokens.index("validate-live-readiness")
@@ -122,4 +125,26 @@ def _is_runnable_live_readiness_command(command: str) -> bool:
         return False
     now_index = args.index("--now")
     has_now_value = now_index + 1 < len(args) and not args[now_index + 1].startswith("-")
-    return has_preflight_bundle and has_now_value
+    if not has_now_value:
+        return False
+    return has_preflight_bundle and _is_iso_timestamp_with_timezone(args[now_index + 1])
+
+
+def _has_live_readiness_command_with_invalid_now(command: str) -> bool:
+    tokens = _command_tokens(command)
+    if "validate-live-readiness" not in tokens or "--now" not in tokens:
+        return False
+    args = tokens[tokens.index("validate-live-readiness") + 1 :]
+    now_index = args.index("--now")
+    return now_index + 1 < len(args) and not _is_iso_timestamp_with_timezone(args[now_index + 1])
+
+
+def _command_tokens(command: str) -> list[str]:
+    try:
+        return shlex.split(command)
+    except ValueError:
+        return command.split()
+
+
+def _is_iso_timestamp_with_timezone(value: str) -> bool:
+    return bool(_ISO_TIMESTAMP_WITH_TZ_RE.fullmatch(value))

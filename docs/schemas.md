@@ -201,9 +201,9 @@ The schema fixes the public `trellm_operator_runbook_v0.1` contract for
 human-gated live-readiness evidence: default mode, live-submission boundary,
 manual approval, approval expiry, kill switch, reconciliation, rollback, and
 artifact-retention checks. Runtime validation also requires a runnable
-`validate-live-readiness` command with a preflight bundle path and `--now`
-timestamp, so the runbook names the final packet-level gate instead of a
-placeholder note.
+`validate-live-readiness` command with a preflight bundle path and an ISO
+timezone `--now` timestamp, so the runbook names the final packet-level gate
+instead of a placeholder note.
 
 Validate the offline demo runbook with:
 

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/weich97/TradeArena/schemas/live_readiness_preflight.schema.json",
+  "$id": "https://github.com/weich97/TreLLM/schemas/live_readiness_preflight.schema.json",
   "title": "TreLLM Live Readiness Preflight Bundle",
   "type": "object",
   "required": [

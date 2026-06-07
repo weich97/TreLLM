@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/weich97/TradeArena/schemas/skill_answer_set.schema.json",
+  "$id": "https://github.com/weich97/TreLLM/schemas/skill_answer_set.schema.json",
   "title": "TreLLM skill task answer set",
   "type": "object",
   "required": [

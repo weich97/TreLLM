@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/weich97/TradeArena/schemas/broker_response_artifact.schema.json",
+  "$id": "https://github.com/weich97/TreLLM/schemas/broker_response_artifact.schema.json",
   "title": "TreLLM Broker Response Artifact",
   "type": "object",
   "required": [

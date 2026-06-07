@@ -6,8 +6,8 @@ authors:
   - family-names: Xue
     given-names: Weicheng
     email: "weich97@vt.edu"
-repository-code: "https://github.com/weich97/TradeArena"
-url: "https://github.com/weich97/TradeArena"
+repository-code: "https://github.com/weich97/TreLLM"
+url: "https://github.com/weich97/TreLLM"
 license: MIT
 version: "0.2.0"
 date-released: "2026-05-22"

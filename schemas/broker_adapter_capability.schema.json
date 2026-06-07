@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/weich97/TradeArena/schemas/broker_adapter_capability.schema.json",
+  "$id": "https://github.com/weich97/TreLLM/schemas/broker_adapter_capability.schema.json",
   "title": "TreLLM Broker Adapter Capability Manifest",
   "type": "object",
   "required": [

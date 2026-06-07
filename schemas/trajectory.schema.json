@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/weich97/TradeArena/schemas/trajectory.schema.json",
+  "$id": "https://github.com/weich97/TreLLM/schemas/trajectory.schema.json",
   "title": "TreLLM trajectory",
   "type": "object",
   "required": ["schema_version", "experiment_name", "seed", "steps"],

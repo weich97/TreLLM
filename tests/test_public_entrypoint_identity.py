@@ -368,18 +368,26 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
 
 def test_public_entrypoints_follow_current_trellm_repository_location():
     stale_patterns = [
+        "weich97/TradeArena",
         "github.com/weich97/TradeArena",
         "github.io/TradeArena",
         "repo=weich97/TradeArena",
         "mybinder.org/v2/gh/weich97/TradeArena",
         "nbviewer.org/github/weich97/TradeArena",
         "cd TradeArena",
+        "Path(\"TradeArena\")",
+        "os.chdir(\"TradeArena\")",
+        'Path(\\"TradeArena\\")',
+        'os.chdir(\\"TradeArena\\")',
+        'name != \\"TradeArena\\"',
     ]
     public_entrypoints = [
         "README.md",
         "pyproject.toml",
+        "CITATION.cff",
         ".github/ISSUE_TEMPLATE/config.yml",
         ".github/workflows/pages.yml",
+        "docs/superpowers/specs/2026-06-05-system-repositioning-design.md",
         "docs/getting_started.md",
         "docs/deterministic_baseline_submission_quickstart.md",
         "docs/external_validation.md",
@@ -389,6 +397,19 @@ def test_public_entrypoints_follow_current_trellm_repository_location():
         "docs/launch/demo_video.md",
         "scripts/run_showcase.py",
         "scripts/build_benchmark_page.py",
+        "notebooks/tradearena_5min_colab.ipynb",
+        "schemas/benchmark_submission.schema.json",
+        "schemas/broker_adapter_capability.schema.json",
+        "schemas/broker_approval_artifact.schema.json",
+        "schemas/broker_handoff_artifact.schema.json",
+        "schemas/broker_response_artifact.schema.json",
+        "schemas/calibration_profile.schema.json",
+        "schemas/demo_artifact_contract.schema.json",
+        "schemas/live_readiness_preflight.schema.json",
+        "schemas/operator_runbook_artifact.schema.json",
+        "schemas/reproduction_report.schema.json",
+        "schemas/skill_answer_set.schema.json",
+        "schemas/trajectory.schema.json",
     ]
     for path in public_entrypoints:
         text = _read_text(path)

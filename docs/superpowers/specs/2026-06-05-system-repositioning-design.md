@@ -51,7 +51,7 @@ Phase 1 should update public-facing narrative without breaking APIs:
 
 Phase 1 should not rename:
 
-- GitHub repository URL `weich97/TradeArena`.
+- GitHub repository URL `weich97/TreLLM`.
 - Python package name `tradearena-benchmark`.
 - Python import package `tradearena`.
 - CLI command `tradearena`.

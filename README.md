@@ -25,7 +25,7 @@
     <img alt="arXiv:2605.28850" src="https://img.shields.io/badge/arXiv-2605.28850-b31b1b.svg">
   </a>
   <a href="https://github.com/weich97/TreLLM/blob/main/LICENSE">
-    <img alt="License" src="https://img.shields.io/github/license/weich97/TradeArena">
+    <img alt="License" src="https://img.shields.io/github/license/weich97/TreLLM">
   </a>
   <a href="https://github.com/weich97/TreLLM/actions/workflows/ci.yml">
     <img alt="Coverage generated in CI" src="https://img.shields.io/badge/coverage-CI%20XML-64748b">
@@ -71,7 +71,7 @@
     <img alt="Open in GitHub Codespaces"
          src="https://img.shields.io/badge/Open%20in-Codespaces-181717?logo=github">
   </a>
-  <a href="https://colab.research.google.com/github/weich97/TradeArena/blob/main/notebooks/tradearena_5min_colab.ipynb">
+  <a href="https://colab.research.google.com/github/weich97/TreLLM/blob/main/notebooks/tradearena_5min_colab.ipynb">
     <img alt="Open in Colab"
          src="https://colab.research.google.com/assets/colab-badge.svg">
   </a>

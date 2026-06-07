@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="920" height="260" viewBox="0 0 920 260" role="img" aria-labelledby="title desc">
   <title id="title">TreLLM README system banner</title>
-  <desc id="desc">A TreLLM README banner with an audit ring, candlesticks, a shield, trajectory nodes, and a TradeArena leaderboard module label.</desc>
+  <desc id="desc">A TreLLM README audit-system banner with an audit ring, candlesticks, a shield, trajectory nodes, and a TradeArena leaderboard module label.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#071318"/>

@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MAX_TRACKED_FILE_BYTES = 25 * 1024 * 1024
 REQUIRED_FILES = [
     "README.md",
-    "docs/assets/trellm_readme_system_banner.svg",
+    "docs/assets/trellm_readme_audit_system_banner.svg",
     "CITATION.cff",
     "docs/getting_started.md",
     "docs/advanced_integrations_security.md",
@@ -235,7 +235,7 @@ BANNED_PUBLIC_TERMS = [
 ]
 REQUIRED_PUBLIC_IDENTITY_PHRASES = {
     "README.md": [
-        "docs/assets/trellm_readme_system_banner.svg",
+        "docs/assets/trellm_readme_audit_system_banner.svg",
         'alt="TreLLM trading audit system wordmark"',
         "TreLLM is an LLM-driven trading audit and control system. TradeArena is",
         "its public leaderboard for ranking auditable agent runs.",

@@ -293,7 +293,7 @@ Auditable benchmark framework for LLM trading agents.
 
     assert (
         "required public identity phrase missing from README.md: "
-        "docs/assets/trellm_readme_system_banner.svg"
+        "docs/assets/trellm_readme_audit_system_banner.svg"
     ) in failures
     assert (
         "required public identity phrase missing from README.md: "

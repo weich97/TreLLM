@@ -85,6 +85,7 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
             "TreLLM is an LLM-driven trading audit and live-readiness control system.",
             "TradeArena is the public leaderboard and benchmark-card surface inside TreLLM.",
             "It does not execute live trades by default",
+            "Live execution is out of scope for the public TradeArena leaderboard path",
         ],
         "docs/contributor_roadmap.md": [
             "TreLLM grows best when contributions make financial AI agents easier to evaluate, audit, reproduce, control, or extend.",
@@ -152,6 +153,7 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
 
     security_text = _normalized(_read_text("SECURITY.md"))
     assert "TradeArena is an audit, benchmark, and live-readiness framework." not in security_text
+    assert "Live execution is out of scope for the public benchmark" not in security_text
 
 
 def test_claim_and_validation_docs_use_trellm_for_system_claims():

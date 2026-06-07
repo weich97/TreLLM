@@ -37,9 +37,9 @@ these modes:
 - redacted manifest generation,
 - or human-approved review.
 
-Live execution is out of scope for the public benchmark unless it is explicitly
-human-approved, sandbox-tested, documented as unsafe for unattended use, and
-implemented behind the broker adapter contract.
+Live execution is out of scope for the public TradeArena leaderboard path unless
+it is explicitly human-approved, sandbox-tested, documented as unsafe for
+unattended use, and implemented behind the broker adapter contract.
 
 ## Advanced Integrations
 

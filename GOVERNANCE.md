@@ -1,9 +1,9 @@
 # Governance
 
-TradeArena is maintained as an open benchmark, audit framework, and
-live-readiness control plane for financial AI agents. The project prioritizes
-reproducibility, safe execution boundaries, human approval, and reviewable
-artifacts over short-term performance claims.
+TreLLM is maintained as an LLM-driven trading audit and live-readiness control
+system. TradeArena is the public leaderboard and benchmark-card surface inside
+TreLLM. The project prioritizes reproducibility, safe execution boundaries,
+human approval, and reviewable artifacts over short-term performance claims.
 
 ## Version Policy
 

@@ -77,6 +77,10 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
             "TreLLM is designed around narrow interfaces.",
             "TradeArena leaderboard or benchmark artifacts should remain comparable, redacted, and reproducible.",
         ],
+        "GOVERNANCE.md": [
+            "TreLLM is maintained as an LLM-driven trading audit and live-readiness control system.",
+            "TradeArena is the public leaderboard and benchmark-card surface inside TreLLM.",
+        ],
         "docs/contributor_roadmap.md": [
             "TreLLM grows best when contributions make financial AI agents easier to evaluate, audit, reproduce, control, or extend.",
             "These contributions move TreLLM from offline audit research toward human-gated, live-ready trading infrastructure.",
@@ -136,6 +140,9 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
 
     contributing_text = _normalized(_read_text("CONTRIBUTING.md"))
     assert "TradeArena is designed around narrow interfaces." not in contributing_text
+
+    governance_text = _normalized(_read_text("GOVERNANCE.md"))
+    assert "TradeArena is maintained as an open benchmark, audit framework" not in governance_text
     assert "These contributions move TreLLM from benchmark research toward human-gated" not in contributor_text
 
 

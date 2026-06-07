@@ -16,6 +16,14 @@ plugins/
 Generated plugins are ignored until a contributor intentionally adds them to a
 PR. Keep experimental provider caches outside this directory.
 
+Use `tradearena new-plugin` when you are starting a generated local scaffold
+and still deciding on the interface. Use a curated example when you want to
+copy a reviewed pattern that already imports, documents its boundary, and has a
+deterministic test. The first curated example is:
+
+- [`examples/sector_concentration_guard/`](examples/sector_concentration_guard/):
+  a risk plugin that clips aggregate target weights by sector.
+
 ## Suggested Categories
 
 | Category | Example contribution |

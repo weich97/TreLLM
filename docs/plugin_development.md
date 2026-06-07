@@ -18,6 +18,21 @@ This creates a local plugin skeleton under `plugins/local/` with:
 
 Use `--output path/to/plugins` to choose a different destination.
 
+## Study A Curated Example
+
+Scaffolds are intentionally minimal. When you want a reviewed pattern with
+documentation and deterministic behavior, study
+[`plugins/examples/sector_concentration_guard/`](../plugins/examples/sector_concentration_guard/)
+instead. It is a risk plugin that inherits the built-in max-position guard and
+adds one sector-concentration cap, so the example stays narrow while showing
+how to extend a real TreLLM risk report.
+
+Validation:
+
+```bash
+python -m pytest tests/test_plugin_examples.py -q
+```
+
 ## Interface Contracts
 
 The canonical protocols live in

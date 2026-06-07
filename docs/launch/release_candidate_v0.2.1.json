@@ -73,10 +73,10 @@
       "sha256": "sha256:560dd7f8427e44af316f90a84765acb80fd931b4862cf32cd6f41a73ecce26ae"
     },
     {
-      "bytes": 66840,
+      "bytes": 67198,
       "exists": true,
       "path": "docs/results/community_registry.md",
-      "sha256": "sha256:3f83f4b1504d6aed94517ab87bc3b27b19495d4ee51cf8b86cdfa2fc4c714bc1"
+      "sha256": "sha256:afa97ea9b67613338cea9e5b2e15ed763bc1bca551c0376b68c3afd690a3b99e"
     },
     {
       "bytes": 1221,
@@ -91,11 +91,11 @@
       "sha256": "sha256:8a0d326255aacca2f55cb32f0b822ce5ef7501e0d545f1e4a8dabf86a6fd6b60"
     }
   ],
-  "commit": "90837e2007386c700e786e3d3cb74cadc5350ec3",
-  "created_at": "2026-06-07T11:51:45.291118+00:00",
+  "commit": "2c7eec320cf66a73ffd2257770adc51d05b712fc",
+  "created_at": "2026-06-07T20:53:45.123738+00:00",
   "current_package_version": "0.2.0",
-  "dirty_file_count": 5,
-  "git_status_sha256": "sha256:68dcf6f215e75e137df8f97f55febd966a2b086aa5d2ff0597da0040e3eae541",
+  "dirty_file_count": 3,
+  "git_status_sha256": "sha256:4ebe5781bd9b830df578454f66fb269a95781285269b874a7329b1ba7210b6ac",
   "pre_release_commands": [
     "python -m compileall src scripts examples tests -q",
     "python -m ruff check src scripts examples tests",

@@ -426,8 +426,10 @@ Output:
 python examples/crypto_microstructure_stress_demo.py
 ```
 
-Runs a no-key synthetic crypto scenario with high volatility, low participation,
-latency, spread, slippage, partial fills, and rejections.
+Runs a no-key synthetic crypto scenario with matching baseline and
+fee-tier/spread-shock execution presets. The artifact exposes fill rate,
+slippage cost, commission, rejected orders, partial fills, and pending orders
+while marking the settings as stress assumptions rather than venue calibration.
 
 Output:
 

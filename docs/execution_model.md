@@ -76,6 +76,27 @@ The default parameters are intentionally conservative stress-test settings for
 comparing agents under identical frictions. They are not claimed to be universal
 market constants.
 
+## Crypto Fee-Tier And Spread-Shock Preset
+
+The no-key crypto microstructure demo compares two execution presets over the
+same synthetic symbols, seed, and market path:
+
+```bash
+python examples/crypto_microstructure_stress_demo.py
+```
+
+The `baseline_fee_tier` preset uses a low explicit fee tier and narrow quoted
+spread assumption. The `fee_tier_spread_shock` preset raises `commission_bps`,
+widens `spread_bps`, lowers participation, and increases latency/impact while
+leaving the generated orders and market inputs reproducible. The summary
+artifact reports fill rate, slippage cost, commissions, rejected orders, partial
+fills, and the last pending-order count for each preset.
+
+This preset is an execution-stress diagnostic. It should not be described as a
+venue-calibrated crypto transaction-cost model unless the fee tier comes from a
+broker/exchange schedule and the spread, depth, latency, and residual slippage
+terms are fitted from quote/order-book and fill records.
+
 ## What OHLCV Can And Cannot Identify
 
 The tracked Yahoo Finance daily and hourly files provide open, high, low, close,

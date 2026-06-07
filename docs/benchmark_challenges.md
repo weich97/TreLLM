@@ -80,6 +80,12 @@ Anonymous rows still need enough metadata for comparison: prompt mode,
 risk-feedback mode, parse coverage, execution config, risk config, data source,
 metrics, trajectory manifest, and reproducibility hash.
 
+Use the entry ID as the public handle. The example manifest
+[`examples/benchmark_submissions/anonymous_entry_redacted_submission.json`](../examples/benchmark_submissions/anonymous_entry_redacted_submission.json)
+shows this pattern with `model_display_name: entry-id:ta-anonymous-demo`.
+Do not replace the entry ID with provider account names, private portfolio
+labels, raw prompts, or completion text.
+
 ## Citation Template
 
 For an accepted row, cite the entry ID and manifest hash:

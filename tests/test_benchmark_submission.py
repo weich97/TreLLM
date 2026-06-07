@@ -46,6 +46,30 @@ def test_example_llm_redacted_submission_includes_model_audit_fields():
     assert payload["evidence"]["tags"] == ["stress-only", "cached-provider", "redacted-prompt"]
 
 
+def test_anonymous_redacted_submission_validates_and_uses_entry_id_boundary():
+    path = ROOT / "examples/benchmark_submissions/anonymous_entry_redacted_submission.json"
+    payload, errors = validate_submission_file(path)
+    text = path.read_text(encoding="utf-8")
+
+    assert errors == []
+    assert payload["reproducibility_hash"] == compute_reproducibility_hash(payload)
+    assert payload["agent"]["provider"] == "anonymous"
+    assert payload["agent"]["model_identifier_redacted"] is True
+    assert payload["agent"]["model_display_name"].startswith("entry-id:")
+    assert payload["evidence"]["tags"] == ["stress-only", "external-submitted", "redacted-prompt"]
+    assert payload["redaction"]["provider_secrets_removed"] is True
+    assert payload["redaction"]["raw_provider_text_removed"] is True
+    for forbidden in (
+        "api_key",
+        "password",
+        "raw_prompt_text",
+        "raw_response_text",
+        "private_holdings",
+        "broker_account",
+    ):
+        assert forbidden not in text.lower()
+
+
 def test_validate_submission_file_reports_malformed_json(tmp_path: Path):
     submission = tmp_path / "broken_submission.json"
     submission.write_text('{"schema_version": ', encoding="utf-8")

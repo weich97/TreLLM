@@ -11,6 +11,7 @@ For a contributor-facing deterministic baseline walkthrough, see
 
 ```bash
 tradearena validate-submission examples/benchmark_submissions/example_redacted_submission.json
+tradearena validate-submission examples/benchmark_submissions/anonymous_entry_redacted_submission.json
 ```
 
 Equivalent script entry:
@@ -108,11 +109,33 @@ See:
 
 - [`examples/benchmark_submissions/example_redacted_submission.json`](../examples/benchmark_submissions/example_redacted_submission.json)
 - [`examples/benchmark_submissions/example_llm_redacted_submission.json`](../examples/benchmark_submissions/example_llm_redacted_submission.json)
+- [`examples/benchmark_submissions/anonymous_entry_redacted_submission.json`](../examples/benchmark_submissions/anonymous_entry_redacted_submission.json)
 - [`examples/benchmark_submissions/model_matrix/`](../examples/benchmark_submissions/model_matrix/)
 - [`examples/benchmark_submissions/real_market_matrix/`](../examples/benchmark_submissions/real_market_matrix/)
 - [`docs/results/classical_baselines/`](results/classical_baselines/)
 - [`docs/results/quality_decomposition/`](results/quality_decomposition/)
 - [`schemas/benchmark_submission.schema.json`](../schemas/benchmark_submission.schema.json)
+
+## Anonymous Entry IDs
+
+Anonymous submissions should keep `agent.model_identifier_redacted: true` and
+use a public-safe display name such as `entry-id:ta-anonymous-demo`. The
+registry derives the citable entry ID from the reproducibility hash, so the
+anonymous example appears as:
+
+```text
+ta-109a118ee5d7
+```
+
+When citing or discussing an anonymous row, cite the entry ID, scenario ID, and
+reproducibility hash rather than a provider account, model endpoint, private
+portfolio, or prompt transcript. For example:
+
+```text
+TradeArena benchmark entry ta-109a118ee5d7,
+scenario anonymous_entry_synthetic_stress_v0_1,
+manifest hash sha256:109a118ee5d70ca663873c613da8caef7802ceb2f80a45df7b05f48e25ecced9.
+```
 
 ## Hash A Trajectory
 

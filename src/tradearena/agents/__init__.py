@@ -4,7 +4,12 @@ from tradearena.agents.analysts import MacroNewsAnalyst, MomentumAnalyst
 from tradearena.agents.execution import TargetWeightExecutionAgent
 from tradearena.agents.llm import ChatCompletionsLLMAnalyst, DeepSeekLLMAnalyst
 from tradearena.agents.portfolio import EqualWeightPortfolioManager
-from tradearena.agents.risk import MaxPositionRiskManager, NoRiskManager
+from tradearena.agents.risk import (
+    MaxDrawdownRiskPreset,
+    MaxPositionRiskManager,
+    NoRiskManager,
+    max_drawdown_risk_preset,
+)
 from tradearena.agents.rl import DeterministicRLAllocationStrategy
 from tradearena.agents.strategy import (
     AlwaysHoldStrategy,
@@ -29,6 +34,7 @@ __all__ = [
     "EqualWeightPortfolioManager",
     "EqualWeightStrategy",
     "MacroNewsAnalyst",
+    "MaxDrawdownRiskPreset",
     "MaxPositionRiskManager",
     "MarkowitzMVOStrategy",
     "MeanVarianceStrategy",
@@ -41,4 +47,5 @@ __all__ = [
     "RiskParityStrategy",
     "SignalWeightedStrategy",
     "TargetWeightExecutionAgent",
+    "max_drawdown_risk_preset",
 ]

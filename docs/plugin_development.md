@@ -40,39 +40,22 @@ Each plugin should keep inputs and outputs explicit.
 ```python
 from dataclasses import dataclass
 
-from tradearena.agents.risk import MaxPositionRiskManager
-from tradearena.core.domain import Decision, MarketSnapshot, PortfolioState, Side
+from tradearena.agents import MaxDrawdownRiskPreset
 
 
 @dataclass
-class MaxDrawdownGuard(MaxPositionRiskManager):
-    name: str = "max-drawdown-guard"
-    initial_equity: float = 100_000.0
-    max_drawdown: float = -0.10
-
-    def approve(
-        self,
-        snapshot: MarketSnapshot,
-        decisions: list[Decision],
-        portfolio: PortfolioState,
-        memory: object,
-    ) -> list[Decision]:
-        approved = super().approve(snapshot, decisions, portfolio, memory)
-        current_drawdown = portfolio.equity() / max(1e-9, self.initial_equity) - 1.0
-        if current_drawdown <= self.max_drawdown:
-            return [
-                Decision(
-                    symbol=decision.symbol,
-                    side=Side.HOLD,
-                    target_weight=0.0,
-                    confidence=decision.confidence,
-                    rationale=f"blocked by drawdown guard: {decision.rationale}",
-                    metadata={**decision.metadata, "risk_blocked": "max_drawdown"},
-                )
-                for decision in approved
-            ]
-        return approved
+class ResearchDeskDrawdownGuard(MaxDrawdownRiskPreset):
+    name: str = "research-desk-drawdown-guard"
+    max_drawdown: float = 0.08
+    drawdown_lookback: int = 5
+    drawdown_de_risk_weight: float = 0.05
 ```
+
+`MaxDrawdownRiskPreset` emits ordinary `RiskReport` records and annotates
+drawdown interventions as `risk_blocked="max_drawdown"` when target weights are
+forced to zero or `risk_clipped="max_drawdown"` when they are reduced to a
+nonzero cap. Run `python examples/max_drawdown_risk_preset_demo.py` for a
+deterministic blocked-and-clipped fixture.
 
 Keep plugin-specific state small. If a plugin needs long memory, store records
 through a `MemoryStore` rather than hidden module globals.

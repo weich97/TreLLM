@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from tradearena.core.domain import (
     Decision,
@@ -349,6 +349,84 @@ class MaxPositionRiskManager:
             exposure=exposure,
             notes=("post-trade attribution computed from simulated fills",),
         )
+
+
+@dataclass
+class MaxDrawdownRiskPreset(MaxPositionRiskManager):
+    """Small reusable preset for drawdown kill-switch experiments."""
+
+    max_abs_weight: float = 1.0
+    min_confidence: float = 0.0
+    max_gross_exposure: float = 1.0
+    max_single_step_turnover: float = 2.0
+    max_drawdown: float = 0.10
+    drawdown_lookback: int = 5
+    drawdown_de_risk_weight: float = 0.0
+    name: str = "max-drawdown-risk"
+
+    def budget(self) -> RiskBudget:
+        budget = super().budget()
+        return replace(
+            budget,
+            metadata={
+                **budget.metadata,
+                "preset": "max_drawdown",
+                "risk_manager": self.name,
+            },
+        )
+
+    def approve(self, snapshot: MarketSnapshot, decisions: list[Decision], portfolio: PortfolioState, memory: object) -> list[Decision]:
+        approved = super().approve(snapshot, decisions, portfolio, memory)
+        if self.last_report is None:
+            return approved
+        if not any(violation.constraint == "drawdown_kill_switch" for violation in self.last_report.violations):
+            return approved
+
+        blocked_count = 0
+        annotated: list[Decision] = []
+        for decision in approved:
+            metadata = dict(decision.metadata)
+            target_weight = 0.0 if abs(decision.target_weight) <= 1e-12 else decision.target_weight
+            if metadata.get("drawdown_kill_switch") is True:
+                if target_weight == 0.0:
+                    metadata["risk_blocked"] = "max_drawdown"
+                    blocked_count += 1
+                else:
+                    metadata["risk_clipped"] = "max_drawdown"
+            annotated.append(
+                Decision(
+                    symbol=decision.symbol,
+                    side=Side.HOLD if target_weight == 0.0 else decision.side,
+                    target_weight=target_weight,
+                    confidence=decision.confidence,
+                    rationale=decision.rationale,
+                    metadata=metadata,
+                )
+            )
+
+        self.last_report = replace(
+            self.last_report,
+            blocked_count=self.last_report.blocked_count + blocked_count,
+            clipped_count=max(0, self.last_report.clipped_count - blocked_count),
+        )
+        return annotated
+
+
+def max_drawdown_risk_preset(
+    *,
+    max_drawdown: float = 0.10,
+    de_risk_weight: float = 0.0,
+    drawdown_lookback: int = 5,
+    max_abs_weight: float = 1.0,
+    max_gross_exposure: float = 1.0,
+) -> MaxDrawdownRiskPreset:
+    return MaxDrawdownRiskPreset(
+        max_abs_weight=max_abs_weight,
+        max_gross_exposure=max_gross_exposure,
+        max_drawdown=abs(max_drawdown),
+        drawdown_lookback=drawdown_lookback,
+        drawdown_de_risk_weight=max(0.0, de_risk_weight),
+    )
 
 
 @dataclass

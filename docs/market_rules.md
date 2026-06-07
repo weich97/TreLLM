@@ -106,6 +106,31 @@ plugins can live outside the TradeArena package.
 Risk presets should emit normal `RiskReport` records so they remain comparable
 with the default `MaxPositionRiskManager`.
 
+The built-in max-drawdown preset is a compact extension example for this
+contract. It reuses the standard risk-report schema while making the drawdown
+intervention explicit as either a block or a clip:
+
+```python
+from tradearena.agents import max_drawdown_risk_preset
+
+risk = max_drawdown_risk_preset(
+    max_drawdown=0.05,
+    de_risk_weight=0.10,
+    drawdown_lookback=3,
+)
+approved_decisions = risk.approve(snapshot, decisions, portfolio, memory)
+assert risk.last_report is not None
+```
+
+For a deterministic blocked-and-clipped fixture, run:
+
+```bash
+python examples/max_drawdown_risk_preset_demo.py
+```
+
+This writes `docs/results/max_drawdown_risk_preset.json` and
+`docs/results/max_drawdown_risk_preset.md`.
+
 ## Adversarial Scenarios
 
 Adversarial tests are useful for LLM agents because the failure is often in

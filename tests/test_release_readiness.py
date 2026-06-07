@@ -207,6 +207,28 @@ def test_release_readiness_flags_public_identity_regressions(tmp_path: Path):
     assert "legacy public identity phrase '# TradeArena v0.2 External Reproduction Pack' found in docs/schemas.md" in failures
 
 
+def test_release_readiness_flags_stale_public_repository_locations(tmp_path: Path):
+    readme = tmp_path / "README.md"
+    readme.write_text(
+        "\n".join(
+            [
+                "Clone from https://github.com/weich97/TradeArena.git",
+                "Open https://weich97.github.io/TradeArena/",
+                "Launch https://colab.research.google.com/github/weich97/TradeArena/blob/main/notebook.ipynb",
+                "Then run cd TradeArena",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    failures = _check_public_identity_boundaries(root=tmp_path, tracked_files=["README.md"])
+
+    assert "stale public repository location 'github.com/weich97/TradeArena' found in README.md" in failures
+    assert "stale public repository location 'github.io/TradeArena' found in README.md" in failures
+    assert "stale public repository location 'cd TradeArena' found in README.md" in failures
+
+
 def test_release_readiness_flags_stale_release_candidate_artifact_hash(tmp_path: Path):
     artifact = tmp_path / "README.md"
     manifest = tmp_path / "docs" / "launch" / "release_candidate_v0.2.1.json"

@@ -314,6 +314,20 @@ LEGACY_PUBLIC_IDENTITY_PHRASES = [
     '"User-Agent": "TradeArena mirror downloader"',
     "Volume is normalized to TradeArena units",
 ]
+STALE_PUBLIC_REPOSITORY_LOCATIONS = [
+    "weich97/TradeArena",
+    "github.com/weich97/TradeArena",
+    "github.io/TradeArena",
+    "repo=weich97/TradeArena",
+    "mybinder.org/v2/gh/weich97/TradeArena",
+    "nbviewer.org/github/weich97/TradeArena",
+    "cd TradeArena",
+    'Path("TradeArena")',
+    'os.chdir("TradeArena")',
+    'Path(\\"TradeArena\\")',
+    'os.chdir(\\"TradeArena\\")',
+    'name != \\"TradeArena\\"',
+]
 CI_REQUIRED_GATE_COMMANDS = [
     "python -m compileall src scripts examples tests -q",
     "python -m ruff check src scripts examples tests",
@@ -417,6 +431,9 @@ def _check_public_identity_boundaries(root: Path, tracked_files: list[str]) -> l
         if not path.is_file() or not _is_public_identity_text_file(rel, path):
             continue
         text = path.read_text(encoding="utf-8", errors="ignore")
+        for location in STALE_PUBLIC_REPOSITORY_LOCATIONS:
+            if location in text:
+                failures.append(f"stale public repository location '{location}' found in {rel}")
         for phrase in LEGACY_PUBLIC_IDENTITY_PHRASES:
             if phrase in text:
                 failures.append(f"legacy public identity phrase '{phrase}' found in {rel}")

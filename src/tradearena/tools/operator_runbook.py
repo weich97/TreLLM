@@ -104,6 +104,11 @@ def _verification_command_errors(payload: dict[str, Any]) -> list[str]:
         return []
     if any(_has_live_readiness_command_with_invalid_now(command) for command in commands):
         return ["verification_commands validate-live-readiness --now value must be an ISO timestamp with timezone"]
+    if any(_has_live_readiness_command_with_unexpected_args(command) for command in commands):
+        return [
+            "verification_commands validate-live-readiness command must only include "
+            "the preflight bundle path, --now, and its timestamp"
+        ]
     if any("validate-live-readiness" in command for command in commands):
         return [
             "verification_commands must include a runnable validate-live-readiness command "
@@ -113,40 +118,49 @@ def _verification_command_errors(payload: dict[str, Any]) -> list[str]:
 
 
 def _is_runnable_live_readiness_command(command: str) -> bool:
-    tokens = _command_tokens(command)
-    if _contains_shell_chaining(command):
+    args = _live_readiness_args_for_supported_command(command)
+    if args is None or len(args) != 3:
         return False
-    if "validate-live-readiness" not in tokens:
+    preflight_bundle, now_flag, now_value = args
+    if now_flag != "--now":
         return False
-    command_index = tokens.index("validate-live-readiness")
-    if command_index == 0:
-        return False
-    prefix = tokens[:command_index]
-    if prefix != ["tradearena"] and prefix != ["python", "-m", "tradearena.cli"]:
-        return False
-    args = tokens[command_index + 1 :]
-    has_preflight_bundle = any(token.endswith(".json") and "preflight" in token for token in args)
-    if "--now" not in args:
-        return False
-    now_index = args.index("--now")
-    has_now_value = now_index + 1 < len(args) and not args[now_index + 1].startswith("-")
-    if not has_now_value:
-        return False
-    return has_preflight_bundle and _is_iso_timestamp_with_timezone(args[now_index + 1])
+    return _is_preflight_bundle_path(preflight_bundle) and _is_iso_timestamp_with_timezone(now_value)
 
 
 def _has_live_readiness_command_with_invalid_now(command: str) -> bool:
-    tokens = _command_tokens(command)
-    if "validate-live-readiness" not in tokens or "--now" not in tokens:
+    args = _live_readiness_args_for_supported_command(command)
+    if args is None or "--now" not in args:
         return False
-    args = tokens[tokens.index("validate-live-readiness") + 1 :]
     now_index = args.index("--now")
     return now_index + 1 < len(args) and not _is_iso_timestamp_with_timezone(args[now_index + 1])
+
+
+def _has_live_readiness_command_with_unexpected_args(command: str) -> bool:
+    args = _live_readiness_args_for_supported_command(command)
+    if args is None or "--now" not in args:
+        return False
+    now_index = args.index("--now")
+    if now_index + 1 >= len(args) or not _is_iso_timestamp_with_timezone(args[now_index + 1]):
+        return False
+    return len(args) != 3 or args[1] != "--now" or not _is_preflight_bundle_path(args[0])
 
 
 def _has_live_readiness_command_with_shell_chaining(command: str) -> bool:
     tokens = _command_tokens(command)
     return "validate-live-readiness" in tokens and _contains_shell_chaining(command)
+
+
+def _live_readiness_args_for_supported_command(command: str) -> list[str] | None:
+    tokens = _command_tokens(command)
+    if _contains_shell_chaining(command) or "validate-live-readiness" not in tokens:
+        return None
+    command_index = tokens.index("validate-live-readiness")
+    if command_index == 0:
+        return None
+    prefix = tokens[:command_index]
+    if prefix != ["tradearena"] and prefix != ["python", "-m", "tradearena.cli"]:
+        return None
+    return tokens[command_index + 1 :]
 
 
 def _command_tokens(command: str) -> list[str]:
@@ -162,3 +176,7 @@ def _is_iso_timestamp_with_timezone(value: str) -> bool:
 
 def _contains_shell_chaining(command: str) -> bool:
     return any(marker in command for marker in _SHELL_CHAINING_MARKERS)
+
+
+def _is_preflight_bundle_path(value: str) -> bool:
+    return value.endswith(".json") and "preflight" in value

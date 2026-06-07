@@ -202,8 +202,9 @@ human-gated live-readiness evidence: default mode, live-submission boundary,
 manual approval, approval expiry, kill switch, reconciliation, rollback, and
 artifact-retention checks. Runtime validation also requires a single runnable
 `validate-live-readiness` command with no shell chaining (`;`, `&`, `&&`, `||`,
-or `|`), a preflight bundle path, and an ISO timezone `--now` timestamp, so the
-runbook names the final packet-level gate instead of a placeholder note.
+or `|`), exactly the preflight bundle path, `--now`, and an ISO timezone
+timestamp, with no extra arguments, so the runbook names the final packet-level
+gate instead of a placeholder note.
 
 Validate the offline demo runbook with:
 

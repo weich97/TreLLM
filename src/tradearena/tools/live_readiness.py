@@ -21,6 +21,13 @@ from tradearena.tools.operator_runbook import validate_operator_runbook_artifact
 
 ROOT = Path(__file__).resolve().parents[3]
 SCHEMA_PATH = ROOT / "schemas" / "live_readiness_preflight.schema.json"
+COMPONENT_PATH_FIELDS = (
+    "capability_manifest",
+    "handoff_artifact",
+    "approval_artifact",
+    "response_artifact",
+    "operator_runbook_artifact",
+)
 
 
 def validate_live_readiness_preflight_bundle_file(
@@ -87,6 +94,7 @@ def _validate_components(
     errors: list[str] = []
     checked_at = now or _text(bundle.get("approval_checked_at"))
     components = summary["components"]
+    errors.extend(_component_path_reference_errors(bundle))
 
     capability_path = _resolve_bundle_path(bundle_path, bundle.get("capability_manifest"))
     handoff_path = _resolve_bundle_path(bundle_path, bundle.get("handoff_artifact"))
@@ -272,6 +280,19 @@ def _resolve_bundle_path(bundle_path: Path, value: object) -> Path:
     if root_candidate.exists() or value.startswith(("outputs/", "docs/", "examples/", "schemas/")):
         return root_candidate
     return bundle_path.parent / candidate
+
+
+def _component_path_reference_errors(bundle: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    for field in COMPONENT_PATH_FIELDS:
+        value = bundle.get(field)
+        if isinstance(value, str) and _has_parent_traversal(value):
+            errors.append(f"{field} path must not contain parent traversal")
+    return errors
+
+
+def _has_parent_traversal(value: str) -> bool:
+    return any(part == ".." for part in Path(value).parts)
 
 
 def _display_path(path: Path) -> str:

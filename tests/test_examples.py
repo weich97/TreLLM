@@ -500,6 +500,36 @@ def test_live_readiness_preflight_demo_links_broker_safety_artifacts():
     assert summary["components"]["approval_binding"]["valid"] is True
 
 
+def test_live_readiness_preflight_rejects_parent_traversal_component_path(tmp_path: Path):
+    _run_example("examples/live_readiness_preflight_demo.py")
+    bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")
+    outside_capability_path = tmp_path.parent / f"{tmp_path.name}_capability_manifest.json"
+    outside_capability_path.write_text(
+        json.dumps(_read_json(bundle["capability_manifest"])),
+        encoding="utf-8",
+    )
+    bundle["capability_manifest"] = f"../{outside_capability_path.name}"
+    bundle_path = tmp_path / "preflight_bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/validate_live_readiness_preflight.py",
+            str(bundle_path),
+            "--now",
+            "2026-05-31T12:30:00Z",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid live-readiness preflight bundle" in result.stdout
+    assert "capability_manifest path must not contain parent traversal" in result.stdout
+
+
 def test_live_readiness_preflight_validator_rejects_mode_not_declared_by_capability(tmp_path: Path):
     _run_example("examples/live_readiness_preflight_demo.py")
     capability = _read_json("outputs/examples/broker_capability_manifest/capability_manifest.json")

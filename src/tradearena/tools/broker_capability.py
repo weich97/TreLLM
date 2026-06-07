@@ -112,6 +112,8 @@ def _semantic_errors(payload: dict[str, Any]) -> list[str]:
             errors.append("credential_policy.no_credentials_in_repo must be true")
         if credential_policy.get("redacted_artifacts_only") is not True:
             errors.append("credential_policy.redacted_artifacts_only must be true")
+        if payload.get("requires_credentials") is True and not _string_set(credential_policy.get("env_vars")):
+            errors.append("credential_policy.env_vars must list credential environment variables when credentials are required")
     return errors
 
 

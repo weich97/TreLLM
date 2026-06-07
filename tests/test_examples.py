@@ -468,6 +468,30 @@ def test_broker_capability_validator_rejects_live_without_required_controls(tmp_
     assert "live-capable adapters must set safety_controls.kill_switch_required to true" in result.stdout
 
 
+def test_broker_capability_validator_requires_env_vars_when_credentials_are_required(tmp_path: Path):
+    _run_example("examples/broker_capability_manifest_demo.py")
+    payload = _read_json("outputs/examples/broker_capability_manifest/capability_manifest.json")
+    payload["supports_live_submission"] = True
+    payload["supported_modes"].append("live_human_approved")
+    payload["account_modes"].append("live")
+    payload["requires_credentials"] = True
+    payload["network_access"] = "required_for_live"
+    payload["credential_policy"]["env_vars"] = []
+    artifact = tmp_path / "broker_capability.json"
+    artifact.write_text(json.dumps(payload), encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_broker_adapter_capability.py", str(artifact)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid broker adapter capability manifest" in result.stdout
+    assert "credential_policy.env_vars must list credential environment variables when credentials are required" in result.stdout
+
+
 def test_broker_capability_cli_validates_demo_artifact():
     _run_example("examples/broker_capability_manifest_demo.py")
 

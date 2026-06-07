@@ -20,6 +20,7 @@ from tradearena.agents import (
     RandomAllocationStrategy,
     RiskParityStrategy,
     SignalWeightedStrategy,
+    SMACrossoverStrategy,
     TargetWeightExecutionAgent,
 )
 from tradearena.core.domain import ExperimentConfig
@@ -67,6 +68,7 @@ def default_registry() -> PluginRegistry:
     registry.register("strategy", "naive-momentum", NaiveMomentumStrategy)
     registry.register("strategy", "mean-reversion", MeanReversionStrategy)
     registry.register("strategy", "risk-parity", RiskParityStrategy)
+    registry.register("strategy", "sma-crossover", SMACrossoverStrategy)
     registry.register("strategy", "mean-variance", MeanVarianceStrategy)
     registry.register("strategy", "markowitz-mvo", MarkowitzMVOStrategy)
     registry.register("strategy", "mock-rl-policy", DeterministicRLAllocationStrategy)
@@ -153,6 +155,8 @@ def build_default_system(
         strategy = MeanReversionStrategy(max_long_weight=max_position_weight)
     elif strategy_name in {"risk-parity", "inverse-volatility"}:
         strategy = RiskParityStrategy(max_long_weight=max_position_weight)
+    elif strategy_name in {"sma-crossover", "sma", "moving-average-crossover"}:
+        strategy = SMACrossoverStrategy(max_long_weight=max_position_weight)
     elif strategy_name in {"mean-variance", "min-var", "minimum-variance"}:
         strategy = MeanVarianceStrategy(max_long_weight=max_position_weight)
     elif strategy_name in {"markowitz-mvo", "markowitz", "mvo", "mean-variance-optimization"}:

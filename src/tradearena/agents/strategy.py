@@ -248,6 +248,64 @@ class MeanReversionStrategy:
 
 
 @dataclass
+class SMACrossoverStrategy:
+    """Deterministic long-only simple moving average crossover baseline."""
+
+    fast_window: int = 3
+    slow_window: int = 8
+    max_long_weight: float = 0.35
+    name: str = "sma-crossover-strategy"
+    _history: dict[str, deque[float]] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if self.fast_window <= 0:
+            raise ValueError("fast_window must be positive")
+        if self.slow_window <= 0:
+            raise ValueError("slow_window must be positive")
+        if self.fast_window >= self.slow_window:
+            raise ValueError("fast_window must be smaller than slow_window")
+
+    def decide(self, snapshot: MarketSnapshot, signals: list[Signal], portfolio: PortfolioState, memory: object) -> list[Decision]:
+        symbols = sorted(snapshot.bars)
+        decisions: list[Decision] = []
+        for symbol in symbols:
+            history = self._history.setdefault(symbol, deque(maxlen=self.slow_window))
+            history.append(float(snapshot.bars[symbol].close))
+            prices = list(history)
+            fast_sma = self._average(prices[-self.fast_window :]) if len(prices) >= self.fast_window else 0.0
+            slow_sma = self._average(prices) if len(prices) >= self.slow_window else 0.0
+            has_signal = len(prices) >= self.slow_window and fast_sma > slow_sma
+            target = self.max_long_weight if has_signal else 0.0
+            decisions.append(
+                _target_weight_decision(
+                    symbol=symbol,
+                    target=target,
+                    confidence=1.0 if has_signal else 0.0,
+                    rationale=(
+                        "fast SMA crossed above slow SMA"
+                        if has_signal
+                        else "SMA crossover baseline is warming up or below slow average"
+                    ),
+                    metadata={
+                        "strategy": self.name,
+                        "fast_window": self.fast_window,
+                        "slow_window": self.slow_window,
+                        "fast_sma": fast_sma,
+                        "slow_sma": slow_sma,
+                        "price_history_length": len(prices),
+                        "max_long_weight": self.max_long_weight,
+                    },
+                )
+            )
+        return decisions
+
+    def _average(self, values: list[float]) -> float:
+        if not values:
+            return 0.0
+        return sum(values) / len(values)
+
+
+@dataclass
 class RiskParityStrategy:
     """Rolling inverse-volatility allocation baseline."""
 

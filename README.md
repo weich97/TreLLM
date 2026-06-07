@@ -639,9 +639,9 @@ The v0.2 TradeArena benchmark card makes one limited claim:
 
 The public leaderboard includes two model-comparison generators:
 
-- a classical baseline matrix: buy-and-hold, equal weight, naive momentum,
-  mean reversion, risk parity, minimum variance, Markowitz/MVO, random, and
-  always-hold across the same synthetic and real-market scenarios;
+- a classical baseline matrix: buy-and-hold, equal weight, SMA crossover,
+  naive momentum, mean reversion, risk parity, minimum variance, Markowitz/MVO,
+  random, and always-hold across the same synthetic and real-market scenarios;
 - a synthetic matrix: seven LLMs plus lower anchors across calm-trend,
   high-volatility, jump/tail, liquidity-collapse, spread-explosion, and
   latency-spike scenarios;

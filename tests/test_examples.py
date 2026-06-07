@@ -273,6 +273,39 @@ def test_operator_runbook_validator_rejects_unknown_live_readiness_args(tmp_path
     ) in result.stdout
 
 
+def test_operator_runbook_validator_rejects_multiple_live_readiness_commands(tmp_path: Path):
+    _run_example("examples/operator_runbook_demo.py")
+    payload = _read_json("outputs/examples/operator_runbook/summary.json")
+    payload["verification_commands"] = [
+        (
+            "tradearena validate-live-readiness "
+            "outputs/examples/live_readiness_preflight/preflight_bundle.json "
+            "--now 2026-05-31T12:30:00Z"
+        ),
+        (
+            "python -m tradearena.cli validate-live-readiness "
+            "outputs/examples/live_readiness_preflight/preflight_bundle.json "
+            "--now 2026-05-31T12:35:00Z"
+        ),
+    ]
+    artifact = tmp_path / "operator_runbook.json"
+    artifact.write_text(json.dumps(payload), encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_operator_runbook_artifact.py", str(artifact)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid operator runbook artifact" in result.stdout
+    assert (
+        "verification_commands must include exactly one supported "
+        "validate-live-readiness command"
+    ) in result.stdout
+
+
 def test_operator_runbook_validator_rejects_chained_live_readiness_command(tmp_path: Path):
     _run_example("examples/operator_runbook_demo.py")
     payload = _read_json("outputs/examples/operator_runbook/summary.json")

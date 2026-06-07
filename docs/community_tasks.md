@@ -62,11 +62,11 @@ reviewable without asking newcomers to understand the whole codebase.
 
 | Task | Suggested labels | Expected validation |
 | --- | --- | --- |
-| Add A-share T+1 and price-limit scenario coverage | `help wanted`, `risk` | deterministic fixture with blocked same-day sell |
-| Add HK lot-size and trading-calendar demo | `help wanted`, `benchmark` | example run plus documented assumptions |
-| Add crypto fee-tier and spread-shock preset | `help wanted`, `execution` | stress example with changed fill costs |
-| Add an Almgren-Chriss impact stress plugin | `help wanted`, `execution`, `discussion` | compare modeled shortfall on a small fixture |
-| Calibrate liquidity-shock presets against fill logs | `help wanted`, `risk`, `benchmark` | compare tracked shock rows with venue or broker fill data |
+| [Add A-share T+1 and price-limit scenario coverage](https://github.com/weich97/TreLLM/issues/31) | `help wanted`, `benchmark`, `risk` | deterministic fixture with blocked same-day sell |
+| [Add HK lot-size and trading-calendar demo](https://github.com/weich97/TreLLM/issues/32) | `help wanted`, `benchmark`, `docs` | example run plus documented assumptions |
+| [Add crypto fee-tier and spread-shock preset](https://github.com/weich97/TreLLM/issues/33) | `help wanted`, `execution`, `benchmark` | stress example with changed fill costs |
+| [Add an Almgren-Chriss impact stress plugin](https://github.com/weich97/TreLLM/issues/34) | `help wanted`, `execution`, `discussion` | compare modeled shortfall on a small fixture |
+| [Add black-swan liquidity halt stress scenario](https://github.com/weich97/TreLLM/issues/35) | `help wanted`, `risk`, `benchmark` | compare tracked shock rows with venue or broker fill data |
 
 ## Broker And Live-Ready Tracks
 
@@ -88,7 +88,7 @@ boundary. No task in this table should introduce default live submission.
 
 | Task | Suggested labels | Expected validation |
 | --- | --- | --- |
-| Add reproducibility badge checks to registry rows | `help wanted`, `benchmark` | `tradearena build-registry examples/benchmark_submissions` |
+| [Add reproducibility badge checks to registry rows](https://github.com/weich97/TreLLM/issues/36) | `good first issue`, `benchmark` | `tradearena build-registry examples/benchmark_submissions` |
 | Add row-level detail panels to the leaderboard | `good first issue`, `benchmark` | open generated `community_registry.html` |
 | Add a quarterly challenge seed file | `help wanted`, `benchmark` | documented command and expected artifact paths |
 | Add a redacted citation entry template | `good first issue`, `docs` | schema validation still passes |
@@ -97,9 +97,9 @@ boundary. No task in this table should introduce default live submission.
 
 | Task | Suggested labels | Expected validation |
 | --- | --- | --- |
-| Export trajectory events to OpenTelemetry spans | `help wanted`, `discussion` | local JSON or console exporter test |
-| Export metrics to W&B or MLflow with opt-in dependency | `help wanted`, `discussion` | mock-backed test, no live service required |
-| Map trajectory records to OpenAI Evals or LangSmith-style traces | `help wanted`, `discussion` | schema example and conversion test |
+| [Export trajectory events to OpenTelemetry spans](https://github.com/weich97/TreLLM/issues/37) | `enhancement`, `help wanted`, `discussion` | local JSON or console exporter test |
+| [Export metrics to W&B or MLflow with opt-in dependency](https://github.com/weich97/TreLLM/issues/38) | `enhancement`, `help wanted`, `discussion` | mock-backed test, no live service required |
+| [Map trajectory records to OpenAI Evals or LangSmith-style traces](https://github.com/weich97/TreLLM/issues/39) | `enhancement`, `help wanted`, `discussion` | schema example and conversion test |
 
 For issue bodies, copy the task row, add a file path owner, and name the command
 that a reviewer should run.

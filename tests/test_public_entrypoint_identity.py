@@ -185,17 +185,36 @@ def test_external_validation_task_tables_include_colab_binder_reproduction():
             assert _normalized(snippet) in text
 
 
-def test_community_task_table_links_current_good_first_issues():
+def test_community_task_tables_link_current_open_issues():
     text = _normalized(_read_text("docs/community_tasks.md"))
 
     required_issue_links = [
         "https://github.com/weich97/TreLLM/issues/27",
         "https://github.com/weich97/TreLLM/issues/29",
+        "https://github.com/weich97/TreLLM/issues/31",
+        "https://github.com/weich97/TreLLM/issues/32",
+        "https://github.com/weich97/TreLLM/issues/33",
+        "https://github.com/weich97/TreLLM/issues/34",
+        "https://github.com/weich97/TreLLM/issues/35",
+        "https://github.com/weich97/TreLLM/issues/36",
+        "https://github.com/weich97/TreLLM/issues/37",
+        "https://github.com/weich97/TreLLM/issues/38",
+        "https://github.com/weich97/TreLLM/issues/39",
         "https://github.com/weich97/TreLLM/issues/40",
         "https://github.com/weich97/TreLLM/issues/41",
     ]
     for issue_link in required_issue_links:
         assert issue_link in text
+
+    required_rows = [
+        "| [Add A-share T+1 and price-limit scenario coverage](https://github.com/weich97/TreLLM/issues/31) | `help wanted`, `benchmark`, `risk` |",
+        "| [Add HK lot-size and trading-calendar demo](https://github.com/weich97/TreLLM/issues/32) | `help wanted`, `benchmark`, `docs` |",
+        "| [Add crypto fee-tier and spread-shock preset](https://github.com/weich97/TreLLM/issues/33) | `help wanted`, `execution`, `benchmark` |",
+        "| [Add reproducibility badge checks to registry rows](https://github.com/weich97/TreLLM/issues/36) | `good first issue`, `benchmark` |",
+        "| [Export trajectory events to OpenTelemetry spans](https://github.com/weich97/TreLLM/issues/37) | `enhancement`, `help wanted`, `discussion` |",
+    ]
+    for row in required_rows:
+        assert _normalized(row) in text
 
     assert "Add an Ollama local-model config example" not in text
 

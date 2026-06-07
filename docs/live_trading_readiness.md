@@ -23,9 +23,9 @@ audit stack can become the control plane around real trading systems.
 | 4 | Human-approved live adapter | Submit live orders only after explicit operator approval. | Broker adapter contract, manual approval record, kill switch, reconciliation, incident runbook. |
 | 5 | Supervised automation | Allow tightly scoped automation after repeated paper/live shadow validation. | External review, capital limits, monitoring, rollback, compliance and jurisdiction review. |
 
-Stages 4 and 5 are not part of the public benchmark claim. They are future
-integration tracks for users who accept the regulatory, operational, and
-financial risk of real trading.
+Stages 4 and 5 are not part of the public TradeArena leaderboard claim. They
+are future TreLLM integration tracks for users who accept the regulatory,
+operational, and financial risk of real trading.
 
 ## Live-Ready Architecture
 

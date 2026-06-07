@@ -123,6 +123,7 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
         ],
         "docs/live_trading_readiness.md": [
             "Capability manifest, `submit_live=false`",
+            "Stages 4 and 5 are not part of the public TradeArena leaderboard claim.",
             "a schema-valid broker adapter capability manifest declares supported modes",
             "a live-readiness preflight bundle validates the capability manifest",
             "Broker capability manifest",
@@ -154,6 +155,9 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
     security_text = _normalized(_read_text("SECURITY.md"))
     assert "TradeArena is an audit, benchmark, and live-readiness framework." not in security_text
     assert "Live execution is out of scope for the public benchmark" not in security_text
+
+    live_readiness_text = _normalized(_read_text("docs/live_trading_readiness.md"))
+    assert "Stages 4 and 5 are not part of the public benchmark claim." not in live_readiness_text
 
 
 def test_claim_and_validation_docs_use_trellm_for_system_claims():

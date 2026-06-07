@@ -283,6 +283,7 @@ LEGACY_PUBLIC_IDENTITY_PHRASES = [
     "TradeArena is designed around narrow interfaces.",
     "TradeArena is an audit, benchmark, and live-readiness framework.",
     "Live execution is out of scope for the public benchmark",
+    "Stages 4 and 5 are not part of the public benchmark claim.",
     "TradeArena already has synthetic, real-market, execution-shock, classical-baseline, and calibration snapshots.",
     "The task suite measures TradeArena-specific audit ability rather than trading ability:",
     "You are evaluating TradeArena as a financial-audit agent, not as a trader.",

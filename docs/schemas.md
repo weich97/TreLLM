@@ -222,7 +222,8 @@ binding, capability-mode consistency, runbook/capability default-mode
 consistency, and handoff/response account-mode plus live-submission
 consistency. Response artifacts in a preflight packet must name the reviewed
 handoff `request_artifact_hash`, and response rows must use `client_order_id`
-values from that handoff artifact.
+values from that handoff artifact. Every handoff order must also have a
+matching response row before the packet is considered live-ready.
 
 Validate the offline demo preflight bundle with:
 

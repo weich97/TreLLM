@@ -175,12 +175,23 @@ def _handoff_response_linkage_errors(handoff: dict[str, Any], response: dict[str
                 f"handoff_artifact.{field} {handoff_value}"
             )
     handoff_ids = _client_order_ids(handoff.get("orders"))
+    response_ids: set[str] = set()
     for idx, row in enumerate(_object_rows(response.get("responses"))):
         client_order_id = row.get("client_order_id")
-        if isinstance(client_order_id, str) and client_order_id not in handoff_ids:
+        if not isinstance(client_order_id, str):
+            continue
+        if client_order_id not in handoff_ids:
             errors.append(
                 f"response_artifact.responses[{idx}].client_order_id {client_order_id} "
                 "is not present in handoff_artifact.orders"
+            )
+            continue
+        response_ids.add(client_order_id)
+    for idx, client_order_id in _client_order_id_rows(handoff.get("orders")):
+        if client_order_id not in response_ids:
+            errors.append(
+                f"handoff_artifact.orders[{idx}].client_order_id {client_order_id} "
+                "is missing from response_artifact.responses"
             )
     return errors
 
@@ -191,6 +202,14 @@ def _client_order_ids(value: object) -> set[str]:
         for row in _object_rows(value)
         if isinstance(row.get("client_order_id"), str) and str(row["client_order_id"]).strip()
     }
+
+
+def _client_order_id_rows(value: object) -> list[tuple[int, str]]:
+    return [
+        (idx, str(row["client_order_id"]))
+        for idx, row in enumerate(_object_rows(value))
+        if isinstance(row.get("client_order_id"), str) and str(row["client_order_id"]).strip()
+    ]
 
 
 def _object_rows(value: object) -> list[dict[str, Any]]:

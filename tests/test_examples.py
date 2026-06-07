@@ -416,6 +416,52 @@ def test_live_readiness_preflight_rejects_unreviewed_response_client_order_id(tm
     ) in result.stdout
 
 
+def test_live_readiness_preflight_requires_response_for_each_handoff_order(tmp_path: Path):
+    _run_example("examples/live_readiness_preflight_demo.py")
+    bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")
+    response = _read_json(bundle["response_artifact"])
+    response["responses"] = []
+    response["reconciliation"] = {
+        "response_count": 0,
+        "accepted_count": 0,
+        "filled_count": 0,
+        "partial_fill_count": 0,
+        "canceled_count": 0,
+        "expired_count": 0,
+        "rejected_count": 0,
+        "unknown_count": 0,
+        "missing_response_count": 0,
+        "unmatched_response_count": 0,
+        "fill_ratio_mean": None,
+    }
+    response_path = tmp_path / "broker_response.json"
+    response_path.write_text(json.dumps(response), encoding="utf-8")
+
+    bundle["response_artifact"] = str(response_path)
+    bundle_path = tmp_path / "preflight_bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/validate_live_readiness_preflight.py",
+            str(bundle_path),
+            "--now",
+            "2026-05-31T12:30:00Z",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid live-readiness preflight bundle" in result.stdout
+    assert (
+        "handoff_artifact.orders[0].client_order_id approval-demo-0001-aapl "
+        "is missing from response_artifact.responses"
+    ) in result.stdout
+
+
 def test_live_readiness_preflight_requires_response_request_hash(tmp_path: Path):
     _run_example("examples/live_readiness_preflight_demo.py")
     bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")

@@ -248,6 +248,47 @@ def test_registry_entry_ids_and_empty_html_are_stable(tmp_path: Path):
     assert "Community Benchmark Registry" not in html
 
 
+def test_registry_html_preserves_badges_sorting_metadata_and_detail_panels(tmp_path: Path):
+    submission_dir = ROOT / "examples/benchmark_submissions"
+    rows, errors = build_registry_rows(submission_dir)
+    assert errors == []
+
+    html_path = tmp_path / "registry.html"
+    write_registry_html(rows[:2], html_path)
+    html = html_path.read_text(encoding="utf-8")
+
+    for row in rows[:2]:
+        assert row["entry_id"] in html
+        assert row["reproducibility_status"] == "Reproducible"
+        assert row["redaction_status"] == "Redacted"
+        assert row["source_file"] in html
+        assert row["claim_scope"] in html
+        assert row["reproducibility_hash"] in html
+
+    assert '<span class="badge">Reproducible</span>' in html
+    assert '<span class="badge redacted">Redacted</span>' in html
+    assert '<details><summary>Open</summary>' in html
+    assert 'data-sort="num">Return</th>' in html
+    assert 'data-sort="num">Audit</th>' in html
+    assert 'data-provider="' in html
+    assert 'data-search="' in html
+    assert 'data-value="' in html
+
+
+def test_empty_registry_html_preserves_filter_and_sort_shell(tmp_path: Path):
+    html_path = tmp_path / "empty_registry.html"
+    write_registry_html([], html_path)
+    html = html_path.read_text(encoding="utf-8")
+
+    assert "No accepted submissions yet." in html
+    assert 'id="search"' in html
+    assert 'id="provider"' in html
+    assert '<table id="registry">' in html
+    assert 'data-sort="text">Entry</th>' in html
+    assert 'data-sort="num">Return</th>' in html
+    assert "applyFilter()" in html
+
+
 def test_hash_run_produces_stable_trajectory_fingerprint():
     trajectory = ROOT / "outputs/examples/audit_walkthrough_trajectory.json"
     if not trajectory.exists():

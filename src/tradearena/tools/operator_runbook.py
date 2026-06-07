@@ -16,7 +16,7 @@ SCHEMA_PATH = ROOT / "schemas" / "operator_runbook_artifact.schema.json"
 _ISO_TIMESTAMP_WITH_TZ_RE = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$"
 )
-_SHELL_CHAINING_TOKENS = {";", "&&", "||", "|"}
+_SHELL_CHAINING_TOKENS = {";", "&", "&&", "||", "|"}
 
 
 def validate_operator_runbook_artifact(payload: dict[str, Any]) -> list[str]:

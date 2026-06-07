@@ -159,6 +159,27 @@ def test_live_readiness_preflight_schema_validates_demo_output():
     _validator("live_readiness_preflight.schema.json").validate(payload)
 
 
+@pytest.mark.parametrize(
+    ("field", "bad_path"),
+    [
+        ("capability_manifest", "/tmp/capability_manifest.json"),
+        ("handoff_artifact", "C:handoff_artifact.json"),
+        ("approval_artifact", "outputs/../approval_artifact.json"),
+        ("response_artifact", r"outputs\response_artifact.json"),
+    ],
+)
+def test_live_readiness_preflight_schema_rejects_nonportable_component_paths(field: str, bad_path: str):
+    subprocess.run([sys.executable, "examples/live_readiness_preflight_demo.py"], cwd=ROOT, check=True)
+    payload = json.loads(
+        (ROOT / "outputs/examples/live_readiness_preflight/preflight_bundle.json").read_text(encoding="utf-8")
+    )
+    payload[field] = bad_path
+
+    errors = sorted(_validator("live_readiness_preflight.schema.json").iter_errors(payload), key=lambda err: err.path)
+
+    assert any(field in str(error.path) and "does not match" in error.message for error in errors)
+
+
 def test_broker_response_artifact_schema_validates_writer_output(tmp_path: Path):
     adapter = AlpacaPaperExportAdapter(client_prefix="schema-recon")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])

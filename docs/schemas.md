@@ -220,15 +220,16 @@ Live-readiness preflight bundles can be validated against
 The schema fixes the public `trellm_live_readiness_preflight_v0.1` contract for
 linking a broker capability manifest, handoff artifact, approval artifact,
 response artifact, and operator runbook into one reviewable safety packet.
-Runtime validation rejects absolute, drive-qualified, and parent-traversal
-(`..`) component references, then calls the component validators and checks
-approval binding, capability-mode consistency, runbook/capability default-mode
-consistency, and handoff/response adapter, adapter-mode, account-mode, and
-live-submission consistency. Response artifacts in a preflight packet must name
-the reviewed handoff `request_artifact_hash`, and response rows must use
-`client_order_id` values from that handoff artifact. Every handoff order must
-also have a matching response row before the packet is considered live-ready,
-and the response artifact's reconciliation `missing_response_count` and
+The schema encodes portable relative component paths: no absolute paths, drive
+qualifiers, parent traversal (`..`), backslashes, or whitespace. Runtime
+validation then calls the component validators and checks approval binding,
+capability-mode consistency, runbook/capability default-mode consistency, and
+handoff/response adapter, adapter-mode, account-mode, and live-submission
+consistency. Response artifacts in a preflight packet must name the reviewed
+handoff `request_artifact_hash`, and response rows must use `client_order_id`
+values from that handoff artifact. Every handoff order must also have a
+matching response row before the packet is considered live-ready, and the
+response artifact's reconciliation `missing_response_count` and
 `unmatched_response_count` must match the handoff/response linkage result.
 
 Validate the offline demo preflight bundle with:

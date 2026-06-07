@@ -328,7 +328,24 @@ Output:
 - `outputs/examples/broker_response_reconciliation/broker_response_artifact.json`
 - `outputs/examples/broker_response_reconciliation/alpaca_paper_orders.json`
 
-## 20. Operator Runbook Checklist
+## 20. Broker Response Status-Mapping Fixture
+
+```bash
+python examples/broker_response_status_mapping_fixture_demo.py
+```
+
+Writes a schema-valid paper response artifact with accepted, rejected,
+partially filled, canceled, and unknown statuses plus recomputed reconciliation
+counts. The fixture is synthetic: no credentials are read and no live orders are
+submitted.
+
+Output:
+
+- `outputs/examples/broker_response_artifact/summary.json`
+- `outputs/examples/broker_response_artifact/response_artifact.json`
+- `outputs/examples/broker_response_artifact/alpaca_paper_orders.json`
+
+## 21. Operator Runbook Checklist
 
 ```bash
 python examples/operator_runbook_demo.py
@@ -344,7 +361,7 @@ Output:
 - `outputs/examples/operator_runbook/summary.json`
 - `outputs/examples/operator_runbook/operator_runbook.md`
 
-## 21. Live-Readiness Preflight Bundle
+## 22. Live-Readiness Preflight Bundle
 
 ```bash
 python examples/live_readiness_preflight_demo.py
@@ -361,7 +378,7 @@ Output:
 - `outputs/examples/live_readiness_preflight/preflight_response_artifact.json`
 - `outputs/examples/live_readiness_preflight/preflight_summary.json`
 
-## 22. Holdings CSV Import
+## 23. Holdings CSV Import
 
 ```bash
 python examples/holdings_csv_import_demo.py
@@ -374,7 +391,7 @@ Output:
 
 - `outputs/examples/holdings_csv_import/summary.json`
 
-## 23. Futures Roll Risk
+## 24. Futures Roll Risk
 
 ```bash
 python examples/futures_roll_risk_demo.py
@@ -388,7 +405,7 @@ Output:
 - `outputs/examples/futures_roll_risk/summary.json`
 - `outputs/examples/futures_roll_risk/futures_roll_risk.svg`
 
-## 24. Crypto Microstructure Stress
+## 25. Crypto Microstructure Stress
 
 ```bash
 python examples/crypto_microstructure_stress_demo.py
@@ -402,7 +419,7 @@ Output:
 - `outputs/examples/crypto_microstructure_stress/summary.json`
 - `outputs/examples/crypto_microstructure_stress/crypto_microstructure_stress.svg`
 
-## 25. Mock Deep-RL Policy Baseline
+## 26. Mock Deep-RL Policy Baseline
 
 ```bash
 python examples/rl_policy_baseline_demo.py

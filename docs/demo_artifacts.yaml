@@ -101,6 +101,24 @@ artifacts:
     required_validators:
       - python scripts/validate_broker_handoff_artifact.py outputs/examples/broker_response_reconciliation/alpaca_paper_orders.json
       - python scripts/validate_broker_response_artifact.py outputs/examples/broker_response_reconciliation/broker_response_artifact.json
+  - id: broker_response_status_mapping_fixture
+    command: python examples/broker_response_status_mapping_fixture_demo.py
+    required_outputs:
+      - outputs/examples/broker_response_artifact/summary.json
+      - outputs/examples/broker_response_artifact/response_artifact.json
+      - outputs/examples/broker_response_artifact/alpaca_paper_orders.json
+      - outputs/examples/broker_response_artifact/alpaca_paper_orders.csv
+    required_json_fields:
+      - outputs/examples/broker_response_artifact/summary.json:statuses
+      - outputs/examples/broker_response_artifact/summary.json:reconciliation.response_count
+      - outputs/examples/broker_response_artifact/response_artifact.json:reconciliation.accepted_count
+      - outputs/examples/broker_response_artifact/response_artifact.json:reconciliation.rejected_count
+      - outputs/examples/broker_response_artifact/response_artifact.json:reconciliation.partial_fill_count
+      - outputs/examples/broker_response_artifact/response_artifact.json:reconciliation.canceled_count
+      - outputs/examples/broker_response_artifact/response_artifact.json:reconciliation.unknown_count
+    required_validators:
+      - python scripts/validate_broker_handoff_artifact.py outputs/examples/broker_response_artifact/alpaca_paper_orders.json
+      - python scripts/validate_broker_response_artifact.py outputs/examples/broker_response_artifact/response_artifact.json
   - id: operator_runbook
     command: python examples/operator_runbook_demo.py
     required_outputs:

@@ -4609,3 +4609,47 @@ def test_new_issue_examples_write_expected_artifacts():
     assert reconciliation["live_submission"] is False
     assert reconciliation["reconciliation"]["partial_fill_count"] == 1
     assert reconciliation["reconciliation"]["missing_response_count"] == 1
+
+
+def test_broker_response_status_mapping_fixture_writes_valid_artifact():
+    subprocess.run([sys.executable, "examples/broker_response_status_mapping_fixture_demo.py"], cwd=ROOT, check=True)
+    artifact = ROOT / "outputs/examples/broker_response_artifact/response_artifact.json"
+
+    payload, errors = validate_broker_response_artifact_file(artifact)
+
+    assert errors == []
+    assert payload["adapter_mode"] == BrokerAdapterMode.PAPER_SANDBOX.value
+    assert payload["account_mode"] == "paper"
+    assert payload["live_submission"] is False
+    assert [response["status"] for response in payload["responses"]] == [
+        BrokerOrderStatus.ACCEPTED.value,
+        BrokerOrderStatus.REJECTED.value,
+        BrokerOrderStatus.PARTIALLY_FILLED.value,
+        BrokerOrderStatus.CANCELED.value,
+        BrokerOrderStatus.UNKNOWN.value,
+    ]
+    assert payload["reconciliation"] == {
+        "response_count": 5,
+        "accepted_count": 1,
+        "rejected_count": 1,
+        "partial_fill_count": 1,
+        "filled_count": 0,
+        "canceled_count": 1,
+        "expired_count": 0,
+        "unknown_count": 1,
+        "unmatched_response_count": 0,
+        "missing_response_count": 0,
+        "fill_ratio_mean": 0.25,
+    }
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/validate_broker_response_artifact.py",
+            str(artifact.relative_to(ROOT)),
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0

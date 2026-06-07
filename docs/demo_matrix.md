@@ -212,6 +212,14 @@ without reading the full source tree.
 - Shows: paper broker responses matched back to submitted client order IDs,
   including filled, partially filled, rejected, missing, and unmatched rows.
 
+### Broker Response Status-Mapping Fixture
+
+- Run: `python examples/broker_response_status_mapping_fixture_demo.py`
+- Artifact: `outputs/examples/broker_response_artifact/response_artifact.json`
+- Shows: a schema-valid synthetic paper response artifact with accepted,
+  rejected, partially filled, canceled, and unknown statuses plus recomputed
+  reconciliation counts.
+
 ### Operator Runbook Checklist
 
 - Run: `python examples/operator_runbook_demo.py`

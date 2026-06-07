@@ -32,7 +32,16 @@ def main() -> int:
     ]
     events = _evaluate_rules(proposals)
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    write_json(OUTPUT_DIR / "ashare_market_rules_summary.json", {"events": events, "summary": _summary(events)})
+    write_json(
+        OUTPUT_DIR / "ashare_market_rules_summary.json",
+        {
+            "schema": "trellm_ashare_market_rules_demo_v0.1",
+            "paper_only": True,
+            "downloads_data": False,
+            "events": events,
+            "summary": _summary(events),
+        },
+    )
     _write_csv(OUTPUT_DIR / "ashare_market_rules_orders.csv", events)
     _write_svg(OUTPUT_DIR / "ashare_market_rules.svg", events)
 

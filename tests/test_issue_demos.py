@@ -3869,6 +3869,43 @@ def test_broker_approval_artifact_binds_to_handoff_request_hash(tmp_path):
     ]
 
 
+def test_broker_approval_binding_rejects_approval_expiring_at_current_time(tmp_path):
+    adapter = DryRunBrokerAdapter(
+        client_prefix="approval-expiry-boundary",
+        safety=BrokerSafetyConfig(
+            account_mode="paper",
+            max_quantity=5.0,
+            allowed_symbols=("AAPL",),
+        ),
+    )
+    adapter.write(
+        [Order("AAPL", Side.BUY, 2.0, order_type=OrderType.LIMIT, limit_price=100.0, reason="expiry boundary")],
+        tmp_path,
+    )
+    request_path = tmp_path / "dry_run_orders.json"
+    approval_payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=250.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-expiry-boundary-001",
+        account_mode="live",
+        max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
+        request_artifact_hash=broker_handoff_artifact_hash(request_path),
+    )
+
+    assert validate_broker_approval_request_binding(
+        approval_payload,
+        request_path,
+        now="2026-05-31T13:00:00Z",
+    ) == ["approval artifact is expired"]
+
+
 def test_broker_approval_binding_rejects_already_live_handoff_request(tmp_path):
     adapter = AlpacaPaperExportAdapter(
         client_prefix="approval-live-request",

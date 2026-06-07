@@ -11,6 +11,7 @@ from tradearena.evaluation.metrics import (
     ReasoningConsistencyEvaluator,
     RiskAuditEvaluator,
 )
+from tradearena.evaluation.offline_tracking import export_trajectory_to_offline_tracking, trajectory_to_offline_tracking
 from tradearena.evaluation.submissions import (
     build_registry_rows,
     validate_submission,
@@ -43,8 +44,10 @@ __all__ = [
     "build_registry_rows",
     "classify_step_failure_modes",
     "export_audit_bundle",
+    "export_trajectory_to_offline_tracking",
     "export_trajectory_to_trace_json",
     "export_trajectory_to_trace_schema_json",
+    "trajectory_to_offline_tracking",
     "trajectory_to_trace",
     "trajectory_to_eval_trace_schema",
     "validate_submission",

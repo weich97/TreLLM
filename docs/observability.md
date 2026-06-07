@@ -109,3 +109,37 @@ Validation:
 ```bash
 python -m pytest tests/test_trace_schema_export.py -q
 ```
+
+## Offline Tracking Export
+
+For experiment-tracking workflows, TreLLM provides a plain-file offline export
+that follows an MLflow-style directory shape without importing MLflow or W&B:
+
+```python
+from tradearena.evaluation import export_trajectory_to_offline_tracking
+
+export_trajectory_to_offline_tracking(
+    "outputs/examples/audit_walkthrough_trajectory.json",
+    "outputs/examples/audit_walkthrough_tracking",
+)
+```
+
+The exporter consumes an existing trajectory JSON and writes:
+
+- `meta.yaml`: run metadata and source trajectory path
+- `metrics.json`: step count, fills, rejected/pending orders, risk blocks,
+  costs, slippage, and final equity
+- `artifacts/trajectory_manifest.json`: scenario, seed, schema version, step
+  count, and trajectory hash
+- `artifacts/redaction.json`: local redaction boundary
+- `export_summary.json`: the full plain-file tracking artifact
+
+This mode intentionally keeps `dependencies_required: []`. It is useful for
+local dashboards, CI artifacts, and later import into external experiment
+trackers, but it does not create a live W&B run or MLflow tracking server entry.
+
+Validation:
+
+```bash
+python -m pytest tests/test_offline_tracking_export.py -q
+```

@@ -57,8 +57,9 @@ Before a broker-facing contribution is accepted, it should prove:
   live-submission boundaries, and reviewed handoff hash plus `client_order_id`
   values, with one response row for every reviewed handoff order and matching
   response reconciliation missing/unmatched counts;
-- the operator runbook names the final `validate-live-readiness` command before
-  broker-facing review;
+- the operator runbook names a runnable final `validate-live-readiness` command
+  with the preflight bundle path and `--now` timestamp before broker-facing
+  review;
 - live submission is impossible without an explicit mode switch;
 - credentials are read from environment variables or an OS secret manager;
 - no credentials, account IDs, private holdings, raw fills, or raw provider

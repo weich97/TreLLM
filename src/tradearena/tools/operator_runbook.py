@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shlex
 from pathlib import Path
 from typing import Any
 
@@ -89,8 +90,36 @@ def _fallback_schema_errors(payload: dict[str, Any]) -> list[str]:
 
 def _verification_command_errors(payload: dict[str, Any]) -> list[str]:
     verification_commands = payload.get("verification_commands")
-    if isinstance(verification_commands, list) and any(
-        isinstance(command, str) and "validate-live-readiness" in command for command in verification_commands
-    ):
+    if not isinstance(verification_commands, list):
+        return ["verification_commands must include validate-live-readiness"]
+    commands = [command for command in verification_commands if isinstance(command, str)]
+    if any(_is_runnable_live_readiness_command(command) for command in commands):
         return []
+    if any("validate-live-readiness" in command for command in commands):
+        return [
+            "verification_commands must include a runnable validate-live-readiness command "
+            "with a preflight bundle path and --now timestamp"
+        ]
     return ["verification_commands must include validate-live-readiness"]
+
+
+def _is_runnable_live_readiness_command(command: str) -> bool:
+    try:
+        tokens = shlex.split(command)
+    except ValueError:
+        tokens = command.split()
+    if "validate-live-readiness" not in tokens:
+        return False
+    command_index = tokens.index("validate-live-readiness")
+    if command_index == 0:
+        return False
+    prefix = tokens[:command_index]
+    if prefix != ["tradearena"] and prefix != ["python", "-m", "tradearena.cli"]:
+        return False
+    args = tokens[command_index + 1 :]
+    has_preflight_bundle = any(token.endswith(".json") and "preflight" in token for token in args)
+    if "--now" not in args:
+        return False
+    now_index = args.index("--now")
+    has_now_value = now_index + 1 < len(args) and not args[now_index + 1].startswith("-")
+    return has_preflight_bundle and has_now_value

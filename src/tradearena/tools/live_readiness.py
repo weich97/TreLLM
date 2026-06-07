@@ -183,6 +183,7 @@ def _handoff_response_linkage_errors(handoff: dict[str, Any], response: dict[str
                 f"handoff_artifact.{field} {handoff_value}"
             )
     handoff_ids = _client_order_ids(handoff.get("orders"))
+    handoff_quantities = _quantity_by_client_order_id(handoff.get("orders"))
     response_ids: set[str] = set()
     unmatched_response_count = 0
     for idx, row in enumerate(_object_rows(response.get("responses"))):
@@ -196,6 +197,13 @@ def _handoff_response_linkage_errors(handoff: dict[str, Any], response: dict[str
                 "is not present in handoff_artifact.orders"
             )
             continue
+        submitted_quantity = row.get("submitted_quantity")
+        handoff_quantity = handoff_quantities.get(client_order_id)
+        if isinstance(submitted_quantity, (int, float)) and handoff_quantity is not None and submitted_quantity != handoff_quantity:
+            errors.append(
+                f"response_artifact.responses[{idx}].submitted_quantity {submitted_quantity} does not match "
+                f"handoff_artifact.orders quantity {handoff_quantity} for client_order_id {client_order_id}"
+            )
         response_ids.add(client_order_id)
     missing_response_count = 0
     for idx, client_order_id in _client_order_id_rows(handoff.get("orders")):
@@ -249,6 +257,16 @@ def _client_order_id_rows(value: object) -> list[tuple[int, str]]:
         for idx, row in enumerate(_object_rows(value))
         if isinstance(row.get("client_order_id"), str) and str(row["client_order_id"]).strip()
     ]
+
+
+def _quantity_by_client_order_id(value: object) -> dict[str, float]:
+    quantities: dict[str, float] = {}
+    for row in _object_rows(value):
+        client_order_id = row.get("client_order_id")
+        quantity = row.get("quantity")
+        if isinstance(client_order_id, str) and isinstance(quantity, (int, float)):
+            quantities[client_order_id] = float(quantity)
+    return quantities
 
 
 def _object_rows(value: object) -> list[dict[str, Any]]:

@@ -452,7 +452,24 @@ Output:
 - `outputs/examples/almgren_chriss_stress/summary.md`
 - `outputs/examples/almgren_chriss_stress/almgren_chriss_stress.svg`
 
-## 27. Mock Deep-RL Policy Baseline
+## 27. Liquidity Halt Stress
+
+```bash
+python examples/liquidity_halt_demo.py
+```
+
+Builds a deterministic paper-only trajectory where a delayed order is pending
+when a circuit halt begins. The artifact includes risk and execution reports
+for pending, partial, rejected, and blocked order outcomes.
+
+Output:
+
+- `outputs/examples/liquidity_halt/summary.json`
+- `outputs/examples/liquidity_halt/trajectory.json`
+- `outputs/examples/liquidity_halt/summary.md`
+- `outputs/examples/liquidity_halt/liquidity_halt.svg`
+
+## 28. Mock Deep-RL Policy Baseline
 
 ```bash
 python examples/rl_policy_baseline_demo.py

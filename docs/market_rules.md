@@ -157,6 +157,16 @@ Examples:
 - halt or limit-up/limit-down period where target weights cannot be reached;
 - correlated selloff where single-name narratives hide portfolio exposure.
 
+The liquidity-halt stress fixture makes the pending-order case concrete:
+
+```bash
+python examples/liquidity_halt_demo.py
+```
+
+It writes a replayable trajectory plus summary artifacts under
+`outputs/examples/liquidity_halt/`, including a pre-halt pending order, a thin
+liquidity partial fill, a rejected delayed order, and a circuit-halt risk block.
+
 Each scenario should publish:
 
 - the market path or fixture generator;

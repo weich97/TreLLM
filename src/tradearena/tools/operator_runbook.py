@@ -16,7 +16,7 @@ SCHEMA_PATH = ROOT / "schemas" / "operator_runbook_artifact.schema.json"
 _ISO_TIMESTAMP_WITH_TZ_RE = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$"
 )
-_SHELL_CHAINING_TOKENS = {";", "&", "&&", "||", "|"}
+_SHELL_CHAINING_MARKERS = (";", "&", "|")
 
 
 def validate_operator_runbook_artifact(payload: dict[str, Any]) -> list[str]:
@@ -114,7 +114,7 @@ def _verification_command_errors(payload: dict[str, Any]) -> list[str]:
 
 def _is_runnable_live_readiness_command(command: str) -> bool:
     tokens = _command_tokens(command)
-    if any(token in _SHELL_CHAINING_TOKENS for token in tokens):
+    if _contains_shell_chaining(command):
         return False
     if "validate-live-readiness" not in tokens:
         return False
@@ -146,7 +146,7 @@ def _has_live_readiness_command_with_invalid_now(command: str) -> bool:
 
 def _has_live_readiness_command_with_shell_chaining(command: str) -> bool:
     tokens = _command_tokens(command)
-    return "validate-live-readiness" in tokens and any(token in _SHELL_CHAINING_TOKENS for token in tokens)
+    return "validate-live-readiness" in tokens and _contains_shell_chaining(command)
 
 
 def _command_tokens(command: str) -> list[str]:
@@ -158,3 +158,7 @@ def _command_tokens(command: str) -> list[str]:
 
 def _is_iso_timestamp_with_timezone(value: str) -> bool:
     return bool(_ISO_TIMESTAMP_WITH_TZ_RE.fullmatch(value))
+
+
+def _contains_shell_chaining(command: str) -> bool:
+    return any(marker in command for marker in _SHELL_CHAINING_MARKERS)

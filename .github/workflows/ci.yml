@@ -34,7 +34,7 @@ jobs:
         run: python -m coverage report --include="src/tradearena/core/*,src/tradearena/execution/*,src/tradearena/tools/*" --fail-under=80
       - name: Upload coverage
         if: matrix.python-version == '3.12'
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         continue-on-error: true
         with:
           files: ./coverage.xml

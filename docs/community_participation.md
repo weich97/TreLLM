@@ -31,6 +31,7 @@ Start with one of these 1-3 hour tasks:
 | --- | --- |
 | [Run the v0.2 reproduction pack on macOS](https://github.com/weich97/TreLLM/issues/43) | A fresh non-maintainer environment can generate the same artifact manifest |
 | [Run the v0.2 reproduction pack on Ubuntu](https://github.com/weich97/TreLLM/issues/44) | The no-key path is not maintainer-machine specific |
+| [Run the v0.2 reproduction pack on Colab/Binder](https://github.com/weich97/TreLLM/issues/45) | The browser notebook path can reproduce the public artifact manifest without local setup |
 | [Submit one deterministic baseline row](https://github.com/weich97/TreLLM/issues/46) | The registry can accept comparable non-LLM evidence |
 | [Submit one quote/fill calibration mini-report](https://github.com/weich97/TreLLM/issues/47) | Execution claims can be checked against quote/fill data rather than stress assumptions alone |
 | [Review one benchmark claim boundary](https://github.com/weich97/TreLLM/issues/48) | Public wording stays tied to engineering, benchmark, or scientific evidence |

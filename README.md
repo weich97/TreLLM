@@ -483,6 +483,7 @@ submit benchmark evidence:
 | --- | ---: | --- |
 | [Run the v0.2 reproduction pack on macOS](https://github.com/weich97/TreLLM/issues/43) | 1 hour | `outputs/reproduction/v0_2/manifest.json`, Python version, command log, deviations |
 | [Run the v0.2 reproduction pack on Ubuntu](https://github.com/weich97/TreLLM/issues/44) | 1 hour | same manifest plus OS/package-manager notes |
+| [Run the v0.2 reproduction pack on Colab/Binder](https://github.com/weich97/TreLLM/issues/45) | 1 hour | notebook URL, runtime type, generated manifest, deviations |
 | [Submit one deterministic baseline row](https://github.com/weich97/TreLLM/issues/46) | 1-2 hours | one schema-valid manifest and rebuilt registry output |
 | [Submit one quote/fill calibration mini-report](https://github.com/weich97/TreLLM/issues/47) | 2-3 hours | calibration JSON/Markdown with source, venue, date range, and replay error |
 | [Review one benchmark claim boundary](https://github.com/weich97/TreLLM/issues/48) | 1 hour | one issue or PR mapping a README/result claim to engineering, benchmark, or scientific evidence |

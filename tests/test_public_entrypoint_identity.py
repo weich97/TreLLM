@@ -160,6 +160,31 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
     assert "Stages 4 and 5 are not part of the public benchmark claim." not in live_readiness_text
 
 
+def test_external_validation_task_tables_include_colab_binder_reproduction():
+    required_snippets = {
+        "README.md": [
+            "Run the v0.2 reproduction pack on Colab/Binder",
+            "https://github.com/weich97/TreLLM/issues/45",
+        ],
+        "docs/community_tasks.md": [
+            "Run v0.2 reproduction pack on Colab/Binder",
+            "https://github.com/weich97/TreLLM/issues/45",
+        ],
+        "docs/community_participation.md": [
+            "Run the v0.2 reproduction pack on Colab/Binder",
+            "https://github.com/weich97/TreLLM/issues/45",
+        ],
+        "docs/external_validation.md": [
+            "Run v0.2 reproduction pack on Colab/Binder",
+            "https://github.com/weich97/TreLLM/issues/45",
+        ],
+    }
+    for path, snippets in required_snippets.items():
+        text = _normalized(_read_text(path))
+        for snippet in snippets:
+            assert _normalized(snippet) in text
+
+
 def test_claim_and_validation_docs_use_trellm_for_system_claims():
     required_snippets = {
         "docs/benchmark_maturity.md": [

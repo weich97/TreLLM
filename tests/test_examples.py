@@ -6,6 +6,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -580,6 +582,43 @@ def test_live_readiness_preflight_rejects_drive_qualified_component_path(tmp_pat
     assert result.returncode == 1
     assert "Invalid live-readiness preflight bundle" in result.stdout
     assert "capability_manifest path must not be drive-qualified" in result.stdout
+
+
+@pytest.mark.parametrize(
+    ("component_path", "expected_error"),
+    [
+        ("nested\\capability_manifest.json", "capability_manifest path must use forward slashes"),
+        ("capability manifest.json", "capability_manifest path must not contain whitespace"),
+    ],
+)
+def test_live_readiness_preflight_rejects_nonportable_component_path_text(
+    tmp_path: Path, component_path: str, expected_error: str
+):
+    _run_example("examples/live_readiness_preflight_demo.py")
+    bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")
+    destination = tmp_path / component_path
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(json.dumps(_read_json(bundle["capability_manifest"])), encoding="utf-8")
+    bundle["capability_manifest"] = component_path
+    bundle_path = tmp_path / "preflight_bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/validate_live_readiness_preflight.py",
+            str(bundle_path),
+            "--now",
+            "2026-05-31T12:30:00Z",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid live-readiness preflight bundle" in result.stdout
+    assert expected_error in result.stdout
 
 
 def test_live_readiness_preflight_validator_rejects_mode_not_declared_by_capability(tmp_path: Path):

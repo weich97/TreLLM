@@ -292,6 +292,10 @@ def _component_path_reference_errors(bundle: dict[str, Any]) -> list[str]:
             errors.append(f"{field} path must be relative")
         if isinstance(value, str) and _is_drive_qualified_component_path(value):
             errors.append(f"{field} path must not be drive-qualified")
+        if isinstance(value, str) and "\\" in value:
+            errors.append(f"{field} path must use forward slashes")
+        if isinstance(value, str) and _has_path_whitespace(value):
+            errors.append(f"{field} path must not contain whitespace")
     return errors
 
 
@@ -305,6 +309,10 @@ def _is_absolute_component_path(value: str) -> bool:
 
 def _is_drive_qualified_component_path(value: str) -> bool:
     return bool(PureWindowsPath(value).drive)
+
+
+def _has_path_whitespace(value: str) -> bool:
+    return any(character.isspace() for character in value)
 
 
 def _display_path(path: Path) -> str:

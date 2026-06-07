@@ -48,6 +48,7 @@ from tradearena.tools.calibration import (
 )
 from tradearena.tools.features import RollingFeatureStore
 from tradearena.tools.futures import FuturesContractMetadata, FuturesRollRiskEngine
+from tradearena.tools.impact import AlmgrenChrissImpactStress
 from tradearena.tools.live_readiness import validate_live_readiness_preflight_bundle_file
 from tradearena.tools.market_rules import (
     MarketRule,
@@ -76,6 +77,7 @@ from tradearena.tools.risk import RiskCalculator
 __all__ = [
     "AlpacaPaperExportAdapter",
     "AlpacaPaperOrder",
+    "AlmgrenChrissImpactStress",
     "BacktestResult",
     "Backtester",
     "BrokerAdapter",

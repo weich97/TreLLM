@@ -97,6 +97,25 @@ venue-calibrated crypto transaction-cost model unless the fee tier comes from a
 broker/exchange schedule and the spread, depth, latency, and residual slippage
 terms are fitted from quote/order-book and fill records.
 
+## Optional Almgren-Chriss Impact Stress
+
+`AlmgrenChrissImpactStress` is an opt-in, paper-only helper for fixture-level
+impact analysis. It does not replace the default simulator. Instead, it reports
+modeled shortfall for a proposed order from explicit fixture fields:
+`symbol`, `side`, `quantity`, `price`, and `volume`.
+
+```bash
+python examples/almgren_chriss_stress_demo.py
+```
+
+The demo compares the default stress baseline with a linear impact proxy and a
+concave temporary-impact proxy. Linear impact is easier to audit and matches the
+default simulator's participation term. Concave impact is useful as a liquidity
+stress assumption because smaller visible volume can produce a larger shortfall
+response. Both are stress proxies. They become calibration claims only after
+`eta`, `gamma`, and the exponent are fitted from venue quote/order-book data and
+realized fills.
+
 ## What OHLCV Can And Cannot Identify
 
 The tracked Yahoo Finance daily and hourly files provide open, high, low, close,

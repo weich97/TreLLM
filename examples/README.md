@@ -436,7 +436,23 @@ Output:
 - `outputs/examples/crypto_microstructure_stress/summary.json`
 - `outputs/examples/crypto_microstructure_stress/crypto_microstructure_stress.svg`
 
-## 26. Mock Deep-RL Policy Baseline
+## 26. Almgren-Chriss Impact Stress
+
+```bash
+python examples/almgren_chriss_stress_demo.py
+```
+
+Compares the default execution-stress baseline with opt-in linear and concave
+market-impact proxies. The fixture reports modeled shortfall and calibration
+boundaries without claiming broker-grade transaction-cost calibration.
+
+Output:
+
+- `outputs/examples/almgren_chriss_stress/summary.json`
+- `outputs/examples/almgren_chriss_stress/summary.md`
+- `outputs/examples/almgren_chriss_stress/almgren_chriss_stress.svg`
+
+## 27. Mock Deep-RL Policy Baseline
 
 ```bash
 python examples/rl_policy_baseline_demo.py

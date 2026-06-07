@@ -223,7 +223,9 @@ consistency, and handoff/response account-mode plus live-submission
 consistency. Response artifacts in a preflight packet must name the reviewed
 handoff `request_artifact_hash`, and response rows must use `client_order_id`
 values from that handoff artifact. Every handoff order must also have a
-matching response row before the packet is considered live-ready.
+matching response row before the packet is considered live-ready, and the
+response artifact's reconciliation `missing_response_count` and
+`unmatched_response_count` must match the handoff/response linkage result.
 
 Validate the offline demo preflight bundle with:
 

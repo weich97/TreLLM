@@ -55,7 +55,8 @@ Before a broker-facing contribution is accepted, it should prove:
   approval binding, response artifact, and operator runbook together, including
   matching capability/runbook default modes, handoff/response account modes,
   live-submission boundaries, and reviewed handoff hash plus `client_order_id`
-  values, with one response row for every reviewed handoff order;
+  values, with one response row for every reviewed handoff order and matching
+  response reconciliation missing/unmatched counts;
 - the operator runbook names the final `validate-live-readiness` command before
   broker-facing review;
 - live submission is impossible without an explicit mode switch;

@@ -462,6 +462,44 @@ def test_live_readiness_preflight_requires_response_for_each_handoff_order(tmp_p
     ) in result.stdout
 
 
+def test_live_readiness_preflight_rejects_stale_response_reconciliation_counts(tmp_path: Path):
+    _run_example("examples/live_readiness_preflight_demo.py")
+    bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")
+    response = _read_json(bundle["response_artifact"])
+    response["reconciliation"]["missing_response_count"] = 1
+    response["reconciliation"]["unmatched_response_count"] = 1
+    response_path = tmp_path / "broker_response.json"
+    response_path.write_text(json.dumps(response), encoding="utf-8")
+
+    bundle["response_artifact"] = str(response_path)
+    bundle_path = tmp_path / "preflight_bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/validate_live_readiness_preflight.py",
+            str(bundle_path),
+            "--now",
+            "2026-05-31T12:30:00Z",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid live-readiness preflight bundle" in result.stdout
+    assert (
+        "response_artifact.reconciliation.missing_response_count 1 does not match "
+        "handoff/response linkage count 0"
+    ) in result.stdout
+    assert (
+        "response_artifact.reconciliation.unmatched_response_count 1 does not match "
+        "handoff/response linkage count 0"
+    ) in result.stdout
+
+
 def test_live_readiness_preflight_requires_response_request_hash(tmp_path: Path):
     _run_example("examples/live_readiness_preflight_demo.py")
     bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")

@@ -176,22 +176,53 @@ def _handoff_response_linkage_errors(handoff: dict[str, Any], response: dict[str
             )
     handoff_ids = _client_order_ids(handoff.get("orders"))
     response_ids: set[str] = set()
+    unmatched_response_count = 0
     for idx, row in enumerate(_object_rows(response.get("responses"))):
         client_order_id = row.get("client_order_id")
         if not isinstance(client_order_id, str):
             continue
         if client_order_id not in handoff_ids:
+            unmatched_response_count += 1
             errors.append(
                 f"response_artifact.responses[{idx}].client_order_id {client_order_id} "
                 "is not present in handoff_artifact.orders"
             )
             continue
         response_ids.add(client_order_id)
+    missing_response_count = 0
     for idx, client_order_id in _client_order_id_rows(handoff.get("orders")):
         if client_order_id not in response_ids:
+            missing_response_count += 1
             errors.append(
                 f"handoff_artifact.orders[{idx}].client_order_id {client_order_id} "
                 "is missing from response_artifact.responses"
+            )
+    errors.extend(
+        _reconciliation_linkage_count_errors(
+            response.get("reconciliation"),
+            missing_response_count=missing_response_count,
+            unmatched_response_count=unmatched_response_count,
+        )
+    )
+    return errors
+
+
+def _reconciliation_linkage_count_errors(
+    value: object, *, missing_response_count: int, unmatched_response_count: int
+) -> list[str]:
+    if not isinstance(value, dict):
+        return []
+    expected_counts = {
+        "missing_response_count": missing_response_count,
+        "unmatched_response_count": unmatched_response_count,
+    }
+    errors: list[str] = []
+    for field_name, expected in expected_counts.items():
+        actual = value.get(field_name)
+        if actual != expected:
+            errors.append(
+                f"response_artifact.reconciliation.{field_name} {actual} "
+                f"does not match handoff/response linkage count {expected}"
             )
     return errors
 

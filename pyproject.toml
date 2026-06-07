@@ -51,6 +51,7 @@ dev = [
 ]
 embeddings = ["sentence-transformers>=5.5.1"]
 ashare = ["akshare>=1.18.64"]
+paper-sandbox = []
 
 [project.scripts]
 tradearena = "tradearena.cli:main"

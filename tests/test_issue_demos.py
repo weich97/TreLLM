@@ -164,6 +164,60 @@ def test_broker_handoff_artifact_rejects_unknown_account_mode():
     assert "account_mode must be one of none, paper, live" in validate_broker_handoff_artifact(payload)
 
 
+def test_paper_sandbox_adapter_skeleton_uses_mock_client_without_default_network(tmp_path):
+    from tradearena.tools import PaperSandboxAdapterSkeleton
+
+    class MockPaperClient:
+        def __init__(self) -> None:
+            self.calls = 0
+
+        def submit_paper_orders(self, requests):
+            self.calls += 1
+            return [
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.ACCEPTED,
+                    broker_order_id="mock-paper-accepted-1",
+                    submitted_quantity=requests[0].quantity,
+                    accepted_quantity=requests[0].quantity,
+                    submitted_at="2026-05-31T16:00:00Z",
+                    broker_timestamp="2026-05-31T16:00:01Z",
+                    account_mode="paper",
+                )
+            ]
+
+    factory_calls = 0
+    client = MockPaperClient()
+
+    def client_factory():
+        nonlocal factory_calls
+        factory_calls += 1
+        return client
+
+    adapter = PaperSandboxAdapterSkeleton(client_factory=client_factory, client_prefix="mock-paper")
+    handoff = adapter.write([Order("AAPL", Side.BUY, 1.0, reason="paper skeleton")], tmp_path)
+    handoff_payload, handoff_errors = validate_broker_handoff_artifact_file(handoff["json"])
+
+    assert factory_calls == 0
+    assert client.calls == 0
+    assert handoff_errors == []
+    assert handoff_payload["adapter_mode"] == BrokerAdapterMode.PAPER_SANDBOX.value
+    assert handoff_payload["account_mode"] == "paper"
+    assert handoff_payload["live_submission"] is False
+
+    result = adapter.submit_paper([Order("AAPL", Side.BUY, 1.0, reason="paper skeleton")], tmp_path)
+    response_payload, response_errors = validate_broker_response_artifact_file(result["response_artifact"])
+
+    assert factory_calls == 1
+    assert client.calls == 1
+    assert response_errors == []
+    assert response_payload["adapter_mode"] == BrokerAdapterMode.PAPER_SANDBOX.value
+    assert response_payload["account_mode"] == "paper"
+    assert response_payload["live_submission"] is False
+    assert response_payload["responses"][0]["status"] == BrokerOrderStatus.ACCEPTED.value
+    assert response_payload["reconciliation"]["accepted_count"] == 1
+
+
 @pytest.mark.parametrize(
     ("field_path", "expected_error"),
     [

@@ -72,6 +72,8 @@ The current code-level primitives live in `tradearena.tools.broker_export`:
 - `write_broker_response_artifact`;
 - `DryRunBrokerAdapter`, the no-network reference adapter for request-shape
   validation;
+- `PaperSandboxAdapterSkeleton`, a no-default-network paper adapter scaffold
+  whose broker-specific client must be injected from an optional dependency;
 - `AlpacaPaperExportAdapter`, the export-only reference implementation.
 
 ## Required Order Fields

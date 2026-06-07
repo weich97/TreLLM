@@ -271,6 +271,40 @@ def test_release_readiness_requires_current_trellm_repository_locations(tmp_path
     ) in failures
 
 
+def test_release_readiness_requires_readme_trellm_system_banner(tmp_path: Path):
+    readme = tmp_path / "README.md"
+    readme.write_text(
+        """
+<p align="center">
+  <img src="docs/assets/tradearena_readme_banner.svg"
+       alt="TradeArena benchmark wordmark"
+       width="780">
+</p>
+
+# TradeArena
+
+Auditable benchmark framework for LLM trading agents.
+""".strip()
+        + "\n",
+        encoding="utf-8",
+    )
+
+    failures = _check_public_identity_boundaries(root=tmp_path, tracked_files=["README.md"])
+
+    assert (
+        "required public identity phrase missing from README.md: "
+        "docs/assets/trellm_readme_system_banner.svg"
+    ) in failures
+    assert (
+        "required public identity phrase missing from README.md: "
+        "TreLLM is an LLM-driven trading audit and control system. TradeArena is"
+    ) in failures
+    assert (
+        "legacy public identity phrase 'Auditable benchmark framework for LLM trading agents' found in README.md"
+        in failures
+    )
+
+
 def test_release_readiness_flags_stale_release_candidate_artifact_hash(tmp_path: Path):
     artifact = tmp_path / "README.md"
     manifest = tmp_path / "docs" / "launch" / "release_candidate_v0.2.1.json"

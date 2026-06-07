@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MAX_TRACKED_FILE_BYTES = 25 * 1024 * 1024
 REQUIRED_FILES = [
     "README.md",
+    "docs/assets/trellm_readme_system_banner.svg",
     "CITATION.cff",
     "docs/getting_started.md",
     "docs/advanced_integrations_security.md",
@@ -233,6 +234,13 @@ BANNED_PUBLIC_TERMS = [
     "_".join(("trading", "agent", "os")),
 ]
 REQUIRED_PUBLIC_IDENTITY_PHRASES = {
+    "README.md": [
+        "docs/assets/trellm_readme_system_banner.svg",
+        'alt="TreLLM trading audit system wordmark"',
+        "TreLLM is an LLM-driven trading audit and control system. TradeArena is",
+        "its public leaderboard for ranking auditable agent runs.",
+        "# TreLLM",
+    ],
     "pyproject.toml": [
         'description = "TreLLM: LLM trading audit system with replayable trajectories, risk gates, reproducibility artifacts, and a TradeArena leaderboard."',
         '"trellm"',
@@ -269,6 +277,7 @@ LEGACY_PUBLIC_IDENTITY_PHRASES = [
     "TradeArena Community Benchmark Registry",
     "TradeArena community registry",
     "TradeArena: pluggable AI trading agent research framework",
+    "Auditable benchmark framework for LLM trading agents",
     "TradeArena currently tracks aggregate public reports",
     "TradeArena already has synthetic, real-market, execution-shock, classical-baseline, and calibration snapshots.",
     "The task suite measures TradeArena-specific audit ability rather than trading ability:",

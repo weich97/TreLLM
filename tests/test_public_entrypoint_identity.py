@@ -185,6 +185,21 @@ def test_external_validation_task_tables_include_colab_binder_reproduction():
             assert _normalized(snippet) in text
 
 
+def test_community_task_table_links_current_good_first_issues():
+    text = _normalized(_read_text("docs/community_tasks.md"))
+
+    required_issue_links = [
+        "https://github.com/weich97/TreLLM/issues/27",
+        "https://github.com/weich97/TreLLM/issues/29",
+        "https://github.com/weich97/TreLLM/issues/40",
+        "https://github.com/weich97/TreLLM/issues/41",
+    ]
+    for issue_link in required_issue_links:
+        assert issue_link in text
+
+    assert "Add an Ollama local-model config example" not in text
+
+
 def test_claim_and_validation_docs_use_trellm_for_system_claims():
     required_snippets = {
         "docs/benchmark_maturity.md": [

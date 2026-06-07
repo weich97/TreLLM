@@ -4,11 +4,28 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 1
+    open-pull-requests-limit: 4
     groups:
-      python-dependencies:
+      python-data:
         patterns:
-          - "*"
+          - "pandas"
+          - "yfinance"
+          - "akshare"
+      python-dev-tools:
+        patterns:
+          - "pytest"
+          - "pytest-cov"
+          - "pillow"
+          - "ruff"
+          - "mypy"
+          - "hypothesis"
+          - "jsonschema"
+      python-embeddings:
+        patterns:
+          - "sentence-transformers"
+      python-build:
+        patterns:
+          - "setuptools"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

@@ -1,7 +1,9 @@
-# Contributing to TradeArena
+# Contributing to TreLLM
 
-TradeArena is designed around narrow interfaces. A useful contribution usually
-adds one small component, one clear demo, and one smoke test.
+TreLLM is designed around narrow interfaces. A useful contribution usually
+adds one small component, one clear demo, and one smoke test. TradeArena
+leaderboard or benchmark artifacts should remain comparable, redacted, and
+reproducible.
 
 ## Local Setup
 

@@ -72,6 +72,11 @@ def test_package_docstring_uses_trellm_system_identity():
 
 def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
     required_snippets = {
+        "CONTRIBUTING.md": [
+            "# Contributing to TreLLM",
+            "TreLLM is designed around narrow interfaces.",
+            "TradeArena leaderboard or benchmark artifacts should remain comparable, redacted, and reproducible.",
+        ],
         "docs/contributor_roadmap.md": [
             "TreLLM grows best when contributions make financial AI agents easier to evaluate, audit, reproduce, control, or extend.",
             "These contributions move TreLLM from offline audit research toward human-gated, live-ready trading infrastructure.",
@@ -128,6 +133,9 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
     contributor_text = _normalized(_read_text("docs/contributor_roadmap.md"))
     assert "TradeArena is the public leaderboard and benchmark module inside that system" not in contributor_text
     assert "These contributions strengthen the TradeArena leaderboard and benchmark module." not in contributor_text
+
+    contributing_text = _normalized(_read_text("CONTRIBUTING.md"))
+    assert "TradeArena is designed around narrow interfaces." not in contributing_text
     assert "These contributions move TreLLM from benchmark research toward human-gated" not in contributor_text
 
 

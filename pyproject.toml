@@ -49,7 +49,7 @@ dev = [
     "hypothesis>=6.100",
     "jsonschema>=4.22",
 ]
-embeddings = ["sentence-transformers>=3.0"]
+embeddings = ["sentence-transformers>=5.5.1"]
 ashare = ["akshare>=1.18"]
 
 [project.scripts]

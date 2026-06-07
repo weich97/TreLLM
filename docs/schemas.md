@@ -203,8 +203,9 @@ manual approval, approval expiry, kill switch, reconciliation, rollback, and
 artifact-retention checks. Runtime validation also requires exactly one
 supported, runnable `validate-live-readiness` command with no shell chaining
 (`;`, `&`, `&&`, `||`, or `|`), exactly the preflight bundle path, `--now`, and
-an ISO timezone timestamp, with no extra arguments, so the runbook names one
-final packet-level gate instead of a placeholder note or competing commands.
+an ISO timezone timestamp, with no extra arguments and no unsupported extra
+`validate-live-readiness` mentions, so the runbook names one final packet-level
+gate instead of a placeholder note or competing commands.
 
 Validate the offline demo runbook with:
 

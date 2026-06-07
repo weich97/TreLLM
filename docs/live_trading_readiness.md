@@ -60,8 +60,8 @@ Before a broker-facing contribution is accepted, it should prove:
 - the operator runbook names exactly one supported, runnable final
   `validate-live-readiness` command with no shell chaining (`;`, `&`, `&&`,
   `||`, or `|`), exactly the preflight bundle path, `--now`, and an ISO
-  timezone timestamp, with no extra arguments or competing final gates before
-  broker-facing review;
+  timezone timestamp, with no extra arguments, unsupported duplicate mentions,
+  or competing final gates before broker-facing review;
 - live submission is impossible without an explicit mode switch;
 - credentials are read from environment variables or an OS secret manager;
 - no credentials, account IDs, private holdings, raw fills, or raw provider

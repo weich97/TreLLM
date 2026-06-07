@@ -102,6 +102,8 @@ def _verification_command_errors(payload: dict[str, Any]) -> list[str]:
         return ["verification_commands validate-live-readiness command must not contain shell chaining"]
     if _supported_live_readiness_command_count(commands) > 1:
         return ["verification_commands must include exactly one supported validate-live-readiness command"]
+    if any(_has_unsupported_live_readiness_command(command) for command in commands):
+        return ["verification_commands must not include unsupported validate-live-readiness commands"]
     if any(_is_runnable_live_readiness_command(command) for command in commands):
         return []
     if any(_has_live_readiness_command_with_invalid_now(command) for command in commands):
@@ -154,6 +156,10 @@ def _has_live_readiness_command_with_shell_chaining(command: str) -> bool:
 
 def _supported_live_readiness_command_count(commands: list[str]) -> int:
     return sum(1 for command in commands if _live_readiness_args_for_supported_command(command) is not None)
+
+
+def _has_unsupported_live_readiness_command(command: str) -> bool:
+    return "validate-live-readiness" in command and _live_readiness_args_for_supported_command(command) is None
 
 
 def _live_readiness_args_for_supported_command(command: str) -> list[str] | None:

@@ -224,8 +224,9 @@ without reading the full source tree.
 - Run: `python examples/live_readiness_preflight_demo.py`
 - Artifact: `outputs/examples/live_readiness_preflight/preflight_summary.json`
 - Shows: capability, handoff, approval binding, response-to-handoff hash
-  binding, reviewed response `client_order_id` coverage, and operator runbook
-  artifacts checked together before a broker-facing review.
+  binding, matching broker adapter identity, reviewed response
+  `client_order_id` coverage, and operator runbook artifacts checked together
+  before a broker-facing review.
 
 ### Live-Readiness Contract
 

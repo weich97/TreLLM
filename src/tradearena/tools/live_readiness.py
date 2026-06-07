@@ -166,7 +166,7 @@ def _handoff_response_linkage_errors(handoff: dict[str, Any], response: dict[str
         errors.append("response_artifact.request_artifact_hash is required for live-readiness preflight")
     elif response_request_hash != broker_handoff_artifact_hash(handoff):
         errors.append("response_artifact.request_artifact_hash does not match handoff_artifact hash")
-    for field in ("account_mode", "live_submission"):
+    for field in ("adapter", "adapter_mode", "account_mode", "live_submission"):
         handoff_value = handoff.get(field)
         response_value = response.get(field)
         if handoff_value != response_value:

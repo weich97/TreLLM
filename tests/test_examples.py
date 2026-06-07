@@ -383,6 +383,44 @@ def test_live_readiness_preflight_rejects_response_account_mode_mismatch(tmp_pat
     assert "response_artifact.account_mode none does not match handoff_artifact.account_mode paper" in result.stdout
 
 
+def test_live_readiness_preflight_rejects_response_adapter_mismatch(tmp_path: Path):
+    _run_example("examples/live_readiness_preflight_demo.py")
+    bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")
+    response = _read_json(bundle["response_artifact"])
+    response["adapter"] = "paper-sandbox-adapter"
+    response["adapter_mode"] = "paper_sandbox"
+    response_path = tmp_path / "broker_response.json"
+    response_path.write_text(json.dumps(response), encoding="utf-8")
+
+    bundle["response_artifact"] = str(response_path)
+    bundle_path = tmp_path / "preflight_bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/validate_live_readiness_preflight.py",
+            str(bundle_path),
+            "--now",
+            "2026-05-31T12:30:00Z",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid live-readiness preflight bundle" in result.stdout
+    assert (
+        "response_artifact.adapter paper-sandbox-adapter does not match "
+        "handoff_artifact.adapter dry-run-broker-adapter"
+    ) in result.stdout
+    assert (
+        "response_artifact.adapter_mode paper_sandbox does not match "
+        "handoff_artifact.adapter_mode dry_run"
+    ) in result.stdout
+
+
 def test_live_readiness_preflight_rejects_unreviewed_response_client_order_id(tmp_path: Path):
     _run_example("examples/live_readiness_preflight_demo.py")
     bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")

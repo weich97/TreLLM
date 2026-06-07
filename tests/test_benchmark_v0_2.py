@@ -5,6 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+from scripts.run_external_reproduction_pack import summarize_failed_commands
 from tradearena.tools.calibration import summarize_quote_fill_calibration
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -132,3 +133,23 @@ def test_external_reproduction_pack_writes_manifest(tmp_path: Path):
     readme = (output_dir / "README.md").read_text(encoding="utf-8")
     assert readme.startswith("# TreLLM v0.2 External Reproduction Pack")
     assert "# TradeArena v0.2 External Reproduction Pack" not in readme
+
+
+def test_external_reproduction_pack_reports_failed_command_details():
+    summary = summarize_failed_commands(
+        [
+            {
+                "id": "agent_autopsy",
+                "returncode": 1,
+                "stdout_tail": "Wrote partial dashboard\n",
+                "stderr_tail": "Traceback tail\nValueError: broken fixture\n",
+            },
+            {"id": "release_readiness", "returncode": 0, "stdout_tail": "ok", "stderr_tail": ""},
+        ]
+    )
+
+    assert "Failed reproduction commands:" in summary
+    assert "agent_autopsy returned 1" in summary
+    assert "stderr tail:" in summary
+    assert "ValueError: broken fixture" in summary
+    assert "release_readiness" not in summary

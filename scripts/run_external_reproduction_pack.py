@@ -106,7 +106,11 @@ def main() -> int:
     (output_dir / "README.md").write_text(_render_readme(manifest), encoding="utf-8")
     print(f"Wrote {_display_path(manifest_path)}")
     print(f"Wrote {_display_path(output_dir / 'README.md')}")
-    return 0 if all(result.get("returncode") in {0, None} for result in command_results) else 1
+    failed_summary = summarize_failed_commands(command_results)
+    if failed_summary:
+        print(failed_summary, file=sys.stderr)
+        return 1
+    return 0
 
 
 def _run_command(command: dict[str, Any]) -> dict[str, Any]:
@@ -119,6 +123,26 @@ def _run_command(command: dict[str, Any]) -> dict[str, Any]:
         "stdout_tail": result.stdout[-2000:],
         "stderr_tail": result.stderr[-2000:],
     }
+
+
+def summarize_failed_commands(command_results: list[dict[str, Any]]) -> str:
+    failed = [result for result in command_results if result.get("returncode") not in {0, None}]
+    if not failed:
+        return ""
+
+    lines = ["Failed reproduction commands:"]
+    for result in failed:
+        command_id = result.get("id", "<unknown>")
+        lines.append(f"- {command_id} returned {result.get('returncode')}")
+        stdout_tail = str(result.get("stdout_tail", "")).strip()
+        stderr_tail = str(result.get("stderr_tail", "")).strip()
+        if stdout_tail:
+            lines.append("  stdout tail:")
+            lines.extend(f"    {line}" for line in stdout_tail.splitlines())
+        if stderr_tail:
+            lines.append("  stderr tail:")
+            lines.extend(f"    {line}" for line in stderr_tail.splitlines())
+    return "\n".join(lines)
 
 
 def _hash_trajectory(path: Path) -> dict[str, Any]:

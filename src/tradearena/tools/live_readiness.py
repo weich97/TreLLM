@@ -290,6 +290,8 @@ def _component_path_reference_errors(bundle: dict[str, Any]) -> list[str]:
             errors.append(f"{field} path must not contain parent traversal")
         if isinstance(value, str) and _is_absolute_component_path(value):
             errors.append(f"{field} path must be relative")
+        if isinstance(value, str) and _is_drive_qualified_component_path(value):
+            errors.append(f"{field} path must not be drive-qualified")
     return errors
 
 
@@ -299,6 +301,10 @@ def _has_parent_traversal(value: str) -> bool:
 
 def _is_absolute_component_path(value: str) -> bool:
     return Path(value).is_absolute() or PureWindowsPath(value).is_absolute()
+
+
+def _is_drive_qualified_component_path(value: str) -> bool:
+    return bool(PureWindowsPath(value).drive)
 
 
 def _display_path(path: Path) -> str:

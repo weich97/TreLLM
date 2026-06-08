@@ -1038,6 +1038,11 @@ def test_extension_and_skill_surfaces_use_trellm_system_identity():
             "The TreLLM system intentionally keeps interfaces narrow.",
             "A new LLM agent, FinRL policy, broker adapter, or risk model should be able to enter by implementing only the protocol it owns.",
         ],
+        "plugins/README.md": [
+            "# TreLLM Plugin Registry",
+            "This directory is a lightweight registry for local and contributed TreLLM plugins.",
+            "copy a reviewed TreLLM pattern",
+        ],
         "docs/broker_adapter_contract.md": [
             "This contract defines the minimum bar for any TreLLM adapter that touches a broker",
             "- reconciliation status against the original TreLLM order.",
@@ -1123,6 +1128,7 @@ def test_extension_and_skill_surfaces_use_trellm_system_identity():
     assert "unless recorded in the TreLLM run manifest." in skill_index_source
     assert "unless recorded in the TradeArena run manifest." not in skill_index_source
     assert "unless recorded in the TradeArena run manifest." not in _normalized(_read_text("docs/agent_skills_index.md"))
+    assert "# TradeArena Plugin Registry" not in _normalized(_read_text("plugins/README.md"))
 
 
 def test_citation_and_research_report_keep_system_and_leaderboard_identity_separate():

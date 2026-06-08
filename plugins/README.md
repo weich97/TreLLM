@@ -1,8 +1,8 @@
-# TradeArena Plugin Registry
+# TreLLM Plugin Registry
 
-This directory is a lightweight registry for local and contributed plugins. It
-is intentionally small: a plugin should be easy to read, test, and remove if it
-does not fit a study.
+This directory is a lightweight registry for local and contributed TreLLM
+plugins. It is intentionally small: a plugin should be easy to read, test, and
+remove if it does not fit a study.
 
 ## Layout
 
@@ -18,8 +18,8 @@ PR. Keep experimental provider caches outside this directory.
 
 Use `tradearena new-plugin` when you are starting a generated local scaffold
 and still deciding on the interface. Use a curated example when you want to
-copy a reviewed pattern that already imports, documents its boundary, and has a
-deterministic test. The first curated example is:
+copy a reviewed TreLLM pattern that already imports, documents its boundary,
+and has a deterministic test. The first curated example is:
 
 - [`examples/sector_concentration_guard/`](examples/sector_concentration_guard/):
   a risk plugin that clips aggregate target weights by sector.

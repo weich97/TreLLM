@@ -148,6 +148,14 @@ def test_operator_runbook_demo_builds_live_ready_checklist():
     assert summary["approval_expiry_required"] is True
     assert summary["artifact_retention_required"] is True
     assert summary["incident_owner_required"] is True
+    assert summary["incident_response_drill"] == {
+        "kill_switch_action": "disable_broker_submission",
+        "rollback_owner": "operator",
+        "affected_account_mode": "paper",
+        "affected_symbols": ["AAPL", "MSFT"],
+        "artifact_retention_path": "outputs/examples/operator_runbook/incident_drill/",
+        "reenable_approval_gate": "new approval artifact bound to a newly reviewed handoff hash",
+    }
     assert {item["id"] for item in summary["checklist"]} >= {
         "mode-boundary",
         "approval-expiry",
@@ -161,6 +169,8 @@ def test_operator_runbook_demo_builds_live_ready_checklist():
     assert "TreLLM Operator Runbook Checklist" in runbook
     assert "does not authorize live submission" in runbook
     assert "incident owner" in runbook
+    assert "disable_broker_submission" in runbook
+    assert "new approval artifact bound to a newly reviewed handoff hash" in runbook
 
 
 def test_operator_runbook_validator_rejects_live_submission(tmp_path: Path):
@@ -201,6 +211,25 @@ def test_operator_runbook_validator_requires_live_readiness_preflight_command(tm
     assert result.returncode == 1
     assert "Invalid operator runbook artifact" in result.stdout
     assert "verification_commands must include validate-live-readiness" in result.stdout
+
+
+def test_operator_runbook_validator_requires_incident_reenable_gate(tmp_path: Path):
+    _run_example("examples/operator_runbook_demo.py")
+    payload = _read_json("outputs/examples/operator_runbook/summary.json")
+    payload["incident_response_drill"].pop("reenable_approval_gate")
+    artifact = tmp_path / "operator_runbook.json"
+    artifact.write_text(json.dumps(payload), encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_operator_runbook_artifact.py", str(artifact)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid operator runbook artifact" in result.stdout
+    assert "'reenable_approval_gate' is a required property" in result.stdout
 
 
 def test_operator_runbook_validator_rejects_placeholder_live_readiness_command(tmp_path: Path):

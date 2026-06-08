@@ -200,10 +200,13 @@ Operator runbook artifacts can be validated against
 The schema fixes the public `trellm_operator_runbook_v0.1` contract for
 human-gated live-readiness evidence: default mode, live-submission boundary,
 manual approval, approval expiry, kill switch, reconciliation, rollback, and
-artifact-retention checks. Runtime validation also requires exactly one
-supported, runnable `validate-live-readiness` command with no shell chaining
-(`;`, `&`, `&&`, `||`, or `|`), exactly the preflight bundle path, `--now`, and
-an ISO timezone timestamp, with no extra arguments and no unsupported extra
+artifact-retention checks. It also requires a structured
+`incident_response_drill` naming the kill-switch action, rollback owner,
+affected account mode and symbols, retention path, and re-enable approval gate.
+Runtime validation also requires exactly one supported, runnable
+`validate-live-readiness` command with no shell chaining (`;`, `&`, `&&`, `||`,
+or `|`), exactly the preflight bundle path, `--now`, and an ISO timezone
+timestamp, with no extra arguments and no unsupported extra
 `validate-live-readiness` mentions, so the runbook names one final packet-level
 gate instead of a placeholder note or competing commands.
 

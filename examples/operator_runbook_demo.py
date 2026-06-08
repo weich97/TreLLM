@@ -71,6 +71,14 @@ def main() -> int:
         "approval_expiry_required": True,
         "artifact_retention_required": True,
         "incident_owner_required": True,
+        "incident_response_drill": {
+            "kill_switch_action": "disable_broker_submission",
+            "rollback_owner": "operator",
+            "affected_account_mode": "paper",
+            "affected_symbols": ["AAPL", "MSFT"],
+            "artifact_retention_path": "outputs/examples/operator_runbook/incident_drill/",
+            "reenable_approval_gate": "new approval artifact bound to a newly reviewed handoff hash",
+        },
         "checklist": checklist,
         "verification_commands": [
             "python examples/operator_runbook_demo.py",
@@ -119,6 +127,7 @@ def _render_runbook(summary: dict) -> str:
     ]
     for item in summary["checklist"]:
         lines.append(f"| `{item['id']}` | {item['owner']} | {item['evidence']} | {item['pass_condition']} |")
+    drill = summary["incident_response_drill"]
     lines.extend(
         [
             "",
@@ -129,6 +138,17 @@ def _render_runbook(summary: dict) -> str:
             "3. Reconcile broker-visible statuses against TreLLM client order IDs.",
             "4. Record the incident owner, affected account mode, affected symbols, and rollback decision.",
             "5. Re-enable only after a new approval artifact and reviewed request hash are created.",
+            "",
+            "## Incident Drill",
+            "",
+            "| Field | Value |",
+            "| --- | --- |",
+            f"| Kill switch action | `{drill['kill_switch_action']}` |",
+            f"| Rollback owner | `{drill['rollback_owner']}` |",
+            f"| Affected account mode | `{drill['affected_account_mode']}` |",
+            f"| Affected symbols | `{', '.join(drill['affected_symbols'])}` |",
+            f"| Artifact retention path | `{drill['artifact_retention_path']}` |",
+            f"| Re-enable approval gate | {drill['reenable_approval_gate']} |",
             "",
         ]
     )

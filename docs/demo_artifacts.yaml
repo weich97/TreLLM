@@ -131,6 +131,8 @@ artifacts:
       - outputs/examples/operator_runbook/summary.json:kill_switch_required
       - outputs/examples/operator_runbook/summary.json:artifact_retention_required
       - outputs/examples/operator_runbook/summary.json:incident_owner_required
+      - outputs/examples/operator_runbook/summary.json:incident_response_drill.kill_switch_action
+      - outputs/examples/operator_runbook/summary.json:incident_response_drill.reenable_approval_gate
       - outputs/examples/operator_runbook/summary.json:checklist.id
     required_validators:
       - python -m tradearena.cli validate-operator-runbook outputs/examples/operator_runbook/summary.json

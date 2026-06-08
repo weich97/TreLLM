@@ -360,7 +360,24 @@ Output:
 - `outputs/examples/broker_response_artifact/response_artifact.json`
 - `outputs/examples/broker_response_artifact/alpaca_paper_orders.json`
 
-## 21. Operator Runbook Checklist
+## 21. Mock Paper Sandbox Client
+
+```bash
+python examples/mock_paper_sandbox_client_demo.py
+```
+
+Shows a broker-specific paper sandbox contribution pattern with an injected
+mock client. The fixture proves no default network call is made, writes a
+paper-mode handoff artifact, and records a broker response artifact through the
+generic paper sandbox skeleton.
+
+Output:
+
+- `outputs/examples/mock_paper_sandbox_client/summary.json`
+- `outputs/examples/mock_paper_sandbox_client/alpaca_paper_orders.json`
+- `outputs/examples/mock_paper_sandbox_client/paper_sandbox_response_artifact.json`
+
+## 22. Operator Runbook Checklist
 
 ```bash
 python examples/operator_runbook_demo.py
@@ -376,7 +393,7 @@ Output:
 - `outputs/examples/operator_runbook/summary.json`
 - `outputs/examples/operator_runbook/operator_runbook.md`
 
-## 22. Live-Readiness Preflight Bundle
+## 23. Live-Readiness Preflight Bundle
 
 ```bash
 python examples/live_readiness_preflight_demo.py
@@ -393,7 +410,7 @@ Output:
 - `outputs/examples/live_readiness_preflight/preflight_response_artifact.json`
 - `outputs/examples/live_readiness_preflight/preflight_summary.json`
 
-## 23. Holdings CSV Import
+## 24. Holdings CSV Import
 
 ```bash
 python examples/holdings_csv_import_demo.py
@@ -406,7 +423,7 @@ Output:
 
 - `outputs/examples/holdings_csv_import/summary.json`
 
-## 24. Futures Roll Risk
+## 25. Futures Roll Risk
 
 ```bash
 python examples/futures_roll_risk_demo.py
@@ -420,7 +437,7 @@ Output:
 - `outputs/examples/futures_roll_risk/summary.json`
 - `outputs/examples/futures_roll_risk/futures_roll_risk.svg`
 
-## 25. Crypto Microstructure Stress
+## 26. Crypto Microstructure Stress
 
 ```bash
 python examples/crypto_microstructure_stress_demo.py
@@ -436,7 +453,7 @@ Output:
 - `outputs/examples/crypto_microstructure_stress/summary.json`
 - `outputs/examples/crypto_microstructure_stress/crypto_microstructure_stress.svg`
 
-## 26. Almgren-Chriss Impact Stress
+## 27. Almgren-Chriss Impact Stress
 
 ```bash
 python examples/almgren_chriss_stress_demo.py
@@ -452,7 +469,7 @@ Output:
 - `outputs/examples/almgren_chriss_stress/summary.md`
 - `outputs/examples/almgren_chriss_stress/almgren_chriss_stress.svg`
 
-## 27. Liquidity Halt Stress
+## 28. Liquidity Halt Stress
 
 ```bash
 python examples/liquidity_halt_demo.py
@@ -469,7 +486,7 @@ Output:
 - `outputs/examples/liquidity_halt/summary.md`
 - `outputs/examples/liquidity_halt/liquidity_halt.svg`
 
-## 28. Mock Deep-RL Policy Baseline
+## 29. Mock Deep-RL Policy Baseline
 
 ```bash
 python examples/rl_policy_baseline_demo.py

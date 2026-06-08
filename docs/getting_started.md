@@ -51,7 +51,10 @@ No local install yet? Use:
 - [nbviewer][nbviewer-quickstart]
 
 Binder and Colab sessions should run the setup cell first; it installs the
-editable checkout and creates `outputs/examples` before writing the trajectory.
+editable checkout and creates `outputs/examples` before writing
+`outputs/examples/notebook_trajectory.json`. Binder can take several minutes on
+the first launch while the image builds. After a Colab runtime reset, rerun the
+setup cell before running the benchmark and `hash-run` cells again.
 
 ## LLM Paths
 

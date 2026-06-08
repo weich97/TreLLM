@@ -157,14 +157,37 @@ def _capability_boundary_errors(
 
 
 def _runbook_capability_errors(capability: dict[str, Any], runbook: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
     capability_default = capability.get("default_mode")
     runbook_default = runbook.get("default_mode")
     if isinstance(capability_default, str) and isinstance(runbook_default, str) and capability_default != runbook_default:
-        return [
+        errors.append(
             f"operator_runbook_artifact.default_mode {runbook_default} does not match "
             f"capability_manifest.default_mode {capability_default}"
-        ]
-    return []
+        )
+    errors.extend(_runbook_capability_safety_control_errors(capability, runbook))
+    return errors
+
+
+def _runbook_capability_safety_control_errors(capability: dict[str, Any], runbook: dict[str, Any]) -> list[str]:
+    capability_controls = capability.get("safety_controls")
+    if not isinstance(capability_controls, dict):
+        return []
+    required_controls = (
+        "manual_approval_required",
+        "approval_expiry_required",
+        "kill_switch_required",
+        "artifact_retention_required",
+    )
+    errors: list[str] = []
+    for field in required_controls:
+        if runbook.get(field) is True and capability_controls.get(field) is not True:
+            errors.append(
+                f"capability_manifest.safety_controls.{field} "
+                f"{str(capability_controls.get(field)).lower()} does not satisfy "
+                f"operator_runbook_artifact.{field} true"
+            )
+    return errors
 
 
 def _handoff_response_linkage_errors(handoff: dict[str, Any], response: dict[str, Any]) -> list[str]:

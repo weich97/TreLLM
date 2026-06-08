@@ -55,10 +55,11 @@ Before a broker-facing contribution is accepted, it should prove:
   approval binding, response artifact, and operator runbook together, including
   portable relative component references without drive qualifiers, backslashes,
   whitespace, or parent traversal, matching capability/runbook default modes,
-  handoff/response account modes, live-submission boundaries, and reviewed
-  handoff hash plus `client_order_id` values, with one response row for every
-  reviewed handoff order and matching response reconciliation missing/unmatched
-  counts;
+  matching capability/runbook safety-control declarations for manual approval,
+  approval expiry, kill switch, and artifact retention, handoff/response
+  account modes, live-submission boundaries, and reviewed handoff hash plus
+  `client_order_id` values, with one response row for every reviewed handoff
+  order and matching response reconciliation missing/unmatched counts;
 - the operator runbook names exactly one supported, runnable final
   `validate-live-readiness` command with no shell chaining (`;`, `&`, `&&`,
   `||`, or `|`), exactly the preflight bundle path, `--now`, and an ISO

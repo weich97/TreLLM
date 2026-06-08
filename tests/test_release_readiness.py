@@ -284,6 +284,7 @@ def test_release_readiness_requires_readme_trellm_system_banner(tmp_path: Path):
 # TradeArena
 
 Auditable benchmark framework for LLM trading agents.
+TradeArena system architecture
 """.strip()
         + "\n",
         encoding="utf-8",
@@ -303,6 +304,7 @@ Auditable benchmark framework for LLM trading agents.
         "legacy public identity phrase 'Auditable benchmark framework for LLM trading agents' found in README.md"
         in failures
     )
+    assert "legacy public identity phrase 'TradeArena system architecture' found in README.md" in failures
 
 
 def test_release_readiness_flags_stale_release_candidate_artifact_hash(tmp_path: Path):

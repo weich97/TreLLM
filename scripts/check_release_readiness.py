@@ -278,6 +278,7 @@ LEGACY_PUBLIC_IDENTITY_PHRASES = [
     "TradeArena community registry",
     "TradeArena: pluggable AI trading agent research framework",
     "Auditable benchmark framework for LLM trading agents",
+    "TradeArena system architecture",
     "TradeArena currently tracks aggregate public reports",
     "TradeArena is maintained as an open benchmark, audit framework",
     "TradeArena is designed around narrow interfaces.",

@@ -234,6 +234,34 @@ def test_community_task_tables_separate_open_and_completed_issue_links():
     assert "Add an Ollama local-model config example" not in text
 
 
+def test_completed_live_ready_backlog_rows_point_to_current_artifacts():
+    text = _normalized(_read_text("docs/community_tasks.md"))
+    live_ready_section = text.split("## Broker And Live-Ready Tracks", 1)[1].split(
+        "## Completed Live-Ready Capability Map", 1
+    )[0]
+    completed_section = text.split("## Completed Live-Ready Capability Map", 1)[1].split("## Benchmark Flywheel", 1)[0]
+
+    completed_capabilities = {
+        "Live-readiness safety-control mismatch fixture": [
+            "outputs/examples/live_readiness_preflight/preflight_bundle.json",
+            "safety controls",
+        ],
+        "Broker-specific paper sandbox client fixture": [
+            "outputs/examples/mock_paper_sandbox_client/paper_sandbox_response_artifact.json",
+            "mock-paper sandbox fixture",
+        ],
+        "Incident-response drill artifact": [
+            "outputs/examples/operator_runbook/summary.json",
+            "incident_response_drill",
+        ],
+    }
+    for capability, evidence_snippets in completed_capabilities.items():
+        assert capability not in live_ready_section
+        assert capability in completed_section
+        for evidence_snippet in evidence_snippets:
+            assert evidence_snippet in completed_section
+
+
 def test_claim_and_validation_docs_use_trellm_for_system_claims():
     required_snippets = {
         "docs/benchmark_maturity.md": [

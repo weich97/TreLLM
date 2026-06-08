@@ -77,12 +77,25 @@ boundary. No task in this table should introduce default live submission.
 
 | Task | Suggested labels | Expected validation |
 | --- | --- | --- |
-| [Add one broker adapter capability manifest check](https://github.com/weich97/TreLLM/issues/57) | `good first issue`, `broker`, `safety` | `tradearena validate-broker-capability outputs/examples/broker_capability_manifest/capability_manifest.json`; no default live submission |
-| [Add one live-readiness preflight consistency check](https://github.com/weich97/TreLLM/issues/58) | `good first issue`, `broker`, `safety` | `tradearena validate-live-readiness outputs/examples/live_readiness_preflight/preflight_bundle.json --now 2026-05-31T12:30:00Z`; targeted broken bundle fails |
-| [Add one approval-binding edge-case test](https://github.com/weich97/TreLLM/issues/59) | `good first issue`, `broker`, `risk` | `pytest tests/test_issue_demos.py -q` with a stale approval, mismatched request hash, disallowed symbol, or notional-limit case |
-| [Add one broker response status-mapping fixture](https://github.com/weich97/TreLLM/issues/60) | `help wanted`, `broker`, `execution` | schema-valid response artifact with accepted, rejected, partial-fill, cancel, or unknown status and recomputed reconciliation counts |
-| [Add one paper-sandbox adapter skeleton behind an optional dependency](https://github.com/weich97/TreLLM/issues/61) | `help wanted`, `adapter`, `paper-trading` | mocked CI test proving no default network call, `paper_sandbox` account mode, response artifact, and no committed credentials |
-| [Add an operator runbook checklist for live-capable paths](https://github.com/weich97/TreLLM/issues/62) | `docs`, `discussion`, `risk` | checklist naming kill switch, approval expiry, account mode, rollback, artifact retention, and incident owner |
+| Add one broker-specific paper sandbox client fixture | `help wanted`, `adapter`, `paper-trading` | mocked CI test proving no default network call, injected client, `paper_sandbox` account mode, and response artifact |
+| Add one live-readiness safety-control mismatch fixture | `good first issue`, `broker`, `safety` | `tradearena validate-live-readiness ...` rejects mismatched capability/runbook control declarations |
+| Add one broker-response reconciliation edge case | `help wanted`, `broker`, `execution` | response artifact with duplicate, missing, or unknown statuses and recomputed reconciliation counts |
+| Add one incident-response drill artifact | `docs`, `risk`, `safety` | operator runbook update naming kill switch, rollback owner, artifact retention path, and re-enable approval gate |
+
+## Completed Live-Ready Capability Map
+
+These issues have landed and are no longer first-task backlog items. They are
+kept here as a capability map so contributors can extend the next layer instead
+of reopening completed scaffolding.
+
+| Capability | Closed issue | Current artifact or validator | Next useful extension |
+| --- | --- | --- | --- |
+| Broker adapter capability manifest | [#57](https://github.com/weich97/TreLLM/issues/57) | `outputs/examples/broker_capability_manifest/capability_manifest.json`; `tradearena validate-broker-capability ...` | add broker-specific capability fixtures with stricter credential and network policies |
+| Live-readiness preflight consistency check | [#58](https://github.com/weich97/TreLLM/issues/58) | `outputs/examples/live_readiness_preflight/preflight_bundle.json`; `tradearena validate-live-readiness ...` | add more cross-artifact mismatch fixtures across capability, runbook, handoff, approval, and response |
+| Approval-binding edge-case coverage | [#59](https://github.com/weich97/TreLLM/issues/59) | `tests/test_issue_demos.py`; broker approval binding validators | add stale approval, symbol, order-type, notional, and quantity examples tied to realistic paper requests |
+| Broker response status-mapping fixture | [#60](https://github.com/weich97/TreLLM/issues/60) | `outputs/examples/broker_response_artifact/response_artifact.json`; response validator | add venue-specific accepted, rejected, partial-fill, cancel, expiry, and unknown mappings |
+| Paper-sandbox adapter skeleton | [#61](https://github.com/weich97/TreLLM/issues/61) | `PaperSandboxAdapterSkeleton`; mocked paper-client tests | add an optional broker-specific paper client without default network access |
+| Operator runbook checklist | [#62](https://github.com/weich97/TreLLM/issues/62) | `outputs/examples/operator_runbook/summary.json`; `tradearena validate-operator-runbook ...` | add incident drills with rollback owner, disable switch, retention path, and re-enable approval evidence |
 
 ## Benchmark Flywheel
 

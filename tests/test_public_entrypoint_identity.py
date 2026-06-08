@@ -116,10 +116,11 @@ def test_contributor_docs_keep_system_and_leaderboard_identity_separate():
         "docs/community_tasks.md": [
             "## Broker And Live-Ready Tracks",
             "Each task should remain offline export, dry run, or paper sandbox by default.",
-            "Add one broker adapter capability manifest check",
-            "Add one live-readiness preflight consistency check",
-            "Add one approval-binding edge-case test",
-            "Add one paper-sandbox adapter skeleton behind an optional dependency",
+            "## Completed Live-Ready Capability Map",
+            "Broker adapter capability manifest",
+            "Live-readiness preflight consistency check",
+            "Approval-binding edge-case coverage",
+            "Paper-sandbox adapter skeleton",
         ],
         "docs/live_trading_readiness.md": [
             "Capability manifest, `submit_live=false`",
@@ -185,10 +186,10 @@ def test_external_validation_task_tables_include_colab_binder_reproduction():
             assert _normalized(snippet) in text
 
 
-def test_community_task_tables_link_current_open_issues():
+def test_community_task_tables_separate_open_and_completed_issue_links():
     text = _normalized(_read_text("docs/community_tasks.md"))
 
-    required_issue_links = [
+    required_open_issue_links = [
         "https://github.com/weich97/TreLLM/issues/27",
         "https://github.com/weich97/TreLLM/issues/29",
         "https://github.com/weich97/TreLLM/issues/31",
@@ -202,6 +203,13 @@ def test_community_task_tables_link_current_open_issues():
         "https://github.com/weich97/TreLLM/issues/39",
         "https://github.com/weich97/TreLLM/issues/40",
         "https://github.com/weich97/TreLLM/issues/41",
+    ]
+    for issue_link in required_open_issue_links:
+        assert issue_link in text
+
+    live_ready_section = text.split("## Broker And Live-Ready Tracks", 1)[1].split("## Completed Live-Ready Capability Map", 1)[0]
+    completed_section = text.split("## Completed Live-Ready Capability Map", 1)[1].split("## Benchmark Flywheel", 1)[0]
+    completed_issue_links = [
         "https://github.com/weich97/TreLLM/issues/57",
         "https://github.com/weich97/TreLLM/issues/58",
         "https://github.com/weich97/TreLLM/issues/59",
@@ -209,8 +217,9 @@ def test_community_task_tables_link_current_open_issues():
         "https://github.com/weich97/TreLLM/issues/61",
         "https://github.com/weich97/TreLLM/issues/62",
     ]
-    for issue_link in required_issue_links:
-        assert issue_link in text
+    for issue_link in completed_issue_links:
+        assert issue_link not in live_ready_section
+        assert issue_link in completed_section
 
     required_rows = [
         "| [Add A-share T+1 and price-limit scenario coverage](https://github.com/weich97/TreLLM/issues/31) | `help wanted`, `benchmark`, `risk` |",

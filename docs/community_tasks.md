@@ -77,10 +77,7 @@ boundary. No task in this table should introduce default live submission.
 
 | Task | Suggested labels | Expected validation |
 | --- | --- | --- |
-| Add one broker-specific paper sandbox client fixture | `help wanted`, `adapter`, `paper-trading` | mocked CI test proving no default network call, injected client, `paper_sandbox` account mode, and response artifact |
-| Add one live-readiness safety-control mismatch fixture | `good first issue`, `broker`, `safety` | `tradearena validate-live-readiness ...` rejects mismatched capability/runbook control declarations |
 | Add one broker-response reconciliation edge case | `help wanted`, `broker`, `execution` | response artifact with duplicate, missing, or unknown statuses and recomputed reconciliation counts |
-| Add one incident-response drill artifact | `docs`, `risk`, `safety` | operator runbook update naming kill switch, rollback owner, artifact retention path, and re-enable approval gate |
 
 ## Completed Live-Ready Capability Map
 
@@ -96,6 +93,9 @@ of reopening completed scaffolding.
 | Broker response status-mapping fixture | [#60](https://github.com/weich97/TreLLM/issues/60) | `outputs/examples/broker_response_artifact/response_artifact.json`; response validator | add venue-specific accepted, rejected, partial-fill, cancel, expiry, and unknown mappings |
 | Paper-sandbox adapter skeleton | [#61](https://github.com/weich97/TreLLM/issues/61) | `PaperSandboxAdapterSkeleton`; mocked paper-client tests | add an optional broker-specific paper client without default network access |
 | Operator runbook checklist | [#62](https://github.com/weich97/TreLLM/issues/62) | `outputs/examples/operator_runbook/summary.json`; `tradearena validate-operator-runbook ...` | add incident drills with rollback owner, disable switch, retention path, and re-enable approval evidence |
+| Live-readiness safety-control mismatch fixture | follow-up to [#58](https://github.com/weich97/TreLLM/issues/58) | `outputs/examples/live_readiness_preflight/preflight_bundle.json`; safety controls checked by `tradearena validate-live-readiness ...` | add venue-specific capability/runbook mismatch fixtures for throttle, kill-switch, and notional controls |
+| Broker-specific paper sandbox client fixture | follow-up to [#61](https://github.com/weich97/TreLLM/issues/61) | `outputs/examples/mock_paper_sandbox_client/paper_sandbox_response_artifact.json`; mock-paper sandbox fixture with no default network call | add opt-in broker SDK fixtures that keep credentials optional and response artifacts schema-valid |
+| Incident-response drill artifact | follow-up to [#62](https://github.com/weich97/TreLLM/issues/62) | `outputs/examples/operator_runbook/summary.json`; `incident_response_drill` kill switch and re-enable approval evidence | add incident drill variants for stale approval, halted venue, and partial-fill rollback cases |
 
 ## Benchmark Flywheel
 

@@ -60,6 +60,7 @@ def _fallback_schema_errors(payload: dict[str, Any]) -> list[str]:
         "approval_expiry_required",
         "artifact_retention_required",
         "incident_owner_required",
+        "incident_response_drill",
         "checklist",
         "verification_commands",
         "safety_note",
@@ -86,10 +87,38 @@ def _fallback_schema_errors(payload: dict[str, Any]) -> list[str]:
     ]:
         if payload.get(field) is not True:
             errors.append(f"{field} must be true")
+    errors.extend(_incident_response_drill_errors(payload.get("incident_response_drill")))
     checklist = payload.get("checklist")
     if not isinstance(checklist, list) or len(checklist) < 7:
         errors.append("checklist must contain at least seven items")
     errors.extend(_verification_command_errors(payload))
+    return errors
+
+
+def _incident_response_drill_errors(value: object) -> list[str]:
+    if not isinstance(value, dict):
+        return ["incident_response_drill must be an object"]
+    required = {
+        "kill_switch_action",
+        "rollback_owner",
+        "affected_account_mode",
+        "affected_symbols",
+        "artifact_retention_path",
+        "reenable_approval_gate",
+    }
+    errors: list[str] = []
+    missing = sorted(required - set(value))
+    if missing:
+        errors.append(f"incident_response_drill missing required fields: {', '.join(missing)}")
+    for field in ("kill_switch_action", "rollback_owner", "artifact_retention_path", "reenable_approval_gate"):
+        field_value = value.get(field)
+        if not isinstance(field_value, str) or not field_value.strip():
+            errors.append(f"incident_response_drill.{field} must be non-empty")
+    if value.get("affected_account_mode") not in {"paper", "live"}:
+        errors.append("incident_response_drill.affected_account_mode must be paper or live")
+    symbols = value.get("affected_symbols")
+    if not isinstance(symbols, list) or not symbols or any(not isinstance(symbol, str) or not symbol.strip() for symbol in symbols):
+        errors.append("incident_response_drill.affected_symbols must contain non-empty symbols")
     return errors
 
 

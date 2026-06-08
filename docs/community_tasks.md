@@ -75,9 +75,10 @@ Use [`live_trading_readiness.md`](live_trading_readiness.md#external-contributio
 and [`broker_adapter_contract.md`](broker_adapter_contract.md) as the review
 boundary. No task in this table should introduce default live submission.
 
-| Task | Suggested labels | Expected validation |
-| --- | --- | --- |
-| Add one broker-response reconciliation edge case | `help wanted`, `broker`, `execution` | response artifact with duplicate, missing, or unknown statuses and recomputed reconciliation counts |
+The first-layer broker-facing scaffolding tasks have landed. New live-ready
+contributions should extend one row in the completed capability map below with
+broker-specific fixtures, stricter safety evidence, or independently reviewed
+paper-trading assumptions.
 
 ## Completed Live-Ready Capability Map
 
@@ -96,6 +97,7 @@ of reopening completed scaffolding.
 | Live-readiness safety-control mismatch fixture | follow-up to [#58](https://github.com/weich97/TreLLM/issues/58) | `outputs/examples/live_readiness_preflight/preflight_bundle.json`; safety controls checked by `tradearena validate-live-readiness ...` | add venue-specific capability/runbook mismatch fixtures for throttle, kill-switch, and notional controls |
 | Broker-specific paper sandbox client fixture | follow-up to [#61](https://github.com/weich97/TreLLM/issues/61) | `outputs/examples/mock_paper_sandbox_client/paper_sandbox_response_artifact.json`; mock-paper sandbox fixture with no default network call | add opt-in broker SDK fixtures that keep credentials optional and response artifacts schema-valid |
 | Incident-response drill artifact | follow-up to [#62](https://github.com/weich97/TreLLM/issues/62) | `outputs/examples/operator_runbook/summary.json`; `incident_response_drill` kill switch and re-enable approval evidence | add incident drill variants for stale approval, halted venue, and partial-fill rollback cases |
+| Broker-response reconciliation edge cases | follow-up to [#60](https://github.com/weich97/TreLLM/issues/60) | `outputs/examples/broker_response_reconciliation/broker_response_artifact.json`; `outputs/examples/broker_response_artifact/response_artifact.json`; duplicate validator error `responses[1].client_order_id duplicates an earlier response` | add venue-specific duplicate, missing, unmatched, cancel, expiry, and unknown-state fixtures with recomputed reconciliation counts |
 
 ## Benchmark Flywheel
 

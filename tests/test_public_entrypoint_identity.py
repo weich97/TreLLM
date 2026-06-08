@@ -254,6 +254,11 @@ def test_completed_live_ready_backlog_rows_point_to_current_artifacts():
             "outputs/examples/operator_runbook/summary.json",
             "incident_response_drill",
         ],
+        "Broker-response reconciliation edge cases": [
+            "outputs/examples/broker_response_reconciliation/broker_response_artifact.json",
+            "outputs/examples/broker_response_artifact/response_artifact.json",
+            "responses[1].client_order_id duplicates an earlier response",
+        ],
     }
     for capability, evidence_snippets in completed_capabilities.items():
         assert capability not in live_ready_section

@@ -50,12 +50,10 @@ reviewable without asking newcomers to understand the whole codebase.
 
 | Task | Suggested labels | Expected validation |
 | --- | --- | --- |
-| [Add an SMA crossover strategy plugin](https://github.com/weich97/TreLLM/issues/27) | `good first issue`, `help wanted` | `python -m pytest tests/test_sma_strategy.py -q` for deterministic target weights |
 | Add a drawdown recovery chart to the showcase | `good first issue`, `risk`, `docs` | one fixture where kill-switch events are visible |
-| [Validate Binder and notebook quickstart path](https://github.com/weich97/TreLLM/issues/40) | `good first issue`, `docs` | `python -m pytest tests/test_notebook_quickstart.py -q`; `tradearena hash-run outputs/examples/notebook_trajectory.json` |
 | Improve alt text for generated HTML reports | `good first issue`, `docs` | inspect rebuilt HTML artifacts |
 | Add a notebook cell that hashes a trajectory | `good first issue`, `docs` | run the notebook or the equivalent CLI command |
-| [Add plugin registry example package](https://github.com/weich97/TreLLM/issues/41) | `good first issue`, `help wanted` | installable example package plus one validation command |
+| Add an installable plugin registry example package variant | `good first issue`, `help wanted` | installable example package plus one validation command |
 
 ## Completed Benchmark Fixture Map
 
@@ -66,16 +64,25 @@ recreating scaffolding.
 | Capability | Closed issue | Current artifact or validator | Next useful extension |
 | --- | --- | --- | --- |
 | Anonymous benchmark manifest example | [#29](https://github.com/weich97/TreLLM/issues/29) | `examples/benchmark_submissions/anonymous_entry_redacted_submission.json`; `test_anonymous_redacted_submission_validates_and_uses_entry_id_boundary`; `docs/results/community_registry.html` | add more anonymous entry variants with different evidence tiers, data-frequency policies, and redaction notes |
+| SMA crossover strategy plugin | [#27](https://github.com/weich97/TreLLM/issues/27) | `tests/test_sma_strategy.py`; `SMACrossoverStrategy`; `sma-crossover` registry entry | add a second deterministic strategy plugin with a tiny manifest row and registry preview |
+| Binder and notebook quickstart path | [#40](https://github.com/weich97/TreLLM/issues/40) | `tests/test_notebook_quickstart.py`; `notebooks/tradearena_5min_colab.ipynb`; `tradearena hash-run outputs/examples/notebook_trajectory.json` | add a notebook cell that compares a local hash with the README quickstart hash |
 
 ## Finance And Market Realism
 
-| Task | Suggested labels | Expected validation |
-| --- | --- | --- |
-| [Add A-share T+1 and price-limit scenario coverage](https://github.com/weich97/TreLLM/issues/31) | `help wanted`, `benchmark`, `risk` | deterministic fixture with blocked same-day sell |
-| [Add HK lot-size and trading-calendar demo](https://github.com/weich97/TreLLM/issues/32) | `help wanted`, `benchmark`, `docs` | example run plus documented assumptions |
-| [Add crypto fee-tier and spread-shock preset](https://github.com/weich97/TreLLM/issues/33) | `help wanted`, `execution`, `benchmark` | stress example with changed fill costs |
-| [Add an Almgren-Chriss impact stress plugin](https://github.com/weich97/TreLLM/issues/34) | `help wanted`, `execution`, `discussion` | compare modeled shortfall on a small fixture |
-| [Add black-swan liquidity halt stress scenario](https://github.com/weich97/TreLLM/issues/35) | `help wanted`, `risk`, `benchmark` | compare tracked shock rows with venue or broker fill data |
+The first market-realism fixtures have landed. New contributions should extend
+one row in the completed map with independently reviewed assumptions,
+additional venues, or richer stress evidence rather than recreating the
+starter demos.
+
+## Completed Market Realism Map
+
+| Capability | Closed issue | Current artifact or validator | Next useful extension |
+| --- | --- | --- | --- |
+| A-share T+1 and price-limit scenario coverage | [#31](https://github.com/weich97/TreLLM/issues/31) | `examples/ashare_market_rules_demo.py`; `docs/results/market_rules_fixture.json`; A-share rule package tests | add exchange-calendar references and board-specific rule variants beyond the starter fixture |
+| Hong Kong lot-size and trading-calendar demo | [#32](https://github.com/weich97/TreLLM/issues/32) | `examples/hk_market_rules_demo.py`; `docs/results/market_rules_fixture.md`; Hong Kong board-lot package | add trading-session and lunch-break fixtures with cited exchange assumptions |
+| Crypto fee-tier and spread-shock preset | [#33](https://github.com/weich97/TreLLM/issues/33) | `examples/crypto_microstructure_stress_demo.py`; `outputs/examples/crypto_microstructure_stress/summary.json` | add venue-specific fee tiers, funding windows, and spread shocks from public exchange schedules |
+| Almgren-Chriss impact stress plugin | [#34](https://github.com/weich97/TreLLM/issues/34) | `examples/almgren_chriss_stress_demo.py`; `tests/test_almgren_chriss_stress.py`; `AlmgrenChrissImpactStress` | add calibrated parameter presets and compare modeled shortfall against public quote/fill samples |
+| Black-swan liquidity halt stress scenario | [#35](https://github.com/weich97/TreLLM/issues/35) | `examples/liquidity_halt_demo.py`; `outputs/examples/liquidity_halt/summary.json`; liquidity halt rule package | add venue halt/suspension references and broker response artifacts for pending orders |
 
 ## Broker And Live-Ready Tracks
 
@@ -112,18 +119,28 @@ of reopening completed scaffolding.
 
 | Task | Suggested labels | Expected validation |
 | --- | --- | --- |
-| [Add reproducibility badge checks to registry rows](https://github.com/weich97/TreLLM/issues/36) | `good first issue`, `benchmark` | `tradearena build-registry examples/benchmark_submissions` |
 | Add row-level detail panels to the leaderboard | `good first issue`, `benchmark` | open generated `community_registry.html` |
 | Add a quarterly challenge seed file | `help wanted`, `benchmark` | documented command and expected artifact paths |
 | Add a redacted citation entry template | `good first issue`, `docs` | schema validation still passes |
 
+## Completed Benchmark Flywheel Map
+
+| Capability | Closed issue | Current artifact or validator | Next useful extension |
+| --- | --- | --- | --- |
+| Reproducibility badge checks to registry rows | [#36](https://github.com/weich97/TreLLM/issues/36) | `docs/results/community_registry.html`; `docs/results/community_registry.md`; `python scripts/build_benchmark_registry.py examples/benchmark_submissions` | add row-level detail panels that expose evidence tier, redaction status, and reproducibility hash without raw provider text |
+
 ## Observability
 
-| Task | Suggested labels | Expected validation |
-| --- | --- | --- |
-| [Export trajectory events to OpenTelemetry spans](https://github.com/weich97/TreLLM/issues/37) | `enhancement`, `help wanted`, `discussion` | local JSON or console exporter test |
-| [Export metrics to W&B or MLflow with opt-in dependency](https://github.com/weich97/TreLLM/issues/38) | `enhancement`, `help wanted`, `discussion` | mock-backed test, no live service required |
-| [Map trajectory records to OpenAI Evals or LangSmith-style traces](https://github.com/weich97/TreLLM/issues/39) | `enhancement`, `help wanted`, `discussion` | schema example and conversion test |
+The first local observability exporters have landed. Follow-up work should keep
+exports offline by default and avoid adding required live-service dependencies.
+
+## Completed Observability Map
+
+| Capability | Closed issue | Current artifact or validator | Next useful extension |
+| --- | --- | --- | --- |
+| OpenTelemetry-style trajectory span export | [#37](https://github.com/weich97/TreLLM/issues/37) | `tests/test_trace_export.py`; `src/tradearena/evaluation/trace_export.py`; `tradearena export-trace ...` | add optional console/JSONL exporters while preserving redaction defaults |
+| W&B or MLflow offline export prototype | [#38](https://github.com/weich97/TreLLM/issues/38) | `tests/test_observability_export.py`; `src/tradearena/evaluation/offline_tracking.py`; `docs/observability.md` | add opt-in adapters for real tracking clients without making them required dependencies |
+| OpenAI Evals or LangSmith-style trace mapping | [#39](https://github.com/weich97/TreLLM/issues/39) | `tests/test_trace_schema_export.py`; `schemas/eval_trace_style.schema.json`; `export_trajectory_to_trace_schema_json` | add sample imports into external trace tools using local JSON fixtures only |
 
 For issue bodies, copy the task row, add a file path owner, and name the command
 that a reviewer should run.

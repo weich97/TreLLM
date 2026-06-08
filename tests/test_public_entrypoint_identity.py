@@ -190,18 +190,12 @@ def test_community_task_tables_separate_open_and_completed_issue_links():
     text = _normalized(_read_text("docs/community_tasks.md"))
 
     required_open_issue_links = [
-        "https://github.com/weich97/TreLLM/issues/27",
-        "https://github.com/weich97/TreLLM/issues/31",
-        "https://github.com/weich97/TreLLM/issues/32",
-        "https://github.com/weich97/TreLLM/issues/33",
-        "https://github.com/weich97/TreLLM/issues/34",
-        "https://github.com/weich97/TreLLM/issues/35",
-        "https://github.com/weich97/TreLLM/issues/36",
-        "https://github.com/weich97/TreLLM/issues/37",
-        "https://github.com/weich97/TreLLM/issues/38",
-        "https://github.com/weich97/TreLLM/issues/39",
-        "https://github.com/weich97/TreLLM/issues/40",
-        "https://github.com/weich97/TreLLM/issues/41",
+        "https://github.com/weich97/TreLLM/issues/43",
+        "https://github.com/weich97/TreLLM/issues/44",
+        "https://github.com/weich97/TreLLM/issues/45",
+        "https://github.com/weich97/TreLLM/issues/46",
+        "https://github.com/weich97/TreLLM/issues/47",
+        "https://github.com/weich97/TreLLM/issues/48",
     ]
     for issue_link in required_open_issue_links:
         assert issue_link in text
@@ -227,6 +221,7 @@ def test_community_task_tables_separate_open_and_completed_issue_links():
     anonymous_manifest_link = "https://github.com/weich97/TreLLM/issues/29"
     assert anonymous_manifest_link not in good_first_section
     assert anonymous_manifest_link in completed_benchmark_section
+    assert "https://github.com/weich97/TreLLM/issues/41" not in text
     for snippet in [
         "examples/benchmark_submissions/anonymous_entry_redacted_submission.json",
         "test_anonymous_redacted_submission_validates_and_uses_entry_id_boundary",
@@ -234,12 +229,53 @@ def test_community_task_tables_separate_open_and_completed_issue_links():
     ]:
         assert snippet in completed_benchmark_section
 
+    active_task_sections = {
+        "good_first": text.split("## Good First Issues", 1)[1].split("## Completed Benchmark Fixture Map", 1)[0],
+        "market_realism": text.split("## Finance And Market Realism", 1)[1].split(
+            "## Completed Market Realism Map", 1
+        )[0],
+        "benchmark_flywheel": text.split("## Benchmark Flywheel", 1)[1].split(
+            "## Completed Benchmark Flywheel Map", 1
+        )[0],
+        "observability": text.split("## Observability", 1)[1].split("## Completed Observability Map", 1)[0],
+    }
+    completed_maps = text.split("## Completed Benchmark Fixture Map", 1)[1]
+    closed_non_external_issue_links = [
+        "https://github.com/weich97/TreLLM/issues/27",
+        "https://github.com/weich97/TreLLM/issues/31",
+        "https://github.com/weich97/TreLLM/issues/32",
+        "https://github.com/weich97/TreLLM/issues/33",
+        "https://github.com/weich97/TreLLM/issues/34",
+        "https://github.com/weich97/TreLLM/issues/35",
+        "https://github.com/weich97/TreLLM/issues/36",
+        "https://github.com/weich97/TreLLM/issues/37",
+        "https://github.com/weich97/TreLLM/issues/38",
+        "https://github.com/weich97/TreLLM/issues/39",
+        "https://github.com/weich97/TreLLM/issues/40",
+    ]
+    for issue_link in closed_non_external_issue_links:
+        for active_section in active_task_sections.values():
+            assert issue_link not in active_section
+        assert issue_link in completed_maps
+    for evidence_snippet in [
+        "tests/test_sma_strategy.py",
+        "examples/ashare_market_rules_demo.py",
+        "examples/hk_market_rules_demo.py",
+        "examples/crypto_microstructure_stress_demo.py",
+        "examples/almgren_chriss_stress_demo.py",
+        "examples/liquidity_halt_demo.py",
+        "docs/results/community_registry.html",
+        "tests/test_trace_export.py",
+        "tests/test_observability_export.py",
+        "tests/test_trace_schema_export.py",
+        "tests/test_notebook_quickstart.py",
+    ]:
+        assert evidence_snippet in completed_maps
+
     required_rows = [
-        "| [Add A-share T+1 and price-limit scenario coverage](https://github.com/weich97/TreLLM/issues/31) | `help wanted`, `benchmark`, `risk` |",
-        "| [Add HK lot-size and trading-calendar demo](https://github.com/weich97/TreLLM/issues/32) | `help wanted`, `benchmark`, `docs` |",
-        "| [Add crypto fee-tier and spread-shock preset](https://github.com/weich97/TreLLM/issues/33) | `help wanted`, `execution`, `benchmark` |",
-        "| [Add reproducibility badge checks to registry rows](https://github.com/weich97/TreLLM/issues/36) | `good first issue`, `benchmark` |",
-        "| [Export trajectory events to OpenTelemetry spans](https://github.com/weich97/TreLLM/issues/37) | `enhancement`, `help wanted`, `discussion` |",
+        "| Add a drawdown recovery chart to the showcase | `good first issue`, `risk`, `docs` |",
+        "| Add a quarterly challenge seed file | `help wanted`, `benchmark` |",
+        "| Add a redacted citation entry template | `good first issue`, `docs` |",
     ]
     for row in required_rows:
         assert _normalized(row) in text

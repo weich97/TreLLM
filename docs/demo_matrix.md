@@ -220,6 +220,14 @@ without reading the full source tree.
   rejected, partially filled, canceled, and unknown statuses plus recomputed
   reconciliation counts.
 
+### Mock Paper Sandbox Client
+
+- Run: `python examples/mock_paper_sandbox_client_demo.py`
+- Artifact: `outputs/examples/mock_paper_sandbox_client/paper_sandbox_response_artifact.json`
+- Shows: a broker-specific paper sandbox fixture using an injected mock client,
+  no default network call, paper-mode handoff output, and validated response
+  reconciliation.
+
 ### Operator Runbook Checklist
 
 - Run: `python examples/operator_runbook_demo.py`

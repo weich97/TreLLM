@@ -119,6 +119,22 @@ artifacts:
     required_validators:
       - python scripts/validate_broker_handoff_artifact.py outputs/examples/broker_response_artifact/alpaca_paper_orders.json
       - python scripts/validate_broker_response_artifact.py outputs/examples/broker_response_artifact/response_artifact.json
+  - id: mock_paper_sandbox_client
+    command: python examples/mock_paper_sandbox_client_demo.py
+    required_outputs:
+      - outputs/examples/mock_paper_sandbox_client/summary.json
+      - outputs/examples/mock_paper_sandbox_client/alpaca_paper_orders.json
+      - outputs/examples/mock_paper_sandbox_client/alpaca_paper_orders.csv
+      - outputs/examples/mock_paper_sandbox_client/paper_sandbox_response_artifact.json
+    required_json_fields:
+      - outputs/examples/mock_paper_sandbox_client/summary.json:adapter_mode
+      - outputs/examples/mock_paper_sandbox_client/summary.json:default_network_call
+      - outputs/examples/mock_paper_sandbox_client/summary.json:mock_client_calls
+      - outputs/examples/mock_paper_sandbox_client/summary.json:response_count
+      - outputs/examples/mock_paper_sandbox_client/paper_sandbox_response_artifact.json:reconciliation.accepted_count
+    required_validators:
+      - python scripts/validate_broker_handoff_artifact.py outputs/examples/mock_paper_sandbox_client/alpaca_paper_orders.json
+      - python scripts/validate_broker_response_artifact.py outputs/examples/mock_paper_sandbox_client/paper_sandbox_response_artifact.json
   - id: operator_runbook
     command: python examples/operator_runbook_demo.py
     required_outputs:

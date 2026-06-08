@@ -547,6 +547,28 @@ def test_broker_capability_cli_validates_demo_artifact():
     assert "Valid broker adapter capability manifest" in result.stdout
 
 
+def test_mock_paper_sandbox_client_demo_uses_injected_client_only():
+    _run_example("examples/mock_paper_sandbox_client_demo.py")
+    summary = _read_json("outputs/examples/mock_paper_sandbox_client/summary.json")
+    response = _read_json("outputs/examples/mock_paper_sandbox_client/paper_sandbox_response_artifact.json")
+    request = _read_json("outputs/examples/mock_paper_sandbox_client/alpaca_paper_orders.json")
+
+    assert summary["adapter_mode"] == "paper_sandbox"
+    assert summary["account_mode"] == "paper"
+    assert summary["live_submission"] is False
+    assert summary["default_network_call"] is False
+    assert summary["mock_client_calls"] == 1
+    assert summary["response_count"] == 2
+    assert summary["missing_response_count"] == 0
+    assert summary["unmatched_response_count"] == 0
+    assert request["adapter_mode"] == "paper_sandbox"
+    assert request["account_mode"] == "paper"
+    assert response["adapter_mode"] == "paper_sandbox"
+    assert response["account_mode"] == "paper"
+    assert response["live_submission"] is False
+    assert response["reconciliation"]["accepted_count"] == 2
+
+
 def test_live_readiness_preflight_demo_links_broker_safety_artifacts():
     _run_example("examples/live_readiness_preflight_demo.py")
     bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")

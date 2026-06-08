@@ -53,11 +53,10 @@ reviewable without asking newcomers to understand the whole codebase.
 | Add a drawdown recovery chart to the showcase | `good first issue`, `risk`, `docs` | one fixture where kill-switch events are visible |
 | Improve alt text for generated HTML reports | `good first issue`, `docs` | inspect rebuilt HTML artifacts |
 | Add a notebook cell that hashes a trajectory | `good first issue`, `docs` | run the notebook or the equivalent CLI command |
-| Add an installable plugin registry example package variant | `good first issue`, `help wanted` | installable example package plus one validation command |
 
-## Completed Benchmark Fixture Map
+## Completed Good-First Fixture Map
 
-These benchmark-facing starter fixtures have landed and are no longer first
+These good-first starter fixtures have landed and are no longer first
 issues. Keep them visible so contributors can extend the next layer instead of
 recreating scaffolding.
 
@@ -66,6 +65,7 @@ recreating scaffolding.
 | Anonymous benchmark manifest example | [#29](https://github.com/weich97/TreLLM/issues/29) | `examples/benchmark_submissions/anonymous_entry_redacted_submission.json`; `test_anonymous_redacted_submission_validates_and_uses_entry_id_boundary`; `docs/results/community_registry.html` | add more anonymous entry variants with different evidence tiers, data-frequency policies, and redaction notes |
 | SMA crossover strategy plugin | [#27](https://github.com/weich97/TreLLM/issues/27) | `tests/test_sma_strategy.py`; `SMACrossoverStrategy`; `sma-crossover` registry entry | add a second deterministic strategy plugin with a tiny manifest row and registry preview |
 | Binder and notebook quickstart path | [#40](https://github.com/weich97/TreLLM/issues/40) | `tests/test_notebook_quickstart.py`; `notebooks/tradearena_5min_colab.ipynb`; `tradearena hash-run outputs/examples/notebook_trajectory.json` | add a notebook cell that compares a local hash with the README quickstart hash |
+| Plugin registry example package | [#41](https://github.com/weich97/TreLLM/issues/41) | `plugins/examples/sector_concentration_guard/`; `tests/test_plugin_examples.py`; `docs/plugin_development.md` | add another installable plugin package variant with packaging metadata and one validation command |
 
 ## Finance And Market Realism
 

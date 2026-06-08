@@ -214,23 +214,26 @@ def test_community_task_tables_separate_open_and_completed_issue_links():
         assert issue_link not in live_ready_section
         assert issue_link in completed_section
 
-    good_first_section = text.split("## Good First Issues", 1)[1].split("## Completed Benchmark Fixture Map", 1)[0]
-    completed_benchmark_section = text.split("## Completed Benchmark Fixture Map", 1)[1].split(
+    good_first_section = text.split("## Good First Issues", 1)[1].split("## Completed Good-First Fixture Map", 1)[0]
+    completed_good_first_section = text.split("## Completed Good-First Fixture Map", 1)[1].split(
         "## Finance And Market Realism", 1
     )[0]
     anonymous_manifest_link = "https://github.com/weich97/TreLLM/issues/29"
     assert anonymous_manifest_link not in good_first_section
-    assert anonymous_manifest_link in completed_benchmark_section
-    assert "https://github.com/weich97/TreLLM/issues/41" not in text
+    assert anonymous_manifest_link in completed_good_first_section
+    assert "https://github.com/weich97/TreLLM/issues/41" not in good_first_section
+    assert "https://github.com/weich97/TreLLM/issues/41" in completed_good_first_section
     for snippet in [
         "examples/benchmark_submissions/anonymous_entry_redacted_submission.json",
         "test_anonymous_redacted_submission_validates_and_uses_entry_id_boundary",
         "docs/results/community_registry.html",
+        "plugins/examples/sector_concentration_guard",
+        "tests/test_plugin_examples.py",
     ]:
-        assert snippet in completed_benchmark_section
+        assert snippet in completed_good_first_section
 
     active_task_sections = {
-        "good_first": text.split("## Good First Issues", 1)[1].split("## Completed Benchmark Fixture Map", 1)[0],
+        "good_first": text.split("## Good First Issues", 1)[1].split("## Completed Good-First Fixture Map", 1)[0],
         "market_realism": text.split("## Finance And Market Realism", 1)[1].split(
             "## Completed Market Realism Map", 1
         )[0],
@@ -239,7 +242,7 @@ def test_community_task_tables_separate_open_and_completed_issue_links():
         )[0],
         "observability": text.split("## Observability", 1)[1].split("## Completed Observability Map", 1)[0],
     }
-    completed_maps = text.split("## Completed Benchmark Fixture Map", 1)[1]
+    completed_maps = text.split("## Completed Good-First Fixture Map", 1)[1]
     closed_non_external_issue_links = [
         "https://github.com/weich97/TreLLM/issues/27",
         "https://github.com/weich97/TreLLM/issues/31",
@@ -252,6 +255,7 @@ def test_community_task_tables_separate_open_and_completed_issue_links():
         "https://github.com/weich97/TreLLM/issues/38",
         "https://github.com/weich97/TreLLM/issues/39",
         "https://github.com/weich97/TreLLM/issues/40",
+        "https://github.com/weich97/TreLLM/issues/41",
     ]
     for issue_link in closed_non_external_issue_links:
         for active_section in active_task_sections.values():
@@ -269,6 +273,8 @@ def test_community_task_tables_separate_open_and_completed_issue_links():
         "tests/test_observability_export.py",
         "tests/test_trace_schema_export.py",
         "tests/test_notebook_quickstart.py",
+        "plugins/examples/sector_concentration_guard",
+        "tests/test_plugin_examples.py",
     ]:
         assert evidence_snippet in completed_maps
 

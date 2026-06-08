@@ -23,6 +23,7 @@ from tradearena.agents.strategy import (
     RandomAllocationStrategy,
     RiskParityStrategy,
     SignalWeightedStrategy,
+    SMACrossoverStrategy,
 )
 
 __all__ = [
@@ -45,6 +46,7 @@ __all__ = [
     "NoRiskManager",
     "RandomAllocationStrategy",
     "RiskParityStrategy",
+    "SMACrossoverStrategy",
     "SignalWeightedStrategy",
     "TargetWeightExecutionAgent",
     "max_drawdown_risk_preset",

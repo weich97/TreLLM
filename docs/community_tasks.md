@@ -50,7 +50,7 @@ reviewable without asking newcomers to understand the whole codebase.
 
 | Task | Suggested labels | Expected validation |
 | --- | --- | --- |
-| [Add an SMA crossover strategy plugin](https://github.com/weich97/TreLLM/issues/27) | `good first issue`, `help wanted` | `pytest` for deterministic target weights |
+| [Add an SMA crossover strategy plugin](https://github.com/weich97/TreLLM/issues/27) | `good first issue`, `help wanted` | `python -m pytest tests/test_sma_strategy.py -q` for deterministic target weights |
 | Add a drawdown recovery chart to the showcase | `good first issue`, `risk`, `docs` | one fixture where kill-switch events are visible |
 | [Add an anonymous benchmark manifest example](https://github.com/weich97/TreLLM/issues/29) | `good first issue`, `docs`, `benchmark` | `tradearena validate-submission ...` |
 | [Validate Binder and notebook quickstart path](https://github.com/weich97/TreLLM/issues/40) | `good first issue`, `docs` | run the README Colab/Binder path and attach environment notes |

@@ -39,11 +39,13 @@ tradearena validate-live-readiness outputs/examples/live_readiness_preflight/pre
 
 The preflight validator rejects safety packets whose handoff and response
 artifacts disagree about `adapter`, `adapter_mode`, `account_mode`, or
-`live_submission`, whose response artifact does not name the reviewed handoff
-`request_artifact_hash`, or whose response rows reference `client_order_id`
-values that are absent from the reviewed handoff artifact. Publish separate
-packets rather than mixing paper, live, non-submission, or unrelated response
-evidence.
+`live_submission`, whose capability manifest does not satisfy the operator
+runbook's required manual-approval, approval-expiry, kill-switch, and
+artifact-retention controls, whose response artifact does not name the reviewed
+handoff `request_artifact_hash`, or whose response rows reference
+`client_order_id` values that are absent from the reviewed handoff artifact.
+Publish separate packets rather than mixing paper, live, non-submission, or
+unrelated response evidence.
 
 The current code-level primitives live in `tradearena.tools.broker_export`:
 

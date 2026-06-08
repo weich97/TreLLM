@@ -93,6 +93,16 @@ Every deterministic baseline submission should include:
 Use [`evidence_labels.md`](evidence_labels.md) to keep `claim_scope`,
 `claim_class`, and `evidence_tier` conservative.
 
+## Evidence Tag Boundary
+
+Use `external-submitted` only when the row comes from a non-maintainer or an
+organization outside the maintainer set. Use `fully-auditable` only when the
+public manifest links enough artifacts for another reviewer to inspect the raw
+decision trail, risk report, execution assumptions, provenance, and trajectory
+hashes. Keep maintainer-generated refreshes separate from external evidence:
+they can improve examples and registry coverage, but they do not prove
+community validation by themselves.
+
 ## Submit The Result
 
 Open the deterministic baseline issue:

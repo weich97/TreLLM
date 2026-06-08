@@ -5,7 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from scripts.run_external_reproduction_pack import summarize_failed_commands
+from scripts.run_external_reproduction_pack import _render_readme, summarize_failed_commands
 from tradearena.tools.calibration import summarize_quote_fill_calibration
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -133,6 +133,36 @@ def test_external_reproduction_pack_writes_manifest(tmp_path: Path):
     readme = (output_dir / "README.md").read_text(encoding="utf-8")
     assert readme.startswith("# TreLLM v0.2 External Reproduction Pack")
     assert "# TradeArena v0.2 External Reproduction Pack" not in readme
+
+
+def test_external_reproduction_pack_readme_includes_issue_ready_text():
+    readme = _render_readme(
+        {
+            "commit_or_tag": "abc1234",
+            "python": {"version": "3.11.9", "platform": "Windows-10"},
+            "commands": [
+                {"id": "trajectory", "argv": ["python", "examples/audit_trajectory_walkthrough.py"], "returncode": 0},
+                {"id": "release_readiness", "argv": ["python", "scripts/check_release_readiness.py"], "returncode": 1},
+            ],
+            "artifacts": [
+                {"path": "outputs/examples/audit_walkthrough_trajectory.json", "exists": True, "sha256": "sha256:abc"},
+                {"path": "outputs/examples/audit_report.html", "exists": False},
+            ],
+            "trajectory_hash": {"reproducibility_hash": "sha256:trajectory"},
+            "live_api_used": False,
+            "market_data_used": "deterministic synthetic data",
+            "private_fills_used": False,
+        }
+    )
+
+    assert "## Suggested Issue Text" in readme
+    assert "Environment: Windows-10 / Python 3.11.9" in readme
+    assert "Commit/tag: abc1234" in readme
+    assert "Trajectory hash: sha256:trajectory" in readme
+    assert "Manifest: outputs/reproduction/v0_2/manifest.json" in readme
+    assert "Commands failed: release_readiness" in readme
+    assert "Missing artifacts: outputs/examples/audit_report.html" in readme
+    assert "No live APIs or private fills were used." in readme
 
 
 def test_external_reproduction_pack_reports_failed_command_details():

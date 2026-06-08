@@ -192,6 +192,9 @@ def _git_command(args: list[str]) -> list[str]:
 
 
 def _render_readme(manifest: dict[str, Any]) -> str:
+    failed_commands = _failed_command_ids(manifest)
+    missing_artifacts = _missing_artifact_paths(manifest)
+    trajectory_hash = _trajectory_reproducibility_hash(manifest)
     lines = [
         "# TreLLM v0.2 External Reproduction Pack",
         "",
@@ -231,9 +234,38 @@ def _render_readme(manifest: dict[str, Any]) -> str:
             json.dumps(manifest["trajectory_hash"], indent=2, sort_keys=True),
             "```",
             "",
+            "## Suggested Issue Text",
+            "",
+            "```markdown",
+            f"Environment: {manifest['python']['platform']} / Python {manifest['python']['version']}",
+            f"Commit/tag: {manifest['commit_or_tag']}",
+            f"Trajectory hash: {trajectory_hash}",
+            "Manifest: outputs/reproduction/v0_2/manifest.json",
+            f"Commands failed: {', '.join(failed_commands) if failed_commands else 'none'}",
+            f"Missing artifacts: {', '.join(missing_artifacts) if missing_artifacts else 'none'}",
+            "No live APIs or private fills were used.",
+            "```",
+            "",
         ]
     )
     return "\n".join(lines)
+
+
+def _failed_command_ids(manifest: dict[str, Any]) -> list[str]:
+    commands = manifest.get("commands", []) if isinstance(manifest.get("commands"), list) else []
+    return [str(command.get("id", "")) for command in commands if command.get("returncode") not in {0, None}]
+
+
+def _missing_artifact_paths(manifest: dict[str, Any]) -> list[str]:
+    artifacts = manifest.get("artifacts", []) if isinstance(manifest.get("artifacts"), list) else []
+    return [str(artifact.get("path", "")) for artifact in artifacts if not artifact.get("exists")]
+
+
+def _trajectory_reproducibility_hash(manifest: dict[str, Any]) -> str:
+    trajectory_hash = manifest.get("trajectory_hash", {})
+    if not isinstance(trajectory_hash, dict):
+        return ""
+    return str(trajectory_hash.get("reproducibility_hash", ""))
 
 
 if __name__ == "__main__":

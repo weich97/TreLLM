@@ -97,9 +97,11 @@ Claim:
 File/path:
 Claim class:
 Evidence labels:
-Supporting artifact or command:
+Current supporting evidence:
+Runnable verification command or artifact path:
 Missing evidence:
-Recommended weaker wording:
+Recommended action: weaken, strengthen, or leave unchanged
+Recommended wording:
 ```
 
 ## Examples Of Safe Weakening

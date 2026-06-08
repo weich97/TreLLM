@@ -191,7 +191,6 @@ def test_community_task_tables_separate_open_and_completed_issue_links():
 
     required_open_issue_links = [
         "https://github.com/weich97/TreLLM/issues/27",
-        "https://github.com/weich97/TreLLM/issues/29",
         "https://github.com/weich97/TreLLM/issues/31",
         "https://github.com/weich97/TreLLM/issues/32",
         "https://github.com/weich97/TreLLM/issues/33",
@@ -220,6 +219,20 @@ def test_community_task_tables_separate_open_and_completed_issue_links():
     for issue_link in completed_issue_links:
         assert issue_link not in live_ready_section
         assert issue_link in completed_section
+
+    good_first_section = text.split("## Good First Issues", 1)[1].split("## Completed Benchmark Fixture Map", 1)[0]
+    completed_benchmark_section = text.split("## Completed Benchmark Fixture Map", 1)[1].split(
+        "## Finance And Market Realism", 1
+    )[0]
+    anonymous_manifest_link = "https://github.com/weich97/TreLLM/issues/29"
+    assert anonymous_manifest_link not in good_first_section
+    assert anonymous_manifest_link in completed_benchmark_section
+    for snippet in [
+        "examples/benchmark_submissions/anonymous_entry_redacted_submission.json",
+        "test_anonymous_redacted_submission_validates_and_uses_entry_id_boundary",
+        "docs/results/community_registry.html",
+    ]:
+        assert snippet in completed_benchmark_section
 
     required_rows = [
         "| [Add A-share T+1 and price-limit scenario coverage](https://github.com/weich97/TreLLM/issues/31) | `help wanted`, `benchmark`, `risk` |",

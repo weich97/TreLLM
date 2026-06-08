@@ -52,11 +52,20 @@ reviewable without asking newcomers to understand the whole codebase.
 | --- | --- | --- |
 | [Add an SMA crossover strategy plugin](https://github.com/weich97/TreLLM/issues/27) | `good first issue`, `help wanted` | `python -m pytest tests/test_sma_strategy.py -q` for deterministic target weights |
 | Add a drawdown recovery chart to the showcase | `good first issue`, `risk`, `docs` | one fixture where kill-switch events are visible |
-| [Add an anonymous benchmark manifest example](https://github.com/weich97/TreLLM/issues/29) | `good first issue`, `docs`, `benchmark` | `tradearena validate-submission ...` |
 | [Validate Binder and notebook quickstart path](https://github.com/weich97/TreLLM/issues/40) | `good first issue`, `docs` | `python -m pytest tests/test_notebook_quickstart.py -q`; `tradearena hash-run outputs/examples/notebook_trajectory.json` |
 | Improve alt text for generated HTML reports | `good first issue`, `docs` | inspect rebuilt HTML artifacts |
 | Add a notebook cell that hashes a trajectory | `good first issue`, `docs` | run the notebook or the equivalent CLI command |
 | [Add plugin registry example package](https://github.com/weich97/TreLLM/issues/41) | `good first issue`, `help wanted` | installable example package plus one validation command |
+
+## Completed Benchmark Fixture Map
+
+These benchmark-facing starter fixtures have landed and are no longer first
+issues. Keep them visible so contributors can extend the next layer instead of
+recreating scaffolding.
+
+| Capability | Closed issue | Current artifact or validator | Next useful extension |
+| --- | --- | --- | --- |
+| Anonymous benchmark manifest example | [#29](https://github.com/weich97/TreLLM/issues/29) | `examples/benchmark_submissions/anonymous_entry_redacted_submission.json`; `test_anonymous_redacted_submission_validates_and_uses_entry_id_boundary`; `docs/results/community_registry.html` | add more anonymous entry variants with different evidence tiers, data-frequency policies, and redaction notes |
 
 ## Finance And Market Realism
 

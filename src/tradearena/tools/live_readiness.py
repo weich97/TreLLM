@@ -140,6 +140,8 @@ def _validate_components(
         errors.extend(_capability_boundary_errors(capability, handoff, response))
     if not capability_errors and not runbook_errors:
         errors.extend(_runbook_capability_errors(capability, runbook))
+    if not runbook_errors and not handoff_errors:
+        errors.extend(_runbook_handoff_scope_errors(runbook, handoff))
     if not runbook_errors and checked_at is not None:
         errors.extend(_runbook_command_binding_errors(runbook, checked_at, bundle_path))
     if not handoff_errors and not response_errors:
@@ -215,6 +217,33 @@ def _runbook_capability_safety_control_errors(capability: dict[str, Any], runboo
                 f"{str(capability_controls.get(field)).lower()} does not satisfy "
                 f"operator_runbook_artifact.{field} true"
             )
+    return errors
+
+
+def _runbook_handoff_scope_errors(runbook: dict[str, Any], handoff: dict[str, Any]) -> list[str]:
+    drill = runbook.get("incident_response_drill")
+    if not isinstance(drill, dict):
+        return []
+    errors: list[str] = []
+    affected_account_mode = drill.get("affected_account_mode")
+    handoff_account_mode = handoff.get("account_mode")
+    if (
+        isinstance(affected_account_mode, str)
+        and isinstance(handoff_account_mode, str)
+        and affected_account_mode != handoff_account_mode
+    ):
+        errors.append(
+            "operator_runbook_artifact.incident_response_drill.affected_account_mode "
+            f"{affected_account_mode} does not cover handoff_artifact.account_mode {handoff_account_mode}"
+        )
+    affected_symbols = _string_set(drill.get("affected_symbols"))
+    handoff_symbols = _order_symbols(handoff.get("orders"))
+    missing_symbols = sorted(handoff_symbols - affected_symbols)
+    if missing_symbols:
+        errors.append(
+            "operator_runbook_artifact.incident_response_drill.affected_symbols missing "
+            f"handoff symbols: {', '.join(missing_symbols)}"
+        )
     return errors
 
 
@@ -327,6 +356,14 @@ def _client_order_ids(value: object) -> set[str]:
         str(row["client_order_id"])
         for row in _object_rows(value)
         if isinstance(row.get("client_order_id"), str) and str(row["client_order_id"]).strip()
+    }
+
+
+def _order_symbols(value: object) -> set[str]:
+    return {
+        str(row["symbol"])
+        for row in _object_rows(value)
+        if isinstance(row.get("symbol"), str) and str(row["symbol"]).strip()
     }
 
 

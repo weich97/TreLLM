@@ -232,7 +232,9 @@ validation then calls the component validators and checks approval binding,
 capability adapter-id and mode consistency, runbook/capability default-mode
 consistency, and handoff/response adapter, adapter-mode, account-mode, and
 live-submission consistency. Handoff orders must also use order types and
-time-in-force values declared in the capability manifest. `approval_checked_at` must match the timestamp passed to
+time-in-force values declared in the capability manifest. The linked runbook's
+incident drill must cover the current handoff account mode and order symbols.
+`approval_checked_at` must match the timestamp passed to
 `validate-live-readiness --now` so approval-expiry checks and the recorded
 review time cannot drift. Response artifacts in a preflight packet must name
 the reviewed handoff `request_artifact_hash`, and response rows must use

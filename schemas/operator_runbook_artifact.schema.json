@@ -43,13 +43,13 @@
       "minItems": 7,
       "items": { "$ref": "#/$defs/checklist_item" },
       "allOf": [
-        { "contains": { "type": "object", "properties": { "id": { "const": "mode-boundary" } }, "required": ["id"] } },
-        { "contains": { "type": "object", "properties": { "id": { "const": "approval-expiry" } }, "required": ["id"] } },
-        { "contains": { "type": "object", "properties": { "id": { "const": "kill-switch" } }, "required": ["id"] } },
-        { "contains": { "type": "object", "properties": { "id": { "const": "reconciliation" } }, "required": ["id"] } },
-        { "contains": { "type": "object", "properties": { "id": { "const": "rollback" } }, "required": ["id"] } },
-        { "contains": { "type": "object", "properties": { "id": { "const": "artifact-retention" } }, "required": ["id"] } },
-        { "contains": { "type": "object", "properties": { "id": { "const": "incident-owner" } }, "required": ["id"] } }
+        { "contains": { "type": "object", "properties": { "id": { "const": "mode-boundary" } }, "required": ["id"] }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "type": "object", "properties": { "id": { "const": "approval-expiry" } }, "required": ["id"] }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "type": "object", "properties": { "id": { "const": "kill-switch" } }, "required": ["id"] }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "type": "object", "properties": { "id": { "const": "reconciliation" } }, "required": ["id"] }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "type": "object", "properties": { "id": { "const": "rollback" } }, "required": ["id"] }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "type": "object", "properties": { "id": { "const": "artifact-retention" } }, "required": ["id"] }, "minContains": 1, "maxContains": 1 },
+        { "contains": { "type": "object", "properties": { "id": { "const": "incident-owner" } }, "required": ["id"] }, "minContains": 1, "maxContains": 1 }
       ]
     },
     "verification_commands": {

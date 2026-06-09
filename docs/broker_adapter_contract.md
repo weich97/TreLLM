@@ -257,9 +257,11 @@ Command-line reviewers can check the same invariant with
 `python scripts/validate_broker_approval_binding.py <approval.json> <request.json> --now <ISO_TIMESTAMP>`.
 The binding validator also checks that every request order stays inside the
 approval's allowed symbols, allowed order types, max quantity, and max notional
-limits. Request orders must include a positive `limit_price` so approval-time
-notional can be calculated; unpriced market requests should stay out of live
-approval binding until a reviewed reference-price field is added.
+limits. The reviewed request must contain at least one order; empty handoff
+artifacts cannot be used to mint a broad live-safety gate. Request orders must
+include a positive `limit_price` so approval-time notional can be calculated;
+unpriced market requests should stay out of live approval binding until a
+reviewed reference-price field is added.
 Adapter implementations can turn a validated approval artifact into the
 runtime safety gate with `broker_safety_from_approval_artifact(...)`; the
 result is a `BrokerSafetyConfig` in `live_human_approved` mode with the same

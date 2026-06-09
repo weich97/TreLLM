@@ -4173,6 +4173,40 @@ def test_broker_approval_request_binding_requires_calculable_notional(tmp_path):
     ]
 
 
+def test_broker_approval_request_binding_rejects_empty_reviewed_handoff(tmp_path):
+    adapter = DryRunBrokerAdapter(
+        client_prefix="approval-empty-request",
+        safety=BrokerSafetyConfig(account_mode="paper", max_quantity=5.0, allowed_symbols=("AAPL",)),
+    )
+    adapter.write([], tmp_path)
+    request_path = tmp_path / "dry_run_orders.json"
+    approval_payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=250.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-empty-request-001",
+        account_mode="live",
+        max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
+        request_artifact_hash=broker_handoff_artifact_hash(request_path),
+    )
+
+    assert validate_broker_approval_request_binding(approval_payload, request_path) == [
+        "request artifact must contain at least one reviewed order"
+    ]
+    try:
+        broker_safety_from_approval_artifact(approval_payload, request_artifact=request_path)
+    except BrokerAdapterContractError as exc:
+        assert "request artifact must contain at least one reviewed order" in str(exc)
+    else:
+        raise AssertionError("expected empty reviewed request to be rejected before live safety creation")
+
+
 def test_broker_safety_from_approval_artifact_can_require_request_binding(tmp_path):
     adapter = DryRunBrokerAdapter(
         client_prefix="approval-safety-bind",

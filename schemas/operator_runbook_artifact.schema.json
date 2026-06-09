@@ -41,7 +41,16 @@
     "checklist": {
       "type": "array",
       "minItems": 7,
-      "items": { "$ref": "#/$defs/checklist_item" }
+      "items": { "$ref": "#/$defs/checklist_item" },
+      "allOf": [
+        { "contains": { "type": "object", "properties": { "id": { "const": "mode-boundary" } }, "required": ["id"] } },
+        { "contains": { "type": "object", "properties": { "id": { "const": "approval-expiry" } }, "required": ["id"] } },
+        { "contains": { "type": "object", "properties": { "id": { "const": "kill-switch" } }, "required": ["id"] } },
+        { "contains": { "type": "object", "properties": { "id": { "const": "reconciliation" } }, "required": ["id"] } },
+        { "contains": { "type": "object", "properties": { "id": { "const": "rollback" } }, "required": ["id"] } },
+        { "contains": { "type": "object", "properties": { "id": { "const": "artifact-retention" } }, "required": ["id"] } },
+        { "contains": { "type": "object", "properties": { "id": { "const": "incident-owner" } }, "required": ["id"] } }
+      ]
     },
     "verification_commands": {
       "type": "array",

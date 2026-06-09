@@ -201,8 +201,9 @@ The reconciliation summary is not free-form. Validators recompute
 `unmatched_response_count <= response_count` invariant from the response rows,
 then reject artifacts whose summary does not match those rows.
 For `live_human_approved` response artifacts, `account_mode` must be `live`;
-paper or sandbox broker responses should use `paper_sandbox` or another
-non-live adapter mode.
+response rows must also use `client_order_id` values from the reviewed live
+request set. Paper or sandbox broker responses should use `paper_sandbox` or
+another non-live adapter mode.
 Public response artifacts should validate against
 [`../schemas/broker_response_artifact.schema.json`](../schemas/broker_response_artifact.schema.json).
 Use `tradearena validate-broker-response <artifact.json>` before submitting a

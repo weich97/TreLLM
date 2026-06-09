@@ -1087,11 +1087,13 @@ def test_broker_response_artifact_schema_rejects_live_response_account_for_non_l
 
 def test_broker_response_artifact_schema_requires_live_response_accounts_for_live_mode(tmp_path: Path):
     output = tmp_path / "broker_response_artifact.json"
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-live-response-account")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])
     write_broker_response_artifact(
-        requests=[],
+        requests=requests,
         responses=[
             BrokerResponse(
-                client_order_id="live-response-account-1",
+                client_order_id=requests[0].client_order_id,
                 status=BrokerOrderStatus.REJECTED,
                 submitted_quantity=1.0,
                 rejection_reason="paper row in live artifact",
@@ -1099,7 +1101,7 @@ def test_broker_response_artifact_schema_requires_live_response_accounts_for_liv
             )
         ],
         output=output,
-        adapter="schema-live-response-account",
+        adapter=adapter.name,
         adapter_mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
         account_mode="live",
     )

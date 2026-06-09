@@ -149,6 +149,18 @@ def test_operator_runbook_artifact_schema_requires_each_critical_checklist_id():
     assert any("does not contain items matching the given schema" in error.message for error in errors)
 
 
+def test_operator_runbook_artifact_schema_rejects_duplicate_critical_checklist_id():
+    subprocess.run([sys.executable, "examples/operator_runbook_demo.py"], cwd=ROOT, check=True)
+    payload = json.loads((ROOT / "outputs/examples/operator_runbook/summary.json").read_text(encoding="utf-8"))
+    duplicate = dict(payload["checklist"][0])
+    duplicate["id"] = "reconciliation"
+    payload["checklist"].append(duplicate)
+
+    errors = sorted(_validator("operator_runbook_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+
+    assert any("Too many items match the given schema" in error.message for error in errors)
+
+
 def test_broker_adapter_capability_schema_validates_demo_output():
     subprocess.run([sys.executable, "examples/broker_capability_manifest_demo.py"], cwd=ROOT, check=True)
     payload = json.loads(

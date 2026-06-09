@@ -1446,6 +1446,7 @@ def test_broker_approval_artifact_schema_requires_live_account_mode():
         ("approved_by", "   ", ("approved_by",)),
         ("approval_reason", "   ", ("approval_reason",)),
         ("allowed_symbols", ["   "], ("allowed_symbols", 0)),
+        ("allowed_symbols", ["AAPL "], ("allowed_symbols", 0)),
     ],
 )
 def test_broker_approval_artifact_schema_rejects_blank_text_fields(

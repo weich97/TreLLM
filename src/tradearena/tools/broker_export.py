@@ -171,6 +171,8 @@ class BrokerSafetyConfig:
             raise BrokerAdapterContractError("live_human_approved mode requires a positive finite approval max_notional")
         if not self.approval.allowed_symbols or not all(_has_text(symbol) for symbol in self.approval.allowed_symbols):
             raise BrokerAdapterContractError("approval allowed_symbols must be a non-empty list of symbols")
+        if any(_has_whitespace(symbol) for symbol in self.approval.allowed_symbols):
+            raise BrokerAdapterContractError("approval allowed_symbols must not contain whitespace")
         if len(self.approval.allowed_symbols) != len(set(self.approval.allowed_symbols)):
             raise BrokerAdapterContractError("approval allowed_symbols must not contain duplicates")
 
@@ -513,6 +515,8 @@ def build_broker_approval_artifact(
         raise BrokerAdapterContractError("account_mode must be live for broker approval artifacts")
     if not approval.allowed_symbols or not all(_has_text(symbol) for symbol in approval.allowed_symbols):
         raise BrokerAdapterContractError("allowed_symbols must be a non-empty list of symbols")
+    if any(_has_whitespace(symbol) for symbol in approval.allowed_symbols):
+        raise BrokerAdapterContractError("allowed_symbols must not contain whitespace")
     if len(approval.allowed_symbols) != len(set(approval.allowed_symbols)):
         raise BrokerAdapterContractError("allowed_symbols must not contain duplicates")
     order_type_values = [order_type.value for order_type in allowed_order_types]
@@ -615,6 +619,8 @@ def validate_broker_approval_artifact(
         or not all(_has_text(item) for item in allowed_symbols)
     ):
         errors.append("allowed_symbols must be a non-empty list of symbols")
+    elif any(_has_whitespace(item) for item in allowed_symbols):
+        errors.append("allowed_symbols must not contain whitespace")
     elif len(allowed_symbols) != len(set(allowed_symbols)):
         errors.append("allowed_symbols must not contain duplicates")
     allowed_order_types = payload.get("allowed_order_types")
@@ -1298,6 +1304,10 @@ def _is_non_negative_finite_number(value: object) -> TypeGuard[int | float]:
 
 def _has_text(value: object) -> TypeGuard[str]:
     return isinstance(value, str) and bool(value.strip())
+
+
+def _has_whitespace(value: object) -> bool:
+    return isinstance(value, str) and any(character.isspace() for character in value)
 
 
 def _dry_run_safety(safety: BrokerSafetyConfig | None) -> BrokerSafetyConfig:

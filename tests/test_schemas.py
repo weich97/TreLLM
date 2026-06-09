@@ -129,6 +129,26 @@ def test_operator_runbook_artifact_schema_requires_live_readiness_command():
     assert any("does not contain items matching the given schema" in error.message for error in errors)
 
 
+def test_operator_runbook_artifact_schema_requires_each_critical_checklist_id():
+    subprocess.run([sys.executable, "examples/operator_runbook_demo.py"], cwd=ROOT, check=True)
+    payload = json.loads((ROOT / "outputs/examples/operator_runbook/summary.json").read_text(encoding="utf-8"))
+    payload["checklist"] = [
+        item for item in payload["checklist"] if item["id"] != "reconciliation"
+    ]
+    payload["checklist"].append(
+        {
+            "id": "mode-boundary",
+            "owner": "operator",
+            "evidence": "duplicate placeholder",
+            "pass_condition": "does not replace reconciliation evidence",
+        }
+    )
+
+    errors = sorted(_validator("operator_runbook_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+
+    assert any("does not contain items matching the given schema" in error.message for error in errors)
+
+
 def test_broker_adapter_capability_schema_validates_demo_output():
     subprocess.run([sys.executable, "examples/broker_capability_manifest_demo.py"], cwd=ROOT, check=True)
     payload = json.loads(

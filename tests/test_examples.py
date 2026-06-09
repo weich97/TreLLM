@@ -232,6 +232,35 @@ def test_operator_runbook_validator_requires_incident_reenable_gate(tmp_path: Pa
     assert "'reenable_approval_gate' is a required property" in result.stdout
 
 
+def test_operator_runbook_validator_requires_each_critical_checklist_id(tmp_path: Path):
+    _run_example("examples/operator_runbook_demo.py")
+    payload = _read_json("outputs/examples/operator_runbook/summary.json")
+    payload["checklist"] = [
+        item for item in payload["checklist"] if item["id"] != "reconciliation"
+    ]
+    payload["checklist"].append(
+        {
+            "id": "mode-boundary",
+            "owner": "operator",
+            "evidence": "duplicate placeholder",
+            "pass_condition": "does not replace reconciliation evidence",
+        }
+    )
+    artifact = tmp_path / "operator_runbook.json"
+    artifact.write_text(json.dumps(payload), encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_operator_runbook_artifact.py", str(artifact)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid operator runbook artifact" in result.stdout
+    assert "checklist missing required ids: reconciliation" in result.stdout
+
+
 def test_operator_runbook_validator_rejects_placeholder_live_readiness_command(tmp_path: Path):
     _run_example("examples/operator_runbook_demo.py")
     payload = _read_json("outputs/examples/operator_runbook/summary.json")

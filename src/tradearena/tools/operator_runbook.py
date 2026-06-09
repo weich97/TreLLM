@@ -17,6 +17,15 @@ _ISO_TIMESTAMP_WITH_TZ_RE = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$"
 )
 _SHELL_CHAINING_MARKERS = (";", "&", "|")
+_REQUIRED_CHECKLIST_IDS = (
+    "mode-boundary",
+    "approval-expiry",
+    "kill-switch",
+    "reconciliation",
+    "rollback",
+    "artifact-retention",
+    "incident-owner",
+)
 
 
 def validate_operator_runbook_artifact(payload: dict[str, Any]) -> list[str]:
@@ -24,7 +33,7 @@ def validate_operator_runbook_artifact(payload: dict[str, Any]) -> list[str]:
         schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
         validator = Draft202012Validator(schema)
         schema_errors = [error.message for error in validator.iter_errors(payload)]
-        return sorted([*schema_errors, *_verification_command_errors(payload)], key=str)
+        return sorted([*schema_errors, *_checklist_errors(payload), *_verification_command_errors(payload)], key=str)
     return _fallback_schema_errors(payload)
 
 
@@ -120,6 +129,7 @@ def _fallback_schema_errors(payload: dict[str, Any]) -> list[str]:
     checklist = payload.get("checklist")
     if not isinstance(checklist, list) or len(checklist) < 7:
         errors.append("checklist must contain at least seven items")
+    errors.extend(_checklist_errors(payload))
     errors.extend(_verification_command_errors(payload))
     return errors
 
@@ -149,6 +159,33 @@ def _incident_response_drill_errors(value: object) -> list[str]:
     if not isinstance(symbols, list) or not symbols or any(not isinstance(symbol, str) or not symbol.strip() for symbol in symbols):
         errors.append("incident_response_drill.affected_symbols must contain non-empty symbols")
     return errors
+
+
+def _checklist_errors(payload: dict[str, Any]) -> list[str]:
+    checklist = payload.get("checklist")
+    if not isinstance(checklist, list):
+        return ["checklist must contain the required control ids"]
+    ids = _checklist_ids(checklist)
+    id_set = set(ids)
+    missing = [item_id for item_id in _REQUIRED_CHECKLIST_IDS if item_id not in id_set]
+    errors: list[str] = []
+    if missing:
+        errors.append(f"checklist missing required ids: {', '.join(missing)}")
+    duplicates = sorted({item_id for item_id in ids if ids.count(item_id) > 1})
+    if duplicates:
+        errors.append(f"checklist duplicate ids: {', '.join(duplicates)}")
+    return errors
+
+
+def _checklist_ids(checklist: list[object]) -> list[str]:
+    ids: list[str] = []
+    for item in checklist:
+        if not isinstance(item, dict):
+            continue
+        item_id = item.get("id")
+        if isinstance(item_id, str) and item_id:
+            ids.append(item_id)
+    return ids
 
 
 def _verification_command_errors(payload: dict[str, Any]) -> list[str]:

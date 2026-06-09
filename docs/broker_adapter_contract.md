@@ -168,9 +168,9 @@ measure broker latency without locale-dependent parsing. `broker_timestamp`
 must be at or after `submitted_at`.
 Every response row's `account_mode` must match the artifact-level
 `account_mode`; publish separate artifacts for paper and live accounts.
-Each response row must use a unique `client_order_id`; duplicate broker
-responses for the same client order must be consolidated before publishing the
-artifact.
+Each response row must use a unique non-empty `client_order_id` without
+whitespace; duplicate broker responses for the same client order must be
+consolidated before publishing the artifact.
 Accepted, partially filled, filled, canceled, and expired rows must include a
 non-empty `broker_order_id`; rejected rows may omit it when the broker never
 created an order. Non-empty `broker_order_id` values must also be unique within

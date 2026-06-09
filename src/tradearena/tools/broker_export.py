@@ -1072,6 +1072,8 @@ def _validate_response_request_bindings(
             errors.append(f"responses[{idx}].broker_timestamp must be at or after submitted_at")
         if not _has_text(response.client_order_id):
             errors.append(f"responses[{idx}].client_order_id must be non-empty")
+        if _has_whitespace(response.client_order_id):
+            errors.append(f"responses[{idx}].client_order_id must not contain whitespace")
         if response.status in {
             BrokerOrderStatus.ACCEPTED,
             BrokerOrderStatus.PARTIALLY_FILLED,
@@ -1374,6 +1376,8 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
         errors.append(f"responses[{idx}] has unexpected fields: {', '.join(extra)}")
     if not _has_text(response.get("client_order_id")):
         errors.append(f"responses[{idx}].client_order_id must be non-empty")
+    if _has_whitespace(response.get("client_order_id")):
+        errors.append(f"responses[{idx}].client_order_id must not contain whitespace")
     if response.get("status") not in {status.value for status in BrokerOrderStatus}:
         errors.append(f"responses[{idx}].status is not a supported broker order status")
     if response.get("status") == BrokerOrderStatus.REJECTED.value and not _has_text(

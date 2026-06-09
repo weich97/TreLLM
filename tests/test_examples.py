@@ -232,6 +232,27 @@ def test_operator_runbook_validator_requires_incident_reenable_gate(tmp_path: Pa
     assert "'reenable_approval_gate' is a required property" in result.stdout
 
 
+def test_operator_runbook_validator_rejects_retention_path_parent_traversal(tmp_path: Path):
+    _run_example("examples/operator_runbook_demo.py")
+    payload = _read_json("outputs/examples/operator_runbook/summary.json")
+    payload["incident_response_drill"]["artifact_retention_path"] = (
+        "outputs/examples/operator_runbook/../private_logs/"
+    )
+    artifact = tmp_path / "operator_runbook.json"
+    artifact.write_text(json.dumps(payload), encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_operator_runbook_artifact.py", str(artifact)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid operator runbook artifact" in result.stdout
+    assert "incident_response_drill.artifact_retention_path must stay under outputs/examples/operator_runbook/" in result.stdout
+
+
 def test_operator_runbook_validator_requires_each_critical_checklist_id(tmp_path: Path):
     _run_example("examples/operator_runbook_demo.py")
     payload = _read_json("outputs/examples/operator_runbook/summary.json")

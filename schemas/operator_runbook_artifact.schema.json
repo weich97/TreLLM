@@ -85,7 +85,8 @@
         },
         "artifact_retention_path": {
           "type": "string",
-          "pattern": "^outputs/examples/operator_runbook/[^\\s\\\\]*$"
+          "pattern": "^outputs/examples/operator_runbook/[^\\s\\\\]*$",
+          "not": { "pattern": "\\.\\." }
         },
         "reenable_approval_gate": { "type": "string", "pattern": "\\S" }
       }

@@ -186,7 +186,7 @@
           "type": "string",
           "enum": ["accepted", "rejected", "partially_filled", "filled", "canceled", "expired", "unknown"]
         },
-        "broker_order_id": { "type": ["string", "null"] },
+        "broker_order_id": { "type": ["string", "null"], "pattern": "^\\S*$" },
         "submitted_quantity": { "type": "number", "exclusiveMinimum": 0 },
         "accepted_quantity": { "type": ["number", "null"], "minimum": 0 },
         "fill_quantity": { "type": ["number", "null"], "minimum": 0 },
@@ -252,7 +252,7 @@
           },
           "then": {
             "properties": {
-              "broker_order_id": { "type": "string", "pattern": "\\S" }
+              "broker_order_id": { "type": "string", "pattern": "^\\S+$" }
             }
           }
         },

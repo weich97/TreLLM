@@ -1086,6 +1086,8 @@ def _validate_response_request_bindings(
             errors.append(
                 f"responses[{idx}].broker_order_id must be non-empty for {response.status.value} broker responses"
             )
+        if _has_whitespace(response.broker_order_id):
+            errors.append(f"responses[{idx}].broker_order_id must not contain whitespace")
         for field_name in ("accepted_quantity", "fill_quantity", "fill_price", "fees"):
             value = getattr(response, field_name)
             if value is not None and not _is_non_negative_finite_number(value):
@@ -1402,6 +1404,8 @@ def _validate_broker_response_row(response: dict[str, object], idx: int) -> list
     }
     if response.get("status") in broker_order_statuses and not _has_text(response.get("broker_order_id")):
         errors.append(f"responses[{idx}].broker_order_id must be non-empty for {response.get('status')} broker responses")
+    if _has_whitespace(response.get("broker_order_id")):
+        errors.append(f"responses[{idx}].broker_order_id must not contain whitespace")
     if not _has_text(response.get("account_mode")):
         errors.append(f"responses[{idx}].account_mode must be non-empty")
     for field_name in ("submitted_at", "broker_timestamp"):

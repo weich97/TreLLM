@@ -1023,6 +1023,33 @@ def test_broker_response_artifact_writer_rejects_duplicate_request_ids(tmp_path)
         raise AssertionError("expected duplicate request id failure")
 
 
+def test_broker_response_artifact_writer_rejects_unknown_live_response_id(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-live-unknown-id")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id="external-live-order",
+                    status=BrokerOrderStatus.REJECTED,
+                    submitted_quantity=1.0,
+                    rejection_reason="not from this reviewed live request",
+                    account_mode="live",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+            account_mode="live",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "responses[0].client_order_id external-live-order is not present in live request set" in str(exc)
+    else:
+        raise AssertionError("expected unknown live response client_order_id failure")
+
+
 def test_broker_response_artifact_writer_rejects_account_mode_mismatch(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="response-account-binding")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])

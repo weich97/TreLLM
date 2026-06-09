@@ -1162,6 +1162,10 @@ def _validate_response_request_bindings(
                 f"does not match artifact account_mode {account_mode}"
             )
         request_quantity = request_quantities.get(response.client_order_id)
+        if adapter_mode == BrokerAdapterMode.LIVE_HUMAN_APPROVED and request_quantity is None:
+            errors.append(
+                f"responses[{idx}].client_order_id {response.client_order_id} is not present in live request set"
+            )
         if request_quantity is None or response.submitted_quantity is None:
             continue
         if not _is_positive_finite_number(response.submitted_quantity):

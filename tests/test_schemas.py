@@ -159,6 +159,15 @@ def test_live_readiness_preflight_schema_validates_demo_output():
     _validator("live_readiness_preflight.schema.json").validate(payload)
 
 
+def test_live_readiness_preflight_schema_documents_checked_at_runtime_binding():
+    schema = _load_schema("live_readiness_preflight.schema.json")
+
+    description = schema["properties"]["approval_checked_at"]["description"]
+
+    assert "same timestamp passed to `validate-live-readiness --now`" in description
+    assert "approval-expiry checks" in description
+
+
 @pytest.mark.parametrize(
     ("field", "bad_path"),
     [

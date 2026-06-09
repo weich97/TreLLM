@@ -228,11 +228,13 @@ qualifiers, parent traversal (`..`), backslashes, or whitespace. Runtime
 validation then calls the component validators and checks approval binding,
 capability-mode consistency, runbook/capability default-mode consistency, and
 handoff/response adapter, adapter-mode, account-mode, and live-submission
-consistency. Response artifacts in a preflight packet must name the reviewed
-handoff `request_artifact_hash`, and response rows must use `client_order_id`
-values from that handoff artifact. Every handoff order must also have a
-matching response row before the packet is considered live-ready, and the
-response artifact's reconciliation `missing_response_count` and
+consistency. `approval_checked_at` must match the timestamp passed to
+`validate-live-readiness --now` so approval-expiry checks and the recorded
+review time cannot drift. Response artifacts in a preflight packet must name
+the reviewed handoff `request_artifact_hash`, and response rows must use
+`client_order_id` values from that handoff artifact. Every handoff order must
+also have a matching response row before the packet is considered live-ready,
+and the response artifact's reconciliation `missing_response_count` and
 `unmatched_response_count` must match the handoff/response linkage result.
 
 Validate the offline demo preflight bundle with:

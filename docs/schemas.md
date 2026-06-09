@@ -203,6 +203,8 @@ manual approval, approval expiry, kill switch, reconciliation, rollback, and
 artifact-retention checks. It also requires a structured
 `incident_response_drill` naming the kill-switch action, rollback owner,
 affected account mode and symbols, retention path, and re-enable approval gate.
+The retention path must stay under `outputs/examples/operator_runbook/` without
+parent traversal, drive qualifiers, backslashes, whitespace, or absolute paths.
 The checklist must include each critical control id exactly once: `mode-boundary`,
 `approval-expiry`, `kill-switch`, `reconciliation`, `rollback`,
 `artifact-retention`, and `incident-owner`.

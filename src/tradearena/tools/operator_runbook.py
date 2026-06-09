@@ -33,7 +33,15 @@ def validate_operator_runbook_artifact(payload: dict[str, Any]) -> list[str]:
         schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
         validator = Draft202012Validator(schema)
         schema_errors = [error.message for error in validator.iter_errors(payload)]
-        return sorted([*schema_errors, *_checklist_errors(payload), *_verification_command_errors(payload)], key=str)
+        return sorted(
+            [
+                *schema_errors,
+                *_incident_response_drill_errors(payload.get("incident_response_drill")),
+                *_checklist_errors(payload),
+                *_verification_command_errors(payload),
+            ],
+            key=str,
+        )
     return _fallback_schema_errors(payload)
 
 
@@ -153,6 +161,11 @@ def _incident_response_drill_errors(value: object) -> list[str]:
         field_value = value.get(field)
         if not isinstance(field_value, str) or not field_value.strip():
             errors.append(f"incident_response_drill.{field} must be non-empty")
+    retention_path = value.get("artifact_retention_path")
+    if isinstance(retention_path, str) and not _is_operator_runbook_retention_path(retention_path):
+        errors.append(
+            "incident_response_drill.artifact_retention_path must stay under outputs/examples/operator_runbook/"
+        )
     if value.get("affected_account_mode") not in {"paper", "live"}:
         errors.append("incident_response_drill.affected_account_mode must be paper or live")
     symbols = value.get("affected_symbols")
@@ -306,3 +319,7 @@ def _is_portable_relative_path(value: str) -> bool:
     if Path(value).is_absolute() or PureWindowsPath(value).is_absolute() or PureWindowsPath(value).drive:
         return False
     return ".." not in Path(value).parts
+
+
+def _is_operator_runbook_retention_path(value: str) -> bool:
+    return _is_portable_relative_path(value) and value.startswith("outputs/examples/operator_runbook/")

@@ -44,6 +44,8 @@ runbook's required manual-approval, approval-expiry, kill-switch, and
 artifact-retention controls, whose response artifact does not name the reviewed
 handoff `request_artifact_hash`, or whose response rows reference
 `client_order_id` values that are absent from the reviewed handoff artifact.
+Top-level `adapter` values in handoff and response artifacts must be non-empty
+strings without whitespace so cross-artifact equality checks are unambiguous.
 Publish separate packets rather than mixing paper, live, non-submission, or
 unrelated response evidence.
 

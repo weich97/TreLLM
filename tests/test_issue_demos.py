@@ -239,6 +239,31 @@ def test_broker_handoff_artifact_rejects_blank_text_fields(tmp_path, field_path,
     assert expected_error in validate_broker_handoff_artifact(payload)
 
 
+def test_broker_handoff_artifact_writer_rejects_adapter_name_whitespace(tmp_path):
+    class WhitespaceAdapter(AlpacaPaperExportAdapter):
+        name = "alpaca-paper-export-adapter "
+
+    adapter = WhitespaceAdapter(client_prefix="handoff-writer-adapter-whitespace")
+
+    try:
+        adapter.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path)
+    except BrokerAdapterContractError as exc:
+        assert "adapter must not contain whitespace" in str(exc)
+    else:
+        raise AssertionError("expected handoff adapter name whitespace to be rejected by writer")
+
+
+def test_broker_handoff_artifact_rejects_adapter_whitespace(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="handoff-adapter-whitespace")
+    adapter.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path)
+    payload = json.loads((tmp_path / "alpaca_paper_orders.json").read_text(encoding="utf-8"))
+    payload["adapter"] = f"{payload['adapter']} "
+
+    errors = validate_broker_handoff_artifact(payload)
+
+    assert "adapter must not contain whitespace" in errors
+
+
 def test_broker_handoff_artifact_rejects_duplicate_client_order_ids(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="handoff-duplicate-client-id")
     adapter.write(
@@ -2647,6 +2672,35 @@ def test_broker_response_artifact_writer_rejects_blank_adapter_name(tmp_path):
         raise AssertionError("expected blank response artifact adapter name to be rejected by writer")
 
 
+def test_broker_response_artifact_writer_rejects_adapter_name_whitespace(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-adapter-whitespace")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.REJECTED,
+                    submitted_quantity=1.0,
+                    rejection_reason="paper account symbol permission mismatch",
+                    submitted_at="2026-06-02T09:30:00Z",
+                    broker_timestamp="2026-06-02T09:30:01Z",
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=f"{adapter.name} ",
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "adapter must not contain whitespace" in str(exc)
+    else:
+        raise AssertionError("expected response artifact adapter name whitespace to be rejected by writer")
+
+
 def test_broker_response_artifact_writer_rejects_empty_artifact_account_mode(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-empty-account")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
@@ -2924,6 +2978,34 @@ def test_broker_response_artifact_validator_rejects_blank_response_text(tmp_path
         payload["responses"][0][field_name] = "   "
 
     assert expected_error in validate_broker_response_artifact(payload)
+
+
+def test_broker_response_artifact_rejects_adapter_whitespace(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-validator-adapter-whitespace")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+    artifact = tmp_path / "broker_response.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.REJECTED,
+                submitted_quantity=1.0,
+                rejection_reason="paper account symbol permission mismatch",
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=artifact,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["adapter"] = f"{payload['adapter']} "
+
+    assert "adapter must not contain whitespace" in validate_broker_response_artifact(payload)
 
 
 @pytest.mark.parametrize("status", [BrokerOrderStatus.REJECTED, BrokerOrderStatus.UNKNOWN])

@@ -33,6 +33,7 @@
       },
       "then": {
         "properties": {
+          "adapter_kind": { "const": "live_capable" },
           "supported_modes": { "contains": { "const": "live_human_approved" } },
           "account_modes": { "contains": { "const": "live" } },
           "network_access": { "const": "required_for_live" },
@@ -52,6 +53,19 @@
               "artifact_retention_required": { "const": true }
             }
           }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "adapter_kind": { "const": "live_capable" }
+        },
+        "required": ["adapter_kind"]
+      },
+      "then": {
+        "properties": {
+          "supports_live_submission": { "const": true }
         }
       }
     }

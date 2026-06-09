@@ -211,6 +211,28 @@ def test_broker_adapter_capability_schema_rejects_live_without_live_network_acce
     assert any("'required_for_live' was expected" in error.message for error in errors)
 
 
+def test_broker_adapter_capability_schema_rejects_live_adapter_kind_mismatch():
+    subprocess.run([sys.executable, "examples/broker_capability_manifest_demo.py"], cwd=ROOT, check=True)
+    payload = json.loads(
+        (ROOT / "outputs/examples/broker_capability_manifest/capability_manifest.json").read_text(encoding="utf-8")
+    )
+    live_support = deepcopy(payload)
+    live_support["supports_live_submission"] = True
+    live_support["supported_modes"].append("live_human_approved")
+    live_support["account_modes"].append("live")
+    live_support["network_access"] = "required_for_live"
+    live_support["requires_credentials"] = True
+    live_support["credential_policy"]["env_vars"] = ["BROKER_API_KEY"]
+
+    live_kind = deepcopy(payload)
+    live_kind["adapter_kind"] = "live_capable"
+
+    validator = _validator("broker_adapter_capability.schema.json")
+    for invalid_payload in (live_support, live_kind):
+        errors = list(validator.iter_errors(invalid_payload))
+        assert errors
+
+
 def test_broker_adapter_capability_schema_rejects_live_without_required_live_controls():
     subprocess.run([sys.executable, "examples/broker_capability_manifest_demo.py"], cwd=ROOT, check=True)
     payload = json.loads(

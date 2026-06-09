@@ -257,6 +257,18 @@ def test_broker_handoff_artifact_rejects_duplicate_client_order_ids(tmp_path):
     assert "orders[1].client_order_id duplicates an earlier order" in errors
 
 
+def test_broker_handoff_artifact_rejects_client_order_id_whitespace(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="handoff-client-id-whitespace")
+    adapter.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path)
+    artifact = tmp_path / "alpaca_paper_orders.json"
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["orders"][0]["client_order_id"] = f"{payload['orders'][0]['client_order_id']} "
+
+    errors = validate_broker_handoff_artifact(payload)
+
+    assert "orders[0].client_order_id must not contain whitespace" in errors
+
+
 def test_broker_handoff_artifact_rejects_symbol_whitespace(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="handoff-symbol-whitespace")
     adapter.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path)
@@ -317,6 +329,17 @@ def test_broker_handoff_writer_rejects_unsupported_time_in_force(tmp_path):
         assert "time_in_force must be one of cls, day, fok, gtc, ioc, opg" in str(exc)
     else:
         raise AssertionError("expected unsupported time_in_force to be rejected by writer")
+
+
+def test_broker_handoff_writer_rejects_client_prefix_whitespace(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="handoff prefix")
+
+    try:
+        adapter.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path)
+    except BrokerAdapterContractError as exc:
+        assert "client_prefix must not contain whitespace" in str(exc)
+    else:
+        raise AssertionError("expected whitespace client_prefix to be rejected by writer")
 
 
 def test_broker_handoff_artifact_rejects_nonfinite_quantity(tmp_path):

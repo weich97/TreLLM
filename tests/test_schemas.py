@@ -1231,6 +1231,18 @@ def test_broker_handoff_artifact_schema_rejects_symbol_whitespace(tmp_path: Path
     assert ("orders", 0, "symbol") in paths
 
 
+def test_broker_handoff_artifact_schema_rejects_client_order_id_whitespace(tmp_path: Path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-handoff-client-id-whitespace")
+    adapter.write([Order("AAPL", Side.BUY, 1.0, reason="schema test")], tmp_path)
+    payload = json.loads((tmp_path / "alpaca_paper_orders.json").read_text(encoding="utf-8"))
+    payload["orders"][0]["client_order_id"] = f"{payload['orders'][0]['client_order_id']} "
+
+    errors = sorted(_validator("broker_handoff_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("orders", 0, "client_order_id") in paths
+
+
 def test_broker_handoff_artifact_schema_requires_live_account_for_live_mode(tmp_path: Path):
     adapter = AlpacaPaperExportAdapter(client_prefix="schema-live-handoff-account")
     adapter.write([Order("AAPL", Side.BUY, 1.0, reason="schema test")], tmp_path)

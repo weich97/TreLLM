@@ -268,6 +268,7 @@ class AlpacaPaperExportAdapter:
     def convert(self, orders: list[Order] | tuple[Order, ...]) -> list[AlpacaPaperOrder]:
         rows: list[AlpacaPaperOrder] = []
         _validate_time_in_force(self.time_in_force)
+        _validate_client_prefix(self.client_prefix)
         self.safety.validate_handoff_config()
         eligible_orders = [order for order in orders if order.side != Side.HOLD and order.quantity > 0]
         _validate_approved_order_counts(self.safety, eligible_orders, time_in_force=self.time_in_force)
@@ -345,6 +346,7 @@ class DryRunBrokerAdapter:
     def convert(self, orders: list[Order] | tuple[Order, ...]) -> list[AlpacaPaperOrder]:
         rows: list[AlpacaPaperOrder] = []
         _validate_time_in_force(self.time_in_force)
+        _validate_client_prefix(self.client_prefix)
         self.safety.validate_handoff_config()
         for idx, order in enumerate(orders, start=1):
             if order.side == Side.HOLD or order.quantity <= 0:
@@ -1326,6 +1328,11 @@ def _safe_symbol(symbol: str) -> str:
     return "".join(char.lower() if char.isalnum() else "-" for char in symbol).strip("-")
 
 
+def _validate_client_prefix(client_prefix: object) -> None:
+    if _has_whitespace(client_prefix):
+        raise BrokerAdapterContractError("client_prefix must not contain whitespace")
+
+
 def _validate_time_in_force(time_in_force: object) -> None:
     if time_in_force not in _SUPPORTED_TIME_IN_FORCE:
         raise BrokerAdapterContractError(
@@ -1500,6 +1507,8 @@ def _validate_broker_handoff_order(
     for field_name in required_text_fields:
         if not _has_text(order.get(field_name)):
             errors.append(f"orders[{idx}].{field_name} must be non-empty")
+    if _has_whitespace(order.get("client_order_id")):
+        errors.append(f"orders[{idx}].client_order_id must not contain whitespace")
     if _has_whitespace(order.get("symbol")):
         errors.append(f"orders[{idx}].symbol must not contain whitespace")
     if order.get("adapter_mode") != adapter_mode:

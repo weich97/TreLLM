@@ -11,7 +11,7 @@ TreLLM's public positioning is:
 Use this one-liner in GitHub, package metadata, and project listings:
 
 ```text
-LLM trading audit system with replayable trajectories, risk gates, reproducibility artifacts, and a TradeArena leaderboard.
+TreLLM is an LLM-driven trading audit and live-readiness control system; TradeArena is its public leaderboard for replayable trajectories, risk gates, execution calibration, and reproducible agent evidence.
 ```
 
 Longer description:
@@ -35,20 +35,21 @@ llm-trading
 trading-agents
 trading-audit
 financial-ai
-financial-agents
 quantitative-finance
 agent-audit
 agent-evaluation
 risk-management
 execution-simulation
-backtesting
 portfolio-optimization
 auditability
-audit-trails
 reproducible-research
-python
 leaderboard
 ai-agents
+execution-calibration
+risk-gates
+trellm
+live-readiness
+paper-trading
 ```
 
 ## Repository Checklist
@@ -88,5 +89,5 @@ https://weich97.github.io/TreLLM/demo_video.html
 ## Suggested Repository Description
 
 ```text
-LLM trading audit system with replayable trajectories, risk gates, reproducibility artifacts, and a TradeArena leaderboard.
+TreLLM is an LLM-driven trading audit and live-readiness control system; TradeArena is its public leaderboard for replayable trajectories, risk gates, execution calibration, and reproducible agent evidence.
 ```

@@ -447,12 +447,16 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
             "# TreLLM Project Metadata",
             "TreLLM's public positioning is:",
             "TreLLM turns every financial-agent decision into a traceable trajectory:",
-            "LLM trading audit system with replayable trajectories, risk gates, reproducibility artifacts, and a TradeArena leaderboard.",
+            "TreLLM is an LLM-driven trading audit and live-readiness control system; TradeArena is its public leaderboard",
             "llm-trading",
             "trading-audit",
-            "financial-agents",
+            "financial-ai",
             "agent-audit",
-            "audit-trails",
+            "execution-calibration",
+            "live-readiness",
+            "paper-trading",
+            "risk-gates",
+            "trellm",
             "leaderboard",
         ],
         "docs/launch/pages_demo.md": [
@@ -549,6 +553,13 @@ def test_launch_and_pages_sources_use_trellm_for_public_positioning():
             assert _normalized(snippet) in text
 
     launch_metadata = _read_text("docs/launch/README.md")
+    assert (
+        "TreLLM is an LLM-driven trading audit and live-readiness control system; "
+        "TradeArena is its public leaderboard for replayable trajectories, risk gates, "
+        "execution calibration, and reproducible agent evidence."
+    ) in launch_metadata
+    for topic in ["trellm", "live-readiness", "execution-calibration", "risk-gates", "paper-trading"]:
+        assert f"\n{topic}\n" in launch_metadata
     assert "\nagent-benchmark\n" not in launch_metadata
     assert "\nbenchmark\n" not in launch_metadata
 

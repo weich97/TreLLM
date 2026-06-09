@@ -233,6 +233,7 @@ def test_release_readiness_requires_current_trellm_repository_locations(tmp_path
     citation = tmp_path / "CITATION.cff"
     schema = tmp_path / "schemas" / "trajectory.schema.json"
     notebook = tmp_path / "notebooks" / "tradearena_5min_colab.ipynb"
+    launch_readme = tmp_path / "docs" / "launch" / "README.md"
     citation.write_text(
         'repository-code: "https://github.com/weich97/TreLLM-archive"\nurl: "https://github.com/weich97/TreLLM-archive"\n',
         encoding="utf-8",
@@ -247,6 +248,13 @@ def test_release_readiness_requires_current_trellm_repository_locations(tmp_path
         '{"cells": [{"source": ["!git clone https://github.com/weich97/TreLLM-archive.git\\n", "os.chdir(\\"TreLLM-archive\\")\\n"]}]}\n',
         encoding="utf-8",
     )
+    launch_readme.parent.mkdir(parents=True, exist_ok=True)
+    launch_readme.write_text(
+        "# TreLLM Project Metadata\n\n"
+        "Suggested repository description:\n\n"
+        "LLM trading audit system with replayable trajectories and a TradeArena leaderboard.\n",
+        encoding="utf-8",
+    )
 
     failures = _check_public_identity_boundaries(
         root=tmp_path,
@@ -254,6 +262,7 @@ def test_release_readiness_requires_current_trellm_repository_locations(tmp_path
             "CITATION.cff",
             "schemas/trajectory.schema.json",
             "notebooks/tradearena_5min_colab.ipynb",
+            "docs/launch/README.md",
         ],
     )
 
@@ -268,6 +277,10 @@ def test_release_readiness_requires_current_trellm_repository_locations(tmp_path
     assert (
         "required public repository location missing from notebooks/tradearena_5min_colab.ipynb: "
         "git clone https://github.com/weich97/TreLLM.git"
+    ) in failures
+    assert (
+        "required public identity phrase missing from docs/launch/README.md: "
+        "TreLLM is an LLM-driven trading audit and live-readiness control system; TradeArena is its public leaderboard"
     ) in failures
 
 

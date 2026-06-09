@@ -297,6 +297,7 @@ class AlpacaPaperExportAdapter:
         path = Path(output_dir)
         path.mkdir(parents=True, exist_ok=True)
         rows = self.convert(orders)
+        _validate_adapter_name(self.name)
         json_path = path / "alpaca_paper_orders.json"
         csv_path = path / "alpaca_paper_orders.csv"
         payload = {
@@ -375,6 +376,7 @@ class DryRunBrokerAdapter:
         path = Path(output_dir)
         path.mkdir(parents=True, exist_ok=True)
         rows = self.convert(orders)
+        _validate_adapter_name(self.name)
         json_path = path / "dry_run_orders.json"
         csv_path = path / "dry_run_orders.csv"
         payload = {
@@ -447,6 +449,8 @@ def write_broker_response_artifact(
     artifact_errors: list[str] = []
     if not _has_text(adapter):
         artifact_errors.append("adapter must be non-empty")
+    if _has_whitespace(adapter):
+        artifact_errors.append("adapter must not contain whitespace")
     if not _has_text(account_mode):
         artifact_errors.append("account_mode must be non-empty")
     if request_artifact_hash is not None and not _SHA256_ARTIFACT_HASH_RE.fullmatch(request_artifact_hash):
@@ -818,6 +822,8 @@ def validate_broker_response_artifact(payload: dict[str, object]) -> list[str]:
         errors.append("schema must be 'tradearena_broker_response_artifact_v0.1'")
     if not _has_text(payload.get("adapter")):
         errors.append("adapter must be non-empty")
+    if _has_whitespace(payload.get("adapter")):
+        errors.append("adapter must not contain whitespace")
     adapter_mode = payload.get("adapter_mode")
     if adapter_mode not in {mode.value for mode in BrokerAdapterMode}:
         errors.append("adapter_mode must be one of offline_export, dry_run, paper_sandbox, live_human_approved")
@@ -908,6 +914,8 @@ def validate_broker_handoff_artifact(payload: dict[str, object]) -> list[str]:
         errors.append("schema must be 'tradearena_broker_handoff_artifact_v0.1'")
     if not _has_text(payload.get("adapter")):
         errors.append("adapter must be non-empty")
+    if _has_whitespace(payload.get("adapter")):
+        errors.append("adapter must not contain whitespace")
     adapter_mode = payload.get("adapter_mode")
     if adapter_mode not in {mode.value for mode in BrokerAdapterMode}:
         errors.append("adapter_mode must be one of offline_export, dry_run, paper_sandbox, live_human_approved")
@@ -1341,6 +1349,13 @@ def _safe_symbol(symbol: str) -> str:
 def _validate_client_prefix(client_prefix: object) -> None:
     if _has_whitespace(client_prefix):
         raise BrokerAdapterContractError("client_prefix must not contain whitespace")
+
+
+def _validate_adapter_name(adapter: object) -> None:
+    if not _has_text(adapter):
+        raise BrokerAdapterContractError("adapter must be non-empty")
+    if _has_whitespace(adapter):
+        raise BrokerAdapterContractError("adapter must not contain whitespace")
 
 
 def _validate_time_in_force(time_in_force: object) -> None:

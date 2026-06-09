@@ -117,8 +117,10 @@ artifact-local replay instructions cannot drift from the release contract.
 Broker handoff request artifacts can be validated against
 [`../schemas/broker_handoff_artifact.schema.json`](../schemas/broker_handoff_artifact.schema.json).
 The schema fixes the public `tradearena_broker_handoff_artifact_v0.1`
-contract for adapter mode, account mode, safety flags, and broker-review order
-rows.
+contract for adapter identity, adapter mode, account mode, safety flags, and
+broker-review order rows. Top-level adapter names must be non-empty strings
+without whitespace so handoff, response, capability, and runbook artifacts can
+be compared without hidden padding.
 
 Validate a broker handoff artifact with:
 
@@ -193,9 +195,10 @@ safety creation.
 Broker response artifacts can be validated against
 [`../schemas/broker_response_artifact.schema.json`](../schemas/broker_response_artifact.schema.json).
 The schema fixes the public `tradearena_broker_response_artifact_v0.1`
-contract for adapter mode, account mode, optional handoff
+contract for adapter identity, adapter mode, account mode, optional handoff
 `request_artifact_hash`, normalized broker statuses, reconciliation counts, and
-redacted response rows.
+redacted response rows. Top-level adapter names must be non-empty strings
+without whitespace.
 
 Validate a broker response artifact with:
 

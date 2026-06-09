@@ -344,6 +344,37 @@ def test_broker_response_artifact_schema_validates_writer_output(tmp_path: Path)
     _validator("broker_response_artifact.schema.json").validate(payload)
 
 
+def test_broker_response_artifact_schema_rejects_adapter_whitespace(tmp_path: Path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-response-adapter-whitespace")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])
+    output = tmp_path / "broker_response_artifact.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.REJECTED,
+                submitted_quantity=1.0,
+                rejection_reason="paper account symbol permission mismatch",
+                submitted_at="2026-06-02T09:30:00Z",
+                broker_timestamp="2026-06-02T09:30:01Z",
+                account_mode="paper",
+            )
+        ],
+        output=output,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    payload["adapter"] = f"{payload['adapter']} "
+
+    errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("adapter",) in paths
+
+
 def test_broker_response_artifact_schema_rejects_malformed_request_hash(tmp_path: Path):
     adapter = AlpacaPaperExportAdapter(client_prefix="schema-recon-request-hash")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])
@@ -1346,6 +1377,18 @@ def test_broker_handoff_artifact_schema_rejects_blank_text_fields(
     paths = {tuple(error.path) for error in errors}
 
     assert expected_path in paths
+
+
+def test_broker_handoff_artifact_schema_rejects_adapter_whitespace(tmp_path: Path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-handoff-adapter-whitespace")
+    adapter.write([Order("AAPL", Side.BUY, 1.0, reason="schema test")], tmp_path)
+    payload = json.loads((tmp_path / "alpaca_paper_orders.json").read_text(encoding="utf-8"))
+    payload["adapter"] = f"{payload['adapter']} "
+
+    errors = sorted(_validator("broker_handoff_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("adapter",) in paths
 
 
 def test_broker_handoff_artifact_schema_rejects_order_account_mode_mismatch(tmp_path: Path):

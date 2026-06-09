@@ -174,6 +174,19 @@ def test_operator_runbook_artifact_schema_rejects_retention_path_parent_traversa
     assert any("should not be valid" in error.message for error in errors)
 
 
+def test_operator_runbook_artifact_schema_rejects_owner_whitespace():
+    subprocess.run([sys.executable, "examples/operator_runbook_demo.py"], cwd=ROOT, check=True)
+    payload = json.loads((ROOT / "outputs/examples/operator_runbook/summary.json").read_text(encoding="utf-8"))
+    payload["incident_response_drill"]["rollback_owner"] = "operator "
+    payload["checklist"][0]["owner"] = "operator "
+
+    errors = sorted(_validator("operator_runbook_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("incident_response_drill", "rollback_owner") in paths
+    assert ("checklist", 0, "owner") in paths
+
+
 def test_broker_adapter_capability_schema_validates_demo_output():
     subprocess.run([sys.executable, "examples/broker_capability_manifest_demo.py"], cwd=ROOT, check=True)
     payload = json.loads(

@@ -75,7 +75,7 @@
       "additionalProperties": false,
       "properties": {
         "kill_switch_action": { "type": "string", "pattern": "\\S" },
-        "rollback_owner": { "type": "string", "pattern": "\\S" },
+        "rollback_owner": { "type": "string", "pattern": "^\\S+$" },
         "affected_account_mode": { "enum": ["paper", "live"] },
         "affected_symbols": {
           "type": "array",
@@ -107,7 +107,7 @@
             "incident-owner"
           ]
         },
-        "owner": { "type": "string", "pattern": "\\S" },
+        "owner": { "type": "string", "pattern": "^\\S+$" },
         "evidence": { "type": "string", "pattern": "\\S" },
         "pass_condition": { "type": "string", "pattern": "\\S" }
       }

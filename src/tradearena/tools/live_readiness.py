@@ -154,6 +154,8 @@ def _capability_boundary_errors(
     adapter_id = capability.get("adapter_id")
     supported_modes = _string_set(capability.get("supported_modes"))
     account_modes = _string_set(capability.get("account_modes"))
+    supported_order_types = _string_set(capability.get("supported_order_types"))
+    supported_time_in_force = _string_set(capability.get("supported_time_in_force"))
     for label, payload in (("handoff_artifact", handoff), ("response_artifact", response)):
         adapter = payload.get("adapter")
         adapter_mode = payload.get("adapter_mode")
@@ -166,6 +168,19 @@ def _capability_boundary_errors(
             errors.append(f"{label}.account_mode {account_mode} is not declared in capability_manifest.account_modes")
         if capability.get("supports_live_submission") is not True and payload.get("live_submission") is True:
             errors.append(f"{label} uses live_submission but capability_manifest does not support live submission")
+    for idx, order in enumerate(_object_rows(handoff.get("orders"))):
+        order_type = order.get("order_type")
+        time_in_force = order.get("time_in_force")
+        if isinstance(order_type, str) and order_type not in supported_order_types:
+            errors.append(
+                f"handoff_artifact.orders[{idx}].order_type {order_type} "
+                "is not declared in capability_manifest.supported_order_types"
+            )
+        if isinstance(time_in_force, str) and time_in_force not in supported_time_in_force:
+            errors.append(
+                f"handoff_artifact.orders[{idx}].time_in_force {time_in_force} "
+                "is not declared in capability_manifest.supported_time_in_force"
+            )
     return errors
 
 

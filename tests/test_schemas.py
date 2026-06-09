@@ -168,6 +168,15 @@ def test_live_readiness_preflight_schema_documents_checked_at_runtime_binding():
     assert "approval-expiry checks" in description
 
 
+def test_operator_runbook_schema_documents_current_preflight_command_binding():
+    schema = _load_schema("operator_runbook_artifact.schema.json")
+
+    description = schema["properties"]["verification_commands"]["description"]
+
+    assert "current preflight bundle being validated" in description
+    assert "`validate-live-readiness --now` timestamp" in description
+
+
 @pytest.mark.parametrize(
     ("field", "bad_path"),
     [

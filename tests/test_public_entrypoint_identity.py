@@ -948,6 +948,7 @@ def test_generated_public_copy_sources_use_trellm_system_identity():
             "Broker adapter capability manifests can be validated against",
             "The schema fixes the public `trellm_broker_adapter_capability_v0.1` contract",
             "tradearena validate-broker-capability outputs/examples/broker_capability_manifest/capability_manifest.json",
+            "the command path must name the current preflight bundle being validated",
             "## Live-Readiness Preflight Bundle Schema",
             "The schema fixes the public `trellm_live_readiness_preflight_v0.1` contract",
             "`approval_checked_at` must match the timestamp passed to `validate-live-readiness --now`",

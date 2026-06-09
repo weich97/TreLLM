@@ -45,6 +45,7 @@
     },
     "verification_commands": {
       "type": "array",
+      "description": "Commands a reviewer can run before accepting a broker-facing packet. Runtime validation requires exactly one supported validate-live-readiness command; its path must name the current preflight bundle being validated, and its `validate-live-readiness --now` timestamp must match the preflight approval_checked_at value.",
       "minItems": 1,
       "items": { "type": "string", "pattern": "\\S" },
       "contains": { "type": "string", "pattern": "validate-live-readiness" }

@@ -207,7 +207,10 @@ Runtime validation also requires exactly one supported, runnable
 `validate-live-readiness` command with no shell chaining (`;`, `&`, `&&`, `||`,
 or `|`), exactly the preflight bundle path, `--now`, and an ISO timezone
 timestamp, with no extra arguments and no unsupported extra
-`validate-live-readiness` mentions, so the runbook names one final packet-level
+`validate-live-readiness` mentions. When the runbook is linked from a
+live-readiness preflight bundle, the command path must name the current
+preflight bundle being validated and the command timestamp must match that
+bundle's `approval_checked_at`, so the runbook names one final packet-level
 gate instead of a placeholder note or competing commands.
 
 Validate the offline demo runbook with:

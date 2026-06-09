@@ -252,6 +252,15 @@ REQUIRED_PUBLIC_IDENTITY_PHRASES = {
     "src/tradearena/__init__.py": [
         "TreLLM: LLM-driven trading audit and control system with a TradeArena compatibility API.",
     ],
+    "docs/launch/README.md": [
+        "TreLLM is an LLM-driven trading audit and live-readiness control system; TradeArena is its public leaderboard",
+        "execution calibration, and reproducible agent evidence.",
+        "trellm",
+        "live-readiness",
+        "execution-calibration",
+        "risk-gates",
+        "paper-trading",
+    ],
     "docs/results/community_registry.md": [
         "# TradeArena Leaderboard Registry",
     ],

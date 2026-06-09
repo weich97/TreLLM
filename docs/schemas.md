@@ -132,9 +132,11 @@ The schema fixes the public `trellm_broker_adapter_capability_v0.1`
 contract for adapter mode, account mode, credential policy, network access,
 default-live prohibition, and live-safety controls. A future paper or live
 adapter should publish this manifest before its handoff, approval, response,
-or runbook artifacts are reviewed. Runtime validation requires live-capable
-adapters to declare `network_access` as `required_for_live`, so live submission
-cannot be advertised by a manifest that still claims no broker network access.
+or runbook artifacts are reviewed. Schema and runtime validation require
+live-capable adapters to declare `network_access` as `required_for_live`, list
+`live_human_approved` and `live` mode support, require credentials with named
+environment variables, and enable every live safety control before live
+submission can be advertised.
 
 Validate the offline demo capability manifest with:
 

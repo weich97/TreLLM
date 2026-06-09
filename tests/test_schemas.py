@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+from copy import deepcopy
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -208,6 +209,35 @@ def test_broker_adapter_capability_schema_rejects_live_without_live_network_acce
     errors = sorted(_validator("broker_adapter_capability.schema.json").iter_errors(payload), key=lambda err: err.path)
 
     assert any("'required_for_live' was expected" in error.message for error in errors)
+
+
+def test_broker_adapter_capability_schema_rejects_live_without_required_live_controls():
+    subprocess.run([sys.executable, "examples/broker_capability_manifest_demo.py"], cwd=ROOT, check=True)
+    payload = json.loads(
+        (ROOT / "outputs/examples/broker_capability_manifest/capability_manifest.json").read_text(encoding="utf-8")
+    )
+    payload["supports_live_submission"] = True
+    payload["network_access"] = "required_for_live"
+    payload["supported_modes"].append("live_human_approved")
+    payload["account_modes"].append("live")
+    payload["requires_credentials"] = True
+    payload["credential_policy"]["env_vars"] = ["BROKER_API_KEY"]
+
+    missing_mode = deepcopy(payload)
+    missing_mode["supported_modes"].remove("live_human_approved")
+    missing_account = deepcopy(payload)
+    missing_account["account_modes"].remove("live")
+    no_credentials = deepcopy(payload)
+    no_credentials["requires_credentials"] = False
+    missing_env_vars = deepcopy(payload)
+    missing_env_vars["credential_policy"]["env_vars"] = []
+    weak_safety = deepcopy(payload)
+    weak_safety["safety_controls"]["kill_switch_required"] = False
+
+    validator = _validator("broker_adapter_capability.schema.json")
+    for invalid_payload in (missing_mode, missing_account, no_credentials, missing_env_vars, weak_safety):
+        errors = list(validator.iter_errors(invalid_payload))
+        assert errors
 
 
 def test_live_readiness_preflight_schema_validates_demo_output():

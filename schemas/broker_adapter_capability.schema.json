@@ -33,7 +33,25 @@
       },
       "then": {
         "properties": {
-          "network_access": { "const": "required_for_live" }
+          "supported_modes": { "contains": { "const": "live_human_approved" } },
+          "account_modes": { "contains": { "const": "live" } },
+          "network_access": { "const": "required_for_live" },
+          "requires_credentials": { "const": true },
+          "credential_policy": {
+            "properties": {
+              "env_vars": { "minItems": 1 }
+            }
+          },
+          "safety_controls": {
+            "properties": {
+              "manual_approval_required": { "const": true },
+              "approval_expiry_required": { "const": true },
+              "request_hash_binding_required": { "const": true },
+              "kill_switch_required": { "const": true },
+              "reconciliation_required": { "const": true },
+              "artifact_retention_required": { "const": true }
+            }
+          }
         }
       }
     }

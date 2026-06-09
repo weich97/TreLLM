@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pytest
 
+from tradearena.tools.broker_capability import validate_broker_adapter_capability
 from tradearena.tools.live_readiness import validate_live_readiness_preflight_bundle_file
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -556,6 +557,14 @@ def test_broker_capability_manifest_demo_builds_review_boundary():
     assert payload["safety_controls"]["kill_switch_required"] is True
     assert "TreLLM Broker Adapter Capability Manifest" in report
     assert "not permission to submit live orders" in report
+
+
+def test_broker_capability_validator_rejects_adapter_id_whitespace():
+    _run_example("examples/broker_capability_manifest_demo.py")
+    payload = _read_json("outputs/examples/broker_capability_manifest/capability_manifest.json")
+    payload["adapter_id"] = f"{payload['adapter_id']} "
+
+    assert "adapter_id must not contain whitespace" in validate_broker_adapter_capability(payload)
 
 
 def test_broker_capability_validator_rejects_live_without_required_controls(tmp_path: Path):

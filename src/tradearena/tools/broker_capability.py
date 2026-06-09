@@ -85,6 +85,10 @@ def _semantic_errors(payload: dict[str, Any]) -> list[str]:
     safety_controls = payload.get("safety_controls")
     credential_policy = payload.get("credential_policy")
 
+    adapter_id = payload.get("adapter_id")
+    if isinstance(adapter_id, str) and any(char.isspace() for char in adapter_id):
+        errors.append("adapter_id must not contain whitespace")
+
     default_mode = payload.get("default_mode")
     if isinstance(default_mode, str) and supported_modes and default_mode not in supported_modes:
         errors.append("default_mode must be included in supported_modes")

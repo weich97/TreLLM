@@ -1095,6 +1095,42 @@ def test_live_readiness_preflight_requires_bundle_checked_at_to_match_cli_now(tm
     ) in result.stdout
 
 
+def test_live_readiness_preflight_requires_runbook_now_to_match_checked_at(tmp_path: Path):
+    _run_example("examples/live_readiness_preflight_demo.py")
+    bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")
+    runbook = _read_json(bundle["operator_runbook_artifact"])
+    runbook["verification_commands"] = [
+        command.replace("2026-05-31T12:30:00Z", "2026-05-31T12:00:00Z")
+        for command in runbook["verification_commands"]
+    ]
+    runbook_path = tmp_path / "operator_runbook.json"
+    runbook_path.write_text(json.dumps(runbook), encoding="utf-8")
+
+    bundle["operator_runbook_artifact"] = runbook_path.name
+    bundle_path = tmp_path / "preflight_bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/validate_live_readiness_preflight.py",
+            str(bundle_path),
+            "--now",
+            "2026-05-31T12:30:00Z",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid live-readiness preflight bundle" in result.stdout
+    assert (
+        "operator_runbook_artifact verification command --now 2026-05-31T12:00:00Z "
+        "does not match preflight approval_checked_at 2026-05-31T12:30:00Z"
+    ) in result.stdout
+
+
 def test_live_readiness_preflight_cli_validates_demo_bundle():
     _run_example("examples/live_readiness_preflight_demo.py")
 

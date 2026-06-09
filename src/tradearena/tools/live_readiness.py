@@ -17,7 +17,7 @@ from tradearena.tools.broker_export import (
     validate_broker_handoff_artifact_file,
     validate_broker_response_artifact_file,
 )
-from tradearena.tools.operator_runbook import validate_operator_runbook_artifact_file
+from tradearena.tools.operator_runbook import live_readiness_verification_now, validate_operator_runbook_artifact_file
 
 ROOT = Path(__file__).resolve().parents[3]
 SCHEMA_PATH = ROOT / "schemas" / "live_readiness_preflight.schema.json"
@@ -136,6 +136,8 @@ def _validate_components(
         errors.extend(_capability_boundary_errors(capability, handoff, response))
     if not capability_errors and not runbook_errors:
         errors.extend(_runbook_capability_errors(capability, runbook))
+    if not runbook_errors and checked_at is not None:
+        errors.extend(_runbook_checked_at_errors(runbook, checked_at))
     if not handoff_errors and not response_errors:
         errors.extend(_handoff_response_linkage_errors(handoff, response))
     return errors
@@ -191,6 +193,16 @@ def _runbook_capability_safety_control_errors(capability: dict[str, Any], runboo
                 f"operator_runbook_artifact.{field} true"
             )
     return errors
+
+
+def _runbook_checked_at_errors(runbook: dict[str, Any], checked_at: str) -> list[str]:
+    runbook_now = live_readiness_verification_now(runbook)
+    if runbook_now is None or runbook_now == checked_at:
+        return []
+    return [
+        f"operator_runbook_artifact verification command --now {runbook_now} "
+        f"does not match preflight approval_checked_at {checked_at}"
+    ]
 
 
 def _handoff_response_linkage_errors(handoff: dict[str, Any], response: dict[str, Any]) -> list[str]:

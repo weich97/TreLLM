@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import re
 import shlex
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import Any
 
 try:
@@ -199,6 +199,8 @@ def _verification_command_errors(payload: dict[str, Any]) -> list[str]:
         return ["verification_commands must include exactly one supported validate-live-readiness command"]
     if any(_has_unsupported_live_readiness_command(command) for command in commands):
         return ["verification_commands must not include unsupported validate-live-readiness commands"]
+    if any(_has_live_readiness_command_with_unportable_bundle_path(command) for command in commands):
+        return ["verification_commands validate-live-readiness preflight bundle path must be portable and relative"]
     if any(_is_runnable_live_readiness_command(command) for command in commands):
         return []
     if any(_has_live_readiness_command_with_invalid_now(command) for command in commands):
@@ -224,6 +226,13 @@ def _is_runnable_live_readiness_command(command: str) -> bool:
     if now_flag != "--now":
         return False
     return _is_preflight_bundle_path(preflight_bundle) and _is_iso_timestamp_with_timezone(now_value)
+
+
+def _has_live_readiness_command_with_unportable_bundle_path(command: str) -> bool:
+    args = _live_readiness_args_for_supported_command(command)
+    if args is None or len(args) != 3 or args[1] != "--now":
+        return False
+    return _is_iso_timestamp_with_timezone(args[2]) and not _is_portable_relative_path(args[0])
 
 
 def _has_live_readiness_command_with_invalid_now(command: str) -> bool:
@@ -286,4 +295,14 @@ def _contains_shell_chaining(command: str) -> bool:
 
 
 def _is_preflight_bundle_path(value: str) -> bool:
-    return value.endswith(".json") and "preflight" in value
+    return _is_portable_relative_path(value) and value.endswith(".json") and "preflight" in value
+
+
+def _is_portable_relative_path(value: str) -> bool:
+    if not value or any(character.isspace() for character in value):
+        return False
+    if "\\" in value:
+        return False
+    if Path(value).is_absolute() or PureWindowsPath(value).is_absolute() or PureWindowsPath(value).drive:
+        return False
+    return ".." not in Path(value).parts

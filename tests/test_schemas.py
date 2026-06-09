@@ -206,6 +206,7 @@ def test_operator_runbook_schema_documents_current_preflight_command_binding():
     description = schema["properties"]["verification_commands"]["description"]
 
     assert "current preflight bundle being validated" in description
+    assert "portable relative path" in description
     assert "`validate-live-readiness --now` timestamp" in description
 
 

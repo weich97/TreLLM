@@ -21,7 +21,7 @@
   ],
   "properties": {
     "schema": { "const": "tradearena_broker_approval_artifact_v0.1" },
-    "approval_id": { "type": "string", "pattern": "\\S" },
+    "approval_id": { "type": "string", "pattern": "^\\S+$" },
     "approval_status": { "const": "approved" },
     "approved_by": {
       "type": "string",

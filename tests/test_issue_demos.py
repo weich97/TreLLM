@@ -3335,6 +3335,27 @@ def test_broker_approval_artifact_rejects_symbol_whitespace():
     assert "allowed_symbols must not contain whitespace" in validate_broker_approval_artifact(payload)
 
 
+def test_broker_approval_artifact_rejects_approval_id_whitespace():
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=250.0,
+            allowed_symbols=("AAPL",),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-validator-id-whitespace",
+        account_mode="live",
+        max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
+        request_artifact_hash="sha256:" + "1" * 64,
+    )
+    payload["approval_id"] = "approval-validator-id-whitespace "
+
+    assert "approval_id must not contain whitespace" in validate_broker_approval_artifact(payload)
+
+
 @pytest.mark.parametrize(
     ("allowed_symbols", "allowed_order_types", "expected_error"),
     [
@@ -3362,6 +3383,26 @@ def test_broker_approval_artifact_builder_rejects_duplicate_scopes(
             expires_at="2026-05-31T13:00:00Z",
             request_artifact_hash="sha256:" + "1" * 64,
             allowed_order_types=allowed_order_types,
+        )
+
+
+def test_broker_approval_artifact_builder_rejects_approval_id_whitespace():
+    with pytest.raises(BrokerAdapterContractError, match="approval_id must not contain whitespace"):
+        build_broker_approval_artifact(
+            BrokerApproval(
+                approval_status="approved",
+                approved_by="operator-7",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=250.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="paper shadow checks passed",
+            ),
+            approval_id="approval-builder-id-whitespace ",
+            account_mode="live",
+            max_quantity=5.0,
+            expires_at="2026-05-31T13:00:00Z",
+            request_artifact_hash="sha256:" + "1" * 64,
+            allowed_order_types=(OrderType.MARKET,),
         )
 
 

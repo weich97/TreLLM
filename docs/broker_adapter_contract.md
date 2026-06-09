@@ -215,7 +215,8 @@ broker-facing PR or paper-sandbox run report.
 
 `live_human_approved` mode requires a durable approval record:
 `approval_id` must be a non-empty string without whitespace so reviewers and
-adapters can use it as a stable audit key.
+adapters can use it as a stable audit key. `approved_by` must also be a
+redacted operator ID without whitespace, not an email address.
 
 ```json
 {

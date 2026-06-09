@@ -1586,6 +1586,30 @@ def test_broker_approval_artifact_schema_rejects_approval_id_whitespace():
     assert ("approval_id",) in paths
 
 
+def test_broker_approval_artifact_schema_rejects_approved_by_whitespace():
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=2500.0,
+            allowed_symbols=("AAPL", "MSFT"),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-schema-operator-id-whitespace",
+        account_mode="live",
+        max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
+        request_artifact_hash="sha256:" + "1" * 64,
+    )
+    payload["approved_by"] = "operator-7 "
+
+    errors = sorted(_validator("broker_approval_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("approved_by",) in paths
+
+
 @pytest.mark.parametrize(
     ("field_name", "field_value"),
     [

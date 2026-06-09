@@ -194,6 +194,22 @@ def test_broker_adapter_capability_schema_rejects_default_live_submission():
     assert any("False was expected" in error.message for error in errors)
 
 
+def test_broker_adapter_capability_schema_rejects_live_without_live_network_access():
+    subprocess.run([sys.executable, "examples/broker_capability_manifest_demo.py"], cwd=ROOT, check=True)
+    payload = json.loads(
+        (ROOT / "outputs/examples/broker_capability_manifest/capability_manifest.json").read_text(encoding="utf-8")
+    )
+    payload["supports_live_submission"] = True
+    payload["supported_modes"].append("live_human_approved")
+    payload["account_modes"].append("live")
+    payload["requires_credentials"] = True
+    payload["credential_policy"]["env_vars"] = ["BROKER_API_KEY"]
+
+    errors = sorted(_validator("broker_adapter_capability.schema.json").iter_errors(payload), key=lambda err: err.path)
+
+    assert any("'required_for_live' was expected" in error.message for error in errors)
+
+
 def test_live_readiness_preflight_schema_validates_demo_output():
     subprocess.run([sys.executable, "examples/live_readiness_preflight_demo.py"], cwd=ROOT, check=True)
     payload = json.loads(

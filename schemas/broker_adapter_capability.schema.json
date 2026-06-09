@@ -23,6 +23,21 @@
     "safety_note"
   ],
   "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "supports_live_submission": { "const": true }
+        },
+        "required": ["supports_live_submission"]
+      },
+      "then": {
+        "properties": {
+          "network_access": { "const": "required_for_live" }
+        }
+      }
+    }
+  ],
   "properties": {
     "schema": { "const": "trellm_broker_adapter_capability_v0.1" },
     "adapter_id": { "type": "string", "pattern": "\\S" },

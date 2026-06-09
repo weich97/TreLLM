@@ -257,6 +257,18 @@ def test_broker_handoff_artifact_rejects_duplicate_client_order_ids(tmp_path):
     assert "orders[1].client_order_id duplicates an earlier order" in errors
 
 
+def test_broker_handoff_artifact_rejects_symbol_whitespace(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="handoff-symbol-whitespace")
+    adapter.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path)
+    artifact = tmp_path / "alpaca_paper_orders.json"
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+    payload["orders"][0]["symbol"] = "AAPL "
+
+    errors = validate_broker_handoff_artifact(payload)
+
+    assert "orders[0].symbol must not contain whitespace" in errors
+
+
 def test_broker_handoff_artifact_rejects_limit_order_without_limit_price(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="handoff-limit-price")
     adapter.write(

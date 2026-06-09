@@ -218,7 +218,7 @@
           "enum": ["offline_export", "dry_run", "paper_sandbox", "live_human_approved"]
         },
         "account_mode": { "type": "string", "enum": ["none", "paper", "live"] },
-        "symbol": { "type": "string", "pattern": "\\S" },
+        "symbol": { "type": "string", "pattern": "^\\S+$" },
         "side": { "type": "string", "enum": ["buy", "sell"] },
         "order_type": { "type": "string", "enum": ["market", "limit"] },
         "quantity": { "type": "number", "exclusiveMinimum": 0 },

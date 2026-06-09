@@ -1492,6 +1492,8 @@ def _validate_broker_handoff_order(
     for field_name in required_text_fields:
         if not _has_text(order.get(field_name)):
             errors.append(f"orders[{idx}].{field_name} must be non-empty")
+    if _has_whitespace(order.get("symbol")):
+        errors.append(f"orders[{idx}].symbol must not contain whitespace")
     if order.get("adapter_mode") != adapter_mode:
         errors.append(f"orders[{idx}].adapter_mode must match artifact adapter_mode")
     if order.get("account_mode") != artifact_account_mode:

@@ -217,7 +217,24 @@ def _runbook_capability_safety_control_errors(capability: dict[str, Any], runboo
                 f"{str(capability_controls.get(field)).lower()} does not satisfy "
                 f"operator_runbook_artifact.{field} true"
             )
+    if (
+        "reconciliation" in _checklist_ids(runbook.get("checklist"))
+        and capability_controls.get("reconciliation_required") is not True
+    ):
+        errors.append(
+            "capability_manifest.safety_controls.reconciliation_required "
+            f"{str(capability_controls.get('reconciliation_required')).lower()} does not satisfy "
+            "operator_runbook_artifact checklist id reconciliation"
+        )
     return errors
+
+
+def _checklist_ids(value: object) -> set[str]:
+    return {
+        str(item["id"])
+        for item in _object_rows(value)
+        if isinstance(item.get("id"), str) and str(item["id"]).strip()
+    }
 
 
 def _runbook_handoff_scope_errors(runbook: dict[str, Any], handoff: dict[str, Any]) -> list[str]:

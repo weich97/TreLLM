@@ -968,6 +968,50 @@ def test_live_readiness_preflight_rejects_safety_control_mismatch(tmp_path: Path
     ) in result.stdout
 
 
+def test_live_readiness_preflight_rejects_reconciliation_control_mismatch(tmp_path: Path):
+    _run_example("examples/live_readiness_preflight_demo.py")
+    bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")
+    capability = _read_json(bundle["capability_manifest"])
+    capability["safety_controls"]["reconciliation_required"] = False
+    capability_path = tmp_path / "capability.json"
+    capability_path.write_text(json.dumps(capability), encoding="utf-8")
+
+    bundle_path = tmp_path / "preflight_bundle.json"
+    runbook = _read_json(bundle["operator_runbook_artifact"])
+    runbook["verification_commands"] = [
+        (
+            f"tradearena validate-live-readiness {bundle_path.name} "
+            "--now 2026-05-31T12:30:00Z"
+        )
+    ]
+    runbook_path = tmp_path / "operator_runbook.json"
+    runbook_path.write_text(json.dumps(runbook), encoding="utf-8")
+
+    bundle["capability_manifest"] = capability_path.name
+    bundle["operator_runbook_artifact"] = runbook_path.name
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/validate_live_readiness_preflight.py",
+            str(bundle_path),
+            "--now",
+            "2026-05-31T12:30:00Z",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid live-readiness preflight bundle" in result.stdout
+    assert (
+        "capability_manifest.safety_controls.reconciliation_required false does not satisfy "
+        "operator_runbook_artifact checklist id reconciliation"
+    ) in result.stdout
+
+
 def test_live_readiness_preflight_rejects_runbook_incident_drill_scope_mismatch(tmp_path: Path):
     _run_example("examples/live_readiness_preflight_demo.py")
     bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")

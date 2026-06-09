@@ -375,6 +375,35 @@ def test_broker_response_artifact_schema_rejects_malformed_request_hash(tmp_path
     assert ("request_artifact_hash",) in {tuple(error.path) for error in errors}
 
 
+def test_broker_response_artifact_schema_rejects_client_order_id_whitespace(tmp_path: Path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="schema-response-client-id-whitespace")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])
+    output = tmp_path / "broker_response_artifact.json"
+    write_broker_response_artifact(
+        requests=requests,
+        responses=[
+            BrokerResponse(
+                client_order_id=requests[0].client_order_id,
+                status=BrokerOrderStatus.REJECTED,
+                submitted_quantity=1.0,
+                rejection_reason="paper sandbox rejected order",
+                account_mode="paper",
+            )
+        ],
+        output=output,
+        adapter=adapter.name,
+        adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+        account_mode="paper",
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    payload["responses"][0]["client_order_id"] = f"{requests[0].client_order_id} "
+
+    errors = sorted(_validator("broker_response_artifact.schema.json").iter_errors(payload), key=lambda err: err.path)
+    paths = {tuple(error.path) for error in errors}
+
+    assert ("responses", 0, "client_order_id") in paths
+
+
 def test_broker_response_artifact_schema_rejects_malformed_timestamps(tmp_path: Path):
     adapter = AlpacaPaperExportAdapter(client_prefix="schema-recon-time")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="schema test")])

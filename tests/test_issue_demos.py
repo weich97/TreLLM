@@ -2711,6 +2711,35 @@ def test_broker_response_artifact_writer_rejects_blank_client_order_id(tmp_path)
         raise AssertionError("expected blank response client_order_id to be rejected by writer")
 
 
+def test_broker_response_artifact_writer_rejects_client_order_id_whitespace(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-client-id-whitespace")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=f"{requests[0].client_order_id} ",
+                    status=BrokerOrderStatus.REJECTED,
+                    submitted_quantity=1.0,
+                    rejection_reason="paper account symbol permission mismatch",
+                    submitted_at="2026-06-02T09:30:00Z",
+                    broker_timestamp="2026-06-02T09:30:01Z",
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "responses[0].client_order_id must not contain whitespace" in str(exc)
+    else:
+        raise AssertionError("expected response client_order_id whitespace to be rejected by writer")
+
+
 def test_broker_response_artifact_writer_rejects_blank_broker_order_id_for_accepted_responses(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-blank-broker-id")
     requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])

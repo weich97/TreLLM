@@ -181,7 +181,7 @@
       ],
       "additionalProperties": false,
       "properties": {
-        "client_order_id": { "type": "string", "pattern": "\\S" },
+        "client_order_id": { "type": "string", "pattern": "^\\S+$" },
         "status": {
           "type": "string",
           "enum": ["accepted", "rejected", "partially_filled", "filled", "canceled", "expired", "unknown"]

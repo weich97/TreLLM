@@ -513,6 +513,8 @@ def build_broker_approval_artifact(
         raise BrokerAdapterContractError("approval_reason must be non-empty")
     if not _has_text(approval_id):
         raise BrokerAdapterContractError("approval_id must be non-empty")
+    if _has_whitespace(approval_id):
+        raise BrokerAdapterContractError("approval_id must not contain whitespace")
     if account_mode != "live":
         raise BrokerAdapterContractError("account_mode must be live for broker approval artifacts")
     if not approval.allowed_symbols or not all(_has_text(symbol) for symbol in approval.allowed_symbols):
@@ -593,6 +595,8 @@ def validate_broker_approval_artifact(
         errors.append("schema must be 'tradearena_broker_approval_artifact_v0.1'")
     if not _has_text(payload.get("approval_id")):
         errors.append("approval_id must be non-empty")
+    if _has_whitespace(payload.get("approval_id")):
+        errors.append("approval_id must not contain whitespace")
     if payload.get("approval_status") != "approved":
         errors.append("approval_status must be approved")
     approved_by = payload.get("approved_by")

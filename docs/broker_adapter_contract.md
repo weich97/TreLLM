@@ -214,6 +214,8 @@ broker-facing PR or paper-sandbox run report.
 ## Human Approval Gate
 
 `live_human_approved` mode requires a durable approval record:
+`approval_id` must be a non-empty string without whitespace so reviewers and
+adapters can use it as a stable audit key.
 
 ```json
 {

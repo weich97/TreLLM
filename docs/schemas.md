@@ -229,9 +229,9 @@ response artifact, and operator runbook into one reviewable safety packet.
 The schema encodes portable relative component paths: no absolute paths, drive
 qualifiers, parent traversal (`..`), backslashes, or whitespace. Runtime
 validation then calls the component validators and checks approval binding,
-capability-mode consistency, runbook/capability default-mode consistency, and
-handoff/response adapter, adapter-mode, account-mode, and live-submission
-consistency. `approval_checked_at` must match the timestamp passed to
+capability adapter-id and mode consistency, runbook/capability default-mode
+consistency, and handoff/response adapter, adapter-mode, account-mode, and
+live-submission consistency. `approval_checked_at` must match the timestamp passed to
 `validate-live-readiness --now` so approval-expiry checks and the recorded
 review time cannot drift. Response artifacts in a preflight packet must name
 the reviewed handoff `request_artifact_hash`, and response rows must use

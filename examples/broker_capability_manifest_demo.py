@@ -19,9 +19,9 @@ def main() -> int:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     manifest = {
         "schema": "trellm_broker_adapter_capability_v0.1",
-        "adapter_id": "alpaca-paper-export-review",
-        "adapter_name": "Alpaca paper export review adapter",
-        "adapter_kind": "paper_sandbox",
+        "adapter_id": "dry-run-broker-adapter",
+        "adapter_name": "Dry-run broker adapter",
+        "adapter_kind": "dry_run",
         "default_mode": "offline_export",
         "supported_modes": ["offline_export", "dry_run", "paper_sandbox"],
         "account_modes": ["none", "paper"],

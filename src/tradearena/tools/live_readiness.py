@@ -151,11 +151,15 @@ def _capability_boundary_errors(
     capability: dict[str, Any], handoff: dict[str, Any], response: dict[str, Any]
 ) -> list[str]:
     errors: list[str] = []
+    adapter_id = capability.get("adapter_id")
     supported_modes = _string_set(capability.get("supported_modes"))
     account_modes = _string_set(capability.get("account_modes"))
     for label, payload in (("handoff_artifact", handoff), ("response_artifact", response)):
+        adapter = payload.get("adapter")
         adapter_mode = payload.get("adapter_mode")
         account_mode = payload.get("account_mode")
+        if isinstance(adapter, str) and isinstance(adapter_id, str) and adapter != adapter_id:
+            errors.append(f"{label}.adapter {adapter} does not match capability_manifest.adapter_id {adapter_id}")
         if isinstance(adapter_mode, str) and adapter_mode not in supported_modes:
             errors.append(f"{label}.adapter_mode {adapter_mode} is not declared in capability_manifest.supported_modes")
         if isinstance(account_mode, str) and account_mode not in account_modes:

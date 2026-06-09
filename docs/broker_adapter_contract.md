@@ -24,7 +24,9 @@ must never be the default.
 
 Before a broker-facing adapter is reviewed, it should publish a capability
 manifest that names its supported modes, account modes, network access,
-credential policy, and live-safety controls. Validate that manifest with:
+credential policy, and live-safety controls. The manifest `adapter_id` must be
+a non-empty string without whitespace because live-readiness compares it against
+handoff and response `adapter` values. Validate that manifest with:
 
 ```bash
 tradearena validate-broker-capability outputs/examples/broker_capability_manifest/capability_manifest.json

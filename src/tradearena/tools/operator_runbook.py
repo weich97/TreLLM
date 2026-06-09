@@ -37,6 +37,20 @@ def validate_operator_runbook_artifact_file(path: str | Path) -> tuple[dict[str,
     return payload, validate_operator_runbook_artifact(payload)
 
 
+def live_readiness_verification_now(payload: dict[str, Any]) -> str | None:
+    """Return the --now timestamp from the supported live-readiness command."""
+    verification_commands = payload.get("verification_commands")
+    if not isinstance(verification_commands, list):
+        return None
+    for command in verification_commands:
+        if not isinstance(command, str):
+            continue
+        args = _live_readiness_args_for_supported_command(command)
+        if args is not None and len(args) == 3 and args[1] == "--now" and _is_iso_timestamp_with_timezone(args[2]):
+            return args[2]
+    return None
+
+
 def _read_operator_runbook_json_file(path: str | Path) -> tuple[Any, list[str]]:
     artifact_path = Path(path)
     if artifact_path.exists() and not artifact_path.is_file():

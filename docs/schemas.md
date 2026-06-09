@@ -126,6 +126,10 @@ Validate a broker handoff artifact with:
 tradearena validate-broker-handoff outputs/examples/alpaca_paper_export/alpaca_paper_orders.json
 ```
 
+Broker handoff order symbols must be non-empty strings without whitespace, so
+reviewed broker-facing rows and later approval scopes cannot diverge through
+hidden padding.
+
 Broker adapter capability manifests can be validated against
 [`../schemas/broker_adapter_capability.schema.json`](../schemas/broker_adapter_capability.schema.json).
 The schema fixes the public `trellm_broker_adapter_capability_v0.1`

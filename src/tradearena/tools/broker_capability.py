@@ -89,7 +89,12 @@ def _semantic_errors(payload: dict[str, Any]) -> list[str]:
     if isinstance(default_mode, str) and supported_modes and default_mode not in supported_modes:
         errors.append("default_mode must be included in supported_modes")
 
+    if payload.get("adapter_kind") == "live_capable" and payload.get("supports_live_submission") is not True:
+        errors.append("adapter_kind live_capable requires supports_live_submission true")
+
     if payload.get("supports_live_submission") is True:
+        if payload.get("adapter_kind") != "live_capable":
+            errors.append("live-capable adapters must set adapter_kind to live_capable")
         if payload.get("network_access") != "required_for_live":
             errors.append("live-capable adapters must set network_access to required_for_live")
         if "live_human_approved" not in supported_modes:

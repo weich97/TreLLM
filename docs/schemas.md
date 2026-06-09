@@ -133,10 +133,10 @@ contract for adapter mode, account mode, credential policy, network access,
 default-live prohibition, and live-safety controls. A future paper or live
 adapter should publish this manifest before its handoff, approval, response,
 or runbook artifacts are reviewed. Schema and runtime validation require
-live-capable adapters to declare `network_access` as `required_for_live`, list
-`live_human_approved` and `live` mode support, require credentials with named
-environment variables, and enable every live safety control before live
-submission can be advertised.
+live-capable adapters to use `adapter_kind: live_capable`, declare
+`network_access` as `required_for_live`, list `live_human_approved` and `live`
+mode support, require credentials with named environment variables, and enable
+every live safety control before live submission can be advertised.
 
 Validate the offline demo capability manifest with:
 

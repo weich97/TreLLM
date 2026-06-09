@@ -92,8 +92,11 @@ def _validate_components(
     bundle: dict[str, Any], *, bundle_path: Path, now: str | None, summary: dict[str, Any]
 ) -> list[str]:
     errors: list[str] = []
-    checked_at = now or _text(bundle.get("approval_checked_at"))
+    bundle_checked_at = _text(bundle.get("approval_checked_at"))
+    checked_at = now or bundle_checked_at
     components = summary["components"]
+    if now is not None and bundle_checked_at is not None and bundle_checked_at != now:
+        errors.append(f"approval_checked_at {bundle_checked_at} does not match validation --now {now}")
     errors.extend(_component_path_reference_errors(bundle))
 
     capability_path = _resolve_bundle_path(bundle_path, bundle.get("capability_manifest"))

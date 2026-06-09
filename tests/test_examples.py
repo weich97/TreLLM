@@ -1067,6 +1067,34 @@ def test_live_readiness_preflight_rejects_response_request_hash_mismatch(tmp_pat
     assert "response_artifact.request_artifact_hash does not match handoff_artifact hash" in result.stdout
 
 
+def test_live_readiness_preflight_requires_bundle_checked_at_to_match_cli_now(tmp_path: Path):
+    _run_example("examples/live_readiness_preflight_demo.py")
+    bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")
+    bundle["approval_checked_at"] = "2026-05-31T12:00:00Z"
+    bundle_path = tmp_path / "preflight_bundle.json"
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/validate_live_readiness_preflight.py",
+            str(bundle_path),
+            "--now",
+            "2026-05-31T12:30:00Z",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid live-readiness preflight bundle" in result.stdout
+    assert (
+        "approval_checked_at 2026-05-31T12:00:00Z does not match validation --now "
+        "2026-05-31T12:30:00Z"
+    ) in result.stdout
+
+
 def test_live_readiness_preflight_cli_validates_demo_bundle():
     _run_example("examples/live_readiness_preflight_demo.py")
 

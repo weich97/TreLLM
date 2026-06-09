@@ -23,6 +23,7 @@
     "operator_runbook_artifact": { "$ref": "#/$defs/portable_relative_path" },
     "approval_checked_at": {
       "type": "string",
+      "description": "Validation timestamp for this safety packet. It must be the same timestamp passed to `validate-live-readiness --now` so approval-expiry checks and the recorded review time cannot drift.",
       "format": "date-time",
       "pattern": "Z$|[+-][0-9]{2}:[0-9]{2}$"
     },

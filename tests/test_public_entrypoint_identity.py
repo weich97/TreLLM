@@ -950,6 +950,7 @@ def test_generated_public_copy_sources_use_trellm_system_identity():
             "tradearena validate-broker-capability outputs/examples/broker_capability_manifest/capability_manifest.json",
             "## Live-Readiness Preflight Bundle Schema",
             "The schema fixes the public `trellm_live_readiness_preflight_v0.1` contract",
+            "`approval_checked_at` must match the timestamp passed to `validate-live-readiness --now`",
             "tradearena validate-live-readiness outputs/examples/live_readiness_preflight/preflight_bundle.json",
             "The schema fixes the public `trellm_operator_runbook_v0.1` contract",
             "tradearena validate-operator-runbook outputs/examples/operator_runbook/summary.json",

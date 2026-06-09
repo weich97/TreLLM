@@ -338,6 +338,34 @@ def test_operator_runbook_validator_rejects_unknown_live_readiness_args(tmp_path
     ) in result.stdout
 
 
+def test_operator_runbook_validator_rejects_absolute_live_readiness_bundle_path(tmp_path: Path):
+    _run_example("examples/operator_runbook_demo.py")
+    payload = _read_json("outputs/examples/operator_runbook/summary.json")
+    payload["verification_commands"] = [
+        (
+            "tradearena validate-live-readiness "
+            "C:/Users/Administrator/preflight_bundle.json "
+            "--now 2026-05-31T12:30:00Z"
+        )
+    ]
+    artifact = tmp_path / "operator_runbook.json"
+    artifact.write_text(json.dumps(payload), encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_operator_runbook_artifact.py", str(artifact)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid operator runbook artifact" in result.stdout
+    assert (
+        "verification_commands validate-live-readiness preflight bundle path "
+        "must be portable and relative"
+    ) in result.stdout
+
+
 def test_operator_runbook_validator_rejects_multiple_live_readiness_commands(tmp_path: Path):
     _run_example("examples/operator_runbook_demo.py")
     payload = _read_json("outputs/examples/operator_runbook/summary.json")
@@ -775,7 +803,7 @@ def test_live_readiness_preflight_rejects_adapter_not_named_by_capability(tmp_pa
     runbook = _read_json(bundle["operator_runbook_artifact"])
     runbook["verification_commands"] = [
         (
-            f"tradearena validate-live-readiness {bundle_path.as_posix()} "
+            f"tradearena validate-live-readiness {bundle_path.name} "
             "--now 2026-05-31T12:30:00Z"
         )
     ]
@@ -819,7 +847,7 @@ def test_live_readiness_preflight_rejects_order_terms_not_declared_by_capability
     runbook = _read_json(bundle["operator_runbook_artifact"])
     runbook["verification_commands"] = [
         (
-            f"tradearena validate-live-readiness {bundle_path.as_posix()} "
+            f"tradearena validate-live-readiness {bundle_path.name} "
             "--now 2026-05-31T12:30:00Z"
         )
     ]
@@ -929,7 +957,7 @@ def test_live_readiness_preflight_rejects_runbook_incident_drill_scope_mismatch(
     bundle_path = tmp_path / "preflight_bundle.json"
     runbook["verification_commands"] = [
         (
-            f"tradearena validate-live-readiness {bundle_path.as_posix()} "
+            f"tradearena validate-live-readiness {bundle_path.name} "
             "--now 2026-05-31T12:30:00Z"
         )
     ]

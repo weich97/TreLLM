@@ -208,8 +208,9 @@ The checklist must include each critical control id exactly once: `mode-boundary
 `artifact-retention`, and `incident-owner`.
 Runtime validation also requires exactly one supported, runnable
 `validate-live-readiness` command with no shell chaining (`;`, `&`, `&&`, `||`,
-or `|`), exactly the preflight bundle path, `--now`, and an ISO timezone
-timestamp, with no extra arguments and no unsupported extra
+or `|`), a portable relative preflight bundle path, `--now`, and an ISO timezone
+timestamp, with no absolute paths, drive-qualified paths, parent traversal,
+backslashes, extra arguments, or unsupported extra
 `validate-live-readiness` mentions. When the runbook is linked from a
 live-readiness preflight bundle, the command path must name the current
 preflight bundle being validated and the command timestamp must match that

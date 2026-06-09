@@ -140,7 +140,9 @@ network access, default-live prohibition, and live-safety controls. The
 `adapter_id` must be a non-empty string without whitespace because
 live-readiness compares it against handoff and response `adapter` values. A
 future paper or live adapter should publish this manifest before its handoff,
-approval, response, or runbook artifacts are reviewed. Schema and runtime validation require
+approval, response, or runbook artifacts are reviewed. Credential environment
+variable names in `credential_policy.env_vars` must also be non-empty strings
+without whitespace. Schema and runtime validation require
 live-capable adapters to use `adapter_kind: live_capable`, declare
 `network_access` as `required_for_live`, list `live_human_approved` and `live`
 mode support, require credentials with named environment variables, and enable

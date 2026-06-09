@@ -613,6 +613,20 @@ def test_broker_capability_validator_rejects_live_without_live_network_access(tm
     assert "live-capable adapters must set network_access to required_for_live" in result.stdout
 
 
+def test_broker_capability_validator_rejects_credential_env_var_whitespace():
+    _run_example("examples/broker_capability_manifest_demo.py")
+    payload = _read_json("outputs/examples/broker_capability_manifest/capability_manifest.json")
+    payload["supports_live_submission"] = True
+    payload["supported_modes"].append("live_human_approved")
+    payload["account_modes"].append("live")
+    payload["network_access"] = "required_for_live"
+    payload["adapter_kind"] = "live_capable"
+    payload["requires_credentials"] = True
+    payload["credential_policy"]["env_vars"] = ["BROKER_API_KEY "]
+
+    assert "credential_policy.env_vars must not contain whitespace" in validate_broker_adapter_capability(payload)
+
+
 def test_broker_capability_validator_rejects_live_support_without_live_adapter_kind(tmp_path: Path):
     _run_example("examples/broker_capability_manifest_demo.py")
     payload = _read_json("outputs/examples/broker_capability_manifest/capability_manifest.json")

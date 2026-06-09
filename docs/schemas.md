@@ -236,7 +236,8 @@ The schema encodes portable relative component paths: no absolute paths, drive
 qualifiers, parent traversal (`..`), backslashes, or whitespace. Runtime
 validation then calls the component validators and checks approval binding,
 capability adapter-id and mode consistency, runbook/capability default-mode
-consistency, and handoff/response adapter, adapter-mode, account-mode, and
+consistency, runbook safety controls including reconciliation checklist
+coverage, and handoff/response adapter, adapter-mode, account-mode, and
 live-submission consistency. Handoff orders must also use order types and
 time-in-force values declared in the capability manifest. The linked runbook's
 incident drill must cover the current handoff account mode and order symbols.

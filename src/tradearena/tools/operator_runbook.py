@@ -39,6 +39,21 @@ def validate_operator_runbook_artifact_file(path: str | Path) -> tuple[dict[str,
 
 def live_readiness_verification_now(payload: dict[str, Any]) -> str | None:
     """Return the --now timestamp from the supported live-readiness command."""
+    args = _live_readiness_verification_args(payload)
+    if args is None:
+        return None
+    return args[2]
+
+
+def live_readiness_verification_bundle_path(payload: dict[str, Any]) -> str | None:
+    """Return the bundle path from the supported live-readiness command."""
+    args = _live_readiness_verification_args(payload)
+    if args is None:
+        return None
+    return args[0]
+
+
+def _live_readiness_verification_args(payload: dict[str, Any]) -> list[str] | None:
     verification_commands = payload.get("verification_commands")
     if not isinstance(verification_commands, list):
         return None
@@ -47,7 +62,7 @@ def live_readiness_verification_now(payload: dict[str, Any]) -> str | None:
             continue
         args = _live_readiness_args_for_supported_command(command)
         if args is not None and len(args) == 3 and args[1] == "--now" and _is_iso_timestamp_with_timezone(args[2]):
-            return args[2]
+            return args
     return None
 
 

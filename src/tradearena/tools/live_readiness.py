@@ -17,7 +17,11 @@ from tradearena.tools.broker_export import (
     validate_broker_handoff_artifact_file,
     validate_broker_response_artifact_file,
 )
-from tradearena.tools.operator_runbook import live_readiness_verification_now, validate_operator_runbook_artifact_file
+from tradearena.tools.operator_runbook import (
+    live_readiness_verification_bundle_path,
+    live_readiness_verification_now,
+    validate_operator_runbook_artifact_file,
+)
 
 ROOT = Path(__file__).resolve().parents[3]
 SCHEMA_PATH = ROOT / "schemas" / "live_readiness_preflight.schema.json"
@@ -137,7 +141,7 @@ def _validate_components(
     if not capability_errors and not runbook_errors:
         errors.extend(_runbook_capability_errors(capability, runbook))
     if not runbook_errors and checked_at is not None:
-        errors.extend(_runbook_checked_at_errors(runbook, checked_at))
+        errors.extend(_runbook_command_binding_errors(runbook, checked_at, bundle_path))
     if not handoff_errors and not response_errors:
         errors.extend(_handoff_response_linkage_errors(handoff, response))
     return errors
@@ -195,14 +199,32 @@ def _runbook_capability_safety_control_errors(capability: dict[str, Any], runboo
     return errors
 
 
-def _runbook_checked_at_errors(runbook: dict[str, Any], checked_at: str) -> list[str]:
+def _runbook_command_binding_errors(runbook: dict[str, Any], checked_at: str, bundle_path: Path) -> list[str]:
+    errors: list[str] = []
     runbook_now = live_readiness_verification_now(runbook)
-    if runbook_now is None or runbook_now == checked_at:
-        return []
-    return [
-        f"operator_runbook_artifact verification command --now {runbook_now} "
-        f"does not match preflight approval_checked_at {checked_at}"
-    ]
+    if runbook_now is not None and runbook_now != checked_at:
+        errors.append(
+            f"operator_runbook_artifact verification command --now {runbook_now} "
+            f"does not match preflight approval_checked_at {checked_at}"
+        )
+    runbook_bundle_path = live_readiness_verification_bundle_path(runbook)
+    if runbook_bundle_path is not None and _resolved_command_bundle_path(bundle_path, runbook_bundle_path) != _resolved_path(bundle_path):
+        errors.append(
+            f"operator_runbook_artifact verification command bundle path {runbook_bundle_path} "
+            "does not match current preflight bundle"
+        )
+    return errors
+
+
+def _resolved_command_bundle_path(bundle_path: Path, value: str) -> Path:
+    return _resolved_path(_resolve_bundle_path(bundle_path, value))
+
+
+def _resolved_path(path: Path) -> Path:
+    try:
+        return path.resolve()
+    except OSError:
+        return path.absolute()
 
 
 def _handoff_response_linkage_errors(handoff: dict[str, Any], response: dict[str, Any]) -> list[str]:

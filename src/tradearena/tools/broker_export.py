@@ -501,6 +501,8 @@ def build_broker_approval_artifact(
         raise BrokerAdapterContractError("approval_status must be approved")
     if not _has_text(approval.approved_by):
         raise BrokerAdapterContractError("approved_by must be non-empty")
+    if _has_whitespace(approval.approved_by):
+        raise BrokerAdapterContractError("approved_by must not contain whitespace")
     if "@" in approval.approved_by:
         raise BrokerAdapterContractError("approved_by must be a redacted operator id, not an email address")
     if not approval.approved_at or not _is_iso_timestamp_with_timezone(approval.approved_at):
@@ -602,6 +604,8 @@ def validate_broker_approval_artifact(
     approved_by = payload.get("approved_by")
     if not _has_text(approved_by):
         errors.append("approved_by must be non-empty")
+    elif _has_whitespace(approved_by):
+        errors.append("approved_by must not contain whitespace")
     elif "@" in approved_by:
         errors.append("approved_by must be a redacted operator id, not an email address")
     approved_at = payload.get("approved_at")

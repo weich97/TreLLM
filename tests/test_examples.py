@@ -733,6 +733,49 @@ def test_live_readiness_preflight_validator_rejects_mode_not_declared_by_capabil
     assert "response_artifact.adapter_mode dry_run is not declared" in result.stdout
 
 
+def test_live_readiness_preflight_rejects_adapter_not_named_by_capability(tmp_path: Path):
+    _run_example("examples/live_readiness_preflight_demo.py")
+    capability = _read_json("outputs/examples/broker_capability_manifest/capability_manifest.json")
+    capability["adapter_id"] = "stale-paper-adapter"
+    capability_path = tmp_path / "capability.json"
+    capability_path.write_text(json.dumps(capability), encoding="utf-8")
+
+    bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")
+    bundle["capability_manifest"] = capability_path.name
+    bundle_path = tmp_path / "preflight_bundle.json"
+    runbook = _read_json(bundle["operator_runbook_artifact"])
+    runbook["verification_commands"] = [
+        (
+            f"tradearena validate-live-readiness {bundle_path.as_posix()} "
+            "--now 2026-05-31T12:30:00Z"
+        )
+    ]
+    runbook_path = tmp_path / "operator_runbook.json"
+    runbook_path.write_text(json.dumps(runbook), encoding="utf-8")
+    bundle["operator_runbook_artifact"] = runbook_path.name
+    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "scripts/validate_live_readiness_preflight.py",
+            str(bundle_path),
+            "--now",
+            "2026-05-31T12:30:00Z",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid live-readiness preflight bundle" in result.stdout
+    assert (
+        "handoff_artifact.adapter dry-run-broker-adapter does not match "
+        "capability_manifest.adapter_id stale-paper-adapter"
+    ) in result.stdout
+
+
 def test_live_readiness_preflight_rejects_runbook_default_mode_mismatch(tmp_path: Path):
     _run_example("examples/live_readiness_preflight_demo.py")
     bundle = _read_json("outputs/examples/live_readiness_preflight/preflight_bundle.json")

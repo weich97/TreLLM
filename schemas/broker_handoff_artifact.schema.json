@@ -212,7 +212,7 @@
       ],
       "additionalProperties": false,
       "properties": {
-        "client_order_id": { "type": "string", "pattern": "\\S" },
+        "client_order_id": { "type": "string", "pattern": "^\\S+$" },
         "adapter_mode": {
           "type": "string",
           "enum": ["offline_export", "dry_run", "paper_sandbox", "live_human_approved"]

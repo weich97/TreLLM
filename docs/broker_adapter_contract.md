@@ -103,6 +103,8 @@ Current export-only examples may use a subset, but new broker-facing adapters
 should move toward this complete shape.
 Public handoff artifacts should validate against
 [`../schemas/broker_handoff_artifact.schema.json`](../schemas/broker_handoff_artifact.schema.json).
+Handoff `client_order_id` values must be unique non-empty strings without
+whitespace because approval and response artifacts use them as audit keys.
 Use `tradearena validate-broker-handoff <artifact.json>` before sharing a
 broker-review or paper-sandbox request artifact.
 

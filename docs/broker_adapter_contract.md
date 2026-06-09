@@ -175,8 +175,8 @@ whitespace; duplicate broker responses for the same client order must be
 consolidated before publishing the artifact.
 Accepted, partially filled, filled, canceled, and expired rows must include a
 non-empty `broker_order_id`; rejected rows may omit it when the broker never
-created an order. Non-empty `broker_order_id` values must also be unique within
-the artifact.
+created an order. Non-empty `broker_order_id` values must not contain
+whitespace and must also be unique within the artifact.
 Rejected response rows must include a non-empty, redacted `rejection_reason`
 so reconciliation artifacts explain why an order did not proceed. `unknown`
 rows must also include a non-empty, redacted `rejection_reason` that explains

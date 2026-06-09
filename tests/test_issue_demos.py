@@ -2793,6 +2793,36 @@ def test_broker_response_artifact_writer_rejects_blank_broker_order_id_for_accep
         raise AssertionError("expected accepted response with blank broker_order_id to be rejected by writer")
 
 
+def test_broker_response_artifact_writer_rejects_broker_order_id_whitespace(tmp_path):
+    adapter = AlpacaPaperExportAdapter(client_prefix="response-writer-broker-id-whitespace")
+    requests = adapter.convert([Order("AAPL", Side.BUY, 1.0, reason="unit test")])
+
+    try:
+        write_broker_response_artifact(
+            requests=requests,
+            responses=[
+                BrokerResponse(
+                    client_order_id=requests[0].client_order_id,
+                    status=BrokerOrderStatus.ACCEPTED,
+                    broker_order_id="paper-broker-1 ",
+                    submitted_quantity=1.0,
+                    accepted_quantity=1.0,
+                    submitted_at="2026-06-02T09:30:00Z",
+                    broker_timestamp="2026-06-02T09:30:01Z",
+                    account_mode="paper",
+                )
+            ],
+            output=tmp_path / "broker_response.json",
+            adapter=adapter.name,
+            adapter_mode=BrokerAdapterMode.PAPER_SANDBOX,
+            account_mode="paper",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "responses[0].broker_order_id must not contain whitespace" in str(exc)
+    else:
+        raise AssertionError("expected response broker_order_id whitespace to be rejected by writer")
+
+
 @pytest.mark.parametrize("status", [BrokerOrderStatus.REJECTED, BrokerOrderStatus.UNKNOWN])
 def test_broker_response_artifact_writer_rejects_blank_reason_for_terminal_responses(tmp_path, status):
     adapter = AlpacaPaperExportAdapter(client_prefix=f"response-writer-blank-{status.value}-reason")

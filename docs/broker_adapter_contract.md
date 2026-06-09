@@ -26,7 +26,9 @@ Before a broker-facing adapter is reviewed, it should publish a capability
 manifest that names its supported modes, account modes, network access,
 credential policy, and live-safety controls. The manifest `adapter_id` must be
 a non-empty string without whitespace because live-readiness compares it against
-handoff and response `adapter` values. Validate that manifest with:
+handoff and response `adapter` values. Credential environment variable names in
+`credential_policy.env_vars` must also be non-empty strings without whitespace.
+Validate that manifest with:
 
 ```bash
 tradearena validate-broker-capability outputs/examples/broker_capability_manifest/capability_manifest.json

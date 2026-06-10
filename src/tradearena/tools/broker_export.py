@@ -453,7 +453,9 @@ def write_broker_response_artifact(
         artifact_errors.append("adapter must not contain whitespace")
     if not _has_text(account_mode):
         artifact_errors.append("account_mode must be non-empty")
-    if request_artifact_hash is not None and not _SHA256_ARTIFACT_HASH_RE.fullmatch(request_artifact_hash):
+    if request_artifact_hash is not None and (
+        not isinstance(request_artifact_hash, str) or not _SHA256_ARTIFACT_HASH_RE.fullmatch(request_artifact_hash)
+    ):
         artifact_errors.append("request_artifact_hash must be sha256:<64 lowercase hex chars>")
     binding_errors = _validate_response_request_bindings(
         requests,

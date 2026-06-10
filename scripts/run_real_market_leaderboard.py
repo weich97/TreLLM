@@ -15,7 +15,12 @@ if str(SRC) not in sys.path:
 
 from tradearena.core.reproducibility import attach_reproducibility_hash, sha256_file, sha256_text
 from tradearena.evaluation.evidence import evidence_payload_for_row, format_evidence_tags
-from tradearena.evaluation.statistics import paired_bootstrap_difference, sample_std, summarize_metric
+from tradearena.evaluation.statistics import (
+    benjamini_hochberg,
+    paired_bootstrap_difference,
+    sample_std,
+    summarize_metric,
+)
 from tradearena.factory import build_default_system
 
 DEFAULT_LLM_MODELS = (
@@ -283,7 +288,7 @@ def _run_one(
             "cache_policy": _cache_policy(provider),
             "provider_call_policy": _provider_call_policy(provider),
             "provider_drift_guard": _provider_drift_guard(provider),
-            "statistical_tests": ["bootstrap_ci", "paired_bootstrap", "paired_sign_flip_permutation"],
+            "statistical_tests": ["bootstrap_ci", "paired_bootstrap", "paired_sign_flip_permutation", "benjamini_hochberg_fdr", "paired_cohens_d", "cliffs_delta"],
         },
         "redaction": {
             "raw_prompts_included": False,
@@ -325,7 +330,7 @@ def _run_one(
                 "cache_policy": _cache_policy(provider),
                 "provider_call_policy": _provider_call_policy(provider),
                 "provider_drift_guard": _provider_drift_guard(provider),
-                "statistical_tests": ["bootstrap_ci", "paired_bootstrap", "paired_sign_flip_permutation"],
+                "statistical_tests": ["bootstrap_ci", "paired_bootstrap", "paired_sign_flip_permutation", "benjamini_hochberg_fdr", "paired_cohens_d", "cliffs_delta"],
             },
             "execution_config": {
                 "commission_bps": 1.0,
@@ -519,13 +524,18 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "bootstrap_p_value_vs_hold": hold_test["bootstrap_p_value"],
                 "permutation_p_value_vs_hold": hold_test["permutation_p_value"],
                 "paired_n_vs_hold": hold_test["paired_n"],
+                "cohens_d_vs_hold": hold_test["cohens_d"],
+                "cliffs_delta_vs_hold": hold_test["cliffs_delta"],
                 "delta_return_vs_random": random_test["mean_delta"],
                 "p_value_vs_random": random_test["p_value"],
                 "bootstrap_p_value_vs_random": random_test["bootstrap_p_value"],
                 "permutation_p_value_vs_random": random_test["permutation_p_value"],
                 "paired_n_vs_random": random_test["paired_n"],
+                "cohens_d_vs_random": random_test["cohens_d"],
+                "cliffs_delta_vs_random": random_test["cliffs_delta"],
             }
         )
+    _attach_fdr_q_values(aggregate_rows)
     return sorted(
         aggregate_rows,
         key=lambda row: (
@@ -629,9 +639,33 @@ def _significance_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                     "delta_ci_high": result["delta_ci_high"],
                     "bootstrap_p_value": result["bootstrap_p_value"],
                     "permutation_p_value": result["permutation_p_value"],
+                    "cohens_d": result["cohens_d"],
+                    "cliffs_delta": result["cliffs_delta"],
                 }
             )
+    bootstrap_q = benjamini_hochberg(
+        {index: row["bootstrap_p_value"] for index, row in enumerate(output)}
+    )
+    permutation_q = benjamini_hochberg(
+        {index: row["permutation_p_value"] for index, row in enumerate(output)}
+    )
+    for index, row in enumerate(output):
+        row["bootstrap_q_value"] = bootstrap_q[index]
+        row["permutation_q_value"] = permutation_q[index]
     return output
+
+
+def _attach_fdr_q_values(aggregate_rows: list[dict[str, Any]]) -> None:
+    """BH-FDR over the full model x baseline test family of this matrix run."""
+
+    family: dict[tuple[int, str], float | None] = {}
+    for index, row in enumerate(aggregate_rows):
+        family[(index, "hold")] = row.get("bootstrap_p_value_vs_hold")
+        family[(index, "random")] = row.get("bootstrap_p_value_vs_random")
+    q_values = benjamini_hochberg(family)
+    for index, row in enumerate(aggregate_rows):
+        row["q_value_vs_hold"] = q_values[(index, "hold")]
+        row["q_value_vs_random"] = q_values[(index, "random")]
 
 
 def _baseline_test(
@@ -724,11 +758,17 @@ def _write_aggregate_table(path: Path, rows: list[dict[str, Any]]) -> None:
         "bootstrap_p_value_vs_hold",
         "permutation_p_value_vs_hold",
         "paired_n_vs_hold",
+        "q_value_vs_hold",
+        "cohens_d_vs_hold",
+        "cliffs_delta_vs_hold",
         "delta_return_vs_random",
         "p_value_vs_random",
         "bootstrap_p_value_vs_random",
         "permutation_p_value_vs_random",
         "paired_n_vs_random",
+        "q_value_vs_random",
+        "cohens_d_vs_random",
+        "cliffs_delta_vs_random",
     ]
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
@@ -775,6 +815,10 @@ def _write_significance_table(path: Path, rows: list[dict[str, Any]]) -> None:
         "delta_ci_high",
         "bootstrap_p_value",
         "permutation_p_value",
+        "bootstrap_q_value",
+        "permutation_q_value",
+        "cohens_d",
+        "cliffs_delta",
     ]
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)

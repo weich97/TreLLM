@@ -15,7 +15,14 @@ if str(SRC) not in sys.path:
 
 from tradearena.core.reproducibility import attach_reproducibility_hash, sha256_file
 from tradearena.evaluation.evidence import evidence_payload_for_row, format_evidence_tags
-from tradearena.evaluation.statistics import paired_bootstrap_difference, sample_std, summarize_metric
+from tradearena.evaluation.statistics import (
+    benjamini_hochberg,
+    mean,
+    paired_bootstrap_difference,
+    sample_std,
+    summarize_metric,
+    variance_components,
+)
 from tradearena.factory import build_default_system
 
 DEFAULT_LLM_MODELS = (
@@ -184,6 +191,12 @@ def main(argv: list[str] | None = None) -> int:
         default=",".join(str(seed) for seed in DEFAULT_SEEDS),
         help="Comma-separated benchmark seeds. Defaults to five seeds for statistical summaries.",
     )
+    parser.add_argument(
+        "--samples-per-seed",
+        type=int,
+        default=1,
+        help="Repeated provider samples per market seed for LLM rows; lets aggregates separate market-path variance from model stochasticity. Baseline rows always run once per seed.",
+    )
     parser.add_argument("--symbols", default="SYN,ALT")
     parser.add_argument("--output-dir", default="docs/results/model_matrix")
     parser.add_argument("--submission-dir", default="examples/benchmark_submissions/model_matrix")
@@ -213,42 +226,47 @@ def main(argv: list[str] | None = None) -> int:
     rows: list[dict[str, Any]] = []
     failures: list[dict[str, str]] = []
 
+    samples_per_seed = max(1, int(args.samples_per_seed))
     for scenario in scenarios:
         for provider, model in model_specs:
+            sample_count = 1 if provider == "baseline" else samples_per_seed
             for seed_index, seed in enumerate(seeds):
                 actual_seed = int(seed) + int(scenario["seed_offset"])
-                try:
-                    row = _run_one(
-                        provider=provider,
-                        model=model,
-                        scenario=scenario,
-                        symbols=symbols,
-                        periods=args.periods,
-                        seed=actual_seed,
-                        seed_index=seed_index,
-                        output_dir=output_dir,
-                        submission_dir=submission_dir,
-                        cache_dir=cache_dir,
-                        provider_mode=args.provider_mode,
-                    )
-                    rows.append(row)
-                    print(
-                        f"OK {row['scenario_key']} seed={row['seed']} {provider}:{model} -> {row['submission']}"
-                    )
-                except Exception as exc:  # pragma: no cover - exercised only by live provider failures
-                    failures.append(
-                        {
-                            "scenario": str(scenario["key"]),
-                            "seed": str(actual_seed),
-                            "provider": provider,
-                            "model": model,
-                            "error": type(exc).__name__,
-                        }
-                    )
-                    print(
-                        f"FAILED {scenario['key']} seed={actual_seed} {provider}:{model}: {type(exc).__name__}: {exc}",
-                        file=sys.stderr,
-                    )
+                for sample_index in range(sample_count):
+                    try:
+                        row = _run_one(
+                            provider=provider,
+                            model=model,
+                            scenario=scenario,
+                            symbols=symbols,
+                            periods=args.periods,
+                            seed=actual_seed,
+                            seed_index=seed_index,
+                            sample_index=sample_index,
+                            output_dir=output_dir,
+                            submission_dir=submission_dir,
+                            cache_dir=cache_dir,
+                            provider_mode=args.provider_mode,
+                        )
+                        rows.append(row)
+                        print(
+                            f"OK {row['scenario_key']} seed={row['seed']} sample={sample_index} {provider}:{model} -> {row['submission']}"
+                        )
+                    except Exception as exc:  # pragma: no cover - exercised only by live provider failures
+                        failures.append(
+                            {
+                                "scenario": str(scenario["key"]),
+                                "seed": str(actual_seed),
+                                "sample_index": str(sample_index),
+                                "provider": provider,
+                                "model": model,
+                                "error": type(exc).__name__,
+                            }
+                        )
+                        print(
+                            f"FAILED {scenario['key']} seed={actual_seed} sample={sample_index} {provider}:{model}: {type(exc).__name__}: {exc}",
+                            file=sys.stderr,
+                        )
 
     _write_matrix_table(output_dir / "leaderboard_model_matrix.csv", rows)
     aggregate_rows = _aggregate_rows(rows)
@@ -257,6 +275,11 @@ def main(argv: list[str] | None = None) -> int:
     _write_scenario_aggregate_table(output_dir / "leaderboard_model_matrix_scenario_aggregate.csv", scenario_rows)
     significance_rows = _significance_rows(rows)
     _write_significance_table(output_dir / "leaderboard_model_matrix_significance.csv", significance_rows)
+    if samples_per_seed > 1:
+        _write_variance_decomposition_table(
+            output_dir / "leaderboard_model_matrix_variance_decomposition.csv",
+            _variance_decomposition_rows(rows),
+        )
     shock_rows = _execution_shock_aggregate_rows(rows)
     _write_shock_aggregate_table(output_dir / "leaderboard_execution_shock_aggregate.csv", shock_rows)
     _write_matrix_markdown(
@@ -306,6 +329,7 @@ def _run_one(
     periods: int,
     seed: int,
     seed_index: int,
+    sample_index: int = 0,
     output_dir: Path,
     submission_dir: Path,
     cache_dir: Path,
@@ -314,6 +338,8 @@ def _run_one(
     model_slug = _slug(f"{provider}-{model}")
     scenario_key = str(scenario["key"])
     slug = f"{scenario_key}__{model_slug}__seed_{seed}"
+    if sample_index:
+        slug = f"{slug}__sample_{sample_index}"
     analyst_name = _analyst_name(provider)
     strategy_name = _strategy_name(provider, model)
     execution_config = _scenario_execution_config(scenario)
@@ -337,6 +363,7 @@ def _run_one(
         llm_mask_timestamps=True,
         llm_use_risk_feedback=True,
         llm_risk_feedback_mode="true",
+        llm_sample_index=sample_index,
         **scenario["synthetic"],
     ).run()
 
@@ -360,6 +387,7 @@ def _run_one(
         "periods": periods,
         "seed": seed,
         "seed_index": seed_index,
+        "sample_index": sample_index,
         "stress_family": scenario.get("stress_family", "market"),
         "scenario_description": scenario.get("description", ""),
         "execution_config": execution_config,
@@ -460,6 +488,7 @@ def _run_one(
         "model": model,
         "seed": seed,
         "seed_index": seed_index,
+        "sample_index": sample_index,
         "stress_family": scenario.get("stress_family", "market"),
         "participation_rate": execution_config["participation_rate"],
         "spread_bps": execution_config["spread_bps"],
@@ -579,6 +608,7 @@ def _write_matrix_table(path: Path, rows: list[dict[str, Any]]) -> None:
         "model",
         "seed",
         "seed_index",
+        "sample_index",
         "stress_family",
         "participation_rate",
         "spread_bps",
@@ -645,13 +675,18 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "bootstrap_p_value_vs_hold": hold_test["bootstrap_p_value"],
                 "permutation_p_value_vs_hold": hold_test["permutation_p_value"],
                 "paired_n_vs_hold": hold_test["paired_n"],
+                "cohens_d_vs_hold": hold_test["cohens_d"],
+                "cliffs_delta_vs_hold": hold_test["cliffs_delta"],
                 "delta_return_vs_random": random_test["mean_delta"],
                 "p_value_vs_random": random_test["p_value"],
                 "bootstrap_p_value_vs_random": random_test["bootstrap_p_value"],
                 "permutation_p_value_vs_random": random_test["permutation_p_value"],
                 "paired_n_vs_random": random_test["paired_n"],
+                "cohens_d_vs_random": random_test["cohens_d"],
+                "cliffs_delta_vs_random": random_test["cliffs_delta"],
             }
         )
+    _attach_fdr_q_values(aggregate_rows)
     return sorted(
         aggregate_rows,
         key=lambda row: (
@@ -752,9 +787,43 @@ def _significance_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                     "delta_ci_high": result["delta_ci_high"],
                     "bootstrap_p_value": result["bootstrap_p_value"],
                     "permutation_p_value": result["permutation_p_value"],
+                    "cohens_d": result["cohens_d"],
+                    "cliffs_delta": result["cliffs_delta"],
                 }
             )
+    bootstrap_q = benjamini_hochberg(
+        {index: row["bootstrap_p_value"] for index, row in enumerate(output)}
+    )
+    permutation_q = benjamini_hochberg(
+        {index: row["permutation_p_value"] for index, row in enumerate(output)}
+    )
+    for index, row in enumerate(output):
+        row["bootstrap_q_value"] = bootstrap_q[index]
+        row["permutation_q_value"] = permutation_q[index]
     return output
+
+
+def _attach_fdr_q_values(aggregate_rows: list[dict[str, Any]]) -> None:
+    """BH-FDR over the full model x baseline test family of this matrix run."""
+
+    family: dict[tuple[int, str], float | None] = {}
+    for index, row in enumerate(aggregate_rows):
+        family[(index, "hold")] = row.get("bootstrap_p_value_vs_hold")
+        family[(index, "random")] = row.get("bootstrap_p_value_vs_random")
+    q_values = benjamini_hochberg(family)
+    for index, row in enumerate(aggregate_rows):
+        row["q_value_vs_hold"] = q_values[(index, "hold")]
+        row["q_value_vs_random"] = q_values[(index, "random")]
+
+
+def _mean_by_scenario_seed(rows: list[dict[str, Any]]) -> dict[tuple[str, str], float]:
+    """Average total_return over repeated provider samples within each (scenario, seed)."""
+
+    grouped: dict[tuple[str, str], list[float]] = {}
+    for row in rows:
+        key = (str(row["scenario_key"]), str(row["seed"]))
+        grouped.setdefault(key, []).append(float(row["total_return"]))
+    return {key: mean(values) for key, values in grouped.items()}
 
 
 def _baseline_test(
@@ -763,16 +832,60 @@ def _baseline_test(
     *,
     baseline_model: str,
 ) -> dict[str, float | int | None]:
-    candidate = {
-        (str(row["scenario_key"]), str(row["seed"])): float(row["total_return"])
-        for row in candidate_rows
-    }
-    baseline = {
-        (str(row["scenario_key"]), str(row["seed"])): float(row["total_return"])
-        for row in all_rows
-        if row.get("provider") == "baseline" and row.get("model") == baseline_model
-    }
+    candidate = _mean_by_scenario_seed(candidate_rows)
+    baseline = _mean_by_scenario_seed(
+        [
+            row
+            for row in all_rows
+            if row.get("provider") == "baseline" and row.get("model") == baseline_model
+        ]
+    )
     return paired_bootstrap_difference(candidate, baseline)
+
+
+def _variance_decomposition_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Between-seed (market path) vs within-seed (provider sampling) variance per model."""
+
+    grouped: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    for row in rows:
+        grouped.setdefault((str(row["provider"]), str(row["model"])), []).append(row)
+    output = []
+    for (provider, model), model_rows in sorted(grouped.items()):
+        by_seed: dict[tuple[str, str], list[float]] = {}
+        for row in model_rows:
+            key = (str(row["scenario_key"]), str(row["seed"]))
+            by_seed.setdefault(key, []).append(float(row["total_return"]))
+        components = variance_components(by_seed)
+        output.append(
+            {
+                "provider": provider,
+                "model": model,
+                "metric": "total_return",
+                "seed_group_count": components["group_count"],
+                "total_runs": components["total_n"],
+                "between_seed_variance": components["between_group_variance"],
+                "within_seed_variance": components["within_group_variance"],
+                "within_seed_share": components["within_group_share"],
+            }
+        )
+    return output
+
+
+def _write_variance_decomposition_table(path: Path, rows: list[dict[str, Any]]) -> None:
+    fieldnames = [
+        "provider",
+        "model",
+        "metric",
+        "seed_group_count",
+        "total_runs",
+        "between_seed_variance",
+        "within_seed_variance",
+        "within_seed_share",
+    ]
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
 
 
 def _write_aggregate_table(path: Path, rows: list[dict[str, Any]]) -> None:
@@ -806,11 +919,17 @@ def _write_aggregate_table(path: Path, rows: list[dict[str, Any]]) -> None:
         "bootstrap_p_value_vs_hold",
         "permutation_p_value_vs_hold",
         "paired_n_vs_hold",
+        "q_value_vs_hold",
+        "cohens_d_vs_hold",
+        "cliffs_delta_vs_hold",
         "delta_return_vs_random",
         "p_value_vs_random",
         "bootstrap_p_value_vs_random",
         "permutation_p_value_vs_random",
         "paired_n_vs_random",
+        "q_value_vs_random",
+        "cohens_d_vs_random",
+        "cliffs_delta_vs_random",
     ]
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
@@ -858,6 +977,10 @@ def _write_significance_table(path: Path, rows: list[dict[str, Any]]) -> None:
         "delta_ci_high",
         "bootstrap_p_value",
         "permutation_p_value",
+        "bootstrap_q_value",
+        "permutation_q_value",
+        "cohens_d",
+        "cliffs_delta",
     ]
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)

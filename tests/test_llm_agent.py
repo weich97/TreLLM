@@ -65,6 +65,65 @@ def test_deepseek_llm_analyst_replays_cache_without_key(tmp_path: Path, monkeypa
     assert isinstance(signals[0].metadata["response_hash"], str)
 
 
+def test_sample_index_uses_distinct_cache_keys(tmp_path: Path, monkeypatch):
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    cache = tmp_path / "cache.jsonl"
+    snapshot = MarketSnapshot(
+        timestamp=__import__("datetime").datetime(2026, 1, 1),
+        bars={
+            "BTC-USD": Bar(
+                symbol="BTC-USD",
+                timestamp=__import__("datetime").datetime(2026, 1, 1),
+                open=100.0,
+                high=105.0,
+                low=98.0,
+                close=104.0,
+                volume=1000.0,
+            )
+        },
+    )
+    base = DeepSeekLLMAnalyst(cache_path=str(cache), model="test-model")
+    prompt = base._prompt(snapshot, PortfolioState(cash=100000.0), memory=None)
+    prompt_hash = __import__("hashlib").sha256(prompt.encode("utf-8")).hexdigest()
+
+    def entry(cache_key: str, score: float) -> str:
+        return json.dumps(
+            {
+                "cache_key": cache_key,
+                "model": "test-model",
+                "prompt_hash": prompt_hash,
+                "prompt": prompt,
+                "response_text": json.dumps(
+                    {
+                        "signals": [
+                            {"symbol": "BTC-USD", "score": score, "confidence": 0.7, "horizon": "1w"}
+                        ]
+                    }
+                ),
+            }
+        )
+
+    cache.write_text(
+        entry(f"deepseek:test-model:{prompt_hash}", 0.25)
+        + "\n"
+        + entry(f"deepseek:test-model:{prompt_hash}:s1", -0.4)
+        + "\n",
+        encoding="utf-8",
+    )
+
+    sample_zero = DeepSeekLLMAnalyst(cache_path=str(cache), model="test-model", sample_index=0)
+    sample_one = DeepSeekLLMAnalyst(cache_path=str(cache), model="test-model", sample_index=1)
+
+    signals_zero = sample_zero.analyze(snapshot, PortfolioState(cash=100000.0), memory=None)
+    signals_one = sample_one.analyze(snapshot, PortfolioState(cash=100000.0), memory=None)
+
+    # sample_index=0 keeps the legacy key format; sample_index>0 maps to a distinct entry.
+    assert signals_zero[0].score == 0.25
+    assert signals_one[0].score == -0.4
+    assert signals_zero[0].metadata["sample_index"] == 0
+    assert signals_one[0].metadata["sample_index"] == 1
+
+
 def test_llm_cache_is_lazy_loaded_until_file_changes(tmp_path: Path):
     cache = tmp_path / "cache.jsonl"
     cache.write_text(

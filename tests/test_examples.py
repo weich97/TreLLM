@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pytest
 
+import tradearena.tools.broker_capability as broker_capability_validator
 from tradearena.tools.broker_capability import validate_broker_adapter_capability
 from tradearena.tools.live_readiness import validate_live_readiness_preflight_bundle_file
 
@@ -664,6 +665,37 @@ def test_broker_capability_validator_rejects_credential_env_var_whitespace():
     payload["credential_policy"]["env_vars"] = ["BROKER_API_KEY "]
 
     assert "credential_policy.env_vars must not contain whitespace" in validate_broker_adapter_capability(payload)
+
+
+@pytest.mark.parametrize(
+    ("field", "value", "expected_error"),
+    [
+        (
+            "supported_modes",
+            ["offline_export "],
+            "supported_modes must contain only supported broker adapter modes",
+        ),
+        ("account_modes", ["paper "], "account_modes must contain only none, paper, or live"),
+        ("supported_order_types", ["market", "stop"], "supported_order_types must contain only market or limit"),
+        (
+            "supported_time_in_force",
+            ["day", "gtd"],
+            "supported_time_in_force must contain only cls, day, fok, gtc, ioc, or opg",
+        ),
+    ],
+)
+def test_broker_capability_fallback_rejects_invalid_scope_lists(
+    monkeypatch: pytest.MonkeyPatch,
+    field: str,
+    value: list[str],
+    expected_error: str,
+):
+    _run_example("examples/broker_capability_manifest_demo.py")
+    payload = _read_json("outputs/examples/broker_capability_manifest/capability_manifest.json")
+    payload[field] = value
+    monkeypatch.setattr(broker_capability_validator, "Draft202012Validator", None)
+
+    assert expected_error in broker_capability_validator.validate_broker_adapter_capability(payload)
 
 
 def test_broker_capability_validator_rejects_live_support_without_live_adapter_kind(tmp_path: Path):

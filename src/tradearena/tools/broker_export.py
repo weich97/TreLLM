@@ -1358,6 +1358,8 @@ def _safe_symbol(symbol: str) -> str:
 
 
 def _validate_client_prefix(client_prefix: object) -> None:
+    if not _has_text(client_prefix):
+        raise BrokerAdapterContractError("client_prefix must be non-empty")
     if _has_whitespace(client_prefix):
         raise BrokerAdapterContractError("client_prefix must not contain whitespace")
 

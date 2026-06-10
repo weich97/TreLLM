@@ -161,6 +161,9 @@ def _incident_response_drill_errors(value: object) -> list[str]:
         field_value = value.get(field)
         if not isinstance(field_value, str) or not field_value.strip():
             errors.append(f"incident_response_drill.{field} must be non-empty")
+    rollback_owner = value.get("rollback_owner")
+    if isinstance(rollback_owner, str) and rollback_owner.strip() and _has_whitespace(rollback_owner):
+        errors.append("incident_response_drill.rollback_owner must not contain whitespace")
     retention_path = value.get("artifact_retention_path")
     if isinstance(retention_path, str) and not _is_operator_runbook_retention_path(retention_path):
         errors.append(
@@ -187,6 +190,12 @@ def _checklist_errors(payload: dict[str, Any]) -> list[str]:
     duplicates = sorted({item_id for item_id in ids if ids.count(item_id) > 1})
     if duplicates:
         errors.append(f"checklist duplicate ids: {', '.join(duplicates)}")
+    for index, item in enumerate(checklist):
+        if not isinstance(item, dict):
+            continue
+        owner = item.get("owner")
+        if not isinstance(owner, str) or not owner.strip() or _has_whitespace(owner):
+            errors.append(f"checklist[{index}].owner must be a non-empty string without whitespace")
     return errors
 
 
@@ -305,6 +314,10 @@ def _is_iso_timestamp_with_timezone(value: str) -> bool:
 
 def _contains_shell_chaining(command: str) -> bool:
     return any(marker in command for marker in _SHELL_CHAINING_MARKERS)
+
+
+def _has_whitespace(value: str) -> bool:
+    return any(character.isspace() for character in value)
 
 
 def _is_preflight_bundle_path(value: str) -> bool:

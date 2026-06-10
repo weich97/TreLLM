@@ -527,6 +527,32 @@ def test_live_human_approved_mode_requires_approval_and_marks_live(tmp_path):
     else:
         raise AssertionError("expected malformed live approval timestamp failure")
 
+    non_string_time_approval = AlpacaPaperExportAdapter(
+        safety=BrokerSafetyConfig(
+            mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,
+            account_mode="live",
+            max_notional=1000.0,
+            max_quantity=10.0,
+            approval=BrokerApproval(
+                approval_status="approved",
+                approved_by="unit-operator",
+                approved_at=123,
+                max_notional=1000.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="unit test approval",
+            ),
+        )
+    )
+    try:
+        non_string_time_approval.write(
+            [Order("AAPL", Side.BUY, 1.0, order_type=OrderType.LIMIT, limit_price=50.0, reason="unit test")],
+            tmp_path / "non-string-approval-time",
+        )
+    except BrokerAdapterContractError as exc:
+        assert "approval approved_at must be an ISO timestamp with timezone" in str(exc)
+    else:
+        raise AssertionError("expected non-string live approval timestamp failure")
+
     nonfinite_approval_notional = AlpacaPaperExportAdapter(
         safety=BrokerSafetyConfig(
             mode=BrokerAdapterMode.LIVE_HUMAN_APPROVED,

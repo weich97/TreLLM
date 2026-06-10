@@ -159,14 +159,24 @@ class BrokerSafetyConfig:
             raise BrokerAdapterContractError("allowed_order_types must contain market or limit")
         if len(self.allowed_order_types) != len(set(self.allowed_order_types)):
             raise BrokerAdapterContractError("allowed_order_types must not contain duplicates")
-        if self.approval is None or not self.approval.is_approved:
+        if self.approval is None:
+            raise BrokerAdapterContractError("live_human_approved mode requires an approved human approval record")
+        if (
+            self.approval.approval_status != "approved"
+            or not _has_text(self.approval.approved_by)
+            or not _has_text(self.approval.approval_reason)
+        ):
             raise BrokerAdapterContractError("live_human_approved mode requires an approved human approval record")
         if "@" in self.approval.approved_by:
             raise BrokerAdapterContractError("approved_by must be a redacted operator id, not an email address")
         if self.account_mode != "live":
             raise BrokerAdapterContractError("live_human_approved mode requires account_mode live")
-        if not _is_iso_timestamp_with_timezone(self.approval.approved_at):
+        if not isinstance(self.approval.approved_at, str) or (
+            _has_text(self.approval.approved_at) and not _is_iso_timestamp_with_timezone(self.approval.approved_at)
+        ):
             raise BrokerAdapterContractError("approval approved_at must be an ISO timestamp with timezone")
+        if not _has_text(self.approval.approved_at):
+            raise BrokerAdapterContractError("live_human_approved mode requires an approved human approval record")
         if not _is_positive_finite_number(self.approval.max_notional):
             raise BrokerAdapterContractError("live_human_approved mode requires a positive finite approval max_notional")
         if not self.approval.allowed_symbols or not all(_has_text(symbol) for symbol in self.approval.allowed_symbols):

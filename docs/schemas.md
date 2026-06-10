@@ -222,7 +222,9 @@ artifact-retention checks. It also requires a structured
 affected account mode and symbols, retention path, and re-enable approval gate.
 Rollback owners and checklist owners must be non-empty strings without
 whitespace so incident ownership and per-control responsibility cannot drift
-through hidden padding.
+through hidden padding. Affected symbols must also be non-empty strings
+without whitespace because live-readiness compares them against handoff order
+symbols.
 The retention path must stay under `outputs/examples/operator_runbook/` without
 parent traversal, drive qualifiers, backslashes, whitespace, or absolute paths.
 The checklist must include each critical control id exactly once: `mode-boundary`,

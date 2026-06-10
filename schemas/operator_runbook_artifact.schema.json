@@ -81,7 +81,7 @@
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "type": "string", "pattern": "\\S" }
+          "items": { "type": "string", "pattern": "^\\S+$" }
         },
         "artifact_retention_path": {
           "type": "string",

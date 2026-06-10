@@ -274,6 +274,25 @@ def test_operator_runbook_validator_rejects_owner_whitespace(tmp_path: Path):
     assert "'operator ' does not match" in result.stdout
 
 
+def test_operator_runbook_validator_rejects_affected_symbol_whitespace(tmp_path: Path):
+    _run_example("examples/operator_runbook_demo.py")
+    payload = _read_json("outputs/examples/operator_runbook/summary.json")
+    payload["incident_response_drill"]["affected_symbols"] = ["AAPL "]
+    artifact = tmp_path / "operator_runbook.json"
+    artifact.write_text(json.dumps(payload), encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_operator_runbook_artifact.py", str(artifact)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid operator runbook artifact" in result.stdout
+    assert "'AAPL ' does not match" in result.stdout
+
+
 def test_operator_runbook_validator_requires_each_critical_checklist_id(tmp_path: Path):
     _run_example("examples/operator_runbook_demo.py")
     payload = _read_json("outputs/examples/operator_runbook/summary.json")

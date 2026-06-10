@@ -172,7 +172,9 @@ def _incident_response_drill_errors(value: object) -> list[str]:
     if value.get("affected_account_mode") not in {"paper", "live"}:
         errors.append("incident_response_drill.affected_account_mode must be paper or live")
     symbols = value.get("affected_symbols")
-    if not isinstance(symbols, list) or not symbols or any(not isinstance(symbol, str) or not symbol.strip() for symbol in symbols):
+    if not isinstance(symbols, list) or not symbols or any(
+        not isinstance(symbol, str) or not symbol.strip() or _has_whitespace(symbol) for symbol in symbols
+    ):
         errors.append("incident_response_drill.affected_symbols must contain non-empty symbols")
     return errors
 

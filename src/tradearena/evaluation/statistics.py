@@ -74,6 +74,8 @@ def paired_bootstrap_difference(
             "bootstrap_p_value": None,
             "permutation_p_value": None,
             "p_value": None,
+            "cohens_d": None,
+            "cliffs_delta": None,
         }
     ci_low, ci_high = bootstrap_ci(differences, confidence=confidence, draws=draws, seed=seed)
     rng = random.Random(seed + 1)
@@ -93,7 +95,95 @@ def paired_bootstrap_difference(
         "bootstrap_p_value": bootstrap_p_value,
         "permutation_p_value": permutation_p_value,
         "p_value": bootstrap_p_value,
+        "cohens_d": paired_cohens_d(differences),
+        "cliffs_delta": cliffs_delta(
+            (candidate_by_key[key] for key in keys),
+            (baseline_by_key[key] for key in keys),
+        ),
     }
+
+
+def benjamini_hochberg(p_values: Mapping[Any, float | None]) -> dict[Any, float | None]:
+    """Benjamini-Hochberg FDR-adjusted q-values for a family of p-values.
+
+    Keys with ``None`` p-values are passed through unchanged so callers can mix
+    testable and untestable rows in one family.
+    """
+
+    testable = [(key, float(p)) for key, p in p_values.items() if p is not None]
+    adjusted: dict[Any, float | None] = dict.fromkeys(p_values, None)
+    if not testable:
+        return adjusted
+    testable.sort(key=lambda item: (item[1], str(item[0])))
+    m = len(testable)
+    running_min = 1.0
+    raw = [min(1.0, p * m / rank) for rank, (_, p) in enumerate(testable, start=1)]
+    for index in range(m - 1, -1, -1):
+        running_min = min(running_min, raw[index])
+        adjusted[testable[index][0]] = running_min
+    return adjusted
+
+
+def paired_cohens_d(differences: Iterable[float]) -> float | None:
+    """Standardized effect size for paired deltas: mean(delta) / std(delta)."""
+
+    numbers = [float(value) for value in differences]
+    if len(numbers) < 2:
+        return None
+    center = mean(numbers)
+    spread = sample_std(numbers)
+    # Near-constant deltas: float noise makes spread tiny but nonzero, which
+    # would explode the ratio; report it as undefined instead.
+    if spread <= 1e-12 * max(1.0, abs(center)):
+        return 0.0 if center == 0.0 else None
+    return center / spread
+
+
+def variance_components(values_by_group: Mapping[Any, Iterable[float]]) -> dict[str, float | int | None]:
+    """Decompose repeated measurements into between-group and within-group variance.
+
+    For matrix runs, groups are market seeds and the within-group values are
+    repeated provider samples at a fixed seed: between-group variance reflects
+    market-path sensitivity, within-group variance reflects model stochasticity.
+    Within-group variance is None unless at least one group has two samples.
+    """
+
+    groups = {key: [float(value) for value in values] for key, values in values_by_group.items()}
+    groups = {key: values for key, values in groups.items() if values}
+    if not groups:
+        return {
+            "group_count": 0,
+            "total_n": 0,
+            "between_group_variance": None,
+            "within_group_variance": None,
+            "within_group_share": None,
+        }
+    group_means = [mean(values) for values in groups.values()]
+    between = sample_std(group_means) ** 2 if len(group_means) >= 2 else None
+    within_list = [sample_std(values) ** 2 for values in groups.values() if len(values) >= 2]
+    within = mean(within_list) if within_list else None
+    share: float | None = None
+    if between is not None and within is not None and (between + within) > 0.0:
+        share = within / (between + within)
+    return {
+        "group_count": len(groups),
+        "total_n": sum(len(values) for values in groups.values()),
+        "between_group_variance": between,
+        "within_group_variance": within,
+        "within_group_share": share,
+    }
+
+
+def cliffs_delta(candidate: Iterable[float], baseline: Iterable[float]) -> float | None:
+    """Nonparametric effect size in [-1, 1]: P(candidate > baseline) - P(candidate < baseline)."""
+
+    left = [float(value) for value in candidate]
+    right = [float(value) for value in baseline]
+    if not left or not right:
+        return None
+    greater = sum(1 for a in left for b in right if a > b)
+    lesser = sum(1 for a in left for b in right if a < b)
+    return (greater - lesser) / (len(left) * len(right))
 
 
 def paired_permutation_p_value(

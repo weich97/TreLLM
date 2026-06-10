@@ -133,6 +133,7 @@ def build_default_system(
     llm_risk_feedback_mode: str = "true",
     llm_output_mode: str = "rationale",
     llm_mask_timestamps: bool = False,
+    llm_sample_index: int = 0,
     synthetic_volatility_scale: float = 1.0,
     synthetic_trend_scale: float = 1.0,
     synthetic_seasonal_scale: float = 1.0,
@@ -186,6 +187,7 @@ def build_default_system(
                     risk_feedback_mode=llm_risk_feedback_mode,
                     output_mode=llm_output_mode,
                     mask_timestamps=llm_mask_timestamps,
+                    sample_index=llm_sample_index,
                 )
             )
         elif analyst_name == "poe-llm":
@@ -206,6 +208,7 @@ def build_default_system(
                     risk_feedback_mode=llm_risk_feedback_mode,
                     output_mode=llm_output_mode,
                     mask_timestamps=llm_mask_timestamps,
+                    sample_index=llm_sample_index,
                     name="poe-llm-analyst",
                 )
             )
@@ -226,6 +229,7 @@ def build_default_system(
                     risk_feedback_mode=llm_risk_feedback_mode,
                     output_mode=llm_output_mode,
                     mask_timestamps=llm_mask_timestamps,
+                    sample_index=llm_sample_index,
                     name="ollama-llm-analyst",
                 )
             )

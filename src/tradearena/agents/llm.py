@@ -35,6 +35,7 @@ class DeepSeekLLMAnalyst:
     risk_feedback_mode: str = "true"
     output_mode: str = "rationale"
     mask_timestamps: bool = False
+    sample_index: int = 0
     name: str = "deepseek-llm-analyst"
     _cache_entries: dict[str, dict[str, Any]] | None = field(default=None, init=False, repr=False)
     _cache_mtime_ns: int | None = field(default=None, init=False, repr=False)
@@ -42,7 +43,10 @@ class DeepSeekLLMAnalyst:
     def analyze(self, snapshot: MarketSnapshot, portfolio: PortfolioState, memory: object) -> list[Signal]:
         prompt = self._prompt(snapshot, portfolio, memory)
         prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
+        # sample_index=0 keeps the legacy key format so existing caches replay.
         cache_key = f"{self.provider}:{self.model}:{prompt_hash}"
+        if self.sample_index:
+            cache_key = f"{cache_key}:s{int(self.sample_index)}"
         cached = self._cache().get(cache_key)
         started = time.time()
         if cached is None:
@@ -57,6 +61,7 @@ class DeepSeekLLMAnalyst:
                 "prompt": prompt,
                 "response_text": response_text,
                 "latency_ms": latency_ms,
+                "sample_index": int(self.sample_index),
                 "created_at": int(time.time()),
             }
             self._append_cache(cached)
@@ -95,6 +100,7 @@ class DeepSeekLLMAnalyst:
                         "prompt_hash": prompt_hash,
                         "response_hash": response_hash,
                         "latency_ms": latency_ms,
+                        "sample_index": int(self.sample_index),
                         "risk_feedback_mode": self.risk_feedback_mode if self.use_risk_feedback else "hidden",
                         "timestamp_masked": self.mask_timestamps,
                         "risk_notes": "" if self.output_mode == "weights_only" else str(item.get("risk_notes", "")),
@@ -284,8 +290,7 @@ class DeepSeekLLMAnalyst:
                     continue
                 item = json.loads(line)
                 cache[str(item["cache_key"])] = item
-                provider_key = f"{item.get('provider', self.provider)}:{item.get('model', '')}:{item.get('prompt_hash', '')}"
-                cache[provider_key] = item
+                cache[_normalized_cache_key(item, self.provider)] = item
         self._cache_entries = cache
         self._cache_mtime_ns = mtime_ns
         return cache
@@ -298,9 +303,22 @@ class DeepSeekLLMAnalyst:
         if self._cache_entries is None:
             self._cache_entries = {}
         self._cache_entries[str(item["cache_key"])] = item
-        provider_key = f"{item.get('provider', self.provider)}:{item.get('model', '')}:{item.get('prompt_hash', '')}"
-        self._cache_entries[provider_key] = item
+        self._cache_entries[_normalized_cache_key(item, self.provider)] = item
         self._cache_mtime_ns = path.stat().st_mtime_ns
+
+
+def _normalized_cache_key(item: dict[str, Any], default_provider: str) -> str:
+    """Fallback lookup key for legacy entries whose cache_key lacks the provider prefix.
+
+    Repeated-sample entries keep their ``:s<n>`` suffix so they never shadow the
+    sample-0 entry for the same prompt.
+    """
+
+    key = f"{item.get('provider', default_provider)}:{item.get('model', '')}:{item.get('prompt_hash', '')}"
+    tail = str(item.get("cache_key", "")).rsplit(":", 1)[-1]
+    if len(tail) > 1 and tail.startswith("s") and tail[1:].isdigit():
+        key = f"{key}:{tail}"
+    return key
 
 
 def _get_secret(name: str) -> str:

@@ -177,7 +177,9 @@ whitespace so hidden padding cannot change approval-scope matching.
 Runtime code can consume this contract with
 `broker_safety_from_approval_artifact(...)` to build a live human-approved
 `BrokerSafetyConfig`; pass `now=` to reject expired approval artifacts during
-validation or conversion. Use `broker_handoff_artifact_hash(...)` to populate
+validation or conversion. The `now` timestamp must include timezone information
+so expiry checks do not depend on local-clock assumptions. Use
+`broker_handoff_artifact_hash(...)` to populate
 the required `request_artifact_hash` with a `sha256:` plus 64 lowercase hex value, and pass
 `request_artifact=` to
 `broker_safety_from_approval_artifact(...)` so live safety creation is bound to

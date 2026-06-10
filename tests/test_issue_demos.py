@@ -3820,6 +3820,25 @@ def test_broker_approval_artifact_builder_requires_expiry():
         )
 
 
+def test_broker_approval_artifact_builder_rejects_non_string_expiry():
+    with pytest.raises(BrokerAdapterContractError, match="expires_at must be an ISO timestamp with timezone"):
+        build_broker_approval_artifact(
+            BrokerApproval(
+                approval_status="approved",
+                approved_by="operator-7",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=250.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="paper shadow checks passed",
+            ),
+            approval_id="approval-non-string-expiry-001",
+            account_mode="live",
+            max_quantity=5.0,
+            expires_at=123,
+            request_artifact_hash="sha256:" + "1" * 64,
+        )
+
+
 @pytest.mark.parametrize(
     ("approved_at", "expires_at", "expected_error"),
     [

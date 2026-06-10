@@ -23,6 +23,7 @@ from tradearena.tools import (
     BrokerResponse,
     BrokerSafetyConfig,
     build_broker_approval_artifact,
+    validate_broker_approval_artifact,
     write_broker_response_artifact,
 )
 from tradearena.tools.calibration import summarize_execution_calibration, summarize_quote_fill_calibration
@@ -1501,6 +1502,28 @@ def test_broker_approval_artifact_schema_validates_writer_output():
     )
 
     _validator("broker_approval_artifact.schema.json").validate(payload)
+
+
+def test_broker_approval_validator_rejects_now_without_timezone():
+    payload = build_broker_approval_artifact(
+        BrokerApproval(
+            approval_status="approved",
+            approved_by="operator-7",
+            approved_at="2026-05-31T12:00:00Z",
+            max_notional=2500.0,
+            allowed_symbols=("AAPL", "MSFT"),
+            approval_reason="paper shadow checks passed",
+        ),
+        approval_id="approval-runtime-naive-now-001",
+        account_mode="live",
+        max_quantity=5.0,
+        expires_at="2026-05-31T13:00:00Z",
+        request_artifact_hash="sha256:" + "1" * 64,
+    )
+
+    errors = validate_broker_approval_artifact(payload, now="2026-05-31T12:30:00")
+
+    assert "now must be an ISO timestamp with timezone" in errors
 
 
 def test_broker_approval_artifact_schema_requires_request_hash_binding():

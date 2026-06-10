@@ -392,7 +392,11 @@ def _run_utility_command(argv: list[str]) -> int:
     if command == "validate-live-readiness":
         parser = argparse.ArgumentParser(description="Validate a TreLLM live-readiness preflight bundle.")
         parser.add_argument("bundle")
-        parser.add_argument("--now", default=None, help="Optional ISO timestamp used to reject expired approval artifacts.")
+        parser.add_argument(
+            "--now",
+            default=None,
+            help="Optional ISO timestamp with timezone used to reject expired approval artifacts.",
+        )
         args = parser.parse_args(argv[1:])
         summary, errors = validate_live_readiness_preflight_bundle_file(args.bundle, now=args.now)
         if errors:
@@ -433,7 +437,11 @@ def _run_utility_command(argv: list[str]) -> int:
     if command == "validate-broker-approval":
         parser = argparse.ArgumentParser(description="Validate a TreLLM broker approval artifact.")
         parser.add_argument("artifact")
-        parser.add_argument("--now", default=None, help="Optional ISO timestamp used to reject expired approval artifacts.")
+        parser.add_argument(
+            "--now",
+            default=None,
+            help="Optional ISO timestamp with timezone used to reject expired approval artifacts.",
+        )
         args = parser.parse_args(argv[1:])
         _, errors = validate_broker_approval_artifact_file(args.artifact, now=args.now)
         if errors:
@@ -448,7 +456,11 @@ def _run_utility_command(argv: list[str]) -> int:
         parser = argparse.ArgumentParser(description="Validate that a TreLLM broker approval binds to a handoff artifact.")
         parser.add_argument("approval_artifact")
         parser.add_argument("request_artifact")
-        parser.add_argument("--now", default=None, help="Optional ISO timestamp used to reject expired approval artifacts.")
+        parser.add_argument(
+            "--now",
+            default=None,
+            help="Optional ISO timestamp with timezone used to reject expired approval artifacts.",
+        )
         args = parser.parse_args(argv[1:])
         approval, approval_errors = validate_broker_approval_artifact_file(args.approval_artifact, now=args.now)
         errors = approval_errors or validate_broker_approval_request_binding(approval, args.request_artifact, now=args.now)

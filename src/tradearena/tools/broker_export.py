@@ -573,9 +573,12 @@ def validate_broker_approval_artifact(
     now: str | datetime | None = None,
 ) -> list[str]:
     errors: list[str] = []
-    now_dt = _parse_timestamp(now) if now is not None else None
-    if now is not None and now_dt is None:
-        errors.append("now must be an ISO timestamp")
+    now_dt = None
+    if now is not None:
+        if not _is_timestamp_with_timezone(now):
+            errors.append("now must be an ISO timestamp with timezone")
+        else:
+            now_dt = _parse_timestamp(now)
     required = {
         "schema",
         "approval_id",
@@ -1314,6 +1317,12 @@ def _parse_timestamp(value: str | datetime) -> datetime | None:
 
 def _is_iso_timestamp_with_timezone(value: str) -> bool:
     return bool(_ISO_TIMESTAMP_WITH_TZ_RE.fullmatch(value)) and _parse_timestamp(value) is not None
+
+
+def _is_timestamp_with_timezone(value: str | datetime) -> bool:
+    if isinstance(value, str):
+        return _is_iso_timestamp_with_timezone(value)
+    return value.tzinfo is not None and value.utcoffset() is not None
 
 
 def _is_finite_number(value: object) -> TypeGuard[int | float]:

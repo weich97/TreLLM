@@ -63,10 +63,11 @@
 
 | 项 | 工作量 | 依赖 |
 | --- | --- | --- |
-| 执行参数网格扫描脚本(包一层现有 runner) | 1-2 天 | 无 |
-| 排名稳定性分析模块(Kendall tau + 翻转表) | 1 天 | statistics.py 扩展 |
-| `--samples-per-seed` 与缓存 key 扩展 | 1 天 | 00 号 P0 |
+| ✅ 执行参数阶梯扫描脚本 `scripts/run_execution_sensitivity_sweep.py`(E0/E1 + 4 个 E2 档位,确定性策略,2026-06-10 完成) | — | — |
+| ✅ 排名稳定性分析(`kendall_tau`、`top_k_jaccard` 进 statistics.py,扫描脚本输出 stability 表) | — | — |
+| ✅ `--samples-per-seed` 与缓存 key 扩展(00 号 P0,2026-06-10 完成) | — | — |
 | 直连 API runner(替换 Poe 路由) | 2-3 天 | API keys、预算 |
+| LLM 代理接入扫描档位(复用矩阵脚本的 execution 配置) | 1 天 | 直连 runner |
 | Binance 多币种 L2 样本扩展(可选,E3 增强) | 2 天 | 公开数据 |
 
 ## 5. 预算估计

@@ -3664,6 +3664,13 @@ def test_broker_approval_artifact_builder_rejects_invalid_approval_fields(
             (),
             "allowed_order_types must contain market or limit",
         ),
+        (
+            "approval-builder-unsupported-order-types-001",
+            "live",
+            ("AAPL",),
+            ("stop",),
+            "allowed_order_types must contain market or limit",
+        ),
     ],
 )
 def test_broker_approval_artifact_builder_rejects_invalid_artifact_scope_fields(

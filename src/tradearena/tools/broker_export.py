@@ -529,9 +529,9 @@ def build_broker_approval_artifact(
         raise BrokerAdapterContractError("allowed_symbols must not contain whitespace")
     if len(approval.allowed_symbols) != len(set(approval.allowed_symbols)):
         raise BrokerAdapterContractError("allowed_symbols must not contain duplicates")
-    order_type_values = [order_type.value for order_type in allowed_order_types]
-    if not order_type_values:
+    if not allowed_order_types or any(not isinstance(order_type, OrderType) for order_type in allowed_order_types):
         raise BrokerAdapterContractError("allowed_order_types must contain market or limit")
+    order_type_values = [order_type.value for order_type in allowed_order_types]
     if len(order_type_values) != len(set(order_type_values)):
         raise BrokerAdapterContractError("allowed_order_types must not contain duplicates")
     if not expires_at:

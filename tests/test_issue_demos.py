@@ -367,6 +367,25 @@ def test_broker_handoff_writer_rejects_client_prefix_whitespace(tmp_path):
         raise AssertionError("expected whitespace client_prefix to be rejected by writer")
 
 
+@pytest.mark.parametrize("adapter_cls", [AlpacaPaperExportAdapter, DryRunBrokerAdapter])
+@pytest.mark.parametrize(
+    ("client_prefix", "expected_error"),
+    [
+        ("", "client_prefix must be non-empty"),
+        (123, "client_prefix must be non-empty"),
+    ],
+)
+def test_broker_handoff_writer_rejects_non_text_client_prefix(tmp_path, adapter_cls, client_prefix, expected_error):
+    adapter = adapter_cls(client_prefix=client_prefix)
+
+    try:
+        adapter.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path)
+    except BrokerAdapterContractError as exc:
+        assert expected_error in str(exc)
+    else:
+        raise AssertionError("expected non-text client_prefix to be rejected by writer")
+
+
 def test_broker_handoff_artifact_rejects_nonfinite_quantity(tmp_path):
     adapter = AlpacaPaperExportAdapter(client_prefix="handoff-nonfinite")
     adapter.write([Order("AAPL", Side.BUY, 1.0, reason="unit test")], tmp_path)

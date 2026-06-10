@@ -3801,6 +3801,25 @@ def test_broker_approval_artifact_builder_requires_request_hash_binding():
         )
 
 
+def test_broker_approval_artifact_builder_rejects_non_string_request_hash():
+    with pytest.raises(BrokerAdapterContractError, match="request_artifact_hash must be sha256"):
+        build_broker_approval_artifact(
+            BrokerApproval(
+                approval_status="approved",
+                approved_by="operator-7",
+                approved_at="2026-05-31T12:00:00Z",
+                max_notional=250.0,
+                allowed_symbols=("AAPL",),
+                approval_reason="paper shadow checks passed",
+            ),
+            approval_id="approval-non-string-request-hash-001",
+            account_mode="live",
+            max_quantity=5.0,
+            expires_at="2026-05-31T13:00:00Z",
+            request_artifact_hash=123,
+        )
+
+
 def test_broker_approval_artifact_builder_requires_expiry():
     with pytest.raises(BrokerAdapterContractError, match="expires_at is required for broker approval artifacts"):
         build_broker_approval_artifact(

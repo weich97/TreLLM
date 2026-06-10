@@ -547,7 +547,7 @@ def build_broker_approval_artifact(
         raise BrokerAdapterContractError(
             "request_artifact_hash is required to bind approval to a broker handoff artifact"
         )
-    if not _SHA256_ARTIFACT_HASH_RE.fullmatch(request_artifact_hash):
+    if not isinstance(request_artifact_hash, str) or not _SHA256_ARTIFACT_HASH_RE.fullmatch(request_artifact_hash):
         raise BrokerAdapterContractError("request_artifact_hash must be sha256:<64 lowercase hex chars>")
 
     return {

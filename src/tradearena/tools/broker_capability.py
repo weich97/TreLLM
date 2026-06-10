@@ -11,6 +11,10 @@ except ModuleNotFoundError:  # pragma: no cover - public package installs may om
 
 ROOT = Path(__file__).resolve().parents[3]
 SCHEMA_PATH = ROOT / "schemas" / "broker_adapter_capability.schema.json"
+_SUPPORTED_MODES = {"offline_export", "dry_run", "paper_sandbox", "live_human_approved"}
+_SUPPORTED_ACCOUNT_MODES = {"none", "paper", "live"}
+_SUPPORTED_ORDER_TYPES = {"market", "limit"}
+_SUPPORTED_TIME_IN_FORCE = {"cls", "day", "fok", "gtc", "ioc", "opg"}
 
 
 def validate_broker_adapter_capability(payload: dict[str, Any]) -> list[str]:
@@ -90,6 +94,17 @@ def _semantic_errors(payload: dict[str, Any]) -> list[str]:
         errors.append("adapter_id must not contain whitespace")
 
     default_mode = payload.get("default_mode")
+    if isinstance(default_mode, str) and default_mode not in _SUPPORTED_MODES - {"live_human_approved"}:
+        errors.append("default_mode must be offline_export, dry_run, or paper_sandbox")
+    if not _contains_only_supported_strings(payload.get("supported_modes"), _SUPPORTED_MODES):
+        errors.append("supported_modes must contain only supported broker adapter modes")
+    if not _contains_only_supported_strings(payload.get("account_modes"), _SUPPORTED_ACCOUNT_MODES):
+        errors.append("account_modes must contain only none, paper, or live")
+    if not _contains_only_supported_strings(payload.get("supported_order_types"), _SUPPORTED_ORDER_TYPES):
+        errors.append("supported_order_types must contain only market or limit")
+    if not _contains_only_supported_strings(payload.get("supported_time_in_force"), _SUPPORTED_TIME_IN_FORCE):
+        errors.append("supported_time_in_force must contain only cls, day, fok, gtc, ioc, or opg")
+
     if isinstance(default_mode, str) and supported_modes and default_mode not in supported_modes:
         errors.append("default_mode must be included in supported_modes")
 
@@ -137,3 +152,7 @@ def _string_set(value: object) -> set[str]:
     if not isinstance(value, list):
         return set()
     return {item for item in value if isinstance(item, str)}
+
+
+def _contains_only_supported_strings(value: object, allowed: set[str]) -> bool:
+    return isinstance(value, list) and bool(value) and all(isinstance(item, str) and item in allowed for item in value)

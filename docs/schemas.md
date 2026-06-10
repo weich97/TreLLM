@@ -147,6 +147,10 @@ live-capable adapters to use `adapter_kind: live_capable`, declare
 `network_access` as `required_for_live`, list `live_human_approved` and `live`
 mode support, require credentials with named environment variables, and enable
 every live safety control before live submission can be advertised.
+Runtime fallback validation also rejects unsupported `supported_modes`,
+`account_modes`, `supported_order_types`, and `supported_time_in_force` entries
+so lightweight installs keep the same live-readiness scope boundaries as the
+JSON Schema path.
 
 Validate the offline demo capability manifest with:
 

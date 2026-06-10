@@ -139,6 +139,56 @@ def paired_cohens_d(differences: Iterable[float]) -> float | None:
     return center / spread
 
 
+def kendall_tau(scores_a: Mapping[Any, float], scores_b: Mapping[Any, float]) -> float | None:
+    """Kendall tau-b rank correlation over the shared keys of two score mappings.
+
+    Used for ranking-stability questions: how much does an agent leaderboard
+    reorder between two execution-assumption levels.
+    """
+
+    keys = sorted(set(scores_a) & set(scores_b), key=str)
+    if len(keys) < 2:
+        return None
+    concordant = 0
+    discordant = 0
+    ties_a = 0
+    ties_b = 0
+    for i in range(len(keys)):
+        for j in range(i + 1, len(keys)):
+            delta_a = float(scores_a[keys[i]]) - float(scores_a[keys[j]])
+            delta_b = float(scores_b[keys[i]]) - float(scores_b[keys[j]])
+            if delta_a == 0.0 and delta_b == 0.0:
+                continue
+            if delta_a == 0.0:
+                ties_a += 1
+            elif delta_b == 0.0:
+                ties_b += 1
+            elif delta_a * delta_b > 0.0:
+                concordant += 1
+            else:
+                discordant += 1
+    denominator = math.sqrt(
+        (concordant + discordant + ties_a) * (concordant + discordant + ties_b)
+    )
+    if denominator == 0.0:
+        return None
+    return (concordant - discordant) / denominator
+
+
+def top_k_jaccard(scores_a: Mapping[Any, float], scores_b: Mapping[Any, float], *, k: int = 3) -> float | None:
+    """Jaccard similarity of the top-k key sets under two score mappings."""
+
+    keys = set(scores_a) & set(scores_b)
+    if not keys or k <= 0:
+        return None
+    top_a = set(sorted(keys, key=lambda key: (-float(scores_a[key]), str(key)))[:k])
+    top_b = set(sorted(keys, key=lambda key: (-float(scores_b[key]), str(key)))[:k])
+    union = top_a | top_b
+    if not union:
+        return None
+    return len(top_a & top_b) / len(union)
+
+
 def variance_components(values_by_group: Mapping[Any, Iterable[float]]) -> dict[str, float | int | None]:
     """Decompose repeated measurements into between-group and within-group variance.
 

@@ -1,11 +1,13 @@
 from tradearena.evaluation.statistics import (
     benjamini_hochberg,
     cliffs_delta,
+    kendall_tau,
     paired_bootstrap_difference,
     paired_cohens_d,
     paired_permutation_p_value,
     sample_std,
     summarize_metric,
+    top_k_jaccard,
     variance_components,
 )
 
@@ -81,6 +83,32 @@ def test_cliffs_delta_bounds_and_signs():
     assert cliffs_delta([0.0, 1.0], [2.0, 3.0]) == -1.0
     assert cliffs_delta([1.0, 2.0], [1.0, 2.0]) == 0.0
     assert cliffs_delta([], [1.0]) is None
+
+
+def test_kendall_tau_perfect_agreement_and_reversal():
+    scores = {"a": 3.0, "b": 2.0, "c": 1.0}
+    reversed_scores = {"a": 1.0, "b": 2.0, "c": 3.0}
+
+    assert kendall_tau(scores, scores) == 1.0
+    assert kendall_tau(scores, reversed_scores) == -1.0
+    assert kendall_tau({"a": 1.0}, {"a": 2.0}) is None
+
+
+def test_kendall_tau_handles_ties():
+    tau = kendall_tau({"a": 1.0, "b": 1.0, "c": 0.0}, {"a": 2.0, "b": 1.0, "c": 0.0})
+
+    assert tau is not None
+    assert 0.0 < tau < 1.0
+
+
+def test_top_k_jaccard_overlap():
+    level_zero = {"a": 3.0, "b": 2.0, "c": 1.0, "d": 0.5}
+    level_one = {"a": 3.0, "d": 2.5, "c": 1.0, "b": 0.1}
+
+    assert top_k_jaccard(level_zero, level_zero, k=2) == 1.0
+    # top-2 sets are {a, b} vs {a, d}: intersection 1, union 3.
+    assert round(float(top_k_jaccard(level_zero, level_one, k=2)), 6) == round(1 / 3, 6)
+    assert top_k_jaccard({}, {}, k=2) is None
 
 
 def test_variance_components_separates_between_and_within():

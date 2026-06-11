@@ -301,6 +301,7 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "schemas/direct_provider_manifest.schema.json" in REQUIRED_FILES
     assert "examples/provider_manifests/direct_openai_example.json" in REQUIRED_FILES
     assert "scripts/validate_direct_provider_manifest.py" in REQUIRED_FILES
+    assert "scripts/run_direct_provider_manifest_pilot.py" in REQUIRED_FILES
     assert (
         "docs/research_plans/iclr_submission_roadmap.md"
         in REQUIRED_PUBLIC_IDENTITY_PHRASES["docs/launch/README.md"]

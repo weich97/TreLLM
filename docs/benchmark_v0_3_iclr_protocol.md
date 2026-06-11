@@ -46,6 +46,26 @@ response hash, redaction policy, contamination tier, execution level, seed,
 sample index, and trajectory-manifest hash. Routed-provider rows must not use
 this contract for headline v0.3 evidence.
 
+The offline pilot runner can generate a hash-only manifest from local
+prompt/response fixtures:
+
+```bash
+python scripts/run_direct_provider_manifest_pilot.py \
+  --provider openai \
+  --model-id gpt-5.5 \
+  --model-version-or-release 2026-05-17 \
+  --api-endpoint-family responses \
+  --prompt-file path/to/prompt.json \
+  --response-file path/to/response.json \
+  --scenario-id synthetic_calm_trend_c0_v0_3 \
+  --contamination-tier C0 \
+  --execution-level E1 \
+  --seed 7 \
+  --sample-index 0 \
+  --trajectory-manifest-sha256 sha256:<64-hex> \
+  --output outputs/direct_provider_manifests/example.json
+```
+
 ## Claim Boundary
 
 Use the v0.3 protocol to support this kind of claim:

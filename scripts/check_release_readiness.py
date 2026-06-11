@@ -224,6 +224,7 @@ REQUIRED_FILES = [
     "scripts/validate_live_readiness_preflight.py",
     "scripts/validate_demo_artifacts.py",
     "scripts/validate_direct_provider_manifest.py",
+    "scripts/run_direct_provider_manifest_pilot.py",
     "SECURITY.md",
 ]
 FORBIDDEN_TRACKED_PATTERNS = [

@@ -45,7 +45,12 @@ def test_v03_external_reproduction_pack_writes_valid_maintainer_report():
         assert manifest["trajectory_hash"]["reproducibility_hash"].startswith("sha256:")
         assert {command["returncode"] for command in manifest["commands"]} == {0}
         assert all(artifact["exists"] and str(artifact["sha256"]).startswith("sha256:") for artifact in manifest["artifacts"])
+        assert any(command["id"] == "v03_direct_api_matrix_plan" for command in manifest["commands"])
         assert any(command["id"] == "v03_evidence_index" for command in manifest["commands"])
+        assert any(
+            artifact["path"].endswith("v0_3_direct_api_matrix_plan/direct_api_matrix_plan_summary.json")
+            for artifact in manifest["artifacts"]
+        )
         assert any(artifact["path"].endswith("v0_3_evidence_index/v0_3_evidence_index.json") for artifact in manifest["artifacts"])
         assert readme.startswith("# TreLLM v0.3 External Reproduction Pack")
         assert "Independent reviewer: `False`" in readme

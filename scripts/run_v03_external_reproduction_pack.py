@@ -88,6 +88,7 @@ def main(argv: list[str] | None = None) -> int:
 
 def _commands(output_dir: Path) -> list[dict[str, Any]]:
     direct_api_dir = output_dir / "v0_3_direct_api_pilot"
+    direct_plan_dir = output_dir / "v0_3_direct_api_matrix_plan"
     direct_gate_dir = output_dir / "v0_3_direct_api_matrix_gate"
     return [
         {
@@ -113,6 +114,22 @@ def _commands(output_dir: Path) -> list[dict[str, Any]]:
                 "0",
             ],
             "description": "Generate a no-key direct API fixture pilot row.",
+        },
+        {
+            "id": "v03_direct_api_matrix_plan",
+            "argv": [
+                sys.executable,
+                "scripts/build_v03_direct_api_matrix_plan.py",
+                "--output-dir",
+                _command_path(direct_plan_dir),
+                "--models",
+                "openai:gpt-5.5:fixture-2026-05-17:responses:OPENAI_API_KEY",
+                "--seeds",
+                "7,11",
+                "--samples",
+                "0,1",
+            ],
+            "description": "Pre-register the direct API matrix rows and credential preflight without live provider calls.",
         },
         {
             "id": "v03_direct_api_matrix_gate",
@@ -244,6 +261,7 @@ def _artifacts(output_dir: Path) -> list[Path]:
     return [
         ROOT / "outputs/examples/audit_walkthrough_trajectory.json",
         output_dir / "v0_3_direct_api_pilot/direct_api_pilot_summary.json",
+        output_dir / "v0_3_direct_api_matrix_plan/direct_api_matrix_plan_summary.json",
         output_dir / "v0_3_direct_api_matrix_gate/direct_api_matrix_gate_summary.json",
         output_dir / "v0_3_execution_ladder/execution_ladder_summary.json",
         output_dir / "v0_3_finaudit_pilot/finaudit_pilot_summary.json",

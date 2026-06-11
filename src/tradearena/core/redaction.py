@@ -65,6 +65,21 @@ _LOCAL_PATH_PATTERNS = (
     re.compile(r"(?i)\b[A-Z]:[\\/](?:Users|TradeArena|TreadeArena|outputs)[\\/][^\s`\"'<>)]+"),
     re.compile(r"(?i)\b/(?:Users|home)/[^\s`\"'<>)]+"),
 )
+_SHA256_PATTERN = re.compile(r"^sha256:[0-9a-f]{64}$")
+_HASH_ONLY_PROMPT_CONTAINER_KEYS = {
+    "prompt_template_id",
+    "prompt_version",
+    "prompt_sha256",
+    "system_prompt_sha256",
+    "raw_prompt_public",
+}
+_HASH_ONLY_RESPONSE_CONTAINER_KEYS = {
+    "response_sha256",
+    "response_format",
+    "parse_status",
+    "parse_error_class",
+    "raw_response_public",
+}
 
 
 @dataclass(frozen=True)
@@ -201,7 +216,9 @@ def _scan_value(value: Any, path: str, findings: list[str]) -> None:
         for raw_key, raw_item in value.items():
             key = str(raw_key)
             normalized = _normalize_key(key)
-            if normalized in _PROMPT_TEXT_KEYS | _RESPONSE_TEXT_KEYS:
+            if normalized in _PROMPT_TEXT_KEYS | _RESPONSE_TEXT_KEYS and not _is_hash_only_manifest_container(
+                normalized, raw_item
+            ):
                 findings.append(f"{path}.{key}: raw prompt/response field is not allowed")
             if normalized in _SECRET_KEYS:
                 findings.append(f"{path}.{key}: secret field is not allowed")
@@ -219,6 +236,29 @@ def _scan_value(value: Any, path: str, findings: list[str]) -> None:
 
 def _normalize_key(key: str) -> str:
     return key.strip().lower().replace("-", "_").replace(" ", "_")
+
+
+def _is_hash_only_manifest_container(normalized_key: str, value: Any) -> bool:
+    if not isinstance(value, dict):
+        return False
+    normalized_keys = {_normalize_key(str(key)) for key in value}
+    if normalized_key in _PROMPT_TEXT_KEYS:
+        return (
+            normalized_keys <= _HASH_ONLY_PROMPT_CONTAINER_KEYS
+            and value.get("raw_prompt_public") is False
+            and _is_sha256(value.get("prompt_sha256"))
+        )
+    if normalized_key in _RESPONSE_TEXT_KEYS:
+        return (
+            normalized_keys <= _HASH_ONLY_RESPONSE_CONTAINER_KEYS
+            and value.get("raw_response_public") is False
+            and _is_sha256(value.get("response_sha256"))
+        )
+    return False
+
+
+def _is_sha256(value: object) -> bool:
+    return isinstance(value, str) and bool(_SHA256_PATTERN.fullmatch(value))
 
 
 def _stable_text(value: Any) -> str:

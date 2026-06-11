@@ -89,6 +89,7 @@ def test_schema_titles_keep_trellm_system_and_tradearena_leaderboard_roles_separ
         "broker_adapter_capability.schema.json": "TreLLM Broker Adapter Capability Manifest",
         "calibration_profile.schema.json": "TreLLM execution calibration profile",
         "demo_artifact_contract.schema.json": "TreLLM Demo Artifact Contract",
+        "direct_provider_manifest.schema.json": "TreLLM Direct Provider Manifest",
         "live_readiness_preflight.schema.json": "TreLLM Live Readiness Preflight Bundle",
         "reproduction_report.schema.json": "TreLLM External Reproduction Report",
         "skill_answer_set.schema.json": "TreLLM skill task answer set",
@@ -100,6 +101,44 @@ def test_schema_titles_keep_trellm_system_and_tradearena_leaderboard_roles_separ
     for schema_name, expected_title in expected_titles.items():
         schema = _load_schema(schema_name)
         assert schema["title"] == expected_title
+
+
+def test_direct_provider_manifest_schema_validates_example_contract():
+    payload = json.loads((ROOT / "examples/provider_manifests/direct_openai_example.json").read_text(encoding="utf-8"))
+
+    _validator("direct_provider_manifest.schema.json").validate(payload)
+    assert payload["schema"] == "trellm_direct_provider_manifest_v0.1"
+    assert payload["provider_route"] == "direct-api"
+    assert payload["redaction"]["raw_prompt_public"] is False
+    assert payload["redaction"]["raw_response_public"] is False
+
+
+def test_direct_provider_manifest_schema_rejects_routed_provider_as_headline_evidence():
+    payload = json.loads((ROOT / "examples/provider_manifests/direct_openai_example.json").read_text(encoding="utf-8"))
+    payload["provider_route"] = "poe"
+
+    errors = sorted(_validator("direct_provider_manifest.schema.json").iter_errors(payload), key=lambda err: err.path)
+
+    assert any("'direct-api' was expected" in error.message for error in errors)
+
+
+def test_direct_provider_manifest_cli_rejects_missing_response_hash(tmp_path: Path):
+    payload = json.loads((ROOT / "examples/provider_manifests/direct_openai_example.json").read_text(encoding="utf-8"))
+    del payload["response"]["response_sha256"]
+    manifest = tmp_path / "missing_response_hash.json"
+    manifest.write_text(json.dumps(payload), encoding="utf-8")
+
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_direct_provider_manifest.py", str(manifest)],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert "Invalid direct provider manifest" in result.stdout
+    assert "'response_sha256' is a required property" in result.stdout
+    assert "Traceback" not in result.stderr
 
 
 def test_operator_runbook_artifact_schema_validates_demo_output():

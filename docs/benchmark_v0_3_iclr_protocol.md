@@ -35,6 +35,17 @@ that the experiments have already been run. A missing output table, direct API
 pilot, or external reproduction report should still be treated as incomplete
 research work.
 
+Validate the direct-provider manifest contract separately:
+
+```bash
+python scripts/validate_direct_provider_manifest.py examples/provider_manifests/direct_openai_example.json
+```
+
+These manifests bind a direct API call to provider, model, version, prompt hash,
+response hash, redaction policy, contamination tier, execution level, seed,
+sample index, and trajectory-manifest hash. Routed-provider rows must not use
+this contract for headline v0.3 evidence.
+
 ## Claim Boundary
 
 Use the v0.3 protocol to support this kind of claim:
@@ -45,4 +56,3 @@ Use the v0.3 protocol to support this kind of claim:
 Do not use the v0.3 protocol to claim:
 
 > An LLM is proven to be profitable in live trading.
-

@@ -105,6 +105,7 @@ REQUIRED_FILES = [
     "schemas/broker_response_artifact.schema.json",
     "schemas/calibration_profile.schema.json",
     "schemas/demo_artifact_contract.schema.json",
+    "schemas/direct_provider_manifest.schema.json",
     "schemas/live_readiness_preflight.schema.json",
     "schemas/operator_runbook_artifact.schema.json",
     "schemas/reproduction_report.schema.json",
@@ -114,6 +115,7 @@ REQUIRED_FILES = [
     "benchmarks/v0.2/spec.json",
     "benchmarks/v0.3-iclr/protocol.json",
     "examples/benchmark_submissions/example_redacted_submission.json",
+    "examples/provider_manifests/direct_openai_example.json",
     "examples/benchmark_submissions/model_matrix/calm_trend__poe_gpt_5_5.json",
     "examples/benchmark_submissions/model_matrix/liquidity_collapse__poe_gpt_5_5.json",
     "examples/benchmark_submissions/real_market_matrix/recent_cross_asset__poe_gpt_5_5__seed_7.json",
@@ -221,6 +223,7 @@ REQUIRED_FILES = [
     "scripts/validate_broker_adapter_capability.py",
     "scripts/validate_live_readiness_preflight.py",
     "scripts/validate_demo_artifacts.py",
+    "scripts/validate_direct_provider_manifest.py",
     "SECURITY.md",
 ]
 FORBIDDEN_TRACKED_PATTERNS = [
@@ -382,6 +385,7 @@ CI_REQUIRED_GATE_COMMANDS = [
     "python scripts/validate_demo_artifacts.py",
     "python scripts/validate_benchmark_spec.py benchmarks/v0.2/spec.json",
     "python scripts/validate_benchmark_spec.py benchmarks/v0.3-iclr/protocol.json",
+    "python scripts/validate_direct_provider_manifest.py examples/provider_manifests/direct_openai_example.json",
     "python scripts/scan_public_artifacts.py outputs docs/results examples/benchmark_submissions",
     "python scripts/validate_benchmark_submission.py examples/benchmark_submissions/example_redacted_submission.json",
     "python scripts/build_benchmark_registry.py examples/benchmark_submissions",

@@ -298,6 +298,9 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "docs/research_plans/iclr_submission_roadmap.md" in REQUIRED_FILES
     assert "benchmarks/v0.3-iclr/protocol.json" in REQUIRED_FILES
     assert "docs/benchmark_v0_3_iclr_protocol.md" in REQUIRED_FILES
+    assert "schemas/direct_provider_manifest.schema.json" in REQUIRED_FILES
+    assert "examples/provider_manifests/direct_openai_example.json" in REQUIRED_FILES
+    assert "scripts/validate_direct_provider_manifest.py" in REQUIRED_FILES
     assert (
         "docs/research_plans/iclr_submission_roadmap.md"
         in REQUIRED_PUBLIC_IDENTITY_PHRASES["docs/launch/README.md"]

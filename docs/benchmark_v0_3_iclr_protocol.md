@@ -66,6 +66,14 @@ python scripts/run_direct_provider_manifest_pilot.py \
   --output outputs/direct_provider_manifests/example.json
 ```
 
+The repository also tracks a tiny deterministic C0/E1 bundle generated with:
+
+```bash
+python scripts/run_v03_direct_api_pilot.py
+```
+
+See `docs/results/v0_3_direct_api_pilot/direct_api_pilot_summary.md`.
+
 ## Claim Boundary
 
 Use the v0.3 protocol to support this kind of claim:

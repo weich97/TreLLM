@@ -302,6 +302,10 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "examples/provider_manifests/direct_openai_example.json" in REQUIRED_FILES
     assert "scripts/validate_direct_provider_manifest.py" in REQUIRED_FILES
     assert "scripts/run_direct_provider_manifest_pilot.py" in REQUIRED_FILES
+    assert "scripts/run_v03_direct_api_pilot.py" in REQUIRED_FILES
+    assert "docs/results/v0_3_direct_api_pilot/direct_api_pilot_rows.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_direct_api_pilot/direct_api_pilot_summary.json" in REQUIRED_FILES
+    assert "docs/results/v0_3_direct_api_pilot/direct_api_pilot_summary.md" in REQUIRED_FILES
     assert (
         "docs/research_plans/iclr_submission_roadmap.md"
         in REQUIRED_PUBLIC_IDENTITY_PHRASES["docs/launch/README.md"]

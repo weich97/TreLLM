@@ -196,6 +196,7 @@
             "enum": [
               "stress-only",
               "direct-api",
+              "protocol-fixture",
               "cached-provider",
               "live-provider",
               "deterministic-baseline",

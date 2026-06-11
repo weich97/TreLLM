@@ -54,6 +54,8 @@ jobs:
           python scripts/validate_benchmark_spec.py benchmarks/v0.3-iclr/protocol.json
       - name: Validate direct provider manifest contract
         run: python scripts/validate_direct_provider_manifest.py examples/provider_manifests/direct_openai_example.json
+      - name: Validate v0.3 direct API pilot
+        run: python scripts/run_v03_direct_api_pilot.py --output-dir outputs/ci_v0_3_direct_api_pilot --seeds 7 --samples 0
       - name: Scan public artifacts for private LLM fields
         run: python scripts/scan_public_artifacts.py outputs docs/results examples/benchmark_submissions
       - name: Validate agent skills

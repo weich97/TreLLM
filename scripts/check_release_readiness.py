@@ -80,6 +80,9 @@ REQUIRED_FILES = [
     "docs/results/real_market_matrix/real_market_model_matrix_scenario_aggregate.csv",
     "docs/results/real_market_matrix/real_market_model_matrix_significance.csv",
     "docs/results/real_market_matrix/real_market_walk_forward.csv",
+    "docs/results/v0_3_direct_api_pilot/direct_api_pilot_rows.csv",
+    "docs/results/v0_3_direct_api_pilot/direct_api_pilot_summary.json",
+    "docs/results/v0_3_direct_api_pilot/direct_api_pilot_summary.md",
     "docs/results/classical_baselines/classical_baselines.md",
     "docs/results/classical_baselines/classical_baseline_matrix.csv",
     "docs/results/classical_baselines/classical_baseline_aggregate.csv",
@@ -226,6 +229,7 @@ REQUIRED_FILES = [
     "scripts/validate_demo_artifacts.py",
     "scripts/validate_direct_provider_manifest.py",
     "scripts/run_direct_provider_manifest_pilot.py",
+    "scripts/run_v03_direct_api_pilot.py",
     "SECURITY.md",
 ]
 FORBIDDEN_TRACKED_PATTERNS = [
@@ -388,6 +392,7 @@ CI_REQUIRED_GATE_COMMANDS = [
     "python scripts/validate_benchmark_spec.py benchmarks/v0.2/spec.json",
     "python scripts/validate_benchmark_spec.py benchmarks/v0.3-iclr/protocol.json",
     "python scripts/validate_direct_provider_manifest.py examples/provider_manifests/direct_openai_example.json",
+    "python scripts/run_v03_direct_api_pilot.py --output-dir outputs/ci_v0_3_direct_api_pilot --seeds 7 --samples 0",
     "python scripts/scan_public_artifacts.py outputs docs/results examples/benchmark_submissions",
     "python scripts/validate_benchmark_submission.py examples/benchmark_submissions/example_redacted_submission.json",
     "python scripts/build_benchmark_registry.py examples/benchmark_submissions",

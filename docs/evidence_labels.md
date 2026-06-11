@@ -8,6 +8,7 @@ can support.
 | --- | --- |
 | `stress-only` | Execution uses shared stress assumptions, not venue-calibrated transaction-cost prediction. |
 | `direct-api` | Provider-backed behavior is bound to a direct provider API manifest with model/version, prompt hash, response hash, and redaction metadata. |
+| `protocol-fixture` | Synthetic fixture row that validates schema, manifest, and registry plumbing without claiming live provider behavior. |
 | `cached-provider` | Provider-backed behavior is replayed or published through cache/redacted manifest evidence. |
 | `live-provider` | Provider-backed behavior came from a live API call in the declared run. |
 | `deterministic-baseline` | Policy is deterministic or seeded local code, not an LLM provider. |
@@ -24,6 +25,9 @@ can support.
 - `direct-api` rows are the only provider-backed rows eligible for v0.3 ICLR
   headline model comparisons; routed providers such as Poe cannot carry this
   tag.
+- `protocol-fixture` rows validate the public evidence path only. They are
+  engineering evidence, not provider performance, model-skill, or trading-profit
+  evidence.
 - `cached-provider` rows are useful for reproducible benchmark comparison, but
   they should not be pooled with `live-provider` rows without an explicit
   provider-drift policy.

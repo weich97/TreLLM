@@ -178,6 +178,18 @@ claim-boundary artifact, not evidence that any model is superior. Rows below the
 v0.3 LLM main-comparison threshold of 10 seeds and 3 samples per seed remain
 pilot evidence.
 
+The v0.3 variance decomposition artifact is generated with:
+
+```bash
+python scripts/build_v03_variance_decomposition.py
+```
+
+See `docs/results/v0_3_variance_decomposition/variance_decomposition.md`.
+This artifact decomposes fixture direct API pilot rows into between-seed
+market-path variance and within-seed repeated-sample variance. It validates the
+reporting surface required by the protocol, but it is not model-performance or
+model-stochasticity evidence.
+
 The v0.3 claim-boundary audit is generated with:
 
 ```bash

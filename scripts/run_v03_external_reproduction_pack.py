@@ -91,6 +91,7 @@ def _commands(output_dir: Path) -> list[dict[str, Any]]:
     direct_plan_dir = output_dir / "v0_3_direct_api_matrix_plan"
     direct_checklist_dir = output_dir / "v0_3_direct_api_submission_checklist"
     direct_gate_dir = output_dir / "v0_3_direct_api_matrix_gate"
+    variance_dir = output_dir / "v0_3_variance_decomposition"
     return [
         {
             "id": "trajectory",
@@ -235,6 +236,18 @@ def _commands(output_dir: Path) -> list[dict[str, Any]]:
             "description": "Generate the v0.3 power-note smoke artifact.",
         },
         {
+            "id": "v03_variance_decomposition",
+            "argv": [
+                sys.executable,
+                "scripts/build_v03_variance_decomposition.py",
+                "--input-rows",
+                _command_path(direct_api_dir / "direct_api_pilot_rows.csv"),
+                "--output-dir",
+                _command_path(variance_dir),
+            ],
+            "description": "Generate the v0.3 between-seed and within-seed variance decomposition fixture.",
+        },
+        {
             "id": "v03_contamination_control_audit",
             "argv": [
                 sys.executable,
@@ -301,6 +314,7 @@ def _artifacts(output_dir: Path) -> list[Path]:
         output_dir / "v0_3_finaudit_pilot/finaudit_pilot_summary.json",
         output_dir / "v0_3_memory_contamination/memory_contamination_summary.json",
         output_dir / "v0_3_power_note/v0_3_power_note_summary.json",
+        output_dir / "v0_3_variance_decomposition/variance_decomposition_summary.json",
         output_dir / "v0_3_contamination_control_audit/contamination_control_audit_summary.json",
         output_dir / "v0_3_claim_boundary_audit/claim_boundary_audit_summary.json",
         output_dir / "v0_3_external_reproduction_gate/external_reproduction_gate_summary.json",

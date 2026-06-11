@@ -156,6 +156,11 @@ Repository work:
 - Generate the v0.3 power and detectable-effect planning artifact with
   `scripts/run_v03_power_note.py`; the public bundle stores the curves and
   thresholds under `docs/results/v0_3_power_note/`.
+- Generate the v0.3 variance decomposition artifact with
+  `scripts/build_v03_variance_decomposition.py`; the public bundle stores
+  between-seed and within-seed variance rows under
+  `docs/results/v0_3_variance_decomposition/` so repeated-sample evidence is
+  separated from seed/path variation before headline comparisons are written.
 - Keep release checks for required statistical artifacts and columns as v0.3
   outputs expand from fixture evidence to direct API model rows.
 - Keep claim text mapped to `docs/claim_boundaries.md`.

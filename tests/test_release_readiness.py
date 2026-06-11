@@ -313,6 +313,7 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "scripts/run_v03_memory_contamination.py" in REQUIRED_FILES
     assert "scripts/build_v03_contamination_control_audit.py" in REQUIRED_FILES
     assert "scripts/run_v03_power_note.py" in REQUIRED_FILES
+    assert "scripts/build_v03_variance_decomposition.py" in REQUIRED_FILES
     assert "scripts/build_v03_claim_boundary_audit.py" in REQUIRED_FILES
     assert "scripts/run_v03_external_reproduction_pack.py" in REQUIRED_FILES
     assert "scripts/build_v03_external_reproduction_gate.py" in REQUIRED_FILES
@@ -360,6 +361,9 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "docs/results/v0_3_power_note/v0_3_detectable_effects.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_power_note/v0_3_power_note_summary.json" in REQUIRED_FILES
     assert "docs/results/v0_3_power_note/v0_3_power_note_summary.md" in REQUIRED_FILES
+    assert "docs/results/v0_3_variance_decomposition/variance_decomposition_rows.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_variance_decomposition/variance_decomposition_summary.json" in REQUIRED_FILES
+    assert "docs/results/v0_3_variance_decomposition/variance_decomposition.md" in REQUIRED_FILES
     assert "docs/results/v0_3_claim_boundary_audit/claim_boundary_audit_findings.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_claim_boundary_audit/claim_boundary_audit_summary.json" in REQUIRED_FILES
     assert "docs/results/v0_3_claim_boundary_audit/claim_boundary_audit.md" in REQUIRED_FILES
@@ -406,6 +410,10 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     )
     assert (
         "python scripts/run_v03_power_note.py --output-dir outputs/ci_v0_3_power_note --repeat-levels 6,10 --effect-sizes 0.8,1.2 --target-powers 0.5 --draws 30 --permutation-draws 128 --seed 3"
+        in CI_REQUIRED_GATE_COMMANDS
+    )
+    assert (
+        "python scripts/build_v03_variance_decomposition.py --output-dir outputs/ci_v0_3_variance_decomposition"
         in CI_REQUIRED_GATE_COMMANDS
     )
     assert (

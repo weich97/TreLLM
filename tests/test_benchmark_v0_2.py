@@ -53,7 +53,9 @@ def test_v03_iclr_protocol_validates_required_submission_gates():
     assert spec["statistics"]["llm_main_comparison"]["minimum_seeds"] >= 10
     assert spec["statistics"]["llm_main_comparison"]["samples_per_seed"] >= 3
     assert "power_curve_or_detectable_effect_note" in spec["statistics"]["required_methods"]
+    assert "variance_decomposition" in spec["statistics"]["required_methods"]
     assert "power curve or detectable effect note" in spec["required_artifacts"]
+    assert "variance decomposition table" in spec["required_artifacts"]
     assert "claim-boundary audit" in spec["required_artifacts"]
     assert "direct API redaction and submission checklist" in spec["required_artifacts"]
     assert "direct API model matrix gate" in spec["required_artifacts"]

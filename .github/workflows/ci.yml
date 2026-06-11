@@ -72,6 +72,8 @@ jobs:
         run: python scripts/build_v03_contamination_control_audit.py --output-dir outputs/ci_v0_3_contamination_control_audit
       - name: Validate v0.3 power note
         run: python scripts/run_v03_power_note.py --output-dir outputs/ci_v0_3_power_note --repeat-levels 6,10 --effect-sizes 0.8,1.2 --target-powers 0.5 --draws 30 --permutation-draws 128 --seed 3
+      - name: Build v0.3 variance decomposition
+        run: python scripts/build_v03_variance_decomposition.py --output-dir outputs/ci_v0_3_variance_decomposition
       - name: Build v0.3 claim boundary audit
         run: python scripts/build_v03_claim_boundary_audit.py --output-dir outputs/ci_v0_3_claim_boundary_audit
       - name: Build v0.3 external reproduction gate

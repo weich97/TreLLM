@@ -189,6 +189,7 @@ def _validate_iclr_protocol_v03(payload: dict[str, Any]) -> list[str]:
         "direct-provider manifest schema or contract",
         "contamination-control readiness audit",
         "power curve or detectable effect note",
+        "variance decomposition table",
         "claim-boundary audit",
         "direct API redaction and submission checklist",
         "direct API model matrix plan",

@@ -195,6 +195,7 @@
             "type": "string",
             "enum": [
               "stress-only",
+              "direct-api",
               "cached-provider",
               "live-provider",
               "deterministic-baseline",

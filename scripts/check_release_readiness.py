@@ -115,6 +115,7 @@ REQUIRED_FILES = [
     "benchmarks/v0.2/spec.json",
     "benchmarks/v0.3-iclr/protocol.json",
     "examples/benchmark_submissions/example_redacted_submission.json",
+    "examples/benchmark_submissions/example_direct_api_redacted_submission.json",
     "examples/provider_manifests/direct_openai_example.json",
     "examples/benchmark_submissions/model_matrix/calm_trend__poe_gpt_5_5.json",
     "examples/benchmark_submissions/model_matrix/liquidity_collapse__poe_gpt_5_5.json",

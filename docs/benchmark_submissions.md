@@ -109,6 +109,7 @@ See:
 
 - [`examples/benchmark_submissions/example_redacted_submission.json`](../examples/benchmark_submissions/example_redacted_submission.json)
 - [`examples/benchmark_submissions/example_llm_redacted_submission.json`](../examples/benchmark_submissions/example_llm_redacted_submission.json)
+- [`examples/benchmark_submissions/example_direct_api_redacted_submission.json`](../examples/benchmark_submissions/example_direct_api_redacted_submission.json)
 - [`examples/benchmark_submissions/anonymous_entry_redacted_submission.json`](../examples/benchmark_submissions/anonymous_entry_redacted_submission.json)
 - [`examples/benchmark_submissions/model_matrix/`](../examples/benchmark_submissions/model_matrix/)
 - [`examples/benchmark_submissions/real_market_matrix/`](../examples/benchmark_submissions/real_market_matrix/)

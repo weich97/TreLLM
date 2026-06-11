@@ -46,6 +46,19 @@ def test_example_llm_redacted_submission_includes_model_audit_fields():
     assert payload["evidence"]["tags"] == ["stress-only", "cached-provider", "redacted-prompt"]
 
 
+def test_example_direct_api_redacted_submission_includes_provider_manifest_binding():
+    path = ROOT / "examples/benchmark_submissions/example_direct_api_redacted_submission.json"
+    payload, errors = validate_submission_file(path)
+
+    assert errors == []
+    assert payload["agent"]["provider"] == "openai"
+    assert payload["agent"]["model_family"] == "gpt-5.5"
+    assert payload["trajectory_manifest"]["artifact_hashes"]["direct_provider_manifest"].startswith("sha256:")
+    assert payload["evidence"]["tags"] == ["stress-only", "direct-api", "live-provider", "redacted-prompt"]
+    assert payload["evidence"]["claim_class"] == "benchmark"
+    assert payload["evidence"]["evidence_tier"] == "stress-benchmark"
+
+
 def test_anonymous_redacted_submission_validates_and_uses_entry_id_boundary():
     path = ROOT / "examples/benchmark_submissions/anonymous_entry_redacted_submission.json"
     payload, errors = validate_submission_file(path)
@@ -146,6 +159,17 @@ def test_submission_rejects_mismatched_claim_layers():
     assert "evidence.evidence_tier must be 'stress-benchmark' for tags stress-only;deterministic-baseline" in validation_errors
 
 
+def test_submission_rejects_routed_provider_with_direct_api_tag():
+    path = ROOT / "examples/benchmark_submissions/example_direct_api_redacted_submission.json"
+    payload, errors = validate_submission_file(path)
+    assert errors == []
+
+    routed = deepcopy(payload)
+    routed["agent"]["provider"] = "poe"
+
+    assert "direct-api evidence cannot use routed provider: poe" in validate_submission(routed, verify_hash=False)
+
+
 def test_submission_allows_quote_calibrated_boundary():
     path = ROOT / "examples/benchmark_submissions/example_redacted_submission.json"
     payload, errors = validate_submission_file(path)
@@ -204,6 +228,7 @@ def test_cli_submission_registry_and_hash_run(tmp_path: Path):
 
     assert "quickstart_core_synthetic_v0_1" in registry.read_text(encoding="utf-8")
     assert "`stress-only`" in registry.read_text(encoding="utf-8")
+    assert "`direct-api`" in registry.read_text(encoding="utf-8")
     assert "stress-benchmark" in registry.read_text(encoding="utf-8")
     assert "evidence_tags" in csv_path.read_text(encoding="utf-8")
     assert "evidence_tier" in csv_path.read_text(encoding="utf-8")

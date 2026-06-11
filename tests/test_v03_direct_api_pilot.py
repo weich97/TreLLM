@@ -92,3 +92,5 @@ def test_v03_direct_api_pilot_generates_seed_sample_evidence(tmp_path: Path):
         text=True,
     )
     assert "`direct-api`" in registry.read_text(encoding="utf-8")
+    assert registry.with_suffix(".csv").exists()
+    assert registry.with_suffix(".html").exists()

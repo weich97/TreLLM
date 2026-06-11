@@ -51,12 +51,12 @@ def test_example_direct_api_redacted_submission_includes_provider_manifest_bindi
     payload, errors = validate_submission_file(path)
 
     assert errors == []
-    assert payload["agent"]["provider"] == "openai"
-    assert payload["agent"]["model_family"] == "gpt-5.5"
+    assert payload["agent"]["provider"] == "fixture-direct-api"
+    assert payload["agent"]["model_family"] == "fixture-llm-policy-v0"
     assert payload["trajectory_manifest"]["artifact_hashes"]["direct_provider_manifest"].startswith("sha256:")
-    assert payload["evidence"]["tags"] == ["stress-only", "direct-api", "live-provider", "redacted-prompt"]
-    assert payload["evidence"]["claim_class"] == "benchmark"
-    assert payload["evidence"]["evidence_tier"] == "stress-benchmark"
+    assert payload["evidence"]["tags"] == ["stress-only", "direct-api", "protocol-fixture", "redacted-prompt"]
+    assert payload["evidence"]["claim_class"] == "engineering"
+    assert payload["evidence"]["evidence_tier"] == "manifest-only"
 
 
 def test_anonymous_redacted_submission_validates_and_uses_entry_id_boundary():

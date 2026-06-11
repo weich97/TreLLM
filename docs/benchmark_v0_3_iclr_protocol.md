@@ -139,6 +139,20 @@ claim-boundary artifact, not evidence that any model is superior. Rows below the
 v0.3 LLM main-comparison threshold of 10 seeds and 3 samples per seed remain
 pilot evidence.
 
+The external reproduction intake gate is generated with:
+
+```bash
+python scripts/build_v03_external_reproduction_gate.py
+```
+
+See
+`docs/results/v0_3_external_reproduction_reports/external_reproduction_gate_summary.md`.
+This artifact scans independent report JSON files, checks the v0.3
+`protocol_id`, environment class, independent-reviewer flag, command success,
+artifact hashes, and private-data boundary. The external reproduction gap
+remains open until three accepted independent reports cover Windows/macOS,
+Linux, and Colab/Binder.
+
 The conservative evidence index is generated with:
 
 ```bash

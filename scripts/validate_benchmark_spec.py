@@ -189,6 +189,7 @@ def _validate_iclr_protocol_v03(payload: dict[str, Any]) -> list[str]:
         "direct-provider manifest schema or contract",
         "power curve or detectable effect note",
         "direct API model matrix gate",
+        "external reproduction report gate",
         "external reproduction bundle",
     ):
         if artifact not in artifacts:

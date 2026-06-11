@@ -78,6 +78,17 @@ ARTIFACT_SPECS = [
         "statistical_methods": ["paired_sign_flip_permutation_power", "detectable_effect_grid"],
         "claim_boundary": "Constrains sample-size and detectable-effect claims; not model-superiority evidence.",
     },
+    {
+        "artifact_id": "external_reproduction_gate",
+        "claim_area": "external reproduction intake and environment coverage",
+        "summary_path": "docs/results/v0_3_external_reproduction_reports/external_reproduction_gate_summary.json",
+        "primary_rows": "docs/results/v0_3_external_reproduction_reports/external_reproduction_environment_coverage.csv",
+        "claim_class": "engineering",
+        "evidence_stage": "threshold-gate",
+        "supports_headline_claim": False,
+        "statistical_methods": ["environment_coverage_gate", "independent_report_count_gate"],
+        "claim_boundary": "Validates external report eligibility; current accepted report count remains below the v0.3 threshold.",
+    },
 ]
 
 GAP_SPECS = [
@@ -92,7 +103,7 @@ GAP_SPECS = [
         "gap_id": "external_reproduction_reports",
         "required_for": "external reproducibility claim",
         "missing_evidence": "three independent reproduction reports covering Windows/macOS, Linux, and Colab/Binder",
-        "current_status": "fresh-environment CI and v0.2 reproduction pack exist; independent v0.3 reports are not present",
+        "current_status": "v0.3 intake gate exists; no accepted independent reports are present",
         "blocking_level": "external-validation-claim",
     },
 ]
@@ -108,6 +119,7 @@ REQUIRED_PROTOCOL_ARTIFACTS = {
     "FinAudit pilot report": "finaudit_pilot",
     "power curve or detectable effect note": "power_detectable_effect_note",
     "direct API model matrix gate": "direct_api_matrix_gate",
+    "external reproduction report gate": "external_reproduction_gate",
     "external reproduction bundle": "gap:external_reproduction_reports",
 }
 

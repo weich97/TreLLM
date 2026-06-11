@@ -230,6 +230,7 @@
     "FinAudit pilot report",
     "power curve or detectable effect note",
     "direct API model matrix gate",
+    "external reproduction report gate",
     "external reproduction bundle"
   ],
   "milestones": [

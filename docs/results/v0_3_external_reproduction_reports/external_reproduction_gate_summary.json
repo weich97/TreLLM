@@ -1,0 +1,31 @@
+{
+  "accepted_report_count": 0,
+  "artifact_id": "external_reproduction_gate",
+  "artifacts": [
+    "external_reproduction_gate_reports.csv",
+    "external_reproduction_environment_coverage.csv",
+    "external_reproduction_gate_summary.json",
+    "external_reproduction_gate_summary.md",
+    "reports/*.json"
+  ],
+  "blocking_reasons": [
+    "insufficient_independent_report_count",
+    "missing_required_environment_class"
+  ],
+  "claim_boundary": "This gate validates external reproduction reports against the v0.3 protocol. It does not count project-maintainer, failed, private-data, or wrong-environment reports as independent evidence.",
+  "covered_environment_count": 0,
+  "external_reproduction_ready": false,
+  "open_gap_policy": "The external_reproduction_reports gap remains open until three independent accepted reports cover windows_or_macos, linux, and colab_or_binder.",
+  "protocol_id": "trellm-v0.3-iclr-protocol",
+  "report_count": 0,
+  "report_dirs": [
+    "docs/results/v0_3_external_reproduction_reports/reports"
+  ],
+  "required_environment_classes": [
+    "windows_or_macos",
+    "linux",
+    "colab_or_binder"
+  ],
+  "required_independent_reports": 3,
+  "schema": "trellm_v0_3_external_reproduction_gate_v0.1"
+}

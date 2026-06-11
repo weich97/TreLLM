@@ -93,6 +93,12 @@ REQUIRED_FILES = [
     "docs/results/v0_3_finaudit_pilot/finaudit_pilot_difficulty_breakdown.csv",
     "docs/results/v0_3_finaudit_pilot/finaudit_pilot_summary.json",
     "docs/results/v0_3_finaudit_pilot/finaudit_pilot_summary.md",
+    "docs/results/v0_3_memory_contamination/memory_contamination_rows.csv",
+    "docs/results/v0_3_memory_contamination/memory_contamination_aggregate.csv",
+    "docs/results/v0_3_memory_contamination/memory_contamination_dose_response.csv",
+    "docs/results/v0_3_memory_contamination/contamination_tier_controls.csv",
+    "docs/results/v0_3_memory_contamination/memory_contamination_summary.json",
+    "docs/results/v0_3_memory_contamination/memory_contamination_summary.md",
     "docs/results/classical_baselines/classical_baselines.md",
     "docs/results/classical_baselines/classical_baseline_matrix.csv",
     "docs/results/classical_baselines/classical_baseline_aggregate.csv",
@@ -242,6 +248,7 @@ REQUIRED_FILES = [
     "scripts/run_v03_direct_api_pilot.py",
     "scripts/run_v03_execution_ladder.py",
     "scripts/run_v03_finaudit_pilot.py",
+    "scripts/run_v03_memory_contamination.py",
     "SECURITY.md",
 ]
 FORBIDDEN_TRACKED_PATTERNS = [
@@ -407,6 +414,7 @@ CI_REQUIRED_GATE_COMMANDS = [
     "python scripts/run_v03_direct_api_pilot.py --output-dir outputs/ci_v0_3_direct_api_pilot --seeds 7 --samples 0",
     "python scripts/run_v03_execution_ladder.py --output-dir outputs/ci_v0_3_execution_ladder --agents signal-weighted,random --seeds 7 --periods 8 --top-k 2",
     "python scripts/run_v03_finaudit_pilot.py --output-dir outputs/ci_v0_3_finaudit_pilot --tasks 4 --periods 16 --base-seed 410",
+    "python scripts/run_v03_memory_contamination.py --output-dir outputs/ci_v0_3_memory_contamination --kinds fake_rejections --doses 0,0.5 --decays 1.0 --risks max-position --seeds 7 --periods 12",
     "python scripts/scan_public_artifacts.py outputs docs/results examples/benchmark_submissions",
     "python scripts/validate_benchmark_submission.py examples/benchmark_submissions/example_redacted_submission.json",
     "python scripts/build_benchmark_registry.py examples/benchmark_submissions",

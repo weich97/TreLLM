@@ -60,6 +60,8 @@ jobs:
         run: python scripts/run_v03_execution_ladder.py --output-dir outputs/ci_v0_3_execution_ladder --agents signal-weighted,random --seeds 7 --periods 8 --top-k 2
       - name: Validate v0.3 FinAudit pilot
         run: python scripts/run_v03_finaudit_pilot.py --output-dir outputs/ci_v0_3_finaudit_pilot --tasks 4 --periods 16 --base-seed 410
+      - name: Validate v0.3 memory contamination pilot
+        run: python scripts/run_v03_memory_contamination.py --output-dir outputs/ci_v0_3_memory_contamination --kinds fake_rejections --doses 0,0.5 --decays 1.0 --risks max-position --seeds 7 --periods 12
       - name: Scan public artifacts for private LLM fields
         run: python scripts/scan_public_artifacts.py outputs docs/results examples/benchmark_submissions
       - name: Validate agent skills

@@ -101,6 +101,19 @@ precision, recall, F1, Wilson intervals, and difficulty breakdowns. Fixture
 auditor scores validate the scoring path; they are not model-performance
 evidence.
 
+The memory-contamination mechanism pilot is generated with:
+
+```bash
+python scripts/run_v03_memory_contamination.py
+```
+
+See `docs/results/v0_3_memory_contamination/memory_contamination_summary.md`.
+This artifact runs a C0 synthetic memory-aware agent through clean and polluted
+read-time memory states, reports paired dose-response deltas for
+`memory_pollution_ratio` and `memory_driven_leverage_amplification`, and
+publishes a C0/C1/C2 contamination-control table. C1 and C2 are control
+contracts in this fixture, not completed real-data evidence.
+
 ## Claim Boundary
 
 Use the v0.3 protocol to support this kind of claim:

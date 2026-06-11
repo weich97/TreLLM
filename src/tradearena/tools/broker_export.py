@@ -154,8 +154,7 @@ class BrokerSafetyConfig:
             raise BrokerAdapterContractError("max_notional must be a positive finite number")
         if not _is_positive_finite_number(self.max_quantity):
             raise BrokerAdapterContractError("max_quantity must be a positive finite number")
-        supported_order_types = {OrderType.MARKET, OrderType.LIMIT}
-        if not self.allowed_order_types or any(order_type not in supported_order_types for order_type in self.allowed_order_types):
+        if not self.allowed_order_types or any(not isinstance(order_type, OrderType) for order_type in self.allowed_order_types):
             raise BrokerAdapterContractError("allowed_order_types must contain market or limit")
         if len(self.allowed_order_types) != len(set(self.allowed_order_types)):
             raise BrokerAdapterContractError("allowed_order_types must not contain duplicates")

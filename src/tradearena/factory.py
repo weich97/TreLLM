@@ -31,11 +31,12 @@ from tradearena.evaluation import (
     BehavioralEvaluator,
     DecisionQualityEvaluator,
     ExecutionRealismEvaluator,
+    IntentExecutionGapEvaluator,
     PerformanceEvaluator,
     ReasoningConsistencyEvaluator,
     RiskAuditEvaluator,
 )
-from tradearena.memory import InMemoryResearchMemory
+from tradearena.memory import InMemoryResearchMemory, PollutedResearchMemory, PollutionConfig
 from tradearena.tools import (
     CalibratedOrderSimulator,
     FillReplayOrderSimulator,
@@ -90,6 +91,26 @@ def default_registry() -> PluginRegistry:
     return registry
 
 
+def _build_memory(
+    pollution_kind: str,
+    pollution_dose: float,
+    pollution_seed: int,
+    loss_streak_length: int,
+) -> InMemoryResearchMemory | PollutedResearchMemory:
+    memory = InMemoryResearchMemory()
+    if not pollution_kind:
+        return memory
+    return PollutedResearchMemory(
+        base=memory,
+        config=PollutionConfig(
+            kind=pollution_kind,
+            dose=pollution_dose,
+            seed=pollution_seed,
+            loss_streak_length=loss_streak_length,
+        ),
+    )
+
+
 def build_default_system(
     *,
     name: str = "momentum-macro-baseline",
@@ -115,6 +136,10 @@ def build_default_system(
     drawdown_de_risk_weight: float = 0.0,
     memory_lookback_events: int = 5,
     memory_decay_rate: float = 0.85,
+    memory_pollution_kind: str = "",
+    memory_pollution_dose: float = 0.0,
+    memory_pollution_seed: int = 0,
+    memory_pollution_loss_streak_length: int = 3,
     analyst_names: tuple[str, ...] = ("momentum", "macro-news"),
     data_source: str = "synthetic",
     real_data_dir: str = "data/real/yahoo_daily_2021_2026",
@@ -133,6 +158,7 @@ def build_default_system(
     llm_risk_feedback_mode: str = "true",
     llm_output_mode: str = "rationale",
     llm_mask_timestamps: bool = False,
+    llm_anonymize_symbols: bool = False,
     llm_sample_index: int = 0,
     synthetic_volatility_scale: float = 1.0,
     synthetic_trend_scale: float = 1.0,
@@ -187,6 +213,7 @@ def build_default_system(
                     risk_feedback_mode=llm_risk_feedback_mode,
                     output_mode=llm_output_mode,
                     mask_timestamps=llm_mask_timestamps,
+                    anonymize_symbols=llm_anonymize_symbols,
                     sample_index=llm_sample_index,
                 )
             )
@@ -208,6 +235,7 @@ def build_default_system(
                     risk_feedback_mode=llm_risk_feedback_mode,
                     output_mode=llm_output_mode,
                     mask_timestamps=llm_mask_timestamps,
+                    anonymize_symbols=llm_anonymize_symbols,
                     sample_index=llm_sample_index,
                     name="poe-llm-analyst",
                 )
@@ -229,6 +257,7 @@ def build_default_system(
                     risk_feedback_mode=llm_risk_feedback_mode,
                     output_mode=llm_output_mode,
                     mask_timestamps=llm_mask_timestamps,
+                    anonymize_symbols=llm_anonymize_symbols,
                     sample_index=llm_sample_index,
                     name="ollama-llm-analyst",
                 )
@@ -321,10 +350,16 @@ def build_default_system(
         risk_manager=risk_manager,
         execution_agent=TargetWeightExecutionAgent(),
         order_simulator=simulator,
-        memory=InMemoryResearchMemory(),
+        memory=_build_memory(
+            memory_pollution_kind,
+            memory_pollution_dose,
+            memory_pollution_seed,
+            memory_pollution_loss_streak_length,
+        ),
         evaluators=[
             PerformanceEvaluator(),
             BehavioralEvaluator(),
+            IntentExecutionGapEvaluator(),
             DecisionQualityEvaluator(),
             ReasoningConsistencyEvaluator(),
             ExecutionRealismEvaluator(),

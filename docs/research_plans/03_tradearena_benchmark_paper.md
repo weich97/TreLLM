@@ -58,12 +58,12 @@ benchmark 论文需要冻结协议:场景集、代理接口、风控预算、执
 
 | 项 | 工作量 |
 | --- | --- |
-| 直连 API 适配(若 01 已做则为零) | — |
-| 污染探针脚本(memorization probe) | 2 天 |
-| 符号匿名化层(C1):现有 redaction 模块扩展 | 2 天 |
-| 前向窗口冻结机制(声明 + 数据下载脚本 + 哈希承诺) | 1 天 |
-| intent-to-execution gap 指标进 metrics.py | 1 天 |
-| 排行榜页渲染 CI/效应量列 | 1 天 |
+| 直连 API 适配(等 API key) | 2-3 天 |
+| 污染探针脚本(memorization probe,需 API) | 2 天 |
+| ✅ 符号匿名化层 C1(2026-06-10 完成):`DeepSeekLLMAnalyst.anonymize_symbols`,序列化 prompt 上做带引号精确替换(ASSET_NN 别名,覆盖 bars/持仓/记忆反馈),解析时反向映射;factory 经 `llm_anonymize_symbols` 透传 | — |
+| ✅ 前向窗口冻结 C2(2026-06-10 完成):`scripts/freeze_forward_window.py`,声明+SHA-256 承诺+`--verify`,拒绝非未来窗口;git 提交日期即公开时间戳 | — |
+| ✅ intent-to-execution gap 指标(2026-06-10 完成):`IntentExecutionGapEvaluator`,意图/风控批准/实际成交三方 L1 距离分解,已进默认评估器列表 | — |
+| 排行榜页渲染 CI/效应量列(等直连矩阵重跑时一并接) | 1 天 |
 
 ## 6. 时间线
 

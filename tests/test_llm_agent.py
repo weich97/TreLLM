@@ -124,6 +124,74 @@ def test_sample_index_uses_distinct_cache_keys(tmp_path: Path, monkeypatch):
     assert signals_one[0].metadata["sample_index"] == 1
 
 
+def test_anonymize_symbols_masks_prompt_and_maps_response_back(tmp_path: Path, monkeypatch):
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    cache = tmp_path / "cache.jsonl"
+    snapshot = MarketSnapshot(
+        timestamp=__import__("datetime").datetime(2026, 1, 1),
+        bars={
+            "BTC-USD": Bar(
+                symbol="BTC-USD",
+                timestamp=__import__("datetime").datetime(2026, 1, 1),
+                open=100.0,
+                high=105.0,
+                low=98.0,
+                close=104.0,
+                volume=1000.0,
+            ),
+            "GSPC": Bar(
+                symbol="GSPC",
+                timestamp=__import__("datetime").datetime(2026, 1, 1),
+                open=50.0,
+                high=51.0,
+                low=49.0,
+                close=50.5,
+                volume=2000.0,
+            ),
+        },
+    )
+    analyst = DeepSeekLLMAnalyst(cache_path=str(cache), model="test-model", anonymize_symbols=True)
+
+    aliases = analyst._symbol_aliases(snapshot)
+    assert aliases == {"BTC-USD": "ASSET_01", "GSPC": "ASSET_02"}
+
+    from tradearena.agents.llm import _replace_quoted_symbols
+
+    prompt = _replace_quoted_symbols(
+        analyst._prompt(snapshot, PortfolioState(cash=100000.0), memory=None), aliases
+    )
+    assert "BTC-USD" not in prompt
+    assert "GSPC" not in prompt
+    assert '"ASSET_01"' in prompt and '"ASSET_02"' in prompt
+
+    prompt_hash = __import__("hashlib").sha256(prompt.encode("utf-8")).hexdigest()
+    cache.write_text(
+        json.dumps(
+            {
+                "cache_key": f"deepseek:test-model:{prompt_hash}",
+                "model": "test-model",
+                "prompt_hash": prompt_hash,
+                "prompt": prompt,
+                "response_text": json.dumps(
+                    {
+                        "signals": [
+                            {"symbol": "ASSET_01", "score": 0.3, "confidence": 0.6, "horizon": "1w"},
+                            {"symbol": "ASSET_02", "score": -0.2, "confidence": 0.5, "horizon": "1w"},
+                        ]
+                    }
+                ),
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    signals = analyst.analyze(snapshot, PortfolioState(cash=100000.0), memory=None)
+
+    assert {signal.symbol for signal in signals} == {"BTC-USD", "GSPC"}
+    assert all(signal.metadata["symbols_anonymized"] is True for signal in signals)
+
+
 def test_llm_cache_is_lazy_loaded_until_file_changes(tmp_path: Path):
     cache = tmp_path / "cache.jsonl"
     cache.write_text(

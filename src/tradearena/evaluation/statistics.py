@@ -139,6 +139,57 @@ def paired_cohens_d(differences: Iterable[float]) -> float | None:
     return center / spread
 
 
+def random_effects_meta(
+    effects_by_group: Mapping[Any, tuple[float, float]],
+) -> dict[str, float | int | None]:
+    """DerSimonian-Laird random-effects pooling of per-group (effect, variance) pairs.
+
+    Use for cross-scenario conclusions ("model X underperforms the baseline
+    overall") where each scenario contributes its own paired-delta mean and
+    squared standard error, and scenarios are treated as a random effect
+    rather than averaged as if exchangeable.
+    """
+
+    pairs = [
+        (float(effect), float(variance))
+        for effect, variance in effects_by_group.values()
+        if variance is not None and float(variance) > 0.0
+    ]
+    if not pairs:
+        return {
+            "group_count": 0,
+            "pooled_effect": None,
+            "pooled_ci_low": None,
+            "pooled_ci_high": None,
+            "tau_squared": None,
+            "i_squared": None,
+            "q_statistic": None,
+        }
+    weights = [1.0 / variance for _, variance in pairs]
+    fixed_effect = sum(weight * effect for weight, (effect, _) in zip(weights, pairs)) / sum(weights)
+    q_statistic = sum(weight * (effect - fixed_effect) ** 2 for weight, (effect, _) in zip(weights, pairs))
+    df = len(pairs) - 1
+    if df > 0:
+        scale = sum(weights) - sum(weight**2 for weight in weights) / sum(weights)
+        tau_squared = max(0.0, (q_statistic - df) / scale) if scale > 0.0 else 0.0
+        i_squared = max(0.0, (q_statistic - df) / q_statistic) if q_statistic > 0.0 else 0.0
+    else:
+        tau_squared = 0.0
+        i_squared = 0.0
+    adjusted = [1.0 / (variance + tau_squared) for _, variance in pairs]
+    pooled = sum(weight * effect for weight, (effect, _) in zip(adjusted, pairs)) / sum(adjusted)
+    pooled_se = math.sqrt(1.0 / sum(adjusted))
+    return {
+        "group_count": len(pairs),
+        "pooled_effect": pooled,
+        "pooled_ci_low": pooled - 1.96 * pooled_se,
+        "pooled_ci_high": pooled + 1.96 * pooled_se,
+        "tau_squared": tau_squared,
+        "i_squared": i_squared,
+        "q_statistic": q_statistic,
+    }
+
+
 def kendall_tau(scores_a: Mapping[Any, float], scores_b: Mapping[Any, float]) -> float | None:
     """Kendall tau-b rank correlation over the shared keys of two score mappings.
 

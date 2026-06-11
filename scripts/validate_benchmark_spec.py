@@ -187,6 +187,7 @@ def _validate_iclr_protocol_v03(payload: dict[str, Any]) -> list[str]:
     artifacts = payload.get("required_artifacts", [])
     for artifact in (
         "direct-provider manifest schema or contract",
+        "contamination-control readiness audit",
         "power curve or detectable effect note",
         "claim-boundary audit",
         "direct API redaction and submission checklist",

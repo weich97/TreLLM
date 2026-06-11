@@ -152,6 +152,19 @@ read-time memory states, reports paired dose-response deltas for
 publishes a C0/C1/C2 contamination-control table. C1 and C2 are control
 contracts in this fixture, not completed real-data evidence.
 
+The contamination-control readiness audit is generated with:
+
+```bash
+python scripts/build_v03_contamination_control_audit.py
+```
+
+See
+`docs/results/v0_3_contamination_control_audit/contamination_control_audit.md`.
+This artifact maps C0, C1, and C2 controls to public evidence. It currently
+marks C0 as fixture mechanism evidence, C1 as contract-only, and C2 as
+forward-freeze tooling present but still missing a committed future-window
+result and walk-forward provenance.
+
 The v0.3 power and detectable-effect note is generated with:
 
 ```bash

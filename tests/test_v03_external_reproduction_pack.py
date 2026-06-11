@@ -47,6 +47,7 @@ def test_v03_external_reproduction_pack_writes_valid_maintainer_report():
         assert all(artifact["exists"] and str(artifact["sha256"]).startswith("sha256:") for artifact in manifest["artifacts"])
         assert any(command["id"] == "v03_direct_api_matrix_plan" for command in manifest["commands"])
         assert any(command["id"] == "v03_direct_api_submission_checklist" for command in manifest["commands"])
+        assert any(command["id"] == "v03_contamination_control_audit" for command in manifest["commands"])
         assert any(command["id"] == "v03_claim_boundary_audit" for command in manifest["commands"])
         assert any(command["id"] == "v03_evidence_index" for command in manifest["commands"])
         assert any(
@@ -56,6 +57,12 @@ def test_v03_external_reproduction_pack_writes_valid_maintainer_report():
         assert any(
             artifact["path"].endswith(
                 "v0_3_direct_api_submission_checklist/direct_api_submission_checklist_summary.json"
+            )
+            for artifact in manifest["artifacts"]
+        )
+        assert any(
+            artifact["path"].endswith(
+                "v0_3_contamination_control_audit/contamination_control_audit_summary.json"
             )
             for artifact in manifest["artifacts"]
         )

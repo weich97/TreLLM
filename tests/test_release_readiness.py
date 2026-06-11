@@ -311,6 +311,7 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "scripts/run_v03_execution_ladder.py" in REQUIRED_FILES
     assert "scripts/run_v03_finaudit_pilot.py" in REQUIRED_FILES
     assert "scripts/run_v03_memory_contamination.py" in REQUIRED_FILES
+    assert "scripts/build_v03_contamination_control_audit.py" in REQUIRED_FILES
     assert "scripts/run_v03_power_note.py" in REQUIRED_FILES
     assert "scripts/build_v03_claim_boundary_audit.py" in REQUIRED_FILES
     assert "scripts/run_v03_external_reproduction_pack.py" in REQUIRED_FILES
@@ -349,6 +350,12 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "docs/results/v0_3_memory_contamination/contamination_tier_controls.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_memory_contamination/memory_contamination_summary.json" in REQUIRED_FILES
     assert "docs/results/v0_3_memory_contamination/memory_contamination_summary.md" in REQUIRED_FILES
+    assert "docs/results/v0_3_contamination_control_audit/contamination_control_audit.csv" in REQUIRED_FILES
+    assert (
+        "docs/results/v0_3_contamination_control_audit/contamination_control_audit_summary.json"
+        in REQUIRED_FILES
+    )
+    assert "docs/results/v0_3_contamination_control_audit/contamination_control_audit.md" in REQUIRED_FILES
     assert "docs/results/v0_3_power_note/v0_3_power_curves.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_power_note/v0_3_detectable_effects.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_power_note/v0_3_power_note_summary.json" in REQUIRED_FILES
@@ -379,6 +386,10 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     )
     assert (
         "python scripts/run_v03_memory_contamination.py --output-dir outputs/ci_v0_3_memory_contamination --kinds fake_rejections --doses 0,0.5 --decays 1.0 --risks max-position --seeds 7 --periods 12"
+        in CI_REQUIRED_GATE_COMMANDS
+    )
+    assert (
+        "python scripts/build_v03_contamination_control_audit.py --output-dir outputs/ci_v0_3_contamination_control_audit"
         in CI_REQUIRED_GATE_COMMANDS
     )
     assert (

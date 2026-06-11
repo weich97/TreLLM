@@ -132,6 +132,9 @@ Repository work:
   C0 synthetic rows and publishes C1/C2 as control contracts.
 - Add memorization-probe outputs to the results bundle.
 - Prevent unlabeled real-market rows from entering the main leaderboard table.
+- Keep the generated contamination-control readiness audit under
+  `docs/results/v0_3_contamination_control_audit/` current so C0 fixture
+  evidence is separated from C1 anonymized-real and C2 forward-frozen gaps.
 
 ### G4: Statistical Power and Claim Boundaries
 

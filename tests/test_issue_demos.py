@@ -793,6 +793,7 @@ def test_live_human_approved_mode_rejects_invalid_limits_without_orders(
     ("allowed_order_types", "expected_error"),
     [
         ((), "allowed_order_types must contain market or limit"),
+        (([OrderType.MARKET],), "allowed_order_types must contain market or limit"),
         ((OrderType.MARKET, OrderType.MARKET), "allowed_order_types must not contain duplicates"),
     ],
 )

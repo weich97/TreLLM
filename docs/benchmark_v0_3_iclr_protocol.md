@@ -74,6 +74,20 @@ python scripts/run_v03_direct_api_pilot.py
 
 See `docs/results/v0_3_direct_api_pilot/direct_api_pilot_summary.md`.
 
+The execution-assumption ladder is generated separately so the protocol can
+report ranking stability and mechanism metrics before any live provider rows are
+promoted:
+
+```bash
+python scripts/run_v03_execution_ladder.py
+```
+
+See `docs/results/v0_3_execution_ladder/execution_ladder_summary.md`. This
+artifact runs deterministic agents through E0, E1, E2, and an E3 calibrated
+replay fixture path, then reports Kendall tau, top-k Jaccard, fill rate,
+rejected orders, slippage cost, and intent-to-execution gap. The E3 row is a
+fixture path unless the run attaches external quote/fill provenance.
+
 ## Claim Boundary
 
 Use the v0.3 protocol to support this kind of claim:

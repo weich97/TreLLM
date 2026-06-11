@@ -4,6 +4,7 @@ from pathlib import Path
 
 from scripts import build_release_candidate_manifest
 from scripts.check_release_readiness import (
+    CI_REQUIRED_GATE_COMMANDS,
     REQUIRED_FILES,
     REQUIRED_PUBLIC_IDENTITY_PHRASES,
     _check_ci_gate_parity,
@@ -303,9 +304,19 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "scripts/validate_direct_provider_manifest.py" in REQUIRED_FILES
     assert "scripts/run_direct_provider_manifest_pilot.py" in REQUIRED_FILES
     assert "scripts/run_v03_direct_api_pilot.py" in REQUIRED_FILES
+    assert "scripts/run_v03_execution_ladder.py" in REQUIRED_FILES
     assert "docs/results/v0_3_direct_api_pilot/direct_api_pilot_rows.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_direct_api_pilot/direct_api_pilot_summary.json" in REQUIRED_FILES
     assert "docs/results/v0_3_direct_api_pilot/direct_api_pilot_summary.md" in REQUIRED_FILES
+    assert "docs/results/v0_3_execution_ladder/execution_ladder_rows.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_execution_ladder/execution_ladder_aggregate.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_execution_ladder/execution_ladder_ranking_stability.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_execution_ladder/execution_ladder_summary.json" in REQUIRED_FILES
+    assert "docs/results/v0_3_execution_ladder/execution_ladder_summary.md" in REQUIRED_FILES
+    assert (
+        "python scripts/run_v03_execution_ladder.py --output-dir outputs/ci_v0_3_execution_ladder --agents signal-weighted,random --seeds 7 --periods 8 --top-k 2"
+        in CI_REQUIRED_GATE_COMMANDS
+    )
     assert (
         "docs/research_plans/iclr_submission_roadmap.md"
         in REQUIRED_PUBLIC_IDENTITY_PHRASES["docs/launch/README.md"]

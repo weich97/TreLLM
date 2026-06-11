@@ -58,6 +58,8 @@ jobs:
         run: python scripts/run_v03_direct_api_pilot.py --output-dir outputs/ci_v0_3_direct_api_pilot --seeds 7 --samples 0
       - name: Validate v0.3 execution ladder
         run: python scripts/run_v03_execution_ladder.py --output-dir outputs/ci_v0_3_execution_ladder --agents signal-weighted,random --seeds 7 --periods 8 --top-k 2
+      - name: Validate v0.3 FinAudit pilot
+        run: python scripts/run_v03_finaudit_pilot.py --output-dir outputs/ci_v0_3_finaudit_pilot --tasks 4 --periods 16 --base-seed 410
       - name: Scan public artifacts for private LLM fields
         run: python scripts/scan_public_artifacts.py outputs docs/results examples/benchmark_submissions
       - name: Validate agent skills

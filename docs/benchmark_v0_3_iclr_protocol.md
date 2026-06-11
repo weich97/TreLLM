@@ -88,6 +88,19 @@ replay fixture path, then reports Kendall tau, top-k Jaccard, fill rate,
 rejected orders, slippage cost, and intent-to-execution gap. The E3 row is a
 fixture path unless the run attaches external quote/fill provenance.
 
+The FinAudit injected-defect pilot is generated with:
+
+```bash
+python scripts/run_v03_finaudit_pilot.py
+```
+
+See `docs/results/v0_3_finaudit_pilot/finaudit_pilot_summary.md`. This artifact
+keeps the answer key private by default, publishes only task hashes and aggregate
+scores, and reports cross-audit versus self-audit fixture performance with
+precision, recall, F1, Wilson intervals, and difficulty breakdowns. Fixture
+auditor scores validate the scoring path; they are not model-performance
+evidence.
+
 ## Claim Boundary
 
 Use the v0.3 protocol to support this kind of claim:

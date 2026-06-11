@@ -305,6 +305,7 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "scripts/run_direct_provider_manifest_pilot.py" in REQUIRED_FILES
     assert "scripts/run_v03_direct_api_pilot.py" in REQUIRED_FILES
     assert "scripts/run_v03_execution_ladder.py" in REQUIRED_FILES
+    assert "scripts/run_v03_finaudit_pilot.py" in REQUIRED_FILES
     assert "docs/results/v0_3_direct_api_pilot/direct_api_pilot_rows.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_direct_api_pilot/direct_api_pilot_summary.json" in REQUIRED_FILES
     assert "docs/results/v0_3_direct_api_pilot/direct_api_pilot_summary.md" in REQUIRED_FILES
@@ -313,8 +314,17 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "docs/results/v0_3_execution_ladder/execution_ladder_ranking_stability.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_execution_ladder/execution_ladder_summary.json" in REQUIRED_FILES
     assert "docs/results/v0_3_execution_ladder/execution_ladder_summary.md" in REQUIRED_FILES
+    assert "docs/results/v0_3_finaudit_pilot/finaudit_pilot_task_manifest.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_finaudit_pilot/finaudit_pilot_scores.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_finaudit_pilot/finaudit_pilot_difficulty_breakdown.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_finaudit_pilot/finaudit_pilot_summary.json" in REQUIRED_FILES
+    assert "docs/results/v0_3_finaudit_pilot/finaudit_pilot_summary.md" in REQUIRED_FILES
     assert (
         "python scripts/run_v03_execution_ladder.py --output-dir outputs/ci_v0_3_execution_ladder --agents signal-weighted,random --seeds 7 --periods 8 --top-k 2"
+        in CI_REQUIRED_GATE_COMMANDS
+    )
+    assert (
+        "python scripts/run_v03_finaudit_pilot.py --output-dir outputs/ci_v0_3_finaudit_pilot --tasks 4 --periods 16 --base-seed 410"
         in CI_REQUIRED_GATE_COMMANDS
     )
     assert (

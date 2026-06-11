@@ -199,6 +199,7 @@ REQUIRED_FILES = [
     "scripts/score_skill_task.py",
     "scripts/score_skill_task_report.py",
     "scripts/validate_skill_contract.py",
+    "scripts/check_repository_metadata.py",
     "scripts/run_showcase.py",
     "scripts/run_leaderboard_model_matrix.py",
     "scripts/run_real_market_leaderboard.py",
@@ -255,6 +256,7 @@ REQUIRED_PUBLIC_IDENTITY_PHRASES = {
     "docs/launch/README.md": [
         "TreLLM is an LLM-driven trading audit and live-readiness control system; TradeArena is its public leaderboard",
         "execution calibration, and reproducible agent evidence.",
+        "python scripts/check_repository_metadata.py weich97/TreLLM",
         "trellm",
         "live-readiness",
         "execution-calibration",

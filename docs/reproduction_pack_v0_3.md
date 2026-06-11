@@ -2,9 +2,10 @@
 
 The v0.3 reproduction target exercises the ICLR-protocol evidence path without
 requiring API keys. It validates the protocol, regenerates small public fixture
-artifacts, builds the direct API matrix plan and credential preflight, runs the
-direct API matrix gate, builds the external reproduction gate, rebuilds the
-evidence index, and records hashes for the generated outputs.
+artifacts, builds the direct API matrix plan and credential preflight, generates
+the direct API redaction/submission checklist, runs the direct API matrix gate,
+builds the external reproduction gate, rebuilds the evidence index, and records
+hashes for the generated outputs.
 
 ## Command
 

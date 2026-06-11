@@ -98,6 +98,20 @@ This artifact pre-registers the 10-seed by 3-sample call matrix and records only
 whether the required credential environment variables are present. It does not
 make provider calls, publish secrets, or count as model-performance evidence.
 
+External direct API contributors should follow the generated redaction and
+submission checklist:
+
+```bash
+python scripts/build_v03_direct_api_submission_checklist.py
+```
+
+See
+`docs/results/v0_3_direct_api_submission_checklist/direct_api_submission_checklist.md`.
+The checklist maps the v0.3 provider manifest fields, benchmark submission
+binding, public redaction policy, matrix gate, privacy scan, and claim-boundary
+requirements into a public artifact. It is a contribution-readiness artifact,
+not model-performance evidence.
+
 The execution-assumption ladder is generated separately so the protocol can
 report ranking stability and mechanism metrics before any live provider rows are
 promoted:

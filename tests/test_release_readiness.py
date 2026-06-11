@@ -4,6 +4,8 @@ from pathlib import Path
 
 from scripts import build_release_candidate_manifest
 from scripts.check_release_readiness import (
+    REQUIRED_FILES,
+    REQUIRED_PUBLIC_IDENTITY_PHRASES,
     _check_ci_gate_parity,
     _check_public_identity_boundaries,
     _check_release_candidate_manifest_hashes,
@@ -282,6 +284,14 @@ def test_release_readiness_requires_current_trellm_repository_locations(tmp_path
         "required public identity phrase missing from docs/launch/README.md: "
         "TreLLM is an LLM-driven trading audit and live-readiness control system; TradeArena is its public leaderboard"
     ) in failures
+
+
+def test_release_readiness_guards_repository_metadata_check_contract():
+    assert "scripts/check_repository_metadata.py" in REQUIRED_FILES
+    assert (
+        "python scripts/check_repository_metadata.py weich97/TreLLM"
+        in REQUIRED_PUBLIC_IDENTITY_PHRASES["docs/launch/README.md"]
+    )
 
 
 def test_release_readiness_requires_readme_trellm_system_banner(tmp_path: Path):

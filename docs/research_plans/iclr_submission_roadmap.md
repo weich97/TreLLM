@@ -156,6 +156,9 @@ Repository work:
 - Keep release checks for required statistical artifacts and columns as v0.3
   outputs expand from fixture evidence to direct API model rows.
 - Keep claim text mapped to `docs/claim_boundaries.md`.
+- Keep the generated v0.3 claim-boundary audit under
+  `docs/results/v0_3_claim_boundary_audit/` current so public README, protocol,
+  roadmap, and report-planning text do not outrun the evidence index.
 - Keep `docs/results/v0_3_evidence_index/` current so pilot artifacts,
   statistical methods, and missing direct-model evidence are visible
   before paper claims are drafted.

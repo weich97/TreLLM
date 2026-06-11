@@ -229,6 +229,7 @@
     "execution-sensitivity report",
     "FinAudit pilot report",
     "power curve or detectable effect note",
+    "claim-boundary audit",
     "direct API redaction and submission checklist",
     "direct API model matrix plan",
     "direct API model matrix gate",

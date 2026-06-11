@@ -165,6 +165,18 @@ claim-boundary artifact, not evidence that any model is superior. Rows below the
 v0.3 LLM main-comparison threshold of 10 seeds and 3 samples per seed remain
 pilot evidence.
 
+The v0.3 claim-boundary audit is generated with:
+
+```bash
+python scripts/build_v03_claim_boundary_audit.py
+```
+
+See `docs/results/v0_3_claim_boundary_audit/claim_boundary_audit.md`. This
+artifact checks public narrative surfaces and the evidence index for overclaim
+risk, including unsupported profitability, best-model, investment-advice, and
+headline scientific-claim wording. It keeps paper text aligned with the open
+direct API model-matrix and external-reproduction gaps.
+
 The external reproduction intake gate is generated with:
 
 ```bash

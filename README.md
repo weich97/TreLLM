@@ -208,6 +208,10 @@ calls should be read as benchmark evidence, not as broad claims that one model
 is generally better at trading. See
 [`docs/claim_boundaries.md`](docs/claim_boundaries.md) and
 [`docs/evidence_labels.md`](docs/evidence_labels.md).
+Current public LLM runs are deliberately labeled as protocol fixtures, pilot
+evidence, routed-provider evidence, or redacted benchmark rows until direct API
+model matrices and independent external reproduction reports satisfy the v0.3
+protocol gates.
 
 ## Why TreLLM?
 

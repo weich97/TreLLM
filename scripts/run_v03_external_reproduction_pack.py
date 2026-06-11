@@ -235,6 +235,16 @@ def _commands(output_dir: Path) -> list[dict[str, Any]]:
             "description": "Generate the v0.3 power-note smoke artifact.",
         },
         {
+            "id": "v03_claim_boundary_audit",
+            "argv": [
+                sys.executable,
+                "scripts/build_v03_claim_boundary_audit.py",
+                "--output-dir",
+                _command_path(output_dir / "v0_3_claim_boundary_audit"),
+            ],
+            "description": "Audit public v0.3 narrative surfaces against claim boundaries and open evidence gaps.",
+        },
+        {
             "id": "v03_external_reproduction_gate",
             "argv": [
                 sys.executable,
@@ -281,6 +291,7 @@ def _artifacts(output_dir: Path) -> list[Path]:
         output_dir / "v0_3_finaudit_pilot/finaudit_pilot_summary.json",
         output_dir / "v0_3_memory_contamination/memory_contamination_summary.json",
         output_dir / "v0_3_power_note/v0_3_power_note_summary.json",
+        output_dir / "v0_3_claim_boundary_audit/claim_boundary_audit_summary.json",
         output_dir / "v0_3_external_reproduction_gate/external_reproduction_gate_summary.json",
         output_dir / "v0_3_evidence_index/v0_3_evidence_index.json",
     ]

@@ -35,13 +35,18 @@ class DeepSeekLLMAnalyst:
     risk_feedback_mode: str = "true"
     output_mode: str = "rationale"
     mask_timestamps: bool = False
+    anonymize_symbols: bool = False
     sample_index: int = 0
     name: str = "deepseek-llm-analyst"
     _cache_entries: dict[str, dict[str, Any]] | None = field(default=None, init=False, repr=False)
     _cache_mtime_ns: int | None = field(default=None, init=False, repr=False)
 
     def analyze(self, snapshot: MarketSnapshot, portfolio: PortfolioState, memory: object) -> list[Signal]:
+        alias_by_symbol = self._symbol_aliases(snapshot)
+        symbol_by_alias = {alias: symbol for symbol, alias in alias_by_symbol.items()}
         prompt = self._prompt(snapshot, portfolio, memory)
+        if alias_by_symbol:
+            prompt = _replace_quoted_symbols(prompt, alias_by_symbol)
         prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
         # sample_index=0 keeps the legacy key format so existing caches replay.
         cache_key = f"{self.provider}:{self.model}:{prompt_hash}"
@@ -74,6 +79,7 @@ class DeepSeekLLMAnalyst:
         signals = []
         for item in self._signal_items(parsed):
             symbol = str(item.get("symbol", ""))
+            symbol = symbol_by_alias.get(symbol, symbol)
             if symbol not in snapshot.bars:
                 continue
             target_weight = _to_float(item.get("target_weight", item.get("weight", "")), None)
@@ -103,6 +109,7 @@ class DeepSeekLLMAnalyst:
                         "sample_index": int(self.sample_index),
                         "risk_feedback_mode": self.risk_feedback_mode if self.use_risk_feedback else "hidden",
                         "timestamp_masked": self.mask_timestamps,
+                        "symbols_anonymized": self.anonymize_symbols,
                         "risk_notes": "" if self.output_mode == "weights_only" else str(item.get("risk_notes", "")),
                         "target_weight": target_weight if target_weight is not None else "",
                     },
@@ -170,6 +177,20 @@ class DeepSeekLLMAnalyst:
         else:
             payload["risk_feedback_instruction"] = "Risk feedback is intentionally hidden for this ablation."
         return json.dumps(payload, sort_keys=True)
+
+    def _symbol_aliases(self, snapshot: MarketSnapshot) -> dict[str, str]:
+        """Stable symbol -> ASSET_NN aliases for contamination-controlled prompts.
+
+        Aliases follow the sorted symbol order, so a fixed universe maps the
+        same way on every step of a run.
+        """
+
+        if not self.anonymize_symbols:
+            return {}
+        return {
+            symbol: f"ASSET_{index:02d}"
+            for index, symbol in enumerate(sorted(snapshot.bars), start=1)
+        }
 
     def _prompt_timestamp(self, snapshot: MarketSnapshot, memory: object = None) -> str:
         if not self.mask_timestamps:
@@ -321,6 +342,20 @@ def _normalized_cache_key(item: dict[str, Any], default_provider: str) -> str:
     return key
 
 
+def _replace_quoted_symbols(serialized_prompt: str, alias_by_symbol: dict[str, str]) -> str:
+    """Replace every quoted symbol occurrence in a JSON prompt with its alias.
+
+    Operating on the serialized JSON catches symbols wherever they appear
+    (bars, positions, recalled risk feedback). Longest symbols are replaced
+    first so overlapping tickers cannot corrupt each other, and only quoted
+    occurrences are touched so ordinary words stay intact.
+    """
+
+    for symbol in sorted(alias_by_symbol, key=len, reverse=True):
+        serialized_prompt = serialized_prompt.replace(f'"{symbol}"', f'"{alias_by_symbol[symbol]}"')
+    return serialized_prompt
+
+
 def _get_secret(name: str) -> str:
     if not name:
         return ""
@@ -356,10 +391,24 @@ def _to_float(value: object, default: float | None) -> float | None:
 ChatCompletionsLLMAnalyst = DeepSeekLLMAnalyst
 
 
-def _recent_risk_feedback(memory: object) -> list[dict[str, Any]]:
+def _recalled_step_events(memory: object, limit: int) -> list[Any]:
+    """Recall step events through ``recent`` so memory decorators (for example
+    read-time pollution) apply to the prompt; fall back to the raw journal for
+    stores without a ``recent`` method."""
+
+    recent_fn = getattr(memory, "recent", None) if memory is not None else None
+    if callable(recent_fn):
+        try:
+            return list(recent_fn("step", limit))
+        except TypeError:
+            pass
     events = getattr(memory, "events", []) if memory is not None else []
+    return list(events[-limit:])
+
+
+def _recent_risk_feedback(memory: object) -> list[dict[str, Any]]:
     feedback = []
-    for event in events[-3:]:
+    for event in _recalled_step_events(memory, 3):
         payload = getattr(event, "payload", None)
         if payload is None and isinstance(event, dict):
             payload = event.get("payload", event)
@@ -385,8 +434,7 @@ def _recent_risk_feedback(memory: object) -> list[dict[str, Any]]:
 
 
 def _long_term_risk_memory(memory: object, limit: int = 52) -> dict[str, Any]:
-    events = getattr(memory, "events", []) if memory is not None else []
-    summaries = [_risk_event_summary(event) for event in events[-limit:]]
+    summaries = [_risk_event_summary(event) for event in _recalled_step_events(memory, limit)]
     summaries = [summary for summary in summaries if summary]
     if not summaries:
         return {

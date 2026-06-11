@@ -3,10 +3,17 @@
 from tradearena.evaluation.audit import AuditManifest, export_audit_bundle
 from tradearena.evaluation.autopsy import FAILURE_MODES, autopsy_trajectory, classify_step_failure_modes
 from tradearena.evaluation.benchmarks import BenchmarkCase, BenchmarkRunner
+from tradearena.evaluation.defect_injection import (
+    DEFECT_KINDS,
+    applicable_steps,
+    inject_defect,
+    score_findings,
+)
 from tradearena.evaluation.metrics import (
     BehavioralEvaluator,
     DecisionQualityEvaluator,
     ExecutionRealismEvaluator,
+    IntentExecutionGapEvaluator,
     PerformanceEvaluator,
     ReasoningConsistencyEvaluator,
     RiskAuditEvaluator,
@@ -33,9 +40,14 @@ __all__ = [
     "BenchmarkRunner",
     "BenchmarkTask",
     "DataLeakagePolicy",
+    "DEFECT_KINDS",
     "DecisionQualityEvaluator",
     "ExecutionRealismEvaluator",
     "FAILURE_MODES",
+    "IntentExecutionGapEvaluator",
+    "applicable_steps",
+    "inject_defect",
+    "score_findings",
     "PerformanceEvaluator",
     "ReasoningConsistencyEvaluator",
     "RiskAuditEvaluator",

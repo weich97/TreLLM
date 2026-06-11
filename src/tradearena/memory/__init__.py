@@ -1,5 +1,11 @@
 """Memory plugins."""
 
+from tradearena.memory.pollution import POLLUTION_KINDS, PollutedResearchMemory, PollutionConfig
 from tradearena.memory.stores import InMemoryResearchMemory
 
-__all__ = ["InMemoryResearchMemory"]
+__all__ = [
+    "POLLUTION_KINDS",
+    "InMemoryResearchMemory",
+    "PollutedResearchMemory",
+    "PollutionConfig",
+]

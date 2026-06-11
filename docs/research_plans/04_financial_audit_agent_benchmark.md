@@ -59,8 +59,9 @@
 
 | 项 | 工作量 | 说明 |
 | --- | --- | --- |
-| 轨迹缺陷注入器(核心) | 3-4 天 | 读轨迹 JSON → 注入 4 类缺陷 → 落 ground truth 标注;复用 `core/trajectory.py` 与 serialization |
-| 审计任务 harness(出题→调模型→判分) | 2-3 天 | 复用 `score_skill_task.py` 骨架 |
+| ✅ 轨迹缺陷注入器(2026-06-10 完成) | — | `evaluation/defect_injection.py`:4 类缺陷(unclipped_position L1 / silent_risk_edit L2 / provenance_drift L2 / tampered_fill_price L3),`inject_defect` 返回缺陷副本+机器可校验 ground truth |
+| ✅ 出题与判分(2026-06-10 完成) | — | `scripts/generate_audit_tasks.py` 批量生成任务(trajectory.json + prompt.md + 私有答案 key);`score_findings` 按 (kind, step±tolerance) 配对算 precision/recall/F1 |
+| ⚠️ 调模型环节(等直连 runner) | 1 天 | 出题与判分已就绪,只差把 prompt 喂给模型的循环 |
 | T2 题库扩充模板 | 2 天 | 基于 claim ladder 三级 |
 | 自我审计管线(03 轨迹回灌) | 1 天 | 依赖 03 完成 |
 

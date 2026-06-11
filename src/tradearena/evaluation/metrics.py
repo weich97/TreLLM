@@ -71,6 +71,75 @@ class BehavioralEvaluator:
 
 
 @dataclass
+class IntentExecutionGapEvaluator:
+    """Distance between what the model wanted, what risk approved, and what executed.
+
+    The audit trail preserves model intent (pre-risk decisions), risk-approved
+    targets, and realized end-of-step portfolio weights. The per-step L1
+    distances between those allocations quantify how much of the final
+    portfolio came from the model versus the risk gate versus execution
+    frictions - the gap most leaderboards cannot report because they only
+    keep realized results.
+    """
+
+    name: str = "intent-execution-gap-evaluator"
+
+    def evaluate(self, trajectory: Trajectory) -> dict[str, float | int | str]:
+        intent_risk: list[float] = []
+        risk_execution: list[float] = []
+        intent_execution: list[float] = []
+        for step in trajectory.steps:
+            intent = _target_weights(step.decisions)
+            approved = _target_weights(step.approved_decisions)
+            if not intent and not approved:
+                continue
+            realized = _realized_weights(step.portfolio)
+            intent_risk.append(_l1_distance(intent, approved))
+            risk_execution.append(_l1_distance(approved, realized))
+            intent_execution.append(_l1_distance(intent, realized))
+        steps = len(intent_execution)
+        return {
+            "intent_gap_steps": steps,
+            "intent_risk_gap_l1": sum(intent_risk) / steps if steps else 0.0,
+            "risk_execution_gap_l1": sum(risk_execution) / steps if steps else 0.0,
+            "intent_execution_gap_l1": sum(intent_execution) / steps if steps else 0.0,
+            "max_intent_execution_gap_l1": max(intent_execution) if steps else 0.0,
+        }
+
+
+def _target_weights(decisions: list[dict]) -> dict[str, float]:
+    weights: dict[str, float] = {}
+    for decision in decisions or []:
+        symbol = str(decision.get("symbol", ""))
+        weight = _finite_float(decision.get("target_weight"))
+        if symbol and weight is not None:
+            weights[symbol] = weights.get(symbol, 0.0) + weight
+    return weights
+
+
+def _realized_weights(portfolio: dict) -> dict[str, float]:
+    if not isinstance(portfolio, dict):
+        return {}
+    equity = _finite_float(portfolio.get("equity"))
+    if not equity:
+        return {}
+    prices = portfolio.get("last_prices", {}) or {}
+    weights: dict[str, float] = {}
+    for symbol, quantity in (portfolio.get("positions", {}) or {}).items():
+        quantity_value = _finite_float(quantity)
+        price = _finite_float(prices.get(symbol))
+        if quantity_value is None or price is None:
+            continue
+        weights[str(symbol)] = quantity_value * price / equity
+    return weights
+
+
+def _l1_distance(left: dict[str, float], right: dict[str, float]) -> float:
+    symbols = set(left) | set(right)
+    return sum(abs(left.get(symbol, 0.0) - right.get(symbol, 0.0)) for symbol in symbols)
+
+
+@dataclass
 class ExecutionRealismEvaluator:
     name: str = "execution-realism-evaluator"
 

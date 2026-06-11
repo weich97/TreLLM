@@ -5,6 +5,7 @@ from tradearena.evaluation.statistics import (
     paired_bootstrap_difference,
     paired_cohens_d,
     paired_permutation_p_value,
+    random_effects_meta,
     sample_std,
     summarize_metric,
     top_k_jaccard,
@@ -83,6 +84,33 @@ def test_cliffs_delta_bounds_and_signs():
     assert cliffs_delta([0.0, 1.0], [2.0, 3.0]) == -1.0
     assert cliffs_delta([1.0, 2.0], [1.0, 2.0]) == 0.0
     assert cliffs_delta([], [1.0]) is None
+
+
+def test_random_effects_meta_homogeneous_groups_match_fixed_effect():
+    # Identical effects and variances: tau^2 = 0, pooled equals the common effect.
+    result = random_effects_meta({"a": (0.02, 0.0001), "b": (0.02, 0.0001), "c": (0.02, 0.0001)})
+
+    assert result["group_count"] == 3
+    assert round(float(result["pooled_effect"]), 6) == 0.02
+    assert result["tau_squared"] == 0.0
+    assert result["i_squared"] == 0.0
+    assert result["pooled_ci_low"] < 0.02 < result["pooled_ci_high"]
+
+
+def test_random_effects_meta_heterogeneity_widens_interval():
+    homogeneous = random_effects_meta({"a": (0.02, 0.0001), "b": (0.02, 0.0001)})
+    heterogeneous = random_effects_meta({"a": (0.10, 0.0001), "b": (-0.06, 0.0001)})
+
+    assert heterogeneous["tau_squared"] > 0.0
+    assert heterogeneous["i_squared"] > 0.5
+    width_homogeneous = homogeneous["pooled_ci_high"] - homogeneous["pooled_ci_low"]
+    width_heterogeneous = heterogeneous["pooled_ci_high"] - heterogeneous["pooled_ci_low"]
+    assert width_heterogeneous > width_homogeneous
+
+
+def test_random_effects_meta_empty_and_invalid_variances():
+    assert random_effects_meta({})["pooled_effect"] is None
+    assert random_effects_meta({"a": (0.1, 0.0)})["pooled_effect"] is None
 
 
 def test_kendall_tau_perfect_agreement_and_reversal():

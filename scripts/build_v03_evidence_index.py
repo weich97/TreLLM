@@ -24,6 +24,17 @@ ARTIFACT_SPECS = [
         "claim_boundary": "Validates direct API evidence plumbing without live provider calls.",
     },
     {
+        "artifact_id": "direct_api_matrix_gate",
+        "claim_area": "direct API model matrix threshold gate",
+        "summary_path": "docs/results/v0_3_direct_api_matrix_gate/direct_api_matrix_gate_summary.json",
+        "primary_rows": "docs/results/v0_3_direct_api_matrix_gate/direct_api_matrix_gate_coverage.csv",
+        "claim_class": "engineering",
+        "evidence_stage": "threshold-gate",
+        "supports_headline_claim": False,
+        "statistical_methods": ["direct_manifest_hash_binding", "seed_sample_threshold_gate"],
+        "claim_boundary": "Verifies direct API matrix provenance and 10x3 coverage; current fixture rows remain pilot evidence.",
+    },
+    {
         "artifact_id": "execution_ladder",
         "claim_area": "execution assumption sensitivity",
         "summary_path": "docs/results/v0_3_execution_ladder/execution_ladder_summary.json",
@@ -74,7 +85,7 @@ GAP_SPECS = [
         "gap_id": "direct_api_model_matrix",
         "required_for": "scientific model reliability claims",
         "missing_evidence": "direct API model rows with at least 10 seeds and 3 samples per seed, or explicit pilot labeling",
-        "current_status": "fixture-only direct API plumbing exists",
+        "current_status": "threshold gate exists; current public rows are fixture/pilot evidence and do not meet non-fixture 10x3 coverage",
         "blocking_level": "headline-scientific-claim",
     },
     {
@@ -96,6 +107,7 @@ REQUIRED_PROTOCOL_ARTIFACTS = {
     "execution-sensitivity report": "execution_ladder",
     "FinAudit pilot report": "finaudit_pilot",
     "power curve or detectable effect note": "power_detectable_effect_note",
+    "direct API model matrix gate": "direct_api_matrix_gate",
     "external reproduction bundle": "gap:external_reproduction_reports",
 }
 
@@ -174,13 +186,20 @@ def _coverage_rows(artifact_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
             continue
         refs = evidence_ref.split(";")
         present = [ref for ref in refs if by_artifact.get(ref, {}).get("status") == "present"]
+        status = "missing"
+        if present:
+            stages = {str(by_artifact[ref].get("evidence_stage", "")) for ref in present}
+            status = "covered-by-fixture" if "protocol-fixture" in stages else "covered-by-artifact"
         rows.append(
             {
                 "protocol_id": PROTOCOL_ID,
                 "required_artifact": required_artifact,
-                "coverage_status": "covered-by-fixture" if present else "missing",
+                "coverage_status": status,
                 "evidence_ref": ";".join(present),
-                "claim_boundary": "Fixture coverage supports protocol plumbing; scientific claims require direct API and scale thresholds.",
+                "claim_boundary": (
+                    "Public artifact coverage supports protocol plumbing and claim boundaries; scientific claims require "
+                    "non-fixture direct API rows and scale thresholds."
+                ),
             }
         )
     return rows
@@ -203,6 +222,9 @@ def _summary(
         "artifact_count": len(artifact_rows),
         "present_artifact_count": len(present),
         "required_protocol_artifact_count": len(coverage_rows),
+        "covered_artifact_count": sum(
+            1 for row in coverage_rows if row["coverage_status"] in {"covered-by-fixture", "covered-by-artifact"}
+        ),
         "covered_fixture_count": sum(1 for row in coverage_rows if row["coverage_status"] == "covered-by-fixture"),
         "open_gap_count": len(gap_rows),
         "open_protocol_coverage_count": len(open_coverage),
@@ -230,6 +252,7 @@ def _summary_markdown(
         "",
         f"- Protocol: `{summary['protocol_id']}`",
         f"- Present artifacts: `{summary['present_artifact_count']} / {summary['artifact_count']}`",
+        f"- Public-artifact-covered protocol artifacts: `{summary['covered_artifact_count']} / {summary['required_protocol_artifact_count']}`",
         f"- Fixture-covered protocol artifacts: `{summary['covered_fixture_count']} / {summary['required_protocol_artifact_count']}`",
         f"- Open gaps: `{summary['open_gap_count']}`",
         f"- Headline scientific claim ready: `{summary['headline_scientific_claim_ready']}`",

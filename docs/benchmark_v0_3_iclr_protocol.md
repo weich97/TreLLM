@@ -74,6 +74,18 @@ python scripts/run_v03_direct_api_pilot.py
 
 See `docs/results/v0_3_direct_api_pilot/direct_api_pilot_summary.md`.
 
+The direct API matrix threshold gate is generated with:
+
+```bash
+python scripts/build_v03_direct_api_matrix_gate.py
+```
+
+See `docs/results/v0_3_direct_api_matrix_gate/direct_api_matrix_gate_summary.md`.
+This artifact verifies submission/manifests hashes, direct API provenance, and
+the v0.3 threshold of 10 seeds and 3 samples per seed. It currently keeps the
+fixture rows labeled as pilot/incomplete evidence, so the direct API model
+matrix gap remains open until non-fixture provider rows meet the threshold.
+
 The execution-assumption ladder is generated separately so the protocol can
 report ranking stability and mechanism metrics before any live provider rows are
 promoted:

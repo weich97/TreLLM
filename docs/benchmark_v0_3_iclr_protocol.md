@@ -114,6 +114,19 @@ read-time memory states, reports paired dose-response deltas for
 publishes a C0/C1/C2 contamination-control table. C1 and C2 are control
 contracts in this fixture, not completed real-data evidence.
 
+The v0.3 power and detectable-effect note is generated with:
+
+```bash
+python scripts/run_v03_power_note.py
+```
+
+See `docs/results/v0_3_power_note/v0_3_power_note_summary.md`. This artifact
+records synthetic paired-test power curves and the smallest detectable Cohen's d
+within the configured grid for each repeat count. It is a planning and
+claim-boundary artifact, not evidence that any model is superior. Rows below the
+v0.3 LLM main-comparison threshold of 10 seeds and 3 samples per seed remain
+pilot evidence.
+
 The conservative evidence index is generated with:
 
 ```bash
@@ -123,8 +136,8 @@ python scripts/build_v03_evidence_index.py
 See `docs/results/v0_3_evidence_index/v0_3_evidence_index.md`. It maps each
 public v0.3 artifact to protocol-required evidence, statistical methods, claim
 classes, and open gaps. It intentionally keeps `headline_scientific_claim_ready`
-false until direct API model matrices, v0.3 power notes, and independent
-external reproduction reports exist.
+false until direct API model matrices and independent external reproduction
+reports exist.
 
 ## Claim Boundary
 

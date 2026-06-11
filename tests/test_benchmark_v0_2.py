@@ -52,6 +52,8 @@ def test_v03_iclr_protocol_validates_required_submission_gates():
     assert {tier["id"] for tier in spec["contamination_tiers"]} == {"C0", "C1", "C2"}
     assert spec["statistics"]["llm_main_comparison"]["minimum_seeds"] >= 10
     assert spec["statistics"]["llm_main_comparison"]["samples_per_seed"] >= 3
+    assert "power_curve_or_detectable_effect_note" in spec["statistics"]["required_methods"]
+    assert "power curve or detectable effect note" in spec["required_artifacts"]
     assert "intent_to_execution_gap" in spec["metrics"]["mechanism"]
     assert "self_audit_bias" in spec["finaudit_track"]["required_analyses"]
     assert spec["external_reproduction"]["minimum_independent_reports"] >= 3

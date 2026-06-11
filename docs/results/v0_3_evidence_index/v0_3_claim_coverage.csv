@@ -7,4 +7,5 @@ trellm-v0.3-iclr-protocol,ranking-stability table,covered-by-fixture,execution_l
 trellm-v0.3-iclr-protocol,contamination probe report,covered-by-fixture,memory_contamination,Fixture coverage supports protocol plumbing; scientific claims require direct API and scale thresholds.
 trellm-v0.3-iclr-protocol,execution-sensitivity report,covered-by-fixture,execution_ladder,Fixture coverage supports protocol plumbing; scientific claims require direct API and scale thresholds.
 trellm-v0.3-iclr-protocol,FinAudit pilot report,covered-by-fixture,finaudit_pilot,Fixture coverage supports protocol plumbing; scientific claims require direct API and scale thresholds.
+trellm-v0.3-iclr-protocol,power curve or detectable effect note,covered-by-fixture,power_detectable_effect_note,Fixture coverage supports protocol plumbing; scientific claims require direct API and scale thresholds.
 trellm-v0.3-iclr-protocol,external reproduction bundle,open-gap,gap:external_reproduction_reports,Required by protocol but not yet satisfied by public v0.3 artifacts.

@@ -56,6 +56,17 @@ ARTIFACT_SPECS = [
         "statistical_methods": ["paired_bootstrap_delta", "BH-FDR q_value", "bootstrap_ci"],
         "claim_boundary": "Reports C0 read-time memory pollution fixture effects, not LLM model-level robustness.",
     },
+    {
+        "artifact_id": "power_detectable_effect_note",
+        "claim_area": "statistical power and detectable effects",
+        "summary_path": "docs/results/v0_3_power_note/v0_3_power_note_summary.json",
+        "primary_rows": "docs/results/v0_3_power_note/v0_3_detectable_effects.csv",
+        "claim_class": "benchmark",
+        "evidence_stage": "planning-note",
+        "supports_headline_claim": False,
+        "statistical_methods": ["paired_sign_flip_permutation_power", "detectable_effect_grid"],
+        "claim_boundary": "Constrains sample-size and detectable-effect claims; not model-superiority evidence.",
+    },
 ]
 
 GAP_SPECS = [
@@ -65,13 +76,6 @@ GAP_SPECS = [
         "missing_evidence": "direct API model rows with at least 10 seeds and 3 samples per seed, or explicit pilot labeling",
         "current_status": "fixture-only direct API plumbing exists",
         "blocking_level": "headline-scientific-claim",
-    },
-    {
-        "gap_id": "power_detectable_effect_note",
-        "required_for": "statistical claim boundaries",
-        "missing_evidence": "v0.3-specific detectable-effect or power note attached to the evidence bundle",
-        "current_status": "generic power-analysis script exists; v0.3 bundle does not yet include a generated power note",
-        "blocking_level": "main-paper-statistical-claim",
     },
     {
         "gap_id": "external_reproduction_reports",
@@ -91,6 +95,7 @@ REQUIRED_PROTOCOL_ARTIFACTS = {
     "contamination probe report": "memory_contamination",
     "execution-sensitivity report": "execution_ladder",
     "FinAudit pilot report": "finaudit_pilot",
+    "power curve or detectable effect note": "power_detectable_effect_note",
     "external reproduction bundle": "gap:external_reproduction_reports",
 }
 

@@ -307,6 +307,7 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "scripts/run_v03_execution_ladder.py" in REQUIRED_FILES
     assert "scripts/run_v03_finaudit_pilot.py" in REQUIRED_FILES
     assert "scripts/run_v03_memory_contamination.py" in REQUIRED_FILES
+    assert "scripts/run_v03_power_note.py" in REQUIRED_FILES
     assert "scripts/build_v03_evidence_index.py" in REQUIRED_FILES
     assert "docs/results/v0_3_direct_api_pilot/direct_api_pilot_rows.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_direct_api_pilot/direct_api_pilot_summary.json" in REQUIRED_FILES
@@ -327,6 +328,10 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "docs/results/v0_3_memory_contamination/contamination_tier_controls.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_memory_contamination/memory_contamination_summary.json" in REQUIRED_FILES
     assert "docs/results/v0_3_memory_contamination/memory_contamination_summary.md" in REQUIRED_FILES
+    assert "docs/results/v0_3_power_note/v0_3_power_curves.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_power_note/v0_3_detectable_effects.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_power_note/v0_3_power_note_summary.json" in REQUIRED_FILES
+    assert "docs/results/v0_3_power_note/v0_3_power_note_summary.md" in REQUIRED_FILES
     assert "docs/results/v0_3_evidence_index/v0_3_evidence_index.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_evidence_index/v0_3_claim_coverage.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_evidence_index/v0_3_open_gaps.csv" in REQUIRED_FILES
@@ -342,6 +347,10 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     )
     assert (
         "python scripts/run_v03_memory_contamination.py --output-dir outputs/ci_v0_3_memory_contamination --kinds fake_rejections --doses 0,0.5 --decays 1.0 --risks max-position --seeds 7 --periods 12"
+        in CI_REQUIRED_GATE_COMMANDS
+    )
+    assert (
+        "python scripts/run_v03_power_note.py --output-dir outputs/ci_v0_3_power_note --repeat-levels 6,10 --effect-sizes 0.8,1.2 --target-powers 0.5 --draws 30 --permutation-draws 128 --seed 3"
         in CI_REQUIRED_GATE_COMMANDS
     )
     assert (

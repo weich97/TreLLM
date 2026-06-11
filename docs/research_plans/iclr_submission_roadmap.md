@@ -140,10 +140,14 @@ Required evidence:
 
 Repository work:
 - Keep statistical reporting in generated artifacts, not only prose.
-- Add release checks for required statistical columns once v0.3 outputs exist.
+- Generate the v0.3 power and detectable-effect planning artifact with
+  `scripts/run_v03_power_note.py`; the public bundle stores the curves and
+  thresholds under `docs/results/v0_3_power_note/`.
+- Keep release checks for required statistical artifacts and columns as v0.3
+  outputs expand from fixture evidence to direct API model rows.
 - Keep claim text mapped to `docs/claim_boundaries.md`.
 - Keep `docs/results/v0_3_evidence_index/` current so pilot artifacts,
-  statistical methods, and missing power/direct-model evidence are visible
+  statistical methods, and missing direct-model evidence are visible
   before paper claims are drafted.
 
 ### G5: FinAudit Trace-Auditor Track

@@ -170,7 +170,7 @@ def _validate_iclr_protocol_v03(payload: dict[str, Any]) -> list[str]:
     baseline_stats = stats.get("deterministic_baseline", {})
     if baseline_stats.get("minimum_seeds", 0) < 30:
         errors.append("statistics.deterministic_baseline.minimum_seeds must be at least 30")
-    for method in ("BH-FDR", "effect_size", "variance_decomposition"):
+    for method in ("BH-FDR", "effect_size", "power_curve_or_detectable_effect_note", "variance_decomposition"):
         if method not in stats.get("required_methods", []):
             errors.append(f"statistics.required_methods must include {method}")
 
@@ -185,7 +185,11 @@ def _validate_iclr_protocol_v03(payload: dict[str, Any]) -> list[str]:
         errors.append("external_reproduction.minimum_independent_reports must be at least 3")
 
     artifacts = payload.get("required_artifacts", [])
-    for artifact in ("direct-provider manifest schema or contract", "external reproduction bundle"):
+    for artifact in (
+        "direct-provider manifest schema or contract",
+        "power curve or detectable effect note",
+        "external reproduction bundle",
+    ):
         if artifact not in artifacts:
             errors.append(f"required_artifacts must include {artifact}")
     return errors

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
@@ -52,8 +52,9 @@ def test_verify_detects_tampered_declaration(tmp_path: Path):
 
 def test_freeze_rejects_non_future_window(tmp_path: Path):
     module = _load_module()
-    start = date.today().isoformat()
-    end = (date.today() + timedelta(days=30)).isoformat()
+    today_utc = datetime.now(timezone.utc).date()
+    start = today_utc.isoformat()
+    end = (today_utc + timedelta(days=30)).isoformat()
 
     with pytest.raises(SystemExit):
         module.main(

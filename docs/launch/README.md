@@ -58,6 +58,8 @@ paper-trading
 - Prepare patch release candidate `v0.2.1` from
   [`release_candidate_v0.2.1.md`](release_candidate_v0.2.1.md) after CI passes.
 - Add the topics above.
+- Verify GitHub About metadata with
+  `python scripts/check_repository_metadata.py weich97/TreLLM`.
 - Enable GitHub Discussions.
 - Verify the GitHub Pages site at `https://weich97.github.io/TreLLM/`.
 - Create the issue backlog in `docs/launch/issue_backlog.md`.

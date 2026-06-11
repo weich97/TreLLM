@@ -6,25 +6,30 @@ fills to stressed frictions? This script runs the deterministic strategy set
 across execution levels and reports ranking stability (Kendall tau-b and
 top-k Jaccard) between every pair of levels.
 
-Deterministic agents only: zero provider cost, so it can run at high seed
-counts. LLM rows reuse the same level definitions through the leaderboard
-matrix scripts.
+Deterministic agents run at zero provider cost. Provider-backed LLM agents
+(`--llm-models poe:gpt-5.5,...`) join the same (scenario, level, seed) cells so
+their rankings are directly comparable with the classical baselines; when LLM
+rows are included, keep `--periods` small because every period is one provider
+call per model. Runs checkpoint to the runs CSV as they finish and a rerun
+resumes from whatever is already there (cached LLM responses replay for free).
 
 Usage:
 
+  # deterministic-only matrix
   python scripts/run_execution_sensitivity_sweep.py \
     --output-dir docs/results/execution_sensitivity
 
-  # quick smoke
-  python scripts/run_execution_sensitivity_sweep.py \
-    --agents buy-and-hold,risk-parity --seeds 7,11 --periods 40 \
-    --scenarios calm --output-dir outputs/tmp_sweep
+  # LLM + baselines, comparable cells
+  POE_API_KEY=... python scripts/run_execution_sensitivity_sweep.py \
+    --llm-models poe:gpt-5.5,poe:claude-opus-4.7 --samples-per-seed 3 \
+    --periods 12 --output-dir docs/results/execution_sensitivity_llm
 """
 
 from __future__ import annotations
 
 import argparse
 import csv
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -107,6 +112,18 @@ RANK_METRIC = "sharpe"
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Sweep deterministic agents across execution-assumption levels.")
     parser.add_argument("--agents", default=",".join(DEFAULT_AGENTS))
+    parser.add_argument(
+        "--llm-models",
+        default="",
+        help="Comma-separated provider:model entries (poe/deepseek) to run alongside the deterministic agents.",
+    )
+    parser.add_argument(
+        "--samples-per-seed",
+        type=int,
+        default=1,
+        help="Repeated provider samples per seed for LLM agents; deterministic agents always run once.",
+    )
+    parser.add_argument("--cache-dir", default="outputs/llm_cache/execution_sensitivity")
     parser.add_argument("--levels", default=",".join(EXECUTION_LEVELS), help=f"Available: {', '.join(EXECUTION_LEVELS)}.")
     parser.add_argument("--scenarios", default=",".join(SCENARIOS), help=f"Available: {', '.join(SCENARIOS)}.")
     parser.add_argument("--seeds", default=",".join(str(seed) for seed in DEFAULT_SEEDS))
@@ -117,48 +134,88 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     agents = [item.strip() for item in args.agents.split(",") if item.strip()]
+    llm_agents = [item.strip() for item in args.llm_models.split(",") if item.strip()]
+    for spec in llm_agents:
+        provider = spec.split(":", 1)[0].lower()
+        if provider not in {"poe", "deepseek"}:
+            raise SystemExit(f"Unsupported LLM provider in {spec!r}; expected poe: or deepseek: prefix")
     levels = {name: EXECUTION_LEVELS[name] for name in args.levels.split(",") if name.strip()}
     scenarios = {name: SCENARIOS[name] for name in args.scenarios.split(",") if name.strip()}
     seeds = [int(seed.strip()) for seed in args.seeds.split(",") if seed.strip()]
     symbols = tuple(symbol.strip() for symbol in args.symbols.split(",") if symbol.strip())
+    samples_per_seed = max(1, int(args.samples_per_seed))
+    cache_dir = ROOT / args.cache_dir if not Path(args.cache_dir).is_absolute() else Path(args.cache_dir)
 
     output_dir = ROOT / args.output_dir if not Path(args.output_dir).is_absolute() else Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    if llm_agents:
+        cache_dir.mkdir(parents=True, exist_ok=True)
 
-    run_rows: list[dict[str, Any]] = []
-    for scenario_key, scenario in scenarios.items():
-        for level_key, level in levels.items():
-            for agent in agents:
-                for seed in seeds:
-                    actual_seed = seed + int(scenario["seed_offset"])
-                    metrics = _run_case(
-                        agent=agent,
-                        level=level,
-                        scenario=scenario,
-                        seed=actual_seed,
-                        periods=args.periods,
-                        symbols=symbols,
-                    )
-                    run_rows.append(
-                        {
-                            "scenario": scenario_key,
-                            "level": level_key,
-                            "agent": agent,
-                            "seed": actual_seed,
-                            "total_return": metrics.get("total_return", 0.0),
-                            "sharpe": metrics.get("sharpe", 0.0),
-                            "max_drawdown": metrics.get("max_drawdown", 0.0),
-                            "execution_fill_rate": metrics.get("execution_fill_rate", ""),
-                            "total_slippage_cost": metrics.get("total_slippage_cost", ""),
-                        }
-                    )
-                print(f"OK {scenario_key} {level_key} {agent} ({len(seeds)} seeds)", flush=True)
+    run_fields = [
+        "scenario",
+        "level",
+        "agent",
+        "seed",
+        "sample",
+        "total_return",
+        "sharpe",
+        "max_drawdown",
+        "execution_fill_rate",
+        "total_slippage_cost",
+    ]
+    runs_path = output_dir / "execution_sensitivity_runs.csv"
+    run_rows = _load_existing_runs(runs_path)
+    completed = {
+        (row["scenario"], row["level"], row["agent"], int(row["seed"]), int(row.get("sample", 0) or 0))
+        for row in run_rows
+    }
+    if completed:
+        print(f"Resuming: {len(completed)} runs already checkpointed in {runs_path}", flush=True)
 
-    _write_csv(
-        output_dir / "execution_sensitivity_runs.csv",
-        run_rows,
-        ["scenario", "level", "agent", "seed", "total_return", "sharpe", "max_drawdown", "execution_fill_rate", "total_slippage_cost"],
-    )
+    with runs_path.open("a", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=run_fields, extrasaction="ignore")
+        if not run_rows:
+            writer.writeheader()
+        for scenario_key, scenario in scenarios.items():
+            for level_key, level in levels.items():
+                for agent in agents + llm_agents:
+                    sample_count = samples_per_seed if ":" in agent else 1
+                    fresh = 0
+                    for seed in seeds:
+                        actual_seed = seed + int(scenario["seed_offset"])
+                        for sample in range(sample_count):
+                            if (scenario_key, level_key, agent, actual_seed, sample) in completed:
+                                continue
+                            metrics = _run_case(
+                                agent=agent,
+                                level=level,
+                                scenario=scenario,
+                                seed=actual_seed,
+                                sample=sample,
+                                periods=args.periods,
+                                symbols=symbols,
+                                cache_dir=cache_dir,
+                            )
+                            row = {
+                                "scenario": scenario_key,
+                                "level": level_key,
+                                "agent": agent,
+                                "seed": actual_seed,
+                                "sample": sample,
+                                "total_return": metrics.get("total_return", 0.0),
+                                "sharpe": metrics.get("sharpe", 0.0),
+                                "max_drawdown": metrics.get("max_drawdown", 0.0),
+                                "execution_fill_rate": metrics.get("execution_fill_rate", ""),
+                                "total_slippage_cost": metrics.get("total_slippage_cost", ""),
+                            }
+                            run_rows.append(row)
+                            writer.writerow(row)
+                            handle.flush()
+                            fresh += 1
+                    print(
+                        f"OK {scenario_key} {level_key} {agent} ({fresh} new / {len(seeds) * sample_count} runs)",
+                        flush=True,
+                    )
 
     aggregate_rows = _aggregate_rows(run_rows)
     _write_csv(
@@ -196,22 +253,47 @@ def _run_case(
     level: dict[str, Any],
     scenario: dict[str, Any],
     seed: int,
+    sample: int = 0,
     periods: int,
     symbols: tuple[str, ...],
+    cache_dir: Path | None = None,
 ) -> dict[str, Any]:
     kwargs: dict[str, Any] = dict(scenario.get("synthetic", {}))
     kwargs.update(level)
+    if ":" in agent:
+        provider, model = agent.split(":", 1)
+        analyst = "poe-llm" if provider == "poe" else "deepseek-llm"
+        model_slug = re.sub(r"[^a-z0-9]+", "_", f"{provider}-{model}".lower()).strip("_")
+        kwargs.update(
+            {
+                "strategy_name": "signal-weighted",
+                "analyst_names": (analyst,),
+                "llm_model": model,
+                "llm_cache_path": str((cache_dir or ROOT / "outputs/llm_cache/execution_sensitivity") / f"{model_slug}.jsonl"),
+                "llm_mask_timestamps": True,
+                "llm_use_risk_feedback": True,
+                "llm_risk_feedback_mode": "true",
+                "llm_sample_index": sample,
+            }
+        )
+    else:
+        kwargs.update({"strategy_name": agent, "analyst_names": ("momentum", "macro-news")})
     _, metrics = build_default_system(
-        name=f"execution_sweep_{agent}_{seed}",
+        name=f"execution_sweep_{re.sub(r'[^A-Za-z0-9]+', '_', agent)}_{seed}",
         symbols=symbols,
         periods=periods,
         seed=seed,
-        strategy_name=agent,
         risk_name="max-position",
-        analyst_names=("momentum", "macro-news"),
         **kwargs,
     ).run()
     return metrics
+
+
+def _load_existing_runs(path: Path) -> list[dict[str, Any]]:
+    if not path.exists():
+        return []
+    with path.open(encoding="utf-8") as handle:
+        return list(csv.DictReader(handle))
 
 
 def _aggregate_rows(run_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:

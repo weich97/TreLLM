@@ -1,6 +1,7 @@
 # TreLLM v0.3 External Reproduction Reports
 
-Place independent reproduction report JSON files in this directory.
+Place independent reproduction report JSON files in this directory. Reviewers
+can generate one with `scripts/run_v03_external_reproduction_pack.py`.
 
 A report counts toward the v0.3 external reproduction gate only when it:
 

@@ -68,6 +68,8 @@ jobs:
         run: python scripts/run_v03_power_note.py --output-dir outputs/ci_v0_3_power_note --repeat-levels 6,10 --effect-sizes 0.8,1.2 --target-powers 0.5 --draws 30 --permutation-draws 128 --seed 3
       - name: Build v0.3 external reproduction gate
         run: python scripts/build_v03_external_reproduction_gate.py --output-dir outputs/ci_v0_3_external_reproduction_reports
+      - name: Build v0.3 external reproduction pack
+        run: python scripts/run_v03_external_reproduction_pack.py --output-dir outputs/ci_v0_3_reproduction_pack --environment-class linux
       - name: Build v0.3 evidence index
         run: python scripts/build_v03_evidence_index.py --output-dir outputs/ci_v0_3_evidence_index
       - name: Scan public artifacts for private LLM fields

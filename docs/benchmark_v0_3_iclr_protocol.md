@@ -153,6 +153,19 @@ artifact hashes, and private-data boundary. The external reproduction gap
 remains open until three accepted independent reports cover Windows/macOS,
 Linux, and Colab/Binder.
 
+External reviewers can generate a v0.3 no-key reproduction report with:
+
+```bash
+python scripts/run_v03_external_reproduction_pack.py \
+  --environment-class linux \
+  --report-author-type independent \
+  --independent-reviewer
+```
+
+See `docs/reproduction_pack_v0_3.md`. Maintainer-authored reports are useful
+smoke tests, but the gate counts only independent, successful, public-data-safe
+reports.
+
 The conservative evidence index is generated with:
 
 ```bash

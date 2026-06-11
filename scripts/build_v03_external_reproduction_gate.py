@@ -96,10 +96,16 @@ def _report_rows(report_dirs: list[Path]) -> list[dict[str, Any]]:
             continue
         for path in sorted(directory.rglob("*.json")):
             payload = _load_json(path)
+            if payload.get("schema") != "tradearena_external_reproduction_pack_v1":
+                continue
             schema_errors = validate_reproduction_report(payload, allow_command_failures=False)
             blocking_reasons = _blocking_reasons(payload, schema_errors)
-            commands = payload.get("commands", []) if isinstance(payload.get("commands"), list) else []
-            artifacts = payload.get("artifacts", []) if isinstance(payload.get("artifacts"), list) else []
+            commands = [
+                command for command in payload.get("commands", []) if isinstance(command, dict)
+            ] if isinstance(payload.get("commands"), list) else []
+            artifacts = [
+                artifact for artifact in payload.get("artifacts", []) if isinstance(artifact, dict)
+            ] if isinstance(payload.get("artifacts"), list) else []
             failed_commands = [command for command in commands if command.get("returncode") not in {0, None}]
             missing_artifacts = [artifact for artifact in artifacts if not artifact.get("exists")]
             trajectory_hash = payload.get("trajectory_hash", {})

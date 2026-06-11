@@ -44,10 +44,38 @@ This writes `outputs/reproduction/v0_2/manifest.json` with commit, Python
 version, commands, output hashes, trajectory hash, and whether live APIs,
 downloaded market data, or private fills were used.
 
+For the v0.3 ICLR-protocol no-key reproduction pack, run:
+
+```bash
+python scripts/run_v03_external_reproduction_pack.py \
+  --environment-class linux
+```
+
+Use `windows_or_macos`, `linux`, or `colab_or_binder` for the environment
+class. Independent reviewers who want the report to count toward the v0.3 gate
+should add:
+
+```bash
+--report-author-type independent --independent-reviewer
+```
+
+This writes `outputs/reproduction/v0_3/manifest.json` with the v0.3
+`protocol_id`, environment class, command logs, artifact hashes, and a
+trajectory reproducibility hash. The gate still requires three accepted
+independent reports across the required environment classes.
+
 Validate the report before submitting it:
 
 ```bash
 python scripts/validate_reproduction_report.py outputs/reproduction/v0_2/manifest.json
+```
+
+For v0.3 reports, validate:
+
+```bash
+python scripts/validate_reproduction_report.py outputs/reproduction/v0_3/manifest.json
+python scripts/build_v03_external_reproduction_gate.py \
+  --report-dirs outputs/reproduction/v0_3
 ```
 
 Build an issue-ready summary bundle:

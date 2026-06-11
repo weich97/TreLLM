@@ -35,6 +35,17 @@ ARTIFACT_SPECS = [
         "claim_boundary": "Verifies direct API matrix provenance and 10x3 coverage; current fixture rows remain pilot evidence.",
     },
     {
+        "artifact_id": "direct_api_model_matrix_plan",
+        "claim_area": "direct API model matrix run plan and credential preflight",
+        "summary_path": "docs/results/v0_3_direct_api_matrix_plan/direct_api_matrix_plan_summary.json",
+        "primary_rows": "docs/results/v0_3_direct_api_matrix_plan/direct_api_matrix_plan_coverage.csv",
+        "claim_class": "engineering",
+        "evidence_stage": "planning-note",
+        "supports_headline_claim": False,
+        "statistical_methods": ["pre_registered_10x3_matrix_plan", "credential_env_var_preflight"],
+        "claim_boundary": "Pre-registers direct API matrix rows and credential readiness; not provider-performance evidence.",
+    },
+    {
         "artifact_id": "execution_ladder",
         "claim_area": "execution assumption sensitivity",
         "summary_path": "docs/results/v0_3_execution_ladder/execution_ladder_summary.json",
@@ -96,7 +107,10 @@ GAP_SPECS = [
         "gap_id": "direct_api_model_matrix",
         "required_for": "scientific model reliability claims",
         "missing_evidence": "direct API model rows with at least 10 seeds and 3 samples per seed, or explicit pilot labeling",
-        "current_status": "threshold gate exists; current public rows are fixture/pilot evidence and do not meet non-fixture 10x3 coverage",
+        "current_status": (
+            "plan/preflight and threshold gate exist; current public rows are fixture/pilot evidence and "
+            "no non-fixture direct API group has run"
+        ),
         "blocking_level": "headline-scientific-claim",
     },
     {
@@ -118,6 +132,7 @@ REQUIRED_PROTOCOL_ARTIFACTS = {
     "execution-sensitivity report": "execution_ladder",
     "FinAudit pilot report": "finaudit_pilot",
     "power curve or detectable effect note": "power_detectable_effect_note",
+    "direct API model matrix plan": "direct_api_model_matrix_plan",
     "direct API model matrix gate": "direct_api_matrix_gate",
     "external reproduction report gate": "external_reproduction_gate",
     "external reproduction bundle": "gap:external_reproduction_reports",

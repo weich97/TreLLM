@@ -86,6 +86,18 @@ the v0.3 threshold of 10 seeds and 3 samples per seed. It currently keeps the
 fixture rows labeled as pilot/incomplete evidence, so the direct API model
 matrix gap remains open until non-fixture provider rows meet the threshold.
 
+Before live provider calls are made, the direct API matrix plan and credential
+preflight is generated with:
+
+```bash
+python scripts/build_v03_direct_api_matrix_plan.py
+```
+
+See `docs/results/v0_3_direct_api_matrix_plan/direct_api_matrix_plan_summary.md`.
+This artifact pre-registers the 10-seed by 3-sample call matrix and records only
+whether the required credential environment variables are present. It does not
+make provider calls, publish secrets, or count as model-performance evidence.
+
 The execution-assumption ladder is generated separately so the protocol can
 report ranking stability and mechanism metrics before any live provider rows are
 promoted:

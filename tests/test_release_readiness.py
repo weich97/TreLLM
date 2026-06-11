@@ -305,6 +305,7 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "scripts/validate_direct_provider_manifest.py" in REQUIRED_FILES
     assert "scripts/run_direct_provider_manifest_pilot.py" in REQUIRED_FILES
     assert "scripts/run_v03_direct_api_pilot.py" in REQUIRED_FILES
+    assert "scripts/build_v03_direct_api_matrix_plan.py" in REQUIRED_FILES
     assert "scripts/build_v03_direct_api_matrix_gate.py" in REQUIRED_FILES
     assert "scripts/run_v03_execution_ladder.py" in REQUIRED_FILES
     assert "scripts/run_v03_finaudit_pilot.py" in REQUIRED_FILES
@@ -320,6 +321,10 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "docs/results/v0_3_direct_api_matrix_gate/direct_api_matrix_gate_coverage.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_direct_api_matrix_gate/direct_api_matrix_gate_summary.json" in REQUIRED_FILES
     assert "docs/results/v0_3_direct_api_matrix_gate/direct_api_matrix_gate_summary.md" in REQUIRED_FILES
+    assert "docs/results/v0_3_direct_api_matrix_plan/direct_api_matrix_plan_rows.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_direct_api_matrix_plan/direct_api_matrix_plan_coverage.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_direct_api_matrix_plan/direct_api_matrix_plan_summary.json" in REQUIRED_FILES
+    assert "docs/results/v0_3_direct_api_matrix_plan/direct_api_matrix_plan_summary.md" in REQUIRED_FILES
     assert "docs/results/v0_3_execution_ladder/execution_ladder_rows.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_execution_ladder/execution_ladder_aggregate.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_execution_ladder/execution_ladder_ranking_stability.csv" in REQUIRED_FILES
@@ -367,6 +372,10 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     )
     assert (
         "python scripts/build_v03_direct_api_matrix_gate.py --output-dir outputs/ci_v0_3_direct_api_matrix_gate --submission-dirs outputs/ci_v0_3_direct_api_pilot/submissions --provider-manifest-dirs outputs/ci_v0_3_direct_api_pilot/provider_manifests"
+        in CI_REQUIRED_GATE_COMMANDS
+    )
+    assert (
+        "python scripts/build_v03_direct_api_matrix_plan.py --output-dir outputs/ci_v0_3_direct_api_matrix_plan --models openai:gpt-5.5:fixture-2026-05-17:responses:OPENAI_API_KEY --seeds 7,11 --samples 0,1"
         in CI_REQUIRED_GATE_COMMANDS
     )
     assert (

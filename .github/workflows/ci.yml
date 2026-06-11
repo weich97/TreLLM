@@ -56,6 +56,8 @@ jobs:
         run: python scripts/validate_direct_provider_manifest.py examples/provider_manifests/direct_openai_example.json
       - name: Validate v0.3 direct API pilot
         run: python scripts/run_v03_direct_api_pilot.py --output-dir outputs/ci_v0_3_direct_api_pilot --seeds 7 --samples 0
+      - name: Build v0.3 direct API matrix plan
+        run: python scripts/build_v03_direct_api_matrix_plan.py --output-dir outputs/ci_v0_3_direct_api_matrix_plan --models openai:gpt-5.5:fixture-2026-05-17:responses:OPENAI_API_KEY --seeds 7,11 --samples 0,1
       - name: Build v0.3 direct API matrix gate
         run: python scripts/build_v03_direct_api_matrix_gate.py --output-dir outputs/ci_v0_3_direct_api_matrix_gate --submission-dirs outputs/ci_v0_3_direct_api_pilot/submissions --provider-manifest-dirs outputs/ci_v0_3_direct_api_pilot/provider_manifests
       - name: Validate v0.3 execution ladder

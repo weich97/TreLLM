@@ -24,7 +24,7 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
         text=True,
     )
 
-    assert "Artifacts indexed: 7" in result.stdout
+    assert "Artifacts indexed: 8" in result.stdout
     assert "Open gaps: 2" in result.stdout
 
     summary = json.loads((output_dir / "v0_3_evidence_index.json").read_text(encoding="utf-8"))
@@ -35,10 +35,10 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
 
     assert summary["schema"] == "trellm_v0_3_evidence_index_v0.1"
     assert summary["protocol_id"] == "trellm-v0.3-iclr-protocol"
-    assert summary["present_artifact_count"] == 7
-    assert summary["covered_artifact_count"] == 11
+    assert summary["present_artifact_count"] == 8
+    assert summary["covered_artifact_count"] == 12
     assert summary["covered_fixture_count"] == 8
-    assert summary["required_protocol_artifact_count"] == 12
+    assert summary["required_protocol_artifact_count"] == 13
     assert summary["headline_scientific_claim_ready"] is False
     assert summary["open_gaps"] == [
         "direct_api_model_matrix",
@@ -49,6 +49,7 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
     assert {row["artifact_id"] for row in artifacts} == {
         "direct_api_pilot",
         "direct_api_matrix_gate",
+        "direct_api_model_matrix_plan",
         "execution_ladder",
         "finaudit_pilot",
         "memory_contamination",
@@ -62,6 +63,7 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
     assert any("kendall_tau" in row["statistical_methods"] for row in artifacts)
     assert any("detectable_effect_grid" in row["statistical_methods"] for row in artifacts)
     assert any("seed_sample_threshold_gate" in row["statistical_methods"] for row in artifacts)
+    assert any("pre_registered_10x3_matrix_plan" in row["statistical_methods"] for row in artifacts)
     assert any("independent_report_count_gate" in row["statistical_methods"] for row in artifacts)
 
     external = next(row for row in coverage if row["required_artifact"] == "external reproduction bundle")
@@ -73,16 +75,19 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
     matrix_gate = next(row for row in coverage if row["required_artifact"] == "direct API model matrix gate")
     assert matrix_gate["coverage_status"] == "covered-by-artifact"
     assert matrix_gate["evidence_ref"] == "direct_api_matrix_gate"
+    matrix_plan = next(row for row in coverage if row["required_artifact"] == "direct API model matrix plan")
+    assert matrix_plan["coverage_status"] == "covered-by-artifact"
+    assert matrix_plan["evidence_ref"] == "direct_api_model_matrix_plan"
     reproduction_gate = next(row for row in coverage if row["required_artifact"] == "external reproduction report gate")
     assert reproduction_gate["coverage_status"] == "covered-by-artifact"
     assert reproduction_gate["evidence_ref"] == "external_reproduction_gate"
     assert sum(1 for row in coverage if row["coverage_status"] == "covered-by-fixture") == 8
-    assert sum(1 for row in coverage if row["coverage_status"] == "covered-by-artifact") == 3
+    assert sum(1 for row in coverage if row["coverage_status"] == "covered-by-artifact") == 4
 
     assert {row["gap_id"] for row in gaps} == set(summary["open_gaps"])
     assert any(row["blocking_level"] == "headline-scientific-claim" for row in gaps)
     direct_gap = next(row for row in gaps if row["gap_id"] == "direct_api_model_matrix")
-    assert "threshold gate exists" in direct_gap["current_status"]
+    assert "plan/preflight and threshold gate exist" in direct_gap["current_status"]
     reproduction_gap = next(row for row in gaps if row["gap_id"] == "external_reproduction_reports")
     assert "v0.3 intake gate exists" in reproduction_gap["current_status"]
     assert "TreLLM v0.3 Evidence Index" in markdown

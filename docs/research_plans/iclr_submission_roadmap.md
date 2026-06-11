@@ -142,6 +142,9 @@ Repository work:
 - Keep statistical reporting in generated artifacts, not only prose.
 - Add release checks for required statistical columns once v0.3 outputs exist.
 - Keep claim text mapped to `docs/claim_boundaries.md`.
+- Keep `docs/results/v0_3_evidence_index/` current so pilot artifacts,
+  statistical methods, and missing power/direct-model evidence are visible
+  before paper claims are drafted.
 
 ### G5: FinAudit Trace-Auditor Track
 
@@ -184,6 +187,9 @@ Repository work:
 - Add a contributor-facing checklist for direct API redaction and result
   submission.
 - Keep release readiness checks guarding public artifact boundaries.
+- Track the missing independent reproduction reports in
+  `docs/results/v0_3_evidence_index/v0_3_open_gaps.csv` until three external
+  environments are actually present.
 
 ## Submission Kill Criteria
 

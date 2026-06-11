@@ -307,6 +307,7 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "scripts/run_v03_execution_ladder.py" in REQUIRED_FILES
     assert "scripts/run_v03_finaudit_pilot.py" in REQUIRED_FILES
     assert "scripts/run_v03_memory_contamination.py" in REQUIRED_FILES
+    assert "scripts/build_v03_evidence_index.py" in REQUIRED_FILES
     assert "docs/results/v0_3_direct_api_pilot/direct_api_pilot_rows.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_direct_api_pilot/direct_api_pilot_summary.json" in REQUIRED_FILES
     assert "docs/results/v0_3_direct_api_pilot/direct_api_pilot_summary.md" in REQUIRED_FILES
@@ -326,6 +327,11 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "docs/results/v0_3_memory_contamination/contamination_tier_controls.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_memory_contamination/memory_contamination_summary.json" in REQUIRED_FILES
     assert "docs/results/v0_3_memory_contamination/memory_contamination_summary.md" in REQUIRED_FILES
+    assert "docs/results/v0_3_evidence_index/v0_3_evidence_index.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_evidence_index/v0_3_claim_coverage.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_evidence_index/v0_3_open_gaps.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_evidence_index/v0_3_evidence_index.json" in REQUIRED_FILES
+    assert "docs/results/v0_3_evidence_index/v0_3_evidence_index.md" in REQUIRED_FILES
     assert (
         "python scripts/run_v03_execution_ladder.py --output-dir outputs/ci_v0_3_execution_ladder --agents signal-weighted,random --seeds 7 --periods 8 --top-k 2"
         in CI_REQUIRED_GATE_COMMANDS
@@ -336,6 +342,10 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     )
     assert (
         "python scripts/run_v03_memory_contamination.py --output-dir outputs/ci_v0_3_memory_contamination --kinds fake_rejections --doses 0,0.5 --decays 1.0 --risks max-position --seeds 7 --periods 12"
+        in CI_REQUIRED_GATE_COMMANDS
+    )
+    assert (
+        "python scripts/build_v03_evidence_index.py --output-dir outputs/ci_v0_3_evidence_index"
         in CI_REQUIRED_GATE_COMMANDS
     )
     assert (

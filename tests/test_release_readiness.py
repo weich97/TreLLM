@@ -296,6 +296,8 @@ def test_release_readiness_guards_repository_metadata_check_contract():
 
 def test_release_readiness_guards_iclr_roadmap_contract():
     assert "docs/research_plans/iclr_submission_roadmap.md" in REQUIRED_FILES
+    assert "benchmarks/v0.3-iclr/protocol.json" in REQUIRED_FILES
+    assert "docs/benchmark_v0_3_iclr_protocol.md" in REQUIRED_FILES
     assert (
         "docs/research_plans/iclr_submission_roadmap.md"
         in REQUIRED_PUBLIC_IDENTITY_PHRASES["docs/launch/README.md"]

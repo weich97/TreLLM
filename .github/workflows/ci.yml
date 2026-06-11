@@ -48,6 +48,10 @@ jobs:
         run: python scripts/run_showcase.py --reuse-existing
       - name: Validate demo artifact contract
         run: python scripts/validate_demo_artifacts.py
+      - name: Validate benchmark protocols
+        run: |
+          python scripts/validate_benchmark_spec.py benchmarks/v0.2/spec.json
+          python scripts/validate_benchmark_spec.py benchmarks/v0.3-iclr/protocol.json
       - name: Scan public artifacts for private LLM fields
         run: python scripts/scan_public_artifacts.py outputs docs/results examples/benchmark_submissions
       - name: Validate agent skills

@@ -294,6 +294,14 @@ def test_release_readiness_guards_repository_metadata_check_contract():
     )
 
 
+def test_release_readiness_guards_iclr_roadmap_contract():
+    assert "docs/research_plans/iclr_submission_roadmap.md" in REQUIRED_FILES
+    assert (
+        "docs/research_plans/iclr_submission_roadmap.md"
+        in REQUIRED_PUBLIC_IDENTITY_PHRASES["docs/launch/README.md"]
+    )
+
+
 def test_release_readiness_requires_readme_trellm_system_banner(tmp_path: Path):
     readme = tmp_path / "README.md"
     readme.write_text(

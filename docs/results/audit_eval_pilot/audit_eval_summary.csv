@@ -1,0 +1,9 @@
+model,slice,tasks,detected,recall,precision,avg_findings_per_task
+deepseek:deepseek-v4-pro,ALL,100,79,0.79,0.6583333333333333,1.2
+deepseek:deepseek-v4-pro,difficulty:L1,25,13,0.52,0.3939393939393939,1.32
+deepseek:deepseek-v4-pro,difficulty:L2,50,45,0.9,0.7758620689655172,1.16
+deepseek:deepseek-v4-pro,difficulty:L3,25,21,0.84,0.7241379310344828,1.16
+deepseek:deepseek-v4-pro,kind:provenance_drift,25,25,1.0,1.0,1.0
+deepseek:deepseek-v4-pro,kind:silent_risk_edit,25,20,0.8,0.6060606060606061,1.32
+deepseek:deepseek-v4-pro,kind:tampered_fill_price,25,21,0.84,0.7241379310344828,1.16
+deepseek:deepseek-v4-pro,kind:unclipped_position,25,13,0.52,0.3939393939393939,1.32

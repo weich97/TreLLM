@@ -112,6 +112,51 @@ def test_pollution_reaches_llm_risk_feedback_path():
     assert all(item["rejected_orders"] >= 2 for item in polluted_feedback)
 
 
+def test_pollution_sweep_writes_agent_and_sample_columns(tmp_path):
+    import csv
+    import importlib.util
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parents[1] / "scripts" / "run_memory_pollution_sweep.py"
+    spec = importlib.util.spec_from_file_location("run_memory_pollution_sweep", path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    exit_code = module.main(
+        [
+            "--kinds", "fake_rejections",
+            "--doses", "0,0.5",
+            "--decays", "0.85",
+            "--risks", "max-position",
+            "--seeds", "3,5",
+            "--periods", "15",
+            "--output-dir", str(tmp_path),
+        ]
+    )
+
+    assert exit_code == 0
+    rows = list(csv.DictReader((tmp_path / "memory_pollution_runs.csv").open(encoding="utf-8")))
+    assert len(rows) == 4
+    assert all(row["agent"] == "memory-aware" for row in rows)
+    assert all(row["sample"] == "0" for row in rows)
+    assert all(row["hold_ratio"] != "" for row in rows)
+    # Resume skips everything already checkpointed.
+    assert module.main(
+        [
+            "--kinds", "fake_rejections",
+            "--doses", "0,0.5",
+            "--decays", "0.85",
+            "--risks", "max-position",
+            "--seeds", "3,5",
+            "--periods", "15",
+            "--output-dir", str(tmp_path),
+        ]
+    ) == 0
+    rows_after = list(csv.DictReader((tmp_path / "memory_pollution_runs.csv").open(encoding="utf-8")))
+    assert len(rows_after) == 4
+
+
 def test_factory_wires_polluted_memory_and_run_records_pollution_ratio():
     system = build_default_system(
         name="pollution_smoke",

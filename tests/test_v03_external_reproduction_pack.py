@@ -48,6 +48,7 @@ def test_v03_external_reproduction_pack_writes_valid_maintainer_report():
         assert any(command["id"] == "v03_direct_api_matrix_plan" for command in manifest["commands"])
         assert any(command["id"] == "v03_direct_api_submission_checklist" for command in manifest["commands"])
         assert any(command["id"] == "v03_contamination_control_audit" for command in manifest["commands"])
+        assert any(command["id"] == "v03_execution_stress_grid" for command in manifest["commands"])
         assert any(command["id"] == "v03_variance_decomposition" for command in manifest["commands"])
         assert any(command["id"] == "v03_claim_boundary_audit" for command in manifest["commands"])
         assert any(command["id"] == "v03_evidence_index" for command in manifest["commands"])
@@ -59,6 +60,10 @@ def test_v03_external_reproduction_pack_writes_valid_maintainer_report():
             artifact["path"].endswith(
                 "v0_3_direct_api_submission_checklist/direct_api_submission_checklist_summary.json"
             )
+            for artifact in manifest["artifacts"]
+        )
+        assert any(
+            artifact["path"].endswith("v0_3_execution_stress_grid/execution_stress_grid_summary.json")
             for artifact in manifest["artifacts"]
         )
         assert any(

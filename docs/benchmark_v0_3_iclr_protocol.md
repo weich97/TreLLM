@@ -126,6 +126,19 @@ replay fixture path, then reports Kendall tau, top-k Jaccard, fill rate,
 rejected orders, slippage cost, and intent-to-execution gap. The E3 row is a
 fixture path unless the run attaches external quote/fill provenance.
 
+The E2 execution stress-grid artifact is generated with:
+
+```bash
+python scripts/run_v03_execution_stress_grid.py
+```
+
+See
+`docs/results/v0_3_execution_stress_grid/execution_stress_grid_summary.md`.
+This artifact pairs each stressed run against an E1 reference by agent and seed,
+then reports deltas for spread, latency, participation, impact, and combined
+stress axes. It is mechanism evidence for execution-assumption sensitivity, not
+a calibrated live transaction-cost forecast.
+
 The FinAudit injected-defect pilot is generated with:
 
 ```bash

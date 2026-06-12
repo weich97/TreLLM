@@ -188,6 +188,7 @@ def _validate_iclr_protocol_v03(payload: dict[str, Any]) -> list[str]:
     for artifact in (
         "direct-provider manifest schema or contract",
         "contamination-control readiness audit",
+        "execution stress-grid report",
         "power curve or detectable effect note",
         "variance decomposition table",
         "claim-boundary audit",

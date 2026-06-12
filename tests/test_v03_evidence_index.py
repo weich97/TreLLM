@@ -24,7 +24,7 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
         text=True,
     )
 
-    assert "Artifacts indexed: 12" in result.stdout
+    assert "Artifacts indexed: 13" in result.stdout
     assert "Open gaps: 2" in result.stdout
 
     summary = json.loads((output_dir / "v0_3_evidence_index.json").read_text(encoding="utf-8"))
@@ -35,10 +35,10 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
 
     assert summary["schema"] == "trellm_v0_3_evidence_index_v0.1"
     assert summary["protocol_id"] == "trellm-v0.3-iclr-protocol"
-    assert summary["present_artifact_count"] == 12
-    assert summary["covered_artifact_count"] == 16
-    assert summary["covered_fixture_count"] == 8
-    assert summary["required_protocol_artifact_count"] == 17
+    assert summary["present_artifact_count"] == 13
+    assert summary["covered_artifact_count"] == 17
+    assert summary["covered_fixture_count"] == 9
+    assert summary["required_protocol_artifact_count"] == 18
     assert summary["headline_scientific_claim_ready"] is False
     assert summary["open_gaps"] == [
         "direct_api_model_matrix",
@@ -53,6 +53,7 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
         "direct_api_submission_checklist",
         "claim_boundary_audit",
         "execution_ladder",
+        "execution_stress_grid",
         "finaudit_pilot",
         "memory_contamination",
         "contamination_control_audit",
@@ -65,6 +66,7 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
     assert all(row["artifact_sha256"].startswith("sha256:") for row in artifacts)
     assert any("BH-FDR" in row["statistical_methods"] for row in artifacts)
     assert any("kendall_tau" in row["statistical_methods"] for row in artifacts)
+    assert any("execution_assumption_axis_sweep" in row["statistical_methods"] for row in artifacts)
     assert any("detectable_effect_grid" in row["statistical_methods"] for row in artifacts)
     assert any("between_within_seed_variance_components" in row["statistical_methods"] for row in artifacts)
     assert any("seed_sample_threshold_gate" in row["statistical_methods"] for row in artifacts)
@@ -102,10 +104,13 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
     )
     assert contamination_audit["coverage_status"] == "covered-by-artifact"
     assert contamination_audit["evidence_ref"] == "contamination_control_audit"
+    stress_grid = next(row for row in coverage if row["required_artifact"] == "execution stress-grid report")
+    assert stress_grid["coverage_status"] == "covered-by-fixture"
+    assert stress_grid["evidence_ref"] == "execution_stress_grid"
     reproduction_gate = next(row for row in coverage if row["required_artifact"] == "external reproduction report gate")
     assert reproduction_gate["coverage_status"] == "covered-by-artifact"
     assert reproduction_gate["evidence_ref"] == "external_reproduction_gate"
-    assert sum(1 for row in coverage if row["coverage_status"] == "covered-by-fixture") == 8
+    assert sum(1 for row in coverage if row["coverage_status"] == "covered-by-fixture") == 9
     assert sum(1 for row in coverage if row["coverage_status"] == "covered-by-artifact") == 8
 
     assert {row["gap_id"] for row in gaps} == set(summary["open_gaps"])

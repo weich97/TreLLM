@@ -92,6 +92,7 @@ def _commands(output_dir: Path) -> list[dict[str, Any]]:
     direct_checklist_dir = output_dir / "v0_3_direct_api_submission_checklist"
     direct_gate_dir = output_dir / "v0_3_direct_api_matrix_gate"
     variance_dir = output_dir / "v0_3_variance_decomposition"
+    stress_grid_dir = output_dir / "v0_3_execution_stress_grid"
     return [
         {
             "id": "trajectory",
@@ -174,6 +175,22 @@ def _commands(output_dir: Path) -> list[dict[str, Any]]:
                 "2",
             ],
             "description": "Generate the v0.3 execution-assumption ladder smoke artifact.",
+        },
+        {
+            "id": "v03_execution_stress_grid",
+            "argv": [
+                sys.executable,
+                "scripts/run_v03_execution_stress_grid.py",
+                "--output-dir",
+                _command_path(stress_grid_dir),
+                "--agents",
+                "signal-weighted,random",
+                "--seeds",
+                "7",
+                "--periods",
+                "8",
+            ],
+            "description": "Generate the v0.3 E2 execution stress-grid smoke artifact.",
         },
         {
             "id": "v03_finaudit_pilot",
@@ -311,6 +328,7 @@ def _artifacts(output_dir: Path) -> list[Path]:
         ),
         output_dir / "v0_3_direct_api_matrix_gate/direct_api_matrix_gate_summary.json",
         output_dir / "v0_3_execution_ladder/execution_ladder_summary.json",
+        output_dir / "v0_3_execution_stress_grid/execution_stress_grid_summary.json",
         output_dir / "v0_3_finaudit_pilot/finaudit_pilot_summary.json",
         output_dir / "v0_3_memory_contamination/memory_contamination_summary.json",
         output_dir / "v0_3_power_note/v0_3_power_note_summary.json",

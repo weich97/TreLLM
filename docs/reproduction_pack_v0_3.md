@@ -5,9 +5,9 @@ requiring API keys. It validates the protocol, regenerates small public fixture
 artifacts, builds the direct API matrix plan and credential preflight, generates
 the direct API redaction/submission checklist, runs the direct API matrix gate,
 builds the variance decomposition fixture, builds the contamination-control
-readiness audit, builds the claim-boundary audit, builds the external
-reproduction gate, rebuilds the evidence index, and records hashes for the
-generated outputs.
+readiness audit, runs the execution stress-grid fixture, builds the
+claim-boundary audit, builds the external reproduction gate, rebuilds the
+evidence index, and records hashes for the generated outputs.
 
 ## Command
 

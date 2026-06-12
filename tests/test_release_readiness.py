@@ -309,6 +309,7 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "scripts/build_v03_direct_api_submission_checklist.py" in REQUIRED_FILES
     assert "scripts/build_v03_direct_api_matrix_gate.py" in REQUIRED_FILES
     assert "scripts/run_v03_execution_ladder.py" in REQUIRED_FILES
+    assert "scripts/run_v03_execution_stress_grid.py" in REQUIRED_FILES
     assert "scripts/run_v03_finaudit_pilot.py" in REQUIRED_FILES
     assert "scripts/run_v03_memory_contamination.py" in REQUIRED_FILES
     assert "scripts/build_v03_contamination_control_audit.py" in REQUIRED_FILES
@@ -340,6 +341,10 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "docs/results/v0_3_execution_ladder/execution_ladder_ranking_stability.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_execution_ladder/execution_ladder_summary.json" in REQUIRED_FILES
     assert "docs/results/v0_3_execution_ladder/execution_ladder_summary.md" in REQUIRED_FILES
+    assert "docs/results/v0_3_execution_stress_grid/execution_stress_grid_rows.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_execution_stress_grid/execution_stress_grid_sensitivity.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_execution_stress_grid/execution_stress_grid_summary.json" in REQUIRED_FILES
+    assert "docs/results/v0_3_execution_stress_grid/execution_stress_grid_summary.md" in REQUIRED_FILES
     assert "docs/results/v0_3_finaudit_pilot/finaudit_pilot_task_manifest.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_finaudit_pilot/finaudit_pilot_scores.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_finaudit_pilot/finaudit_pilot_difficulty_breakdown.csv" in REQUIRED_FILES
@@ -382,6 +387,10 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "docs/results/v0_3_evidence_index/v0_3_evidence_index.md" in REQUIRED_FILES
     assert (
         "python scripts/run_v03_execution_ladder.py --output-dir outputs/ci_v0_3_execution_ladder --agents signal-weighted,random --seeds 7 --periods 8 --top-k 2"
+        in CI_REQUIRED_GATE_COMMANDS
+    )
+    assert (
+        "python scripts/run_v03_execution_stress_grid.py --output-dir outputs/ci_v0_3_execution_stress_grid --agents signal-weighted,random --seeds 7 --periods 8"
         in CI_REQUIRED_GATE_COMMANDS
     )
     assert (

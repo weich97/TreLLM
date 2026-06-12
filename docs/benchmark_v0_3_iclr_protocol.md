@@ -165,6 +165,18 @@ precision, recall, F1, Wilson intervals, and difficulty breakdowns. Fixture
 auditor scores validate the scoring path; they are not model-performance
 evidence.
 
+The FinAudit direct-model audit plan is generated with:
+
+```bash
+python scripts/build_v03_finaudit_direct_model_plan.py
+```
+
+See
+`docs/results/v0_3_finaudit_direct_model_plan/finaudit_direct_model_plan.md`.
+This artifact pre-registers direct-provider model auditor calls over the public
+task manifest while keeping answer keys and raw model responses private. It does
+not call providers or report model audit performance.
+
 The memory-contamination mechanism pilot is generated with:
 
 ```bash

@@ -4,9 +4,9 @@ This index maps generated public artifacts to the v0.3 ICLR protocol claims.
 It is deliberately conservative: fixture and pilot artifacts do not support headline scientific model-performance claims.
 
 - Protocol: `trellm-v0.3-iclr-protocol`
-- Present artifacts: `14 / 14`
-- Public-artifact-covered protocol artifacts: `18 / 19`
-- Fixture-covered protocol artifacts: `9 / 19`
+- Present artifacts: `15 / 15`
+- Public-artifact-covered protocol artifacts: `19 / 20`
+- Fixture-covered protocol artifacts: `9 / 20`
 - Open gaps: `2`
 - Headline scientific claim ready: `False`
 - Claim boundary: This index maps public v0.3 artifacts to protocol claims. Current artifacts validate protocol plumbing and pilot mechanisms; they do not yet support headline scientific model-performance claims.
@@ -24,6 +24,7 @@ It is deliberately conservative: fixture and pilot artifacts do not support head
 | execution_ladder | execution assumption sensitivity | protocol-fixture | kendall_tau;top_k_jaccard;bootstrap_ci | false | present |
 | execution_stress_grid | E2 execution stress-grid sensitivity | protocol-fixture | paired_seed_delta_vs_e1_reference;execution_assumption_axis_sweep | false | present |
 | finaudit_pilot | financial trace audit | protocol-fixture | precision;recall;f1;wilson_interval;difficulty_breakdown | false | present |
+| finaudit_direct_model_plan | FinAudit direct-model auditor call plan | planning-note | direct_model_auditor_plan;private_answer_key_boundary | false | present |
 | memory_contamination | memory contamination mechanism | protocol-fixture | paired_bootstrap_delta;BH-FDR q_value;bootstrap_ci | false | present |
 | contamination_control_audit | contamination-tier readiness and claim boundaries | planning-note | contamination_tier_readiness_audit;forward_freeze_tooling_check | false | present |
 | power_detectable_effect_note | statistical power and detectable effects | planning-note | paired_sign_flip_permutation_power;detectable_effect_grid | false | present |
@@ -44,6 +45,7 @@ It is deliberately conservative: fixture and pilot artifacts do not support head
 | execution-sensitivity report | covered-by-fixture | execution_ladder | Public artifact coverage supports protocol plumbing and claim boundaries; scientific claims require non-fixture direct API rows and scale thresholds. |
 | execution stress-grid report | covered-by-fixture | execution_stress_grid | Public artifact coverage supports protocol plumbing and claim boundaries; scientific claims require non-fixture direct API rows and scale thresholds. |
 | FinAudit pilot report | covered-by-fixture | finaudit_pilot | Public artifact coverage supports protocol plumbing and claim boundaries; scientific claims require non-fixture direct API rows and scale thresholds. |
+| FinAudit direct-model audit plan | covered-by-artifact | finaudit_direct_model_plan | Public artifact coverage supports protocol plumbing and claim boundaries; scientific claims require non-fixture direct API rows and scale thresholds. |
 | power curve or detectable effect note | covered-by-artifact | power_detectable_effect_note | Public artifact coverage supports protocol plumbing and claim boundaries; scientific claims require non-fixture direct API rows and scale thresholds. |
 | variance decomposition table | covered-by-artifact | variance_decomposition | Public artifact coverage supports protocol plumbing and claim boundaries; scientific claims require non-fixture direct API rows and scale thresholds. |
 | claim-boundary audit | covered-by-artifact | claim_boundary_audit | Public artifact coverage supports protocol plumbing and claim boundaries; scientific claims require non-fixture direct API rows and scale thresholds. |

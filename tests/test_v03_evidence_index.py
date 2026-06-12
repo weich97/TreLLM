@@ -24,7 +24,7 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
         text=True,
     )
 
-    assert "Artifacts indexed: 14" in result.stdout
+    assert "Artifacts indexed: 15" in result.stdout
     assert "Open gaps: 2" in result.stdout
 
     summary = json.loads((output_dir / "v0_3_evidence_index.json").read_text(encoding="utf-8"))
@@ -35,10 +35,10 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
 
     assert summary["schema"] == "trellm_v0_3_evidence_index_v0.1"
     assert summary["protocol_id"] == "trellm-v0.3-iclr-protocol"
-    assert summary["present_artifact_count"] == 14
-    assert summary["covered_artifact_count"] == 18
+    assert summary["present_artifact_count"] == 15
+    assert summary["covered_artifact_count"] == 19
     assert summary["covered_fixture_count"] == 9
-    assert summary["required_protocol_artifact_count"] == 19
+    assert summary["required_protocol_artifact_count"] == 20
     assert summary["headline_scientific_claim_ready"] is False
     assert summary["open_gaps"] == [
         "direct_api_model_matrix",
@@ -56,6 +56,7 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
         "execution_ladder",
         "execution_stress_grid",
         "finaudit_pilot",
+        "finaudit_direct_model_plan",
         "memory_contamination",
         "contamination_control_audit",
         "power_detectable_effect_note",
@@ -77,6 +78,7 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
     assert any("claim_boundary_text_audit" in row["statistical_methods"] for row in artifacts)
     assert any("contamination_tier_readiness_audit" in row["statistical_methods"] for row in artifacts)
     assert any("independent_report_count_gate" in row["statistical_methods"] for row in artifacts)
+    assert any("direct_model_auditor_plan" in row["statistical_methods"] for row in artifacts)
 
     external = next(row for row in coverage if row["required_artifact"] == "external reproduction bundle")
     assert external["coverage_status"] == "open-gap"
@@ -112,11 +114,14 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
     stress_grid = next(row for row in coverage if row["required_artifact"] == "execution stress-grid report")
     assert stress_grid["coverage_status"] == "covered-by-fixture"
     assert stress_grid["evidence_ref"] == "execution_stress_grid"
+    finaudit_plan = next(row for row in coverage if row["required_artifact"] == "FinAudit direct-model audit plan")
+    assert finaudit_plan["coverage_status"] == "covered-by-artifact"
+    assert finaudit_plan["evidence_ref"] == "finaudit_direct_model_plan"
     reproduction_gate = next(row for row in coverage if row["required_artifact"] == "external reproduction report gate")
     assert reproduction_gate["coverage_status"] == "covered-by-artifact"
     assert reproduction_gate["evidence_ref"] == "external_reproduction_gate"
     assert sum(1 for row in coverage if row["coverage_status"] == "covered-by-fixture") == 9
-    assert sum(1 for row in coverage if row["coverage_status"] == "covered-by-artifact") == 9
+    assert sum(1 for row in coverage if row["coverage_status"] == "covered-by-artifact") == 10
 
     assert {row["gap_id"] for row in gaps} == set(summary["open_gaps"])
     assert any(row["blocking_level"] == "headline-scientific-claim" for row in gaps)

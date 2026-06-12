@@ -94,6 +94,8 @@ def _commands(output_dir: Path) -> list[dict[str, Any]]:
     direct_gate_dir = output_dir / "v0_3_direct_api_matrix_gate"
     variance_dir = output_dir / "v0_3_variance_decomposition"
     stress_grid_dir = output_dir / "v0_3_execution_stress_grid"
+    finaudit_dir = output_dir / "v0_3_finaudit_pilot"
+    finaudit_direct_model_dir = output_dir / "v0_3_finaudit_direct_model_plan"
     return [
         {
             "id": "trajectory",
@@ -211,7 +213,7 @@ def _commands(output_dir: Path) -> list[dict[str, Any]]:
                 sys.executable,
                 "scripts/run_v03_finaudit_pilot.py",
                 "--output-dir",
-                _command_path(output_dir / "v0_3_finaudit_pilot"),
+                _command_path(finaudit_dir),
                 "--tasks",
                 "4",
                 "--periods",
@@ -220,6 +222,20 @@ def _commands(output_dir: Path) -> list[dict[str, Any]]:
                 "410",
             ],
             "description": "Generate the v0.3 FinAudit injected-defect smoke artifact.",
+        },
+        {
+            "id": "v03_finaudit_direct_model_plan",
+            "argv": [
+                sys.executable,
+                "scripts/build_v03_finaudit_direct_model_plan.py",
+                "--task-manifest",
+                _command_path(finaudit_dir / "finaudit_pilot_task_manifest.csv"),
+                "--output-dir",
+                _command_path(finaudit_direct_model_dir),
+                "--models",
+                "openai:gpt-5.5:fixture-2026-05-17:responses:OPENAI_API_KEY",
+            ],
+            "description": "Pre-register direct-model FinAudit auditor calls without making provider calls.",
         },
         {
             "id": "v03_memory_contamination",
@@ -344,6 +360,7 @@ def _artifacts(output_dir: Path) -> list[Path]:
         output_dir / "v0_3_execution_ladder/execution_ladder_summary.json",
         output_dir / "v0_3_execution_stress_grid/execution_stress_grid_summary.json",
         output_dir / "v0_3_finaudit_pilot/finaudit_pilot_summary.json",
+        output_dir / "v0_3_finaudit_direct_model_plan/finaudit_direct_model_plan_summary.json",
         output_dir / "v0_3_memory_contamination/memory_contamination_summary.json",
         output_dir / "v0_3_power_note/v0_3_power_note_summary.json",
         output_dir / "v0_3_variance_decomposition/variance_decomposition_summary.json",

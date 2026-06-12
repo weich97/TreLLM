@@ -312,6 +312,7 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "scripts/run_v03_execution_ladder.py" in REQUIRED_FILES
     assert "scripts/run_v03_execution_stress_grid.py" in REQUIRED_FILES
     assert "scripts/run_v03_finaudit_pilot.py" in REQUIRED_FILES
+    assert "scripts/build_v03_finaudit_direct_model_plan.py" in REQUIRED_FILES
     assert "scripts/run_v03_memory_contamination.py" in REQUIRED_FILES
     assert "scripts/build_v03_contamination_control_audit.py" in REQUIRED_FILES
     assert "scripts/run_v03_power_note.py" in REQUIRED_FILES
@@ -355,6 +356,10 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     assert "docs/results/v0_3_finaudit_pilot/finaudit_pilot_difficulty_breakdown.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_finaudit_pilot/finaudit_pilot_summary.json" in REQUIRED_FILES
     assert "docs/results/v0_3_finaudit_pilot/finaudit_pilot_summary.md" in REQUIRED_FILES
+    assert "docs/results/v0_3_finaudit_direct_model_plan/finaudit_direct_model_plan_rows.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_finaudit_direct_model_plan/finaudit_direct_model_plan_coverage.csv" in REQUIRED_FILES
+    assert "docs/results/v0_3_finaudit_direct_model_plan/finaudit_direct_model_plan_summary.json" in REQUIRED_FILES
+    assert "docs/results/v0_3_finaudit_direct_model_plan/finaudit_direct_model_plan.md" in REQUIRED_FILES
     assert "docs/results/v0_3_memory_contamination/memory_contamination_rows.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_memory_contamination/memory_contamination_aggregate.csv" in REQUIRED_FILES
     assert "docs/results/v0_3_memory_contamination/memory_contamination_dose_response.csv" in REQUIRED_FILES
@@ -400,6 +405,10 @@ def test_release_readiness_guards_iclr_roadmap_contract():
     )
     assert (
         "python scripts/run_v03_finaudit_pilot.py --output-dir outputs/ci_v0_3_finaudit_pilot --tasks 4 --periods 16 --base-seed 410"
+        in CI_REQUIRED_GATE_COMMANDS
+    )
+    assert (
+        "python scripts/build_v03_finaudit_direct_model_plan.py --task-manifest outputs/ci_v0_3_finaudit_pilot/finaudit_pilot_task_manifest.csv --output-dir outputs/ci_v0_3_finaudit_direct_model_plan --models openai:gpt-5.5:fixture-2026-05-17:responses:OPENAI_API_KEY"
         in CI_REQUIRED_GATE_COMMANDS
     )
     assert (

@@ -26,13 +26,13 @@ def _write_runs(path: Path, rows: list[dict]) -> None:
         writer.writerows(rows)
 
 
-def _row(scenario, level, agent, seed, total_return, sharpe=1.0):
+def _row(scenario, level, agent, seed, total_return, sharpe=1.0, sample=0):
     return {
         "scenario": scenario,
         "level": level,
         "agent": agent,
         "seed": seed,
-        "sample": 0,
+        "sample": sample,
         "total_return": total_return,
         "sharpe": sharpe,
         "max_drawdown": -0.05,
@@ -92,6 +92,50 @@ def test_fragility_did_signs_and_significance(tmp_path: Path):
     # the two-test family (model-b's null contributes p=1) doubles it.
     assert float(by_agent["poe:model-a"]["permutation_p_value"]) == 0.03125
     assert float(by_agent["poe:model-a"]["q_value"]) == 0.0625
+
+
+def test_sampling_variance_decomposition_with_repeated_samples(tmp_path: Path):
+    module = _load_module()
+    rows = []
+    # Two seeds whose means differ (between-seed variance) and three provider
+    # samples per seed with within-seed spread.
+    for seed, base in ((1, 0.10), (2, 0.20)):
+        for sample, offset in enumerate((-0.01, 0.0, 0.01)):
+            rows.append(_row("calm", "E1_default_stress", "poe:model-a", seed, base + offset, sample=sample))
+    # Deterministic agent rows must never appear in the decomposition.
+    rows.append(_row("calm", "E1_default_stress", "buy-and-hold", 1, 0.05))
+    _write_runs(tmp_path / "m" / "execution_sensitivity_runs.csv", rows)
+
+    merged = module.load_merged_runs([tmp_path / "m"])
+    decomposition = module.sampling_variance_rows(merged)
+
+    assert len(decomposition) == 1
+    record = decomposition[0]
+    assert record["agent"] == "poe:model-a"
+    assert record["seed_count"] == 2
+    assert record["total_runs"] == 6
+    # Between-seed variance (means 0.10 vs 0.20 -> 0.005) dominates the
+    # within-seed sampling variance (1e-4): share is small.
+    assert 0.0 < float(record["within_seed_share"]) < 0.05
+
+
+def test_did_averages_repeated_samples_within_seed(tmp_path: Path):
+    module = _load_module()
+    rows = []
+    for seed in (1, 2, 3, 4, 5, 6):
+        rows.append(_row("calm", "E0_ideal", "buy-and-hold", seed, 0.10))
+        rows.append(_row("calm", "E1_default_stress", "buy-and-hold", seed, 0.09))
+        # Samples scatter +/-0.02 around a mean E0 return of 0.12.
+        for sample, value in enumerate((0.10, 0.12, 0.14)):
+            rows.append(_row("calm", "E0_ideal", "poe:model-a", seed, value, sample=sample))
+        rows.append(_row("calm", "E1_default_stress", "poe:model-a", seed, 0.07))
+    _write_runs(tmp_path / "m" / "execution_sensitivity_runs.csv", rows)
+
+    merged = module.load_merged_runs([tmp_path / "m"])
+    did = module.fragility_did_rows(merged, baseline_agent="buy-and-hold", stress_levels=("E1_default_stress",))
+
+    # Sample-averaged E0 = 0.12, so DiD = (0.12-0.07) - (0.10-0.09) = 0.04.
+    assert round(float(did[0]["mean_did"]), 6) == 0.04
 
 
 def test_main_writes_all_tables(tmp_path: Path):

@@ -9,68 +9,95 @@ baseline anchor does on the same market paths.
 
 | Agent | Type | Stress level | Mean DiD | 95% CI | q | Cohen's d |
 | --- | --- | --- | ---: | --- | ---: | ---: |
-| deepseek:deepseek-v4-pro | llm | E1_default_stress | -0.0260 | [-0.0463, -0.0070] | 0.0660 | -0.47 |
+| deepseek:deepseek-v4-pro | llm | E1_default_stress | -0.0246 | [-0.0415, -0.0093] | 0.0257 | -0.54 |
 | mean-reversion | classical | E1_default_stress | -0.0068 | [-0.0206, +0.0090] | 0.5342 | -0.15 |
 | minimum-variance | classical | E1_default_stress | +0.0052 | [-0.0073, +0.0178] | 0.5345 | 0.15 |
-| naive-momentum | classical | E1_default_stress | -0.0037 | [-0.0171, +0.0082] | 0.6768 | -0.10 |
-| poe:claude-opus-4.7 | llm | E1_default_stress | -0.0066 | [-0.0193, +0.0072] | 0.5342 | -0.18 |
-| poe:gemini-3.1-pro | llm | E1_default_stress | -0.0054 | [-0.0222, +0.0111] | 0.6768 | -0.11 |
-| poe:glm-5 | llm | E1_default_stress | -0.0054 | [-0.0158, +0.0066] | 0.5342 | -0.17 |
-| poe:gpt-5.5 | llm | E1_default_stress | -0.0037 | [-0.0167, +0.0098] | 0.6820 | -0.10 |
+| naive-momentum | classical | E1_default_stress | -0.0037 | [-0.0171, +0.0082] | 0.6765 | -0.10 |
+| poe:claude-opus-4.7 | llm | E1_default_stress | -0.0065 | [-0.0192, +0.0071] | 0.5342 | -0.18 |
+| poe:gemini-3.1-pro | llm | E1_default_stress | -0.0057 | [-0.0223, +0.0109] | 0.6551 | -0.12 |
+| poe:glm-5 | llm | E1_default_stress | -0.0054 | [-0.0158, +0.0068] | 0.5342 | -0.17 |
+| poe:gpt-5.5 | llm | E1_default_stress | -0.0037 | [-0.0167, +0.0098] | 0.6765 | -0.10 |
 | random | classical | E1_default_stress | +0.0025 | [-0.0073, +0.0132] | 0.6862 | 0.08 |
-| risk-parity | classical | E1_default_stress | +0.0058 | [-0.0041, +0.0155] | 0.4459 | 0.21 |
+| risk-parity | classical | E1_default_stress | +0.0058 | [-0.0041, +0.0155] | 0.4476 | 0.21 |
 | signal-weighted | classical | E1_default_stress | +0.0014 | [-0.0083, +0.0113] | 0.7890 | 0.05 |
-| deepseek:deepseek-v4-pro | llm | E2_harsh_corner | -0.0440 | [-0.0665, -0.0244] | 0.0000 | -0.72 |
+| deepseek:deepseek-v4-pro | llm | E2_harsh_corner | -0.0397 | [-0.0584, -0.0205] | 0.0000 | -0.71 |
 | mean-reversion | classical | E2_harsh_corner | -0.0448 | [-0.0654, -0.0250] | 0.0000 | -0.78 |
 | minimum-variance | classical | E2_harsh_corner | -0.0095 | [-0.0196, +0.0009] | 0.2652 | -0.31 |
 | naive-momentum | classical | E2_harsh_corner | -0.0139 | [-0.0299, +0.0019] | 0.2652 | -0.30 |
-| poe:claude-opus-4.7 | llm | E2_harsh_corner | -0.0194 | [-0.0416, +0.0018] | 0.2652 | -0.31 |
-| poe:gemini-3.1-pro | llm | E2_harsh_corner | -0.0229 | [-0.0500, +0.0018] | 0.2652 | -0.30 |
-| poe:glm-5 | llm | E2_harsh_corner | -0.0173 | [-0.0416, +0.0073] | 0.4050 | -0.24 |
-| poe:gpt-5.5 | llm | E2_harsh_corner | -0.0142 | [-0.0381, +0.0083] | 0.4459 | -0.22 |
+| poe:claude-opus-4.7 | llm | E2_harsh_corner | -0.0193 | [-0.0416, +0.0018] | 0.2652 | -0.31 |
+| poe:gemini-3.1-pro | llm | E2_harsh_corner | -0.0230 | [-0.0501, +0.0020] | 0.2652 | -0.31 |
+| poe:glm-5 | llm | E2_harsh_corner | -0.0170 | [-0.0415, +0.0073] | 0.4090 | -0.24 |
+| poe:gpt-5.5 | llm | E2_harsh_corner | -0.0142 | [-0.0381, +0.0083] | 0.4476 | -0.22 |
 | random | classical | E2_harsh_corner | -0.0176 | [-0.0346, +0.0049] | 0.2652 | -0.32 |
 | risk-parity | classical | E2_harsh_corner | -0.0096 | [-0.0202, +0.0007] | 0.2652 | -0.31 |
 | signal-weighted | classical | E2_harsh_corner | -0.0131 | [-0.0298, +0.0044] | 0.2937 | -0.28 |
+
+## Provider-Sampling Variance Decomposition
+
+Within-seed share is the fraction of total-return variance due to
+provider sampling at a fixed market path; the remainder is market
+variation across seeds.
+
+| Scenario | Level | Agent | Seeds | Runs | Within-seed share |
+| --- | --- | --- | ---: | ---: | ---: |
+| calm | E0_ideal | deepseek:deepseek-v4-pro | 10 | 30 | 0.447 |
+| calm | E0_ideal | poe:claude-opus-4.7 | 10 | 30 | 0.002 |
+| calm | E0_ideal | poe:gemini-3.1-pro | 10 | 30 | 0.392 |
+| calm | E0_ideal | poe:glm-5 | 10 | 30 | 0.117 |
+| calm | E0_ideal | poe:gpt-5.5 | 10 | 30 | 0.000 |
+| calm | E1_default_stress | deepseek:deepseek-v4-pro | 10 | 30 | 0.320 |
+| calm | E1_default_stress | poe:claude-opus-4.7 | 10 | 19 | 0.018 |
+| calm | E1_default_stress | poe:gemini-3.1-pro | 10 | 21 | 0.030 |
+| calm | E1_default_stress | poe:glm-5 | 10 | 11 | 0.439 |
+| calm | E1_default_stress | poe:gpt-5.5 | 10 | 30 | 0.003 |
+| calm | E2_harsh_corner | deepseek:deepseek-v4-pro | 10 | 30 | 0.188 |
+| calm | E2_harsh_corner | poe:gpt-5.5 | 10 | 11 | 0.000 |
+| high_vol | E0_ideal | deepseek:deepseek-v4-pro | 10 | 30 | 0.142 |
+| high_vol | E1_default_stress | deepseek:deepseek-v4-pro | 10 | 30 | 0.136 |
+| high_vol | E2_harsh_corner | deepseek:deepseek-v4-pro | 10 | 30 | 0.027 |
+| jump_tail | E0_ideal | deepseek:deepseek-v4-pro | 10 | 30 | 0.311 |
+| jump_tail | E1_default_stress | deepseek:deepseek-v4-pro | 10 | 30 | 0.084 |
+| jump_tail | E2_harsh_corner | deepseek:deepseek-v4-pro | 10 | 30 | 0.025 |
 
 ## Ranking Stability Between Levels
 
 | Scenario | Level A | Level B | Kendall tau | Top-3 Jaccard |
 | --- | --- | --- | ---: | ---: |
-| calm | E0_ideal | E1_default_stress | 0.758 | 0.200 |
-| calm | E0_ideal | E2_harsh_corner | 0.727 | 1.000 |
-| calm | E0_ideal | E2_latency_3 | 0.697 | 1.000 |
-| calm | E0_ideal | E2_participation_1pct | 0.758 | 0.200 |
-| calm | E0_ideal | E2_spread_20bps | 0.818 | 0.500 |
-| calm | E1_default_stress | E2_harsh_corner | 0.606 | 0.200 |
-| calm | E1_default_stress | E2_latency_3 | 0.576 | 0.200 |
-| calm | E1_default_stress | E2_participation_1pct | 1.000 | 1.000 |
-| calm | E1_default_stress | E2_spread_20bps | 0.939 | 0.500 |
+| calm | E0_ideal | E1_default_stress | 0.818 | 0.200 |
+| calm | E0_ideal | E2_harsh_corner | 0.758 | 1.000 |
+| calm | E0_ideal | E2_latency_3 | 0.727 | 1.000 |
+| calm | E0_ideal | E2_participation_1pct | 0.788 | 0.200 |
+| calm | E0_ideal | E2_spread_20bps | 0.848 | 0.500 |
+| calm | E1_default_stress | E2_harsh_corner | 0.636 | 0.200 |
+| calm | E1_default_stress | E2_latency_3 | 0.606 | 0.200 |
+| calm | E1_default_stress | E2_participation_1pct | 0.970 | 1.000 |
+| calm | E1_default_stress | E2_spread_20bps | 0.970 | 0.500 |
 | calm | E2_harsh_corner | E2_latency_3 | 0.970 | 1.000 |
 | calm | E2_harsh_corner | E2_participation_1pct | 0.606 | 0.200 |
 | calm | E2_harsh_corner | E2_spread_20bps | 0.667 | 0.500 |
 | calm | E2_latency_3 | E2_participation_1pct | 0.576 | 0.200 |
 | calm | E2_latency_3 | E2_spread_20bps | 0.636 | 0.500 |
 | calm | E2_participation_1pct | E2_spread_20bps | 0.939 | 0.500 |
-| high_vol | E0_ideal | E1_default_stress | 0.242 | 0.200 |
-| high_vol | E0_ideal | E2_harsh_corner | 0.545 | 0.200 |
-| high_vol | E0_ideal | E2_latency_3 | 0.545 | 0.200 |
-| high_vol | E0_ideal | E2_participation_1pct | 0.242 | 0.200 |
-| high_vol | E0_ideal | E2_spread_20bps | 0.424 | 0.200 |
-| high_vol | E1_default_stress | E2_harsh_corner | 0.152 | 0.000 |
+| high_vol | E0_ideal | E1_default_stress | 0.212 | 0.200 |
+| high_vol | E0_ideal | E2_harsh_corner | 0.515 | 0.200 |
+| high_vol | E0_ideal | E2_latency_3 | 0.576 | 0.200 |
+| high_vol | E0_ideal | E2_participation_1pct | 0.273 | 0.200 |
+| high_vol | E0_ideal | E2_spread_20bps | 0.394 | 0.200 |
+| high_vol | E1_default_stress | E2_harsh_corner | 0.091 | 0.000 |
 | high_vol | E1_default_stress | E2_latency_3 | 0.212 | 0.000 |
-| high_vol | E1_default_stress | E2_participation_1pct | 1.000 | 1.000 |
-| high_vol | E1_default_stress | E2_spread_20bps | 0.818 | 1.000 |
+| high_vol | E1_default_stress | E2_participation_1pct | 0.939 | 0.500 |
+| high_vol | E1_default_stress | E2_spread_20bps | 0.758 | 0.500 |
 | high_vol | E2_harsh_corner | E2_latency_3 | 0.818 | 1.000 |
 | high_vol | E2_harsh_corner | E2_participation_1pct | 0.152 | 0.000 |
 | high_vol | E2_harsh_corner | E2_spread_20bps | 0.333 | 0.000 |
 | high_vol | E2_latency_3 | E2_participation_1pct | 0.212 | 0.000 |
 | high_vol | E2_latency_3 | E2_spread_20bps | 0.333 | 0.000 |
 | high_vol | E2_participation_1pct | E2_spread_20bps | 0.818 | 1.000 |
-| jump_tail | E0_ideal | E1_default_stress | 0.455 | 0.500 |
-| jump_tail | E0_ideal | E2_harsh_corner | 0.364 | 0.500 |
+| jump_tail | E0_ideal | E1_default_stress | 0.515 | 0.500 |
+| jump_tail | E0_ideal | E2_harsh_corner | 0.303 | 0.500 |
 | jump_tail | E0_ideal | E2_latency_3 | 0.424 | 0.500 |
-| jump_tail | E0_ideal | E2_participation_1pct | 0.455 | 0.500 |
-| jump_tail | E0_ideal | E2_spread_20bps | 0.515 | 0.500 |
+| jump_tail | E0_ideal | E2_participation_1pct | 0.515 | 0.500 |
+| jump_tail | E0_ideal | E2_spread_20bps | 0.576 | 0.500 |
 | jump_tail | E1_default_stress | E2_harsh_corner | 0.727 | 0.500 |
 | jump_tail | E1_default_stress | E2_latency_3 | 0.848 | 0.500 |
 | jump_tail | E1_default_stress | E2_participation_1pct | 1.000 | 1.000 |
@@ -89,25 +116,25 @@ baseline anchor does on the same market paths.
 | calm | E0_ideal | 1 | buy-and-hold | classical | 23.381 | 0.0932 | 1.00 |
 | calm | E0_ideal | 2 | minimum-variance | classical | 23.323 | 0.0932 | 1.00 |
 | calm | E0_ideal | 3 | risk-parity | classical | 23.113 | 0.0896 | 1.00 |
-| calm | E0_ideal | 4 | poe:gpt-5.5 | llm | 21.633 | 0.0826 | 1.00 |
-| calm | E0_ideal | 5 | poe:glm-5 | llm | 21.294 | 0.0792 | 1.00 |
-| calm | E0_ideal | 6 | poe:claude-opus-4.7 | llm | 21.245 | 0.0813 | 1.00 |
+| calm | E0_ideal | 4 | poe:gpt-5.5 | llm | 21.627 | 0.0826 | 1.00 |
+| calm | E0_ideal | 5 | poe:claude-opus-4.7 | llm | 21.366 | 0.0815 | 1.00 |
+| calm | E0_ideal | 6 | poe:glm-5 | llm | 21.231 | 0.0800 | 1.00 |
 | calm | E0_ideal | 7 | naive-momentum | classical | 19.889 | 0.0797 | 1.00 |
-| calm | E0_ideal | 8 | poe:gemini-3.1-pro | llm | 18.731 | 0.0608 | 1.00 |
+| calm | E0_ideal | 8 | poe:gemini-3.1-pro | llm | 18.537 | 0.0605 | 1.00 |
 | calm | E0_ideal | 9 | random | classical | 16.364 | 0.0621 | 1.00 |
-| calm | E0_ideal | 10 | deepseek:deepseek-v4-pro | llm | 10.063 | 0.0343 | 1.00 |
+| calm | E0_ideal | 10 | deepseek:deepseek-v4-pro | llm | 9.063 | 0.0285 | 1.00 |
 | calm | E0_ideal | 11 | signal-weighted | classical | 8.402 | 0.0203 | 1.00 |
 | calm | E0_ideal | 12 | mean-reversion | classical | 2.258 | 0.0023 | 0.50 |
 | calm | E1_default_stress | 1 | buy-and-hold | classical | 16.687 | 0.0885 | 0.88 |
-| calm | E1_default_stress | 2 | poe:gpt-5.5 | llm | 15.435 | 0.0758 | 0.86 |
-| calm | E1_default_stress | 3 | poe:claude-opus-4.7 | llm | 15.392 | 0.0754 | 0.87 |
+| calm | E1_default_stress | 2 | poe:gpt-5.5 | llm | 15.423 | 0.0759 | 0.86 |
+| calm | E1_default_stress | 3 | poe:claude-opus-4.7 | llm | 15.400 | 0.0755 | 0.88 |
 | calm | E1_default_stress | 4 | minimum-variance | classical | 15.311 | 0.0853 | 0.87 |
 | calm | E1_default_stress | 5 | naive-momentum | classical | 15.248 | 0.0732 | 0.86 |
-| calm | E1_default_stress | 6 | poe:glm-5 | llm | 15.242 | 0.0740 | 0.86 |
-| calm | E1_default_stress | 7 | risk-parity | classical | 15.226 | 0.0800 | 0.87 |
-| calm | E1_default_stress | 8 | poe:gemini-3.1-pro | llm | 13.671 | 0.0660 | 0.78 |
+| calm | E1_default_stress | 6 | risk-parity | classical | 15.226 | 0.0800 | 0.87 |
+| calm | E1_default_stress | 7 | poe:glm-5 | llm | 15.188 | 0.0746 | 0.86 |
+| calm | E1_default_stress | 8 | poe:gemini-3.1-pro | llm | 13.479 | 0.0663 | 0.80 |
 | calm | E1_default_stress | 9 | random | classical | 11.735 | 0.0544 | 0.86 |
-| calm | E1_default_stress | 10 | deepseek:deepseek-v4-pro | llm | 10.484 | 0.0437 | 0.80 |
+| calm | E1_default_stress | 10 | deepseek:deepseek-v4-pro | llm | 10.287 | 0.0461 | 0.79 |
 | calm | E1_default_stress | 11 | signal-weighted | classical | 6.402 | 0.0103 | 0.77 |
 | calm | E1_default_stress | 12 | mean-reversion | classical | 2.714 | 0.0041 | 0.38 |
 | calm | E2_harsh_corner | 1 | minimum-variance | classical | 14.954 | 0.0741 | 0.51 |
@@ -115,10 +142,10 @@ baseline anchor does on the same market paths.
 | calm | E2_harsh_corner | 3 | buy-and-hold | classical | 14.494 | 0.0723 | 0.51 |
 | calm | E2_harsh_corner | 4 | naive-momentum | classical | 13.316 | 0.0776 | 0.51 |
 | calm | E2_harsh_corner | 5 | poe:claude-opus-4.7 | llm | 12.743 | 0.0665 | 0.49 |
-| calm | E2_harsh_corner | 6 | poe:gpt-5.5 | llm | 12.659 | 0.0666 | 0.49 |
+| calm | E2_harsh_corner | 6 | poe:gpt-5.5 | llm | 12.659 | 0.0666 | 0.48 |
 | calm | E2_harsh_corner | 7 | poe:glm-5 | llm | 12.193 | 0.0636 | 0.46 |
 | calm | E2_harsh_corner | 8 | random | classical | 12.163 | 0.0599 | 0.51 |
-| calm | E2_harsh_corner | 9 | deepseek:deepseek-v4-pro | llm | 12.040 | 0.0572 | 0.48 |
+| calm | E2_harsh_corner | 9 | deepseek:deepseek-v4-pro | llm | 11.709 | 0.0531 | 0.48 |
 | calm | E2_harsh_corner | 10 | poe:gemini-3.1-pro | llm | 11.416 | 0.0580 | 0.45 |
 | calm | E2_harsh_corner | 11 | signal-weighted | classical | 7.436 | 0.0168 | 0.33 |
 | calm | E2_harsh_corner | 12 | mean-reversion | classical | 3.718 | 0.0106 | 0.27 |
@@ -166,14 +193,14 @@ baseline anchor does on the same market paths.
 | high_vol | E0_ideal | 6 | poe:glm-5 | llm | 9.224 | 0.0690 | 1.00 |
 | high_vol | E0_ideal | 7 | poe:gpt-5.5 | llm | 9.023 | 0.0713 | 1.00 |
 | high_vol | E0_ideal | 8 | poe:claude-opus-4.7 | llm | 9.016 | 0.0710 | 1.00 |
-| high_vol | E0_ideal | 9 | poe:gemini-3.1-pro | llm | 7.708 | 0.0567 | 1.00 |
-| high_vol | E0_ideal | 10 | deepseek:deepseek-v4-pro | llm | 7.574 | 0.0466 | 1.00 |
+| high_vol | E0_ideal | 9 | deepseek:deepseek-v4-pro | llm | 8.186 | 0.0502 | 1.00 |
+| high_vol | E0_ideal | 10 | poe:gemini-3.1-pro | llm | 7.708 | 0.0567 | 1.00 |
 | high_vol | E0_ideal | 11 | signal-weighted | classical | 6.128 | 0.0119 | 1.00 |
 | high_vol | E0_ideal | 12 | mean-reversion | classical | 3.721 | 0.0166 | 1.00 |
 | high_vol | E1_default_stress | 1 | poe:glm-5 | llm | 9.592 | 0.0789 | 0.85 |
-| high_vol | E1_default_stress | 2 | buy-and-hold | classical | 9.457 | 0.1044 | 0.83 |
-| high_vol | E1_default_stress | 3 | poe:claude-opus-4.7 | llm | 9.218 | 0.0818 | 0.86 |
-| high_vol | E1_default_stress | 4 | deepseek:deepseek-v4-pro | llm | 9.201 | 0.0761 | 0.83 |
+| high_vol | E1_default_stress | 2 | deepseek:deepseek-v4-pro | llm | 9.512 | 0.0762 | 0.83 |
+| high_vol | E1_default_stress | 3 | buy-and-hold | classical | 9.457 | 0.1044 | 0.83 |
+| high_vol | E1_default_stress | 4 | poe:claude-opus-4.7 | llm | 9.218 | 0.0818 | 0.86 |
 | high_vol | E1_default_stress | 5 | poe:gpt-5.5 | llm | 9.062 | 0.0777 | 0.85 |
 | high_vol | E1_default_stress | 6 | risk-parity | classical | 8.693 | 0.0872 | 0.85 |
 | high_vol | E1_default_stress | 7 | poe:gemini-3.1-pro | llm | 8.649 | 0.0733 | 0.80 |
@@ -190,7 +217,7 @@ baseline anchor does on the same market paths.
 | high_vol | E2_harsh_corner | 6 | poe:gpt-5.5 | llm | 8.198 | 0.0936 | 0.54 |
 | high_vol | E2_harsh_corner | 7 | poe:glm-5 | llm | 8.130 | 0.0916 | 0.53 |
 | high_vol | E2_harsh_corner | 8 | poe:claude-opus-4.7 | llm | 8.010 | 0.0972 | 0.54 |
-| high_vol | E2_harsh_corner | 9 | deepseek:deepseek-v4-pro | llm | 7.672 | 0.0845 | 0.55 |
+| high_vol | E2_harsh_corner | 9 | deepseek:deepseek-v4-pro | llm | 7.474 | 0.0870 | 0.52 |
 | high_vol | E2_harsh_corner | 10 | naive-momentum | classical | 7.088 | 0.0694 | 0.47 |
 | high_vol | E2_harsh_corner | 11 | mean-reversion | classical | 5.102 | 0.0427 | 0.45 |
 | high_vol | E2_harsh_corner | 12 | signal-weighted | classical | 0.465 | 0.0112 | 0.37 |
@@ -238,15 +265,15 @@ baseline anchor does on the same market paths.
 | jump_tail | E0_ideal | 6 | signal-weighted | classical | 7.132 | 0.0279 | 1.00 |
 | jump_tail | E0_ideal | 7 | poe:gemini-3.1-pro | llm | 6.958 | 0.0793 | 1.00 |
 | jump_tail | E0_ideal | 8 | poe:gpt-5.5 | llm | 6.841 | 0.0801 | 1.00 |
-| jump_tail | E0_ideal | 9 | poe:claude-opus-4.7 | llm | 6.675 | 0.0762 | 1.00 |
-| jump_tail | E0_ideal | 10 | poe:glm-5 | llm | 6.323 | 0.0705 | 1.00 |
-| jump_tail | E0_ideal | 11 | deepseek:deepseek-v4-pro | llm | 6.010 | 0.0428 | 1.00 |
+| jump_tail | E0_ideal | 9 | deepseek:deepseek-v4-pro | llm | 6.721 | 0.0539 | 1.00 |
+| jump_tail | E0_ideal | 10 | poe:claude-opus-4.7 | llm | 6.675 | 0.0762 | 1.00 |
+| jump_tail | E0_ideal | 11 | poe:glm-5 | llm | 6.323 | 0.0705 | 1.00 |
 | jump_tail | E0_ideal | 12 | mean-reversion | classical | 0.991 | 0.0061 | 0.90 |
 | jump_tail | E1_default_stress | 1 | naive-momentum | classical | 7.773 | 0.0829 | 0.84 |
 | jump_tail | E1_default_stress | 2 | minimum-variance | classical | 7.346 | 0.0863 | 0.84 |
 | jump_tail | E1_default_stress | 3 | risk-parity | classical | 7.135 | 0.0802 | 0.85 |
 | jump_tail | E1_default_stress | 4 | buy-and-hold | classical | 6.920 | 0.0870 | 0.85 |
-| jump_tail | E1_default_stress | 5 | deepseek:deepseek-v4-pro | llm | 6.411 | 0.0657 | 0.84 |
+| jump_tail | E1_default_stress | 5 | deepseek:deepseek-v4-pro | llm | 6.693 | 0.0679 | 0.84 |
 | jump_tail | E1_default_stress | 6 | poe:claude-opus-4.7 | llm | 6.009 | 0.0748 | 0.87 |
 | jump_tail | E1_default_stress | 7 | poe:gpt-5.5 | llm | 5.882 | 0.0752 | 0.86 |
 | jump_tail | E1_default_stress | 8 | random | classical | 5.751 | 0.0616 | 0.79 |
@@ -261,7 +288,7 @@ baseline anchor does on the same market paths.
 | jump_tail | E2_harsh_corner | 5 | poe:claude-opus-4.7 | llm | 4.469 | 0.0521 | 0.50 |
 | jump_tail | E2_harsh_corner | 6 | poe:glm-5 | llm | 4.316 | 0.0446 | 0.49 |
 | jump_tail | E2_harsh_corner | 7 | poe:gpt-5.5 | llm | 4.000 | 0.0458 | 0.51 |
-| jump_tail | E2_harsh_corner | 8 | deepseek:deepseek-v4-pro | llm | 3.874 | 0.0433 | 0.47 |
+| jump_tail | E2_harsh_corner | 8 | deepseek:deepseek-v4-pro | llm | 3.863 | 0.0407 | 0.49 |
 | jump_tail | E2_harsh_corner | 9 | poe:gemini-3.1-pro | llm | 3.816 | 0.0434 | 0.46 |
 | jump_tail | E2_harsh_corner | 10 | random | classical | 3.606 | 0.0512 | 0.49 |
 | jump_tail | E2_harsh_corner | 11 | mean-reversion | classical | 2.605 | 0.0352 | 0.41 |

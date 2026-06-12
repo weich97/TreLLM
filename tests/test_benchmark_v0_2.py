@@ -59,6 +59,7 @@ def test_v03_iclr_protocol_validates_required_submission_gates():
     assert "claim-boundary audit" in spec["required_artifacts"]
     assert "direct API redaction and submission checklist" in spec["required_artifacts"]
     assert "direct API model matrix gate" in spec["required_artifacts"]
+    assert "direct API call packet manifest" in spec["required_artifacts"]
     assert "contamination-control readiness audit" in spec["required_artifacts"]
     assert "execution stress-grid report" in spec["required_artifacts"]
     assert "external reproduction report gate" in spec["required_artifacts"]

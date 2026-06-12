@@ -46,6 +46,7 @@ def test_v03_external_reproduction_pack_writes_valid_maintainer_report():
         assert {command["returncode"] for command in manifest["commands"]} == {0}
         assert all(artifact["exists"] and str(artifact["sha256"]).startswith("sha256:") for artifact in manifest["artifacts"])
         assert any(command["id"] == "v03_direct_api_matrix_plan" for command in manifest["commands"])
+        assert any(command["id"] == "v03_direct_api_call_packets" for command in manifest["commands"])
         assert any(command["id"] == "v03_direct_api_submission_checklist" for command in manifest["commands"])
         assert any(command["id"] == "v03_contamination_control_audit" for command in manifest["commands"])
         assert any(command["id"] == "v03_execution_stress_grid" for command in manifest["commands"])
@@ -54,6 +55,10 @@ def test_v03_external_reproduction_pack_writes_valid_maintainer_report():
         assert any(command["id"] == "v03_evidence_index" for command in manifest["commands"])
         assert any(
             artifact["path"].endswith("v0_3_direct_api_matrix_plan/direct_api_matrix_plan_summary.json")
+            for artifact in manifest["artifacts"]
+        )
+        assert any(
+            artifact["path"].endswith("v0_3_direct_api_call_packets/direct_api_call_packets_summary.json")
             for artifact in manifest["artifacts"]
         )
         assert any(

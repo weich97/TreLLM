@@ -98,6 +98,19 @@ This artifact pre-registers the 10-seed by 3-sample call matrix and records only
 whether the required credential environment variables are present. It does not
 make provider calls, publish secrets, or count as model-performance evidence.
 
+The no-key direct API call-packet queue is generated with:
+
+```bash
+python scripts/build_v03_direct_api_call_packets.py
+```
+
+See `docs/results/v0_3_direct_api_call_packets/direct_api_call_packets.md`.
+This artifact turns pre-registered matrix rows into hash-bound call packets,
+expected provider-manifest paths, expected submission paths, and redaction
+contracts. It does not call providers or publish raw prompts/responses; rows
+become evidence only after a direct-provider manifest and benchmark submission
+are generated and pass the matrix gate.
+
 External direct API contributors should follow the generated redaction and
 submission checklist:
 

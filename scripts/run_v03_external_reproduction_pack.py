@@ -89,6 +89,7 @@ def main(argv: list[str] | None = None) -> int:
 def _commands(output_dir: Path) -> list[dict[str, Any]]:
     direct_api_dir = output_dir / "v0_3_direct_api_pilot"
     direct_plan_dir = output_dir / "v0_3_direct_api_matrix_plan"
+    direct_call_packet_dir = output_dir / "v0_3_direct_api_call_packets"
     direct_checklist_dir = output_dir / "v0_3_direct_api_submission_checklist"
     direct_gate_dir = output_dir / "v0_3_direct_api_matrix_gate"
     variance_dir = output_dir / "v0_3_variance_decomposition"
@@ -133,6 +134,18 @@ def _commands(output_dir: Path) -> list[dict[str, Any]]:
                 "0,1",
             ],
             "description": "Pre-register the direct API matrix rows and credential preflight without live provider calls.",
+        },
+        {
+            "id": "v03_direct_api_call_packets",
+            "argv": [
+                sys.executable,
+                "scripts/build_v03_direct_api_call_packets.py",
+                "--plan-rows",
+                _command_path(direct_plan_dir / "direct_api_matrix_plan_rows.csv"),
+                "--output-dir",
+                _command_path(direct_call_packet_dir),
+            ],
+            "description": "Generate hash-bound no-key call packets from the pre-registered direct API matrix plan.",
         },
         {
             "id": "v03_direct_api_submission_checklist",
@@ -323,6 +336,7 @@ def _artifacts(output_dir: Path) -> list[Path]:
         ROOT / "outputs/examples/audit_walkthrough_trajectory.json",
         output_dir / "v0_3_direct_api_pilot/direct_api_pilot_summary.json",
         output_dir / "v0_3_direct_api_matrix_plan/direct_api_matrix_plan_summary.json",
+        output_dir / "v0_3_direct_api_call_packets/direct_api_call_packets_summary.json",
         output_dir / (
             "v0_3_direct_api_submission_checklist/direct_api_submission_checklist_summary.json"
         ),

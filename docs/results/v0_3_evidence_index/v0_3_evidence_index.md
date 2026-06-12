@@ -4,9 +4,9 @@ This index maps generated public artifacts to the v0.3 ICLR protocol claims.
 It is deliberately conservative: fixture and pilot artifacts do not support headline scientific model-performance claims.
 
 - Protocol: `trellm-v0.3-iclr-protocol`
-- Present artifacts: `13 / 13`
-- Public-artifact-covered protocol artifacts: `17 / 18`
-- Fixture-covered protocol artifacts: `9 / 18`
+- Present artifacts: `14 / 14`
+- Public-artifact-covered protocol artifacts: `18 / 19`
+- Fixture-covered protocol artifacts: `9 / 19`
 - Open gaps: `2`
 - Headline scientific claim ready: `False`
 - Claim boundary: This index maps public v0.3 artifacts to protocol claims. Current artifacts validate protocol plumbing and pilot mechanisms; they do not yet support headline scientific model-performance claims.
@@ -18,6 +18,7 @@ It is deliberately conservative: fixture and pilot artifacts do not support head
 | direct_api_pilot | direct API provenance | protocol-fixture | seed/sample manifest coverage | false | present |
 | direct_api_matrix_gate | direct API model matrix threshold gate | threshold-gate | direct_manifest_hash_binding;seed_sample_threshold_gate | false | present |
 | direct_api_model_matrix_plan | direct API model matrix run plan and credential preflight | planning-note | pre_registered_10x3_matrix_plan;credential_env_var_preflight | false | present |
+| direct_api_call_packets | direct API call-packet execution queue | planning-note | deterministic_call_packet_hashing;redaction_contract_binding | false | present |
 | direct_api_submission_checklist | direct API redaction and submission checklist | planning-note | schema_field_coverage_check;redaction_submission_checklist | false | present |
 | claim_boundary_audit | public narrative claim-boundary audit | planning-note | claim_boundary_text_audit;evidence_index_gap_check | false | present |
 | execution_ladder | execution assumption sensitivity | protocol-fixture | kendall_tau;top_k_jaccard;bootstrap_ci | false | present |
@@ -48,6 +49,7 @@ It is deliberately conservative: fixture and pilot artifacts do not support head
 | claim-boundary audit | covered-by-artifact | claim_boundary_audit | Public artifact coverage supports protocol plumbing and claim boundaries; scientific claims require non-fixture direct API rows and scale thresholds. |
 | direct API redaction and submission checklist | covered-by-artifact | direct_api_submission_checklist | Public artifact coverage supports protocol plumbing and claim boundaries; scientific claims require non-fixture direct API rows and scale thresholds. |
 | direct API model matrix plan | covered-by-artifact | direct_api_model_matrix_plan | Public artifact coverage supports protocol plumbing and claim boundaries; scientific claims require non-fixture direct API rows and scale thresholds. |
+| direct API call packet manifest | covered-by-artifact | direct_api_call_packets | Public artifact coverage supports protocol plumbing and claim boundaries; scientific claims require non-fixture direct API rows and scale thresholds. |
 | direct API model matrix gate | covered-by-artifact | direct_api_matrix_gate | Public artifact coverage supports protocol plumbing and claim boundaries; scientific claims require non-fixture direct API rows and scale thresholds. |
 | external reproduction report gate | covered-by-artifact | external_reproduction_gate | Public artifact coverage supports protocol plumbing and claim boundaries; scientific claims require non-fixture direct API rows and scale thresholds. |
 | external reproduction bundle | open-gap | gap:external_reproduction_reports | Required by protocol but not yet satisfied by public v0.3 artifacts. |

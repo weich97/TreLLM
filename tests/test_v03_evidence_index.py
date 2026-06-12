@@ -24,7 +24,7 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
         text=True,
     )
 
-    assert "Artifacts indexed: 13" in result.stdout
+    assert "Artifacts indexed: 14" in result.stdout
     assert "Open gaps: 2" in result.stdout
 
     summary = json.loads((output_dir / "v0_3_evidence_index.json").read_text(encoding="utf-8"))
@@ -35,10 +35,10 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
 
     assert summary["schema"] == "trellm_v0_3_evidence_index_v0.1"
     assert summary["protocol_id"] == "trellm-v0.3-iclr-protocol"
-    assert summary["present_artifact_count"] == 13
-    assert summary["covered_artifact_count"] == 17
+    assert summary["present_artifact_count"] == 14
+    assert summary["covered_artifact_count"] == 18
     assert summary["covered_fixture_count"] == 9
-    assert summary["required_protocol_artifact_count"] == 18
+    assert summary["required_protocol_artifact_count"] == 19
     assert summary["headline_scientific_claim_ready"] is False
     assert summary["open_gaps"] == [
         "direct_api_model_matrix",
@@ -50,6 +50,7 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
         "direct_api_pilot",
         "direct_api_matrix_gate",
         "direct_api_model_matrix_plan",
+        "direct_api_call_packets",
         "direct_api_submission_checklist",
         "claim_boundary_audit",
         "execution_ladder",
@@ -71,6 +72,7 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
     assert any("between_within_seed_variance_components" in row["statistical_methods"] for row in artifacts)
     assert any("seed_sample_threshold_gate" in row["statistical_methods"] for row in artifacts)
     assert any("pre_registered_10x3_matrix_plan" in row["statistical_methods"] for row in artifacts)
+    assert any("deterministic_call_packet_hashing" in row["statistical_methods"] for row in artifacts)
     assert any("redaction_submission_checklist" in row["statistical_methods"] for row in artifacts)
     assert any("claim_boundary_text_audit" in row["statistical_methods"] for row in artifacts)
     assert any("contamination_tier_readiness_audit" in row["statistical_methods"] for row in artifacts)
@@ -91,6 +93,9 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
     matrix_plan = next(row for row in coverage if row["required_artifact"] == "direct API model matrix plan")
     assert matrix_plan["coverage_status"] == "covered-by-artifact"
     assert matrix_plan["evidence_ref"] == "direct_api_model_matrix_plan"
+    call_packets = next(row for row in coverage if row["required_artifact"] == "direct API call packet manifest")
+    assert call_packets["coverage_status"] == "covered-by-artifact"
+    assert call_packets["evidence_ref"] == "direct_api_call_packets"
     submission_checklist = next(
         row for row in coverage if row["required_artifact"] == "direct API redaction and submission checklist"
     )
@@ -111,7 +116,7 @@ def test_v03_evidence_index_maps_artifacts_and_open_gaps(tmp_path: Path):
     assert reproduction_gate["coverage_status"] == "covered-by-artifact"
     assert reproduction_gate["evidence_ref"] == "external_reproduction_gate"
     assert sum(1 for row in coverage if row["coverage_status"] == "covered-by-fixture") == 9
-    assert sum(1 for row in coverage if row["coverage_status"] == "covered-by-artifact") == 8
+    assert sum(1 for row in coverage if row["coverage_status"] == "covered-by-artifact") == 9
 
     assert {row["gap_id"] for row in gaps} == set(summary["open_gaps"])
     assert any(row["blocking_level"] == "headline-scientific-claim" for row in gaps)

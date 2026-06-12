@@ -194,6 +194,7 @@ def _validate_iclr_protocol_v03(payload: dict[str, Any]) -> list[str]:
         "claim-boundary audit",
         "direct API redaction and submission checklist",
         "direct API model matrix plan",
+        "direct API call packet manifest",
         "direct API model matrix gate",
         "external reproduction report gate",
         "external reproduction bundle",

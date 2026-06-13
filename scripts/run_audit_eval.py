@@ -171,6 +171,19 @@ def _make_analyst(provider: str, model: str, cache_dir: Path) -> DeepSeekLLMAnal
             use_response_format=False,
             timeout_seconds=180,
         )
+    if provider == "glm":
+        return DeepSeekLLMAnalyst(
+            model=model,
+            cache_path=cache_path,
+            api_key_env="GLM_API_KEY",
+            fallback_api_key_env="",
+            api_base_url="https://open.bigmodel.cn/api/paas/v4",
+            provider="glm",
+            api_protocol="openai_chat_completions",
+            thinking="disabled",
+            use_response_format=False,
+            timeout_seconds=180,
+        )
     return DeepSeekLLMAnalyst(model=model, cache_path=cache_path, provider="deepseek", timeout_seconds=180)
 
 

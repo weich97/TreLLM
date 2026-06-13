@@ -42,6 +42,7 @@ from tradearena.evaluation.statistics import (
     paired_bootstrap_difference,
     summarize_metric,
     top_k_jaccard,
+    variance_components,
 )
 
 RANK_METRIC = "sharpe"
@@ -210,6 +211,42 @@ def fragility_did_rows(
     return output
 
 
+def sampling_variance_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Between-seed (market path) vs within-seed (provider sampling) variance.
+
+    Only cells where at least one seed carries repeated provider samples are
+    reported; deterministic agents never qualify. A small within-seed share
+    means conclusions ride on market variation, not provider stochasticity.
+    """
+
+    grouped: dict[tuple[str, str, str], dict[int, list[float]]] = {}
+    for row in rows:
+        agent = str(row["agent"])
+        if ":" not in agent:
+            continue
+        key = (str(row["scenario"]), str(row["level"]), agent)
+        grouped.setdefault(key, {}).setdefault(int(row["seed"]), []).append(float(row["total_return"]))
+    output = []
+    for (scenario, level, agent), by_seed in sorted(grouped.items()):
+        if not any(len(values) >= 2 for values in by_seed.values()):
+            continue
+        components = variance_components(by_seed)
+        output.append(
+            {
+                "scenario": scenario,
+                "level": level,
+                "agent": agent,
+                "metric": "total_return",
+                "seed_count": components["group_count"],
+                "total_runs": components["total_n"],
+                "between_seed_variance": components["between_group_variance"],
+                "within_seed_variance": components["within_group_variance"],
+                "within_seed_share": components["within_group_share"],
+            }
+        )
+    return output
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Merge per-model sweeps and analyze LLM execution sensitivity.")
     parser.add_argument("--input-dirs", required=True, help="Comma-separated sweep output directories.")
@@ -230,6 +267,7 @@ def main(argv: list[str] | None = None) -> int:
     aggregates = aggregate_rows(rows)
     stability = stability_rows(aggregates, top_k=args.top_k)
     fragility = fragility_did_rows(rows, baseline_agent=args.did_baseline)
+    sampling_variance = sampling_variance_rows(rows)
 
     _write_csv(
         output_dir / "merged_runs.csv",
@@ -276,10 +314,34 @@ def main(argv: list[str] | None = None) -> int:
             "cohens_d",
         ],
     )
-    _write_markdown(output_dir / "execution_sensitivity_llm.md", aggregates, stability, fragility, top_k=args.top_k)
+    if sampling_variance:
+        _write_csv(
+            output_dir / "sampling_variance.csv",
+            sampling_variance,
+            [
+                "scenario",
+                "level",
+                "agent",
+                "metric",
+                "seed_count",
+                "total_runs",
+                "between_seed_variance",
+                "within_seed_variance",
+                "within_seed_share",
+            ],
+        )
+    _write_markdown(
+        output_dir / "execution_sensitivity_llm.md",
+        aggregates,
+        stability,
+        fragility,
+        sampling_variance,
+        top_k=args.top_k,
+    )
     print(
         f"Merged {len(rows)} runs from {len(input_dirs)} sweeps -> {len(aggregates)} cells, "
-        f"{len(stability)} stability pairs, {len(fragility)} DiD rows in {output_dir}"
+        f"{len(stability)} stability pairs, {len(fragility)} DiD rows, "
+        f"{len(sampling_variance)} sampling-variance cells in {output_dir}"
     )
     return 0
 
@@ -296,6 +358,7 @@ def _write_markdown(
     aggregates: list[dict[str, Any]],
     stability: list[dict[str, Any]],
     fragility: list[dict[str, Any]],
+    sampling_variance: list[dict[str, Any]] | None = None,
     *,
     top_k: int,
 ) -> None:
@@ -324,6 +387,25 @@ def _write_markdown(
             f"| {row['agent']} | {row['agent_type']} | {row['stress_level']} "
             f"| {float(row['mean_did']):+.4f} | {ci} | {q_text} | {d_text} |"
         )
+    if sampling_variance:
+        lines += [
+            "",
+            "## Provider-Sampling Variance Decomposition",
+            "",
+            "Within-seed share is the fraction of total-return variance due to",
+            "provider sampling at a fixed market path; the remainder is market",
+            "variation across seeds.",
+            "",
+            "| Scenario | Level | Agent | Seeds | Runs | Within-seed share |",
+            "| --- | --- | --- | ---: | ---: | ---: |",
+        ]
+        for row in sampling_variance:
+            share = row["within_seed_share"]
+            share_text = f"{float(share):.3f}" if share is not None else ""
+            lines.append(
+                f"| {row['scenario']} | {row['level']} | {row['agent']} "
+                f"| {row['seed_count']} | {row['total_runs']} | {share_text} |"
+            )
     lines += [
         "",
         "## Ranking Stability Between Levels",

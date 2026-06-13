@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -53,6 +54,8 @@ OUTCOMES = (
     "memory_pollution_ratio",
     "total_return",
     "max_drawdown",
+    "turnover_events",
+    "hold_ratio",
 )
 PRIMARY_OUTCOME = "memory_driven_leverage_amplification"
 
@@ -70,6 +73,18 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--risks", default=",".join(DEFAULT_RISKS))
     parser.add_argument("--seeds", default=",".join(str(seed) for seed in DEFAULT_SEEDS))
     parser.add_argument("--periods", type=int, default=120)
+    parser.add_argument(
+        "--agent",
+        default="memory-aware",
+        help="'memory-aware' (deterministic overlay) or a provider:model spec (poe/deepseek) whose prompt consumes the polluted recall path.",
+    )
+    parser.add_argument(
+        "--samples-per-seed",
+        type=int,
+        default=1,
+        help="Repeated provider samples per seed for LLM agents; deterministic runs always use one.",
+    )
+    parser.add_argument("--cache-dir", default="outputs/llm_cache/memory_pollution")
     parser.add_argument("--symbols", default="SYN,ALT")
     parser.add_argument("--output-dir", default="docs/results/memory_pollution")
     args = parser.parse_args(argv)
@@ -87,10 +102,27 @@ def main(argv: list[str] | None = None) -> int:
 
     # The full matrix takes an hour-plus, so runs checkpoint to the CSV as they
     # finish and a rerun resumes from whatever is already there.
+    agent = args.agent.strip()
+    samples_per_seed = max(1, int(args.samples_per_seed)) if ":" in agent else 1
+    cache_dir = ROOT / args.cache_dir if not Path(args.cache_dir).is_absolute() else Path(args.cache_dir)
+    if ":" in agent:
+        cache_dir.mkdir(parents=True, exist_ok=True)
+
     runs_path = output_dir / "memory_pollution_runs.csv"
-    run_fields = ["kind", "dose", "decay", "risk", "seed", *OUTCOMES]
+    run_fields = ["agent", "kind", "dose", "decay", "risk", "seed", "sample", *OUTCOMES]
     run_rows = _load_existing_runs(runs_path)
-    completed = {(str(row["kind"]), float(row["dose"]), float(row["decay"]), str(row["risk"]), int(row["seed"])) for row in run_rows}
+    completed = {
+        (
+            str(row.get("agent") or "memory-aware"),
+            str(row["kind"]),
+            float(row["dose"]),
+            float(row["decay"]),
+            str(row["risk"]),
+            int(row["seed"]),
+            int(row.get("sample") or 0),
+        )
+        for row in run_rows
+    }
     if completed:
         print(f"Resuming: {len(completed)} runs already checkpointed in {runs_path}", flush=True)
 
@@ -104,33 +136,39 @@ def main(argv: list[str] | None = None) -> int:
                     for dose_label, pollution_kwargs in _dose_axis(kind, doses, streaks):
                         fresh = 0
                         for seed in seeds:
-                            key = (kind, float(dose_label), float(decay), risk, int(seed))
-                            if key in completed:
-                                continue
-                            metrics = _run_case(
-                                kind=kind,
-                                pollution_kwargs=pollution_kwargs,
-                                decay=decay,
-                                risk=risk,
-                                seed=seed,
-                                periods=args.periods,
-                                symbols=symbols,
-                            )
-                            row = {
-                                "kind": kind,
-                                "dose": dose_label,
-                                "decay": decay,
-                                "risk": risk,
-                                "seed": seed,
-                            }
-                            for outcome in OUTCOMES:
-                                row[outcome] = metrics.get(outcome, "")
-                            run_rows.append(row)
-                            writer.writerow(row)
-                            handle.flush()
-                            fresh += 1
+                            for sample in range(samples_per_seed):
+                                key = (agent, kind, float(dose_label), float(decay), risk, int(seed), sample)
+                                if key in completed:
+                                    continue
+                                metrics = _run_case(
+                                    agent=agent,
+                                    kind=kind,
+                                    pollution_kwargs=pollution_kwargs,
+                                    decay=decay,
+                                    risk=risk,
+                                    seed=seed,
+                                    sample=sample,
+                                    periods=args.periods,
+                                    symbols=symbols,
+                                    cache_dir=cache_dir,
+                                )
+                                row = {
+                                    "agent": agent,
+                                    "kind": kind,
+                                    "dose": dose_label,
+                                    "decay": decay,
+                                    "risk": risk,
+                                    "seed": seed,
+                                    "sample": sample,
+                                }
+                                for outcome in OUTCOMES:
+                                    row[outcome] = metrics.get(outcome, "")
+                                run_rows.append(row)
+                                writer.writerow(row)
+                                handle.flush()
+                                fresh += 1
                         print(
-                            f"OK kind={kind} dose={dose_label} decay={decay} risk={risk} ({fresh} new / {len(seeds)} seeds)",
+                            f"OK agent={agent} kind={kind} dose={dose_label} decay={decay} risk={risk} ({fresh} new / {len(seeds) * samples_per_seed} runs)",
                             flush=True,
                         )
 
@@ -211,25 +249,45 @@ def _dose_axis(kind: str, doses: list[float], streaks: list[int]) -> list[tuple[
 
 def _run_case(
     *,
+    agent: str = "memory-aware",
     kind: str,
     pollution_kwargs: dict[str, Any],
     decay: float,
     risk: str,
     seed: int,
+    sample: int = 0,
     periods: int,
     symbols: tuple[str, ...],
+    cache_dir: Path | None = None,
 ) -> dict[str, Any]:
+    kwargs: dict[str, Any] = dict(pollution_kwargs)
+    if ":" in agent:
+        provider, model = agent.split(":", 1)
+        analyst = "poe-llm" if provider == "poe" else "deepseek-llm"
+        model_slug = re.sub(r"[^a-z0-9]+", "_", f"{provider}-{model}".lower()).strip("_")
+        kwargs.update(
+            {
+                "strategy_name": "signal-weighted",
+                "analyst_names": (analyst,),
+                "llm_model": model,
+                "llm_cache_path": str((cache_dir or ROOT / "outputs/llm_cache/memory_pollution") / f"{model_slug}.jsonl"),
+                "llm_mask_timestamps": True,
+                "llm_use_risk_feedback": True,
+                "llm_risk_feedback_mode": "true",
+                "llm_sample_index": sample,
+            }
+        )
+    else:
+        kwargs.update({"strategy_name": "memory-aware", "analyst_names": ("momentum", "macro-news")})
     _, metrics = build_default_system(
         name=f"memory_pollution_{kind}_{seed}",
         symbols=symbols,
         periods=periods,
         seed=seed,
-        strategy_name="memory-aware",
         risk_name=risk,
-        analyst_names=("momentum", "macro-news"),
         memory_decay_rate=decay,
         memory_pollution_seed=seed,
-        **pollution_kwargs,
+        **kwargs,
     ).run()
     return metrics
 
@@ -261,10 +319,20 @@ def _aggregate_rows(run_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def _dose_response_rows(run_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Paired (same seed) comparison of every nonzero dose against dose zero."""
 
-    by_cell: dict[tuple[str, float, str, float], dict[int, dict[str, Any]]] = {}
+    # Repeated provider samples average within seed before pairing.
+    accumulator: dict[tuple[str, float, str, float], dict[int, list[dict[str, Any]]]] = {}
     for row in run_rows:
         key = (str(row["kind"]), float(row["decay"]), str(row["risk"]), float(row["dose"]))
-        by_cell.setdefault(key, {})[int(row["seed"])] = row
+        accumulator.setdefault(key, {}).setdefault(int(row["seed"]), []).append(row)
+    by_cell: dict[tuple[str, float, str, float], dict[int, dict[str, Any]]] = {}
+    for key, by_seed in accumulator.items():
+        by_cell[key] = {}
+        for seed, samples in by_seed.items():
+            averaged: dict[str, Any] = dict(samples[0])
+            for outcome in OUTCOMES:
+                values = [float(s[outcome]) for s in samples if s.get(outcome) not in ("", None)]
+                averaged[outcome] = sum(values) / len(values) if values else ""
+            by_cell[key][seed] = averaged
 
     output: list[dict[str, Any]] = []
     for (kind, decay, risk, dose), runs_by_seed in sorted(by_cell.items()):
@@ -274,8 +342,16 @@ def _dose_response_rows(run_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         if not baseline:
             continue
         for outcome in OUTCOMES:
-            candidate = {seed: float(row[outcome]) for seed, row in runs_by_seed.items()}
-            reference = {seed: float(row[outcome]) for seed, row in baseline.items()}
+            candidate = {
+                seed: float(row[outcome])
+                for seed, row in runs_by_seed.items()
+                if row.get(outcome) not in ("", None)
+            }
+            reference = {
+                seed: float(row[outcome])
+                for seed, row in baseline.items()
+                if row.get(outcome) not in ("", None)
+            }
             result = paired_bootstrap_difference(candidate, reference)
             output.append(
                 {

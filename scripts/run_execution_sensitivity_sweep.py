@@ -137,8 +137,8 @@ def main(argv: list[str] | None = None) -> int:
     llm_agents = [item.strip() for item in args.llm_models.split(",") if item.strip()]
     for spec in llm_agents:
         provider = spec.split(":", 1)[0].lower()
-        if provider not in {"poe", "deepseek"}:
-            raise SystemExit(f"Unsupported LLM provider in {spec!r}; expected poe: or deepseek: prefix")
+        if provider not in {"poe", "deepseek", "glm"}:
+            raise SystemExit(f"Unsupported LLM provider in {spec!r}; expected poe:, deepseek:, or glm: prefix")
     levels = {name: EXECUTION_LEVELS[name] for name in args.levels.split(",") if name.strip()}
     scenarios = {name: SCENARIOS[name] for name in args.scenarios.split(",") if name.strip()}
     seeds = [int(seed.strip()) for seed in args.seeds.split(",") if seed.strip()]
@@ -262,7 +262,7 @@ def _run_case(
     kwargs.update(level)
     if ":" in agent:
         provider, model = agent.split(":", 1)
-        analyst = "poe-llm" if provider == "poe" else "deepseek-llm"
+        analyst = {"poe": "poe-llm", "glm": "glm-llm"}.get(provider, "deepseek-llm")
         model_slug = re.sub(r"[^a-z0-9]+", "_", f"{provider}-{model}".lower()).strip("_")
         kwargs.update(
             {

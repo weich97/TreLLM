@@ -240,6 +240,28 @@ def build_default_system(
                     name="poe-llm-analyst",
                 )
             )
+        elif analyst_name == "glm-llm":
+            analysts.append(
+                DeepSeekLLMAnalyst(
+                    model=llm_model,
+                    cache_path=llm_cache_path,
+                    api_key_env="GLM_API_KEY",
+                    fallback_api_key_env="",
+                    api_base_url="https://open.bigmodel.cn/api/paas/v4",
+                    provider="glm",
+                    api_protocol="openai_chat_completions",
+                    thinking="disabled",
+                    use_response_format=False,
+                    timeout_seconds=120,
+                    use_risk_feedback=llm_use_risk_feedback,
+                    risk_feedback_mode=llm_risk_feedback_mode,
+                    output_mode=llm_output_mode,
+                    mask_timestamps=llm_mask_timestamps,
+                    anonymize_symbols=llm_anonymize_symbols,
+                    sample_index=llm_sample_index,
+                    name="glm-llm-analyst",
+                )
+            )
         elif analyst_name == "ollama-llm":
             analysts.append(
                 DeepSeekLLMAnalyst(

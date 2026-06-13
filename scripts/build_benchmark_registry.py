@@ -17,9 +17,12 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Build the TradeArena leaderboard registry.")
     parser.add_argument("input", help="Submission JSON file or directory containing JSON submissions.")
     parser.add_argument("--output", default="docs/results/community_registry.md")
-    parser.add_argument("--csv-output", default="docs/results/community_registry.csv")
-    parser.add_argument("--html-output", default="docs/results/community_registry.html")
+    parser.add_argument("--csv-output")
+    parser.add_argument("--html-output")
     args = parser.parse_args(argv)
+    output_path = Path(args.output)
+    csv_output = Path(args.csv_output) if args.csv_output else output_path.with_suffix(".csv")
+    html_output = Path(args.html_output) if args.html_output else output_path.with_suffix(".html")
 
     rows, errors = build_registry_rows(args.input)
     if errors:
@@ -28,12 +31,12 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  - {error}")
         return 1
 
-    write_registry_markdown(rows, args.output)
-    _write_csv(rows, args.csv_output)
-    write_registry_html(rows, args.html_output)
+    write_registry_markdown(rows, output_path)
+    _write_csv(rows, csv_output)
+    write_registry_html(rows, html_output)
     print(f"Wrote {args.output}")
-    print(f"Wrote {args.csv_output}")
-    print(f"Wrote {args.html_output}")
+    print(f"Wrote {csv_output.as_posix()}")
+    print(f"Wrote {html_output.as_posix()}")
     print(f"Accepted submissions: {len(rows)}")
     return 0
 

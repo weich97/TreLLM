@@ -140,6 +140,7 @@ def validate_submission(payload: dict[str, Any], *, verify_hash: bool = True) ->
             if not isinstance(evidence.get("claim_scope"), str) or not evidence.get("claim_scope"):
                 errors.append("evidence.claim_scope must be a non-empty string when evidence is provided")
             else:
+                evidence = {**evidence, "provider": payload["agent"].get("provider", "")}
                 errors.extend(validate_evidence_boundary(evidence))
 
     return errors

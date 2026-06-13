@@ -30,6 +30,45 @@ def test_v02_spec_validates_and_names_required_surfaces():
     assert "always-hold" in spec["baselines"]
 
 
+def test_v03_iclr_protocol_validates_required_submission_gates():
+    result = subprocess.run(
+        [sys.executable, "scripts/validate_benchmark_spec.py", "benchmarks/v0.3-iclr/protocol.json"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    payload = json.loads(result.stdout)
+    spec = json.loads((ROOT / "benchmarks/v0.3-iclr/protocol.json").read_text(encoding="utf-8"))
+
+    assert payload["valid"] is True
+    assert payload["schema_version"] == "trellm_iclr_protocol_v0.3"
+    assert payload["spec_id"] == "trellm-v0.3-iclr-protocol"
+    assert payload["canonical_sha256"].startswith("sha256:")
+    assert spec["system_identity"]["system_name"] == "TreLLM"
+    assert spec["system_identity"]["leaderboard_name"] == "TradeArena"
+    assert spec["provider_protocol"]["headline_results"]["allow_routed_providers"] is False
+    assert {level["id"] for level in spec["execution_ladder"]} == {"E0", "E1", "E2", "E3"}
+    assert {tier["id"] for tier in spec["contamination_tiers"]} == {"C0", "C1", "C2"}
+    assert spec["statistics"]["llm_main_comparison"]["minimum_seeds"] >= 10
+    assert spec["statistics"]["llm_main_comparison"]["samples_per_seed"] >= 3
+    assert "power_curve_or_detectable_effect_note" in spec["statistics"]["required_methods"]
+    assert "variance_decomposition" in spec["statistics"]["required_methods"]
+    assert "power curve or detectable effect note" in spec["required_artifacts"]
+    assert "variance decomposition table" in spec["required_artifacts"]
+    assert "claim-boundary audit" in spec["required_artifacts"]
+    assert "direct API redaction and submission checklist" in spec["required_artifacts"]
+    assert "direct API model matrix gate" in spec["required_artifacts"]
+    assert "direct API call packet manifest" in spec["required_artifacts"]
+    assert "contamination-control readiness audit" in spec["required_artifacts"]
+    assert "execution stress-grid report" in spec["required_artifacts"]
+    assert "FinAudit direct-model audit plan" in spec["required_artifacts"]
+    assert "external reproduction report gate" in spec["required_artifacts"]
+    assert "intent_to_execution_gap" in spec["metrics"]["mechanism"]
+    assert "self_audit_bias" in spec["finaudit_track"]["required_analyses"]
+    assert spec["external_reproduction"]["minimum_independent_reports"] >= 3
+
+
 def test_benchmark_spec_validator_reports_malformed_json(tmp_path: Path):
     spec = tmp_path / "broken_spec.json"
     spec.write_text('{"schema_version": ', encoding="utf-8")

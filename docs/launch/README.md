@@ -66,6 +66,9 @@ paper-trading
 - Verify the browser-playable 3-minute demo and link it from the README.
 - Verify the v0.2 external reproduction pack with at least three independent
   reports: macOS/Python 3.10, Linux/Python 3.11, and Colab or Binder.
+- Use `docs/research_plans/iclr_submission_roadmap.md` as the research
+  readiness contract before framing TreLLM as an ICLR-level agent evaluation
+  system.
 - Attach the execution calibration stability report, market-rule fixture report,
   and external validation bundle to the patch release notes.
 

@@ -34,10 +34,12 @@ scientific claim unless the protocol declares how cache provenance is handled.
 ## Evidence Labels
 
 The TradeArena leaderboard rows carry explicit evidence labels:
-`stress-only`, `cached-provider`, `live-provider`, `deterministic-baseline`,
-`external-submitted`, `quote-calibrated`, `fill-replay-validated`,
-`redacted-prompt`, and `fully-auditable`. These labels are the row-level
-version of the claim boundary: they describe whether a result is a stress
-benchmark, a cached or live provider run, a deterministic anchor, an external
-submission, or a quote/fill-validated execution row. See
+`stress-only`, `direct-api`, `protocol-fixture`, `cached-provider`,
+`live-provider`, `deterministic-baseline`, `external-submitted`,
+`quote-calibrated`, `fill-replay-validated`, `redacted-prompt`, and
+`fully-auditable`. These labels are the row-level version of the claim
+boundary: they describe whether a result is a stress benchmark, a direct API
+manifest, a protocol plumbing fixture, a cached or live provider run, a
+deterministic anchor, an external submission, or a quote/fill-validated
+execution row. See
 [`docs/evidence_labels.md`](evidence_labels.md).

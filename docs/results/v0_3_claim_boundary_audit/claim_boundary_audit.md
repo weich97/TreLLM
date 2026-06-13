@@ -1,0 +1,34 @@
+# TreLLM v0.3 Claim Boundary Audit
+
+This artifact checks whether public narrative surfaces keep pilot, fixture, benchmark, and scientific claims separated.
+
+- Protocol: `trellm-v0.3-iclr-protocol`
+- Audit targets: `7`
+- Checks: `20`
+- Violations: `0`
+- Claim boundary: This audit checks whether public narrative surfaces preserve TreLLM's claim boundaries. It is not evidence of model performance and does not close the direct API or external reproduction gaps.
+
+## Findings
+
+| Check | Target | Status | Severity | Detail |
+| --- | --- | --- | --- | --- |
+| evidence-index-headline-ready | `docs/results/v0_3_evidence_index/v0_3_evidence_index.json` | pass | blocking | headline_scientific_claim_ready must remain false until direct API model matrix and external reproduction gaps close. |
+| evidence-index-open-gaps | `docs/results/v0_3_evidence_index/v0_3_open_gaps.csv` | pass | blocking | Direct-model and external-reproduction gaps must be explicit while public artifacts are pilot/fixture evidence. |
+| required-boundary-phrase | `README.md` | pass | blocking | Required claim-boundary phrase is present: TreLLM is not investment advice or a promise of profitable trading. |
+| required-boundary-phrase | `README.md` | pass | blocking | Required claim-boundary phrase is present: The repo distinguishes three claims: |
+| required-boundary-phrase | `README.md` | pass | blocking | Required claim-boundary phrase is present: Current public LLM runs are deliberately labeled as protocol fixtures, |
+| risky-claim-context | `README.md:90` | pass | blocking | Risky phrase `\bpromise\s+of\s+profitable\s+trading\b` must appear only in a negated, forbidden, or limitation context. |
+| risky-claim-context | `README.md:90` | pass | blocking | Risky phrase `\binvestment\s+advice\b` must appear only in a negated, forbidden, or limitation context. |
+| required-boundary-phrase | `docs/benchmark_v0_3_iclr_protocol.md` | pass | blocking | Required claim-boundary phrase is present: headline_scientific_claim_ready |
+| required-boundary-phrase | `docs/benchmark_v0_3_iclr_protocol.md` | pass | blocking | Required claim-boundary phrase is present: false until direct API model matrices and independent external reproduction |
+| required-boundary-phrase | `docs/benchmark_v0_3_iclr_protocol.md` | pass | blocking | Required claim-boundary phrase is present: Do not use the v0.3 protocol to claim: |
+| risky-claim-context | `docs/benchmark_v0_3_iclr_protocol.md:216` | pass | blocking | Risky phrase `\bproven\s+to\s+be\s+profitable\b` must appear only in a negated, forbidden, or limitation context. |
+| required-boundary-phrase | `docs/research_plans/iclr_submission_roadmap.md` | pass | blocking | Required claim-boundary phrase is present: The paper should not claim that LLMs can trade profitably. |
+| required-boundary-phrase | `docs/research_plans/iclr_submission_roadmap.md` | pass | blocking | Required claim-boundary phrase is present: Do not submit an ICLR main paper if any of these remain true: |
+| required-boundary-phrase | `docs/research_plans/iclr_submission_roadmap.md` | pass | blocking | Required claim-boundary phrase is present: Headline LLM comparisons still depend on Poe or another routed provider. |
+| risky-claim-context | `docs/research_plans/iclr_submission_roadmap.md:265` | pass | blocking | Risky phrase `\bproves?\s+that\b` must appear only in a negated, forbidden, or limitation context. |
+| risky-claim-context | `docs/research_plans/iclr_submission_roadmap.md:265` | pass | blocking | Risky phrase `\bbest\s+trading\s+model\b` must appear only in a negated, forbidden, or limitation context. |
+| required-boundary-phrase | `docs/claim_boundaries.md` | pass | blocking | Required claim-boundary phrase is present: TreLLM separates three kinds of claims. |
+| required-boundary-phrase | `docs/claim_boundaries.md` | pass | blocking | Required claim-boundary phrase is present: Scientific rows should be rare and conservative. |
+| required-boundary-phrase | `docs/academic_report_plan.md` | pass | blocking | Required claim-boundary phrase is present: Use this ladder to avoid overclaiming: |
+| required-boundary-phrase | `docs/academic_report_plan.md` | pass | blocking | Required claim-boundary phrase is present: Scientific and execution-realism |

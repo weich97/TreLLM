@@ -20,6 +20,24 @@
     "schema": { "const": "tradearena_external_reproduction_pack_v1" },
     "created_at": { "type": "string" },
     "repository": { "type": "string" },
+    "protocol_id": {
+      "type": "string",
+      "description": "Optional protocol identifier; v0.3 ICLR reproduction reports should use trellm-v0.3-iclr-protocol."
+    },
+    "environment_class": {
+      "type": "string",
+      "enum": ["windows_or_macos", "linux", "colab_or_binder"],
+      "description": "Optional v0.3 environment class used by the external reproduction gate."
+    },
+    "report_author_type": {
+      "type": "string",
+      "enum": ["project-maintainer", "independent"],
+      "description": "Whether the report was produced by a project maintainer or an independent reviewer."
+    },
+    "independent_reviewer": {
+      "type": "boolean",
+      "description": "True only for reports submitted by someone outside the project authorship team."
+    },
     "commit_or_tag": { "type": "string", "minLength": 1 },
     "git_status_short": { "type": "string" },
     "python": {

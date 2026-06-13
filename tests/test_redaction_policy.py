@@ -61,6 +61,26 @@ def test_private_debug_policy_preserves_raw_fields_and_public_scanner_flags_them
     assert any("raw prompt/response field" in finding for finding in findings)
 
 
+def test_public_scanner_allows_hash_only_direct_provider_manifest_containers():
+    payload = {
+        "prompt": {
+            "prompt_template_id": "trellm-allocation-v0.3",
+            "prompt_version": "v0.3.0",
+            "prompt_sha256": "sha256:" + "a" * 64,
+            "system_prompt_sha256": "sha256:" + "b" * 64,
+            "raw_prompt_public": False,
+        },
+        "response": {
+            "response_sha256": "sha256:" + "c" * 64,
+            "response_format": "json_object",
+            "parse_status": "parsed",
+            "raw_response_public": False,
+        },
+    }
+
+    assert scan_public_artifact_payload(payload) == []
+
+
 def test_trajectory_to_dict_is_public_redacted_by_default():
     trajectory = Trajectory(experiment_name="llm-like", seed=7)
     trajectory.append(

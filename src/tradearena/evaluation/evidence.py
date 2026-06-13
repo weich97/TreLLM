@@ -4,6 +4,8 @@ from collections.abc import Iterable
 
 ALLOWED_EVIDENCE_TAGS = (
     "stress-only",
+    "direct-api",
+    "protocol-fixture",
     "cached-provider",
     "live-provider",
     "deterministic-baseline",
@@ -26,6 +28,8 @@ ALLOWED_EVIDENCE_TIERS = (
 
 EVIDENCE_TAG_DESCRIPTIONS = {
     "stress-only": "Execution uses shared stress assumptions, not venue-calibrated transaction-cost prediction.",
+    "direct-api": "Provider-backed behavior is bound to a direct provider API manifest with model/version, prompt hash, response hash, and redaction metadata.",
+    "protocol-fixture": "Synthetic fixture row that validates schema, manifest, and registry plumbing without claiming live provider behavior.",
     "cached-provider": "Provider-backed behavior is replayed or published through cache/redacted manifest evidence.",
     "live-provider": "Provider-backed behavior came from a live API call in the declared run.",
     "deterministic-baseline": "Policy is deterministic or seeded local code, not an LLM provider.",
@@ -91,10 +95,14 @@ def evidence_tags_for_row(
 
 def claim_scope_for_tags(tags: Iterable[str]) -> str:
     tag_set = set(tags)
+    if "protocol-fixture" in tag_set:
+        return "protocol fixture for direct API evidence validation; not provider-performance or return evidence"
     if "fill-replay-validated" in tag_set:
         return "fill-replay execution validation"
     if "quote-calibrated" in tag_set:
         return "quote/fill calibrated execution evidence"
+    if "direct-api" in tag_set and "stress-only" in tag_set:
+        return "direct-provider reliability under stress-only execution"
     if "live-provider" in tag_set and "stress-only" in tag_set:
         return "live-provider behavior under stress-only execution"
     if "cached-provider" in tag_set and "stress-only" in tag_set:
@@ -106,6 +114,8 @@ def claim_scope_for_tags(tags: Iterable[str]) -> str:
 
 def evidence_tier_for_tags(tags: Iterable[str]) -> str:
     tag_set = set(tags)
+    if "protocol-fixture" in tag_set:
+        return "manifest-only"
     if "fill-replay-validated" in tag_set:
         return "fill-replay-validated"
     if "quote-calibrated" in tag_set:
@@ -119,11 +129,15 @@ def evidence_tier_for_tags(tags: Iterable[str]) -> str:
 
 def claim_class_for_tags(tags: Iterable[str]) -> str:
     tag_set = set(tags)
+    if "protocol-fixture" in tag_set:
+        return "engineering"
     scientific_tags = {"external-submitted", "fully-auditable", "fill-replay-validated"}
     if scientific_tags.issubset(tag_set) and not ({"redacted-prompt", "cached-provider"} & tag_set):
         return "scientific"
     benchmark_tags = {
         "stress-only",
+        "direct-api",
+        "protocol-fixture",
         "cached-provider",
         "live-provider",
         "deterministic-baseline",
@@ -213,6 +227,10 @@ def validate_evidence_boundary(evidence: dict[str, object]) -> list[str]:
     lowered_scope = claim_scope.lower()
     if "stress-only" in tags and _contains_any(lowered_scope, _CALIBRATED_EXECUTION_CLAIMS):
         errors.append("stress-only evidence cannot claim calibrated or broker-grade transaction-cost validity")
+    if "direct-api" in tags:
+        provider = str(evidence.get("provider", "")).strip().lower()
+        if provider in _ROUTED_PROVIDERS:
+            errors.append(f"direct-api evidence cannot use routed provider: {provider}")
     if "calibrated" in lowered_scope and not ({"quote-calibrated", "fill-replay-validated"} & set(tags)):
         errors.append("calibrated execution claims require quote-calibrated or fill-replay-validated evidence")
     if _contains_any(lowered_scope, _FILL_REPLAY_CLAIMS) and "fill-replay-validated" not in tags:
@@ -254,6 +272,10 @@ def _boundary_notes_for_tags(tags: Iterable[str]) -> list[str]:
     notes: list[str] = []
     if "stress-only" in tag_set:
         notes.append("Do not read this row as calibrated transaction-cost prediction.")
+    if "direct-api" in tag_set:
+        notes.append("Direct API evidence must retain model/version, prompt hash, response hash, and redacted manifest metadata.")
+    if "protocol-fixture" in tag_set:
+        notes.append("Fixture rows validate artifact plumbing only; do not report them as provider performance.")
     if "cached-provider" in tag_set:
         notes.append("Provider behavior is cache-backed; do not pool with live-provider rows without a drift policy.")
     if "redacted-prompt" in tag_set:
@@ -293,3 +315,5 @@ _SCIENTIFIC_CLAIMS = (
     "superior",
     "model skill",
 )
+
+_ROUTED_PROVIDERS = ("poe", "openrouter", "openrouter.ai", "router", "aggregator")

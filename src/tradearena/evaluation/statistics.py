@@ -7,6 +7,24 @@ from itertools import product
 from typing import Any
 
 
+def wilson_interval(successes: int, trials: int, *, z: float = 1.96) -> tuple[float, float, float]:
+    """Wilson score interval for a binomial proportion.
+
+    Returns (point, low, high). Robust at the extremes (0 or 1 successes)
+    where the normal approximation degenerates, which is the regime of the
+    near-ceiling and near-floor auditor recalls reported here.
+    """
+
+    if trials <= 0:
+        return 0.0, 0.0, 0.0
+    p = successes / trials
+    z2 = z * z
+    denom = 1.0 + z2 / trials
+    center = (p + z2 / (2 * trials)) / denom
+    margin = (z * math.sqrt(p * (1 - p) / trials + z2 / (4 * trials * trials))) / denom
+    return p, max(0.0, center - margin), min(1.0, center + margin)
+
+
 def mean(values: Iterable[float]) -> float:
     numbers = [float(value) for value in values]
     return sum(numbers) / len(numbers) if numbers else 0.0

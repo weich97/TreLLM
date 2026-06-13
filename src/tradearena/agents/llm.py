@@ -37,6 +37,7 @@ class DeepSeekLLMAnalyst:
     mask_timestamps: bool = False
     anonymize_symbols: bool = False
     sample_index: int = 0
+    temperature: float = 0.0
     name: str = "deepseek-llm-analyst"
     _cache_entries: dict[str, dict[str, Any]] | None = field(default=None, init=False, repr=False)
     _cache_mtime_ns: int | None = field(default=None, init=False, repr=False)
@@ -222,7 +223,7 @@ class DeepSeekLLMAnalyst:
             )
         request_body = {
             "model": self.api_model or self.model,
-            "temperature": 0,
+            "temperature": float(self.temperature),
             "messages": [
                 {
                     "role": "system",

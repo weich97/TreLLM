@@ -182,3 +182,19 @@ def test_paired_bootstrap_difference_reports_effect_sizes():
     empty = paired_bootstrap_difference({}, {})
     assert empty["cohens_d"] is None
     assert empty["cliffs_delta"] is None
+
+
+def test_wilson_interval_bounds_and_extremes():
+    from tradearena.evaluation.statistics import wilson_interval
+
+    p, lo, hi = wilson_interval(8, 10)
+    assert p == 0.8
+    assert 0.0 < lo < 0.8 < hi < 1.0
+    # Perfect success: point 1.0, upper capped at 1.0, lower below 1.
+    p1, lo1, hi1 = wilson_interval(25, 25)
+    assert p1 == 1.0 and hi1 == 1.0 and lo1 < 1.0
+    # Zero successes: point 0, lower floored at 0.
+    p0, lo0, hi0 = wilson_interval(0, 25)
+    assert p0 == 0.0 and lo0 == 0.0 and hi0 > 0.0
+    # Empty.
+    assert wilson_interval(0, 0) == (0.0, 0.0, 0.0)

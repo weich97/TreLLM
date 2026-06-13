@@ -263,7 +263,7 @@ def _run_case(
     kwargs: dict[str, Any] = dict(pollution_kwargs)
     if ":" in agent:
         provider, model = agent.split(":", 1)
-        analyst = "poe-llm" if provider == "poe" else "deepseek-llm"
+        analyst = {"poe": "poe-llm", "glm": "glm-llm"}.get(provider, "deepseek-llm")
         model_slug = re.sub(r"[^a-z0-9]+", "_", f"{provider}-{model}".lower()).strip("_")
         kwargs.update(
             {

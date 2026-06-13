@@ -1,32 +1,34 @@
-# Audit-Agent Pilot: deepseek-v4-pro on 100 Defect-Injected Trajectories
+# Audit-Agent Evaluation: 6 Models on 100 Defect-Injected Trajectories
 
-First model evaluation of the FinAudit task family (research plan 04).
-One defect per trajectory (25 per kind); the auditor reports structured
-findings scored against injected ground truth. Compact audit view,
-single pass, no retries.
+FinAudit task family (research plan 04): one defect per trajectory (25 per
+kind), auditor reports structured findings scored vs injected ground truth.
+Compact audit view, single pass. Five Poe-routed/direct models plus the
+deepseek direct pilot.
 
-| Slice | Tasks | Recall | Precision |
-| --- | ---: | ---: | ---: |
-| ALL | 100 | 0.79 | 0.66 |
-| difficulty:L1 | 25 | 0.52 | 0.39 |
-| difficulty:L2 | 50 | 0.90 | 0.78 |
-| difficulty:L3 | 25 | 0.84 | 0.72 |
-| kind:provenance_drift | 25 | 1.00 | 1.00 |
-| kind:silent_risk_edit | 25 | 0.80 | 0.61 |
-| kind:tampered_fill_price | 25 | 0.84 | 0.72 |
-| kind:unclipped_position | 25 | 0.52 | 0.39 |
+## Overall and by difficulty (recall)
 
-## Headline: difficulty inversion
+| Model | ALL | L1 single-record | L2 cross-record | L3 recompute |
+| --- | ---: | ---: | ---: | ---: |
+| poe:gpt-5.5 | 0.99 | 1.00 | 0.98 | 1.00 |
+| poe:claude-opus-4.7 | 0.97 | 0.88 | 1.00 | 1.00 |
+| poe:gemini-3.1-pro | 0.95 | 0.80 | 1.00 | 1.00 |
+| deepseek:deepseek-v4-pro | 0.79 | 0.52 | 0.90 | 0.84 |
+| glm:glm-5 | 0.71 | 0.32 | 0.80 | 0.92 |
+| poe:glm-5 | 0.70 | 0.40 | 0.80 | 0.80 |
 
-The nominally easiest defect (L1 `unclipped_position`: an approved weight
-of 0.8 against a documented 0.35 cap, visible in a single record) has the
-worst detection (recall 0.52), while cross-record consistency checks
-(`provenance_drift`, recall 1.00) and recomputation checks
-(`tampered_fill_price`, 0.84) score far higher. The auditor pattern-matches
-inconsistencies between records but does not systematically check stated
-constraints against values - the opposite of difficulty ordering assumed
-in the task design, and a concrete failure mode for LLM-as-auditor
-deployments.
+## Headline: the difficulty inversion is a weak-auditor phenomenon
 
-Reproduce: `python scripts/generate_audit_tasks.py --tasks 100 --periods 20
---output-dir outputs/audit_tasks` then `python scripts/run_audit_eval.py`.
+Strong auditors (gpt-5.5 L1=1.00, claude-opus-4.7 L1=0.88, gemini-3.1-pro
+L1=0.80) detect the nominally easiest single-record rule violation reliably.
+Weaker auditors (glm-5 L1=0.32-0.40, deepseek-v4-pro L1=0.52) miss it while
+still scoring well on cross-record (L2) and recompute (L3) checks - they
+pattern-match inter-record inconsistencies but do not systematically verify
+stated constraints against values. The inversion reported in the single-model
+pilot is therefore a property of weaker auditors, not a universal one.
+
+## Routing note
+
+poe:glm-5 (ALL 0.70) and glm:glm-5 direct (ALL 0.71) match overall but differ
+by difficulty (L1 0.40 vs 0.32; L3 0.80 vs 0.92), a same-name routing effect.
+
+Reproduce: generate_audit_tasks.py --tasks 100 then run_audit_eval.py.
